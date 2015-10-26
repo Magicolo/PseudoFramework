@@ -21,7 +21,7 @@ namespace Pseudo
 			get
 			{
 				Circle circle = new Circle(_circle);
-				circle.Position += transform.position.ToVector2();
+				circle.Position += Transform.position.ToVector2();
 				return circle;
 			}
 		}
@@ -32,7 +32,7 @@ namespace Pseudo
 			if (!_draw)
 				return;
 
-			Vector3 position = transform.position + _circle.Position.ToVector3();
+			Vector3 position = Transform.position + _circle.Position.ToVector3();
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.75f);
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, _circle.Radius);
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);

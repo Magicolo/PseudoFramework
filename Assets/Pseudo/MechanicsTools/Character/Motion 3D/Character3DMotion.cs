@@ -138,7 +138,7 @@ public class Character3DMotion : StateLayer
 		base.OnUpdate();
 
 		RaySettings.Angle = Gravity.Angle - 90;
-		Ground = RaySettings.GetGround(transform.position, Vector3.down, Application.isEditor);
+		Ground = RaySettings.GetGround(Transform.position, Vector3.down, Application.isEditor);
 
 		if (Ground == null)
 			Grounded = false;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-public class MinMaxDrawer : MonoBehaviourExtended
+public class MinMaxDrawer : PMonoBehaviour
 {
 	
 }

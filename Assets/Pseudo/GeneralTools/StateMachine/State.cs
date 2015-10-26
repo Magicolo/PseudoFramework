@@ -4,7 +4,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public abstract class State : MonoBehaviourExtended, IState
+	public abstract class State : PMonoBehaviour, IState
 	{
 		public virtual IStateLayer Layer { get { return _layerReference; } }
 		public virtual IStateMachine Machine { get { return _machineReference; } }

@@ -12,7 +12,7 @@ namespace Pseudo
 {
 	[RequireComponent(typeof(SpriteRenderer))]
 	[AddComponentMenu("Pseudo/Mechanics/Fog Of War")]
-	public class FogOfWar : MonoBehaviourExtended
+	public class FogOfWar : PMonoBehaviour
 	{
 		[SerializeField, PropertyField(typeof(RangeAttribute), 1, 25)]
 		int definition;
@@ -239,8 +239,8 @@ namespace Pseudo
 		{
 			CleanUp();
 
-			currentScale = transform.lossyScale;
-			currentPosition = transform.position - currentScale / 2;
+			currentScale = Transform.lossyScale;
+			currentPosition = Transform.position - currentScale / 2;
 			area = new Rect(currentPosition.x, currentPosition.y, currentScale.x, currentScale.y);
 		}
 
@@ -252,7 +252,7 @@ namespace Pseudo
 
 				updateFogOfWar |= updateCount >= 0;
 
-				if (updateFogOfWar && spriteRenderer.isVisible && gameObject.activeInHierarchy)
+				if (updateFogOfWar && spriteRenderer.isVisible && GameObject.activeInHierarchy)
 				{
 					deltaTime = Time.deltaTime;
 					flickerAmount = (Random.value * 2 - 1) * Flicker;
@@ -384,8 +384,8 @@ namespace Pseudo
 
 		void CreateTexture()
 		{
-			mapWidth = Mathf.Abs((int)(transform.lossyScale.x * Definition).Round());
-			mapHeight = Mathf.Abs((int)(transform.lossyScale.y * Definition).Round());
+			mapWidth = Mathf.Abs((int)(Transform.lossyScale.x * Definition).Round());
+			mapHeight = Mathf.Abs((int)(Transform.lossyScale.y * Definition).Round());
 			mapDiagonal = (int)Mathf.Ceil(Mathf.Sqrt(mapWidth * mapWidth + mapHeight * mapHeight)) * 2;
 			currentAlphaMap = new float[mapWidth, mapHeight];
 			texture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
@@ -414,7 +414,7 @@ namespace Pseudo
 				{
 					for (int x = 0; x < mapWidth; x++)
 					{
-						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, transform.position.z);
+						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, Transform.position.z);
 
 						if (Physics.Raycast(position - Vector3.forward * 100, Vector3.forward, Mathf.Infinity, LayerMask))
 							currentHeightMap[x, y] = 1;

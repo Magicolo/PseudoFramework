@@ -5,7 +5,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public abstract class StateLayer : MonoBehaviourExtended, IStateLayer
+	public abstract class StateLayer : PMonoBehaviour, IStateLayer
 	{
 
 		public IStateLayer Layer { get { return _parentReference as IStateLayer; } }

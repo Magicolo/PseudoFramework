@@ -6,7 +6,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/Mechanics/Fog Agent")]
-	public class FogAgent : MonoBehaviourExtended
+	public class FogAgent : PMonoBehaviour
 	{
 		[SerializeField, PropertyField]
 		Vector3 offset;
@@ -213,7 +213,7 @@ namespace Pseudo
 		{
 			CleanUp();
 
-			position = transform.position + offset;
+			position = Transform.position + offset;
 			rect = new Rect(position.x - MaxRadius, position.y - MaxRadius, MaxRadius * 2, MaxRadius * 2);
 			IsInView = Camera.main.WorldRectInView(rect);
 
@@ -235,7 +235,7 @@ namespace Pseudo
 				{
 					FogOfWar fogOfWar = FogsOfWar[i];
 					Vector3 lastRelativePosition = RelativePositionsDict[fogOfWar];
-					Vector3 currentRelativePosition = fogOfWar.transform.position - position;
+					Vector3 currentRelativePosition = fogOfWar.Transform.position - position;
 					RelativePositionsDict[fogOfWar] = currentRelativePosition;
 
 					if (HasChanged || (lastRelativePosition != currentRelativePosition && rect.Intersects(fogOfWar.Area)))

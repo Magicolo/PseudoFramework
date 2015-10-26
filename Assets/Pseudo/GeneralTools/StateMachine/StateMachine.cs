@@ -6,7 +6,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/State Machine")]
-	public class StateMachine : MonoBehaviourExtended, IStateMachine
+	public class StateMachine : PMonoBehaviour, IStateMachine
 	{
 		bool isActive;
 		public bool IsActive { get { return isActive; } }
@@ -321,7 +321,7 @@ namespace Pseudo
 
 		void Reset()
 		{
-			StateMachineUtility.CleanUp(null, gameObject);
+			StateMachineUtility.CleanUp(null, GameObject);
 		}
 	}
 }

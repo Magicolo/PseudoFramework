@@ -6,7 +6,7 @@ using System;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Smooth/Oscillate")]
-	public class SmoothOscillate : MonoBehaviourExtended, ICopyable<SmoothOscillate>
+	public class SmoothOscillate : PMonoBehaviour, ICopyable<SmoothOscillate>
 	{
 		[Mask]
 		public TransformModes Mode = TransformModes.Position;
@@ -54,13 +54,13 @@ namespace Pseudo
 			if (!Culling || Renderer.isVisible)
 			{
 				if (Mode.Contains(TransformModes.Position))
-					transform.OscillateLocalPosition(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					Transform.OscillateLocalPosition(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 
 				if (Mode.Contains(TransformModes.Rotation))
-					transform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					Transform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 
 				if (Mode.Contains(TransformModes.Scale))
-					transform.OscillateLocalScale(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					Transform.OscillateLocalScale(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 			}
 		}
 

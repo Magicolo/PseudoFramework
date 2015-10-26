@@ -6,7 +6,7 @@ using Pseudo;
 namespace Pseudo.Internal.PhysicsTools
 {
 	[RequireComponent(typeof(Rigidbody))]
-	public class PhysicsZone : MonoBehaviourExtended
+	public class PhysicsZone : PMonoBehaviour
 	{
 		Dictionary<Rigidbody, int> rigidbodyCountDict;
 		public Dictionary<Rigidbody, int> RigidbodyCountDict

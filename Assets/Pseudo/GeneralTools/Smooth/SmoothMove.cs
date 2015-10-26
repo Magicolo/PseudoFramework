@@ -7,7 +7,7 @@ using System;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Smooth/Move")]
-	public class SmoothMove : MonoBehaviourExtended, ICopyable<SmoothMove>
+	public class SmoothMove : PMonoBehaviour, ICopyable<SmoothMove>
 	{
 		[Mask]
 		public TransformModes Mode = TransformModes.Position;
@@ -49,13 +49,13 @@ namespace Pseudo
 				float deltaTime = Kronos.GetDeltaTime(TimeChannel);
 
 				if (Mode.Contains(TransformModes.Position))
-					transform.TranslateLocal(Speed * deltaTime, Axes);
+					Transform.TranslateLocal(Speed * deltaTime, Axes);
 
 				if (Mode.Contains(TransformModes.Rotation))
-					transform.RotateLocal(Speed * deltaTime, Axes);
+					Transform.RotateLocal(Speed * deltaTime, Axes);
 
 				if (Mode.Contains(TransformModes.Scale))
-					transform.ScaleLocal(Speed * deltaTime, Axes);
+					Transform.ScaleLocal(Speed * deltaTime, Axes);
 			}
 		}
 

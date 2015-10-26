@@ -7,7 +7,7 @@ namespace Pseudo
 {
 	[ExecuteInEditMode]
 	[AddComponentMenu("Pseudo/General/Combo System")]
-	public class ComboSystem : MonoBehaviourExtended
+	public class ComboSystem : PMonoBehaviour
 	{
 
 		[SerializeField]

@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 using System.Diagnostics;
 
-public class zTest : MonoBehaviourExtended
+public class zTest : PMonoBehaviour
 {
 	CachedValue<Rigidbody> cachedRigidbody;
 	public Rigidbody Rigidbody { get { return cachedRigidbody.Value; } }

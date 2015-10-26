@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-public class InputHandler : MonoBehaviourExtended
+public class InputHandler : PMonoBehaviour
 {
 	public List<KeyboardButton> KeyboardButtons;
 	public List<KeyboardAxis> KeyboardAxes;

@@ -7,7 +7,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Input System")]
-	public class InputSystem : MonoBehaviourExtended
+	public class InputSystem : PMonoBehaviour
 	{
 		[SerializeField]
 		List<KeyboardInfo> _keyboardInfos = new List<KeyboardInfo>();

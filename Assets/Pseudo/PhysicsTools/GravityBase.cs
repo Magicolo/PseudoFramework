@@ -5,7 +5,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.PhysicsTools
 {
-	public class GravityBase : MonoBehaviourExtended
+	public class GravityBase : PMonoBehaviour
 	{
 		[SerializeField, PropertyField(typeof(RangeAttribute), 0, 360)]
 		float _angle = 90;
