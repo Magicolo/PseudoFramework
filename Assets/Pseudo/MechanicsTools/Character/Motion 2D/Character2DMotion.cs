@@ -135,7 +135,7 @@ public class Character2DMotion : StateLayer
 		base.OnUpdate();
 
 		RaySettings.Angle = Gravity.Angle - 90;
-		Ground = RaySettings.GetGround(Transform.position, Vector3.down);
+		Ground = RaySettings.GetGround(CachedTransform.position, Vector3.down);
 
 		if (Ground == null)
 			Grounded = false;

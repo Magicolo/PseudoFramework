@@ -69,7 +69,7 @@ namespace Pseudo
 
 		void InitializeReference()
 		{
-			_reference = GameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			_reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			_reference.gameObject.SetActive(false);
 			_reference.playOnAwake = false;
 			_reference.spatialBlend = 1f;

@@ -321,7 +321,7 @@ namespace Pseudo
 
 		void Reset()
 		{
-			StateMachineUtility.CleanUp(null, GameObject);
+			StateMachineUtility.CleanUp(null, CachedGameObject);
 		}
 	}
 }

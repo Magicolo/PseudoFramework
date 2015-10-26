@@ -24,7 +24,7 @@ public class Character3DRotate : StateLayer
 	{
 		get
 		{
-			_modelTransform = _modelTransformCached ? _modelTransform : Transform.FindChild("Model").GetComponent<Transform>();
+			_modelTransform = _modelTransformCached ? _modelTransform : CachedTransform.FindChild("Model").GetComponent<Transform>();
 			_modelTransformCached = true;
 			return _modelTransform;
 		}

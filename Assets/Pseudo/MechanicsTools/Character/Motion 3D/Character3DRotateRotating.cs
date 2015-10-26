@@ -26,7 +26,7 @@ public class Character3DRotateRotating : State
 
 	public override void OnFixedUpdate()
 	{
-		Layer.CurrentAngle = Mathf.LerpAngle(Transform.localEulerAngles.z, Layer.TargetAngle, Speed * Time.fixedDeltaTime);
+		Layer.CurrentAngle = Mathf.LerpAngle(CachedTransform.localEulerAngles.z, Layer.TargetAngle, Speed * Time.fixedDeltaTime);
 		Layer.Rigidbody.RotateTowards(Layer.CurrentAngle, Speed, Axes.Z);
 	}
 }

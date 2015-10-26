@@ -8,16 +8,36 @@ namespace Pseudo
 {
 	public abstract class PMonoBehaviour : MonoBehaviour
 	{
-		CachedValue<GameObject> cachedGameObject;
-		public GameObject GameObject { get { return cachedGameObject; } }
-
-		CachedValue<Transform> cachedTransform;
-		public Transform Transform { get { return cachedTransform; } }
-
-		public PMonoBehaviour()
+		bool isGameObjectCached;
+		GameObject gameObjectCached;
+		public GameObject CachedGameObject
 		{
-			cachedGameObject = new CachedValue<GameObject>(() => base.gameObject);
-			cachedTransform = new CachedValue<Transform>(() => base.transform);
+			get
+			{
+				if (!isGameObjectCached)
+				{
+					isGameObjectCached = true;
+					gameObjectCached = gameObject;
+				}
+
+				return gameObjectCached;
+			}
+		}
+
+		bool isTransformCached;
+		Transform transformCached;
+		public Transform CachedTransform
+		{
+			get
+			{
+				if (!isTransformCached)
+				{
+					isTransformCached = true;
+					transformCached = transform;
+				}
+
+				return transformCached;
+			}
 		}
 	}
 }

@@ -49,13 +49,13 @@ namespace Pseudo
 				float deltaTime = Kronos.GetDeltaTime(TimeChannel);
 
 				if (Mode.Contains(TransformModes.Position))
-					Transform.TranslateLocal(Speed * deltaTime, Axes);
+					CachedTransform.TranslateLocal(Speed * deltaTime, Axes);
 
 				if (Mode.Contains(TransformModes.Rotation))
-					Transform.RotateLocal(Speed * deltaTime, Axes);
+					CachedTransform.RotateLocal(Speed * deltaTime, Axes);
 
 				if (Mode.Contains(TransformModes.Scale))
-					Transform.ScaleLocal(Speed * deltaTime, Axes);
+					CachedTransform.ScaleLocal(Speed * deltaTime, Axes);
 			}
 		}
 

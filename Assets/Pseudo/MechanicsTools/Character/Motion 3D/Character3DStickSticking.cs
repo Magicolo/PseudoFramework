@@ -55,7 +55,7 @@ public class Character3DStickSticking : State
 				CurrentCollider = collision;
 			else if (CurrentCollider != collision)
 			{
-				Vector3 direction = collision.transform.position - Transform.position;
+				Vector3 direction = collision.transform.position - CachedTransform.position;
 				direction = Layer.Gravity.WorldToRelative(direction) * Layer.HorizontalAxis;
 
 				if (direction.x > 0)
@@ -87,7 +87,7 @@ public class Character3DStickSticking : State
 
 	RaycastHit GetHit(Collider colliderToHit)
 	{
-		Vector3 position = Transform.position;
+		Vector3 position = CachedTransform.position;
 		Vector3 direction = colliderToHit.transform.position - position;
 		Ray ray = new Ray(position, direction);
 		RaycastHit hit;

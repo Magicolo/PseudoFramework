@@ -54,13 +54,13 @@ namespace Pseudo
 			if (!Culling || Renderer.isVisible)
 			{
 				if (Mode.Contains(TransformModes.Position))
-					Transform.OscillateLocalPosition(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalPosition(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 
 				if (Mode.Contains(TransformModes.Rotation))
-					Transform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 
 				if (Mode.Contains(TransformModes.Scale))
-					Transform.OscillateLocalScale(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalScale(Frequency, Amplitude, Center, Kronos.GetTime(TimeChannel), Axes);
 			}
 		}
 

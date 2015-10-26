@@ -589,7 +589,7 @@ namespace Pseudo.Internal
 				{
 					StateLayer layer = layers[i];
 
-					if (machine == null || layer.Machine == null || !object.ReferenceEquals(layer.Machine, machine) || layer.GameObject != gameObject)
+					if (machine == null || layer.Machine == null || !object.ReferenceEquals(layer.Machine, machine) || layer.CachedGameObject != gameObject)
 						layer.Destroy();
 				}
 
@@ -597,7 +597,7 @@ namespace Pseudo.Internal
 				{
 					State state = states[i];
 
-					if (machine == null || state.Machine == null || !object.ReferenceEquals(state.Machine, machine) || state.GameObject != gameObject || state.Layer == null)
+					if (machine == null || state.Machine == null || !object.ReferenceEquals(state.Machine, machine) || state.CachedGameObject != gameObject || state.Layer == null)
 						state.Destroy();
 				}
 

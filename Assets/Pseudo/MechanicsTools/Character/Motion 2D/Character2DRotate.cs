@@ -24,7 +24,7 @@ public class Character2DRotate : StateLayer
 	{
 		get
 		{
-			_spriteTransform = _spriteTransformCached ? _spriteTransform : Transform.FindChild("Sprite").GetComponent<Transform>();
+			_spriteTransform = _spriteTransformCached ? _spriteTransform : CachedTransform.FindChild("Sprite").GetComponent<Transform>();
 			_spriteTransformCached = true;
 			return _spriteTransform;
 		}

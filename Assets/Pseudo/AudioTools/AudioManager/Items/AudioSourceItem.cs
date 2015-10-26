@@ -41,7 +41,7 @@ namespace Pseudo.Internal.Audio
 			_originalSettings = settings;
 			_settings = Pool<AudioSourceSettings>.Create(settings);
 			_source = audioSource;
-			_source.transform.parent = PAudio.Instance.Transform;
+			_source.transform.parent = PAudio.Instance.CachedTransform;
 			_spatializer.AddSource(_source.transform);
 
 			// Setup the AudioSource
