@@ -1,0 +1,17 @@
+﻿using System;
+using Pseudo.Internal.Editor;
+
+namespace Pseudo {
+	[AttributeUsage(AttributeTargets.Field)]
+	public sealed class MaskAttribute : CustomAttributeBase {
+
+		public int filter = -1;
+	
+		public MaskAttribute() {
+		}
+	
+		public MaskAttribute(object filter) {
+			this.filter = (int)filter;
+		}
+	}
+}
