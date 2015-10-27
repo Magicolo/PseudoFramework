@@ -31,10 +31,10 @@ public class zTest : PMonoBehaviour
 	public bool test;
 	void Test()
 	{
-		PDebug.LogTest("Unity Transform Getter", () => { var position = transform.position; }, 1000000);
-		PDebug.LogTest("GetComponent", () => { var position = GetComponent<Transform>().position; }, 1000000);
-		PDebug.LogTest("Cached Transform Getter", () => { var position = CachedTransform.position; }, 1000000);
-		PDebug.LogTest("Direct Field Get", () => { var position = transformAwake.position; }, 1000000);
+		//PDebug.LogTest("Unity Transform Getter", () => { var position = transform.position; }, 1000000);
+		//PDebug.LogTest("GetComponent", () => { var position = GetComponent<Transform>().position; }, 1000000);
+		//PDebug.LogTest("Cached Transform Getter", () => { var position = CachedTransform.position; }, 1000000);
+		//PDebug.LogTest("Direct Field Get", () => { var position = transformAwake.position; }, 1000000);
 	}
 
 	void OnDrawGizmos()

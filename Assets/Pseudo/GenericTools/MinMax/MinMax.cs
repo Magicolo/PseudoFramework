@@ -25,6 +25,6 @@ public struct MinMax
 
 	public float GetRandom(ProbabilityDistributions distribution)
 	{
-		return PRandom.RandomRange(min, max, distribution);
+		return PRandom.Range(min, max, distribution);
 	}
 }

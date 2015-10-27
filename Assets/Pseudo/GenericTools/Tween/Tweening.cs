@@ -17,6 +17,7 @@ namespace Pseudo
 			OutQuad,
 			InOutQuad,
 			OutInQuad,
+			SmoothStep
 		}
 
 		public static readonly Action EmptyAction = () => { };
@@ -41,6 +42,7 @@ namespace Pseudo
 			else
 				return inQuadEase(ratio * 2 - 1f) / 2f + 0.5f;
 		};
+		static readonly Func<float, float> smoothStepEase = ratio => ratio * ratio * (3f - 2f * ratio);
 
 		public static Func<float, float> ToEaseFunction(Ease ease)
 		{
@@ -56,6 +58,8 @@ namespace Pseudo
 					return inOutQuadEase;
 				case Ease.OutInQuad:
 					return _outInQuadEase;
+				case Ease.SmoothStep:
+					return smoothStepEase;
 			}
 		}
 

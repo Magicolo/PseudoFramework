@@ -8,7 +8,7 @@ public static class PRandom
 {
 	public static readonly Random RandomGenerator = new Random(Environment.TickCount);
 
-	public static double RandomRange(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static double Range(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
 		double randomValue = 0d;
 
@@ -34,18 +34,18 @@ public static class PRandom
 
 				return PMath.Clamp(randomValue * (max - min) + min, min, max);
 			case ProbabilityDistributions.Proportional:
-				return Math.Pow(2f, RandomRange(Math.Log(min, 2d), Math.Log(max, 2d)));
+				return Math.Pow(2f, Range(Math.Log(min, 2d), Math.Log(max, 2d)));
 		}
 	}
 
-	public static int RandomRange(int min, int max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static int Range(int min, int max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
-		return (int)Math.Round(RandomRange((double)min, (double)max, distribution));
+		return (int)Math.Round(Range((double)min, (double)max, distribution));
 	}
 
-	public static float RandomRange(float min, float max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static float Range(float min, float max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
-		return (float)RandomRange((double)min, (double)max, distribution);
+		return (float)Range((double)min, (double)max, distribution);
 	}
 
 	public static T WeightedRandom<T>(Dictionary<T, float> objectsAndWeights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
@@ -70,7 +70,7 @@ public static class PRandom
 			weightSums[i] = weightSum;
 		}
 
-		randomValue = RandomRange(0f, weightSum, distribution);
+		randomValue = Range(0f, weightSum, distribution);
 
 		for (int i = 0; i < weightSums.Length; i++)
 		{
