@@ -6,7 +6,7 @@ namespace Pseudo
 {
 	public static class FloatExtensions
 	{
-		public static float Remap(this float f, float currentMin, float currentMax, float targetMin, float targetMax)
+		public static float Scale(this float f, float currentMin, float currentMax, float targetMin, float targetMax)
 		{
 			return (f - currentMin) / (currentMax - currentMin) * (targetMax - targetMin) + targetMin;
 		}
@@ -53,6 +53,11 @@ namespace Pseudo
 		public static float Round(this float f)
 		{
 			return f.Round(1f);
+		}
+
+		public static bool IsBetween(this float f, float min, float max)
+		{
+			return f > min && f < max;
 		}
 
 		public static float Wrap(this float f, float min, float max)

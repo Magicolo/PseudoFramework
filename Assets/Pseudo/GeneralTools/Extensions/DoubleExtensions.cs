@@ -6,7 +6,7 @@ namespace Pseudo
 {
 	public static class DoubleExtensions
 	{
-		public static double Remap(this double d, double sourceMin, double sourceMax, double targetMin, double targetMax)
+		public static double Scale(this double d, double sourceMin, double sourceMax, double targetMin, double targetMax)
 		{
 			return (d - sourceMin) / (sourceMax - sourceMin) * (targetMax - targetMin) + targetMin;
 		}
