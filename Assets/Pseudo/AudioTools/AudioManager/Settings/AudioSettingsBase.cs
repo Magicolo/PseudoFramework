@@ -145,8 +145,8 @@ namespace Pseudo
 			PitchScale = reference.PitchScale;
 			RandomVolume = reference.RandomVolume;
 			RandomPitch = reference.RandomPitch;
-			CopyHelper.CopyTo(reference.RTPCs, ref RTPCs);
-			CopyHelper.CopyTo(reference.Options, ref Options);
+			CopyUtility.CopyTo(reference.RTPCs, ref RTPCs);
+			CopyUtility.CopyTo(reference.Options, ref Options);
 		}
 	}
 }

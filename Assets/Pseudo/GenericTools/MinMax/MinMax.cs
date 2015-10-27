@@ -9,33 +9,22 @@ using Pseudo;
 public struct MinMax
 {
 	[SerializeField]
-	float _min;
+	float min;
 
 	[SerializeField]
-	float _max;
+	float max;
 
-	public float Min { get { return _min; } set { _min = value; } }
-	public float Max { get { return _max; } set { _max = value; } }
+	public float Min { get { return min; } set { min = value; } }
+	public float Max { get { return max; } set { max = value; } }
 
 	public MinMax(float min, float max)
 	{
-		_min = min;
-		_max = max;
+		this.min = min;
+		this.max = max;
 	}
 
 	public float GetRandom(ProbabilityDistributions distribution)
 	{
-		double randomValue = 0d;
-
-		switch (distribution)
-		{
-			case ProbabilityDistributions.Uniform:
-				randomValue = HelperFunctions.RandomDouble();
-				break;
-			case ProbabilityDistributions.Normal:
-				break;
-		}
-
-		return (float)randomValue;
+		return PRandom.RandomRange(min, max, distribution);
 	}
 }

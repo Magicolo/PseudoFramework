@@ -31,7 +31,7 @@ namespace Pseudo.Internal.Audio
 
 		protected override void InitializeSources()
 		{
-			AddSource(HelperFunctions.WeightedRandom(_originalSettings.Sources, _originalSettings.Weights));
+			AddSource(PRandom.WeightedRandom(_originalSettings.Sources, _originalSettings.Weights));
 		}
 
 		protected override void Recycle()

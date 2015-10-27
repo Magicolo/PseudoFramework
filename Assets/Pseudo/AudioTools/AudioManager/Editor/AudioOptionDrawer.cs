@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Audio
 		SerializedObject _dummySerialized;
 
 		AudioOption _audioOption;
-		DynamicValue _dynamicValue;
+		PDynamicValue _dynamicValue;
 		SerializedProperty _typeProperty;
 		SerializedProperty _valueProperty;
 		SerializedProperty _timeProperty;
@@ -178,7 +178,7 @@ namespace Pseudo.Internal.Audio
 
 		void InitializeValue(AudioOption.Types type)
 		{
-			if (_dynamicValue.GetValueType() == DynamicValue.ValueTypes.Null && _dynamicValue.GetValue() == null)
+			if (_dynamicValue.GetValueType() == PDynamicValue.ValueTypes.Null && _dynamicValue.GetValue() == null)
 				_dynamicValue.SetValue(AudioOption.GetDefaultValue(type));
 
 			if (type == AudioOption.Types.VolumeScale || type == AudioOption.Types.PitchScale)
@@ -206,7 +206,7 @@ namespace Pseudo.Internal.Audio
 		{
 			serializedObject.ApplyModifiedProperties();
 
-			DynamicValue.ValueTypes valueType;
+			PDynamicValue.ValueTypes valueType;
 			bool isArray;
 
 			AudioOption.ToValueType(type, hasCurve, out valueType, out isArray);

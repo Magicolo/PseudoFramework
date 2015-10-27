@@ -560,7 +560,7 @@ namespace Pseudo
 			_pausedState = reference._pausedState;
 			_hasFaded = reference._hasFaded;
 			_break = reference._break;
-			CopyHelper.CopyTo(reference._delayedOptions, ref _delayedOptions);
+			CopyUtility.CopyTo(reference._delayedOptions, ref _delayedOptions);
 			OnPlay = reference.OnPlay;
 			OnPause = reference.OnPause;
 			OnResume = reference.OnResume;

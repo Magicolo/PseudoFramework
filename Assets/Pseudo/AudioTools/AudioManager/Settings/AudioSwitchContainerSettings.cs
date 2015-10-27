@@ -32,7 +32,7 @@ namespace Pseudo.Internal.Audio
 			base.Copy(reference);
 
 			SwitchName = reference.SwitchName;
-			CopyHelper.CopyTo(reference.SwitchValues, ref SwitchValues);
+			CopyUtility.CopyTo(reference.SwitchValues, ref SwitchValues);
 		}
 	}
 }
