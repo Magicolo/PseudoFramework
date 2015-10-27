@@ -69,6 +69,13 @@ namespace Pseudo
 		Normal
 	}
 
+	public enum RaycastHitModes
+	{
+		First,
+		FirstOfEach,
+		All
+	}
+
 	public enum ControllerTypes
 	{
 		Keyboard,

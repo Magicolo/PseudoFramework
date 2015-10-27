@@ -10,21 +10,16 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Gravity")]
 	public class Gravity : GravityBase
 	{
-		bool _rigidbodyCached;
-		Rigidbody _rigidbody;
-		public Rigidbody Rigidbody
+		public CachedValue<Rigidbody> CachedRigidbody;
+
+		public Gravity()
 		{
-			get
-			{
-				_rigidbody = _rigidbodyCached ? _rigidbody : this.FindComponent<Rigidbody>();
-				_rigidbodyCached = true;
-				return _rigidbody;
-			}
+			CachedRigidbody = new CachedValue<Rigidbody>(this.FindComponent<Rigidbody>);
 		}
 
 		void FixedUpdate()
 		{
-			Rigidbody.AddForce(Force * Rigidbody.mass);
+			CachedRigidbody.Value.AddForce(Force * CachedRigidbody.Value.mass);
 		}
 	}
 }

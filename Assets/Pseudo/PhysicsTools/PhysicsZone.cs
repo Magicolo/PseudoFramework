@@ -8,17 +8,8 @@ namespace Pseudo.Internal.PhysicsTools
 	[RequireComponent(typeof(Rigidbody))]
 	public class PhysicsZone : PMonoBehaviour
 	{
-		Dictionary<Rigidbody, int> rigidbodyCountDict;
-		public Dictionary<Rigidbody, int> RigidbodyCountDict
-		{
-			get
-			{
-				if (rigidbodyCountDict == null)
-					rigidbodyCountDict = new Dictionary<Rigidbody, int>();
-
-				return rigidbodyCountDict;
-			}
-		}
+		public List<Rigidbody> Rigidbodies = new List<Rigidbody>();
+		List<int> rigidbodyCount = new List<int>();
 
 		public virtual void OnRigidbodyEnter(Rigidbody attachedRigidbody)
 		{
@@ -34,33 +25,38 @@ namespace Pseudo.Internal.PhysicsTools
 		{
 			Rigidbody attachedRigidbody = collision.attachedRigidbody;
 
-			if (attachedRigidbody != null)
-			{
-				if (!RigidbodyCountDict.ContainsKey(attachedRigidbody))
-				{
-					RigidbodyCountDict[attachedRigidbody] = 1;
+			if (attachedRigidbody == null)
+				return;
 
-					OnRigidbodyEnter(attachedRigidbody);
-				}
-				else
-					RigidbodyCountDict[attachedRigidbody] += 1;
+			int index = Rigidbodies.IndexOf(attachedRigidbody);
+
+			if (index == -1)
+			{
+				Rigidbodies.Add(attachedRigidbody);
+				rigidbodyCount.Add(1);
+				OnRigidbodyEnter(attachedRigidbody);
 			}
+			else
+				rigidbodyCount[index]++;
 		}
 
 		void OnTriggerExit(Collider collision)
 		{
 			Rigidbody attachedRigidbody = collision.attachedRigidbody;
 
-			if (attachedRigidbody != null && RigidbodyCountDict.ContainsKey(attachedRigidbody))
-			{
-				RigidbodyCountDict[attachedRigidbody] -= 1;
+			if (attachedRigidbody == null)
+				return;
 
-				if (RigidbodyCountDict[attachedRigidbody] <= 0)
-				{
-					OnRigidbodyExit(attachedRigidbody);
-					RigidbodyCountDict.Remove(attachedRigidbody);
-				}
+			int index = Rigidbodies.IndexOf(attachedRigidbody);
+
+
+			if (rigidbodyCount[index] == 1)
+			{
+				Rigidbodies.RemoveAt(index);
+				rigidbodyCount.RemoveAt(index);
 			}
+			else
+				rigidbodyCount[index]--;
 		}
 	}
 }

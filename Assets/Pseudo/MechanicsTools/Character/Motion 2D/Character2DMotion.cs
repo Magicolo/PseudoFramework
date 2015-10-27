@@ -6,7 +6,7 @@ using Pseudo;
 [RequireComponent(typeof(InputSystem), typeof(Animator), typeof(Gravity2D))]
 public class Character2DMotion : StateLayer
 {
-	public GroundCastSettings2D RaySettings;
+	public MultipleRaycast2DSettings RaySettings;
 
 	[Disable]
 	public Collider2D Ground;
@@ -135,12 +135,15 @@ public class Character2DMotion : StateLayer
 		base.OnUpdate();
 
 		RaySettings.Angle = Gravity.Angle - 90;
-		Ground = RaySettings.GetGround(CachedTransform.position, Vector3.down);
 
-		if (Ground == null)
+		if (RaySettings.Hits.Count == 0)
+		{
+			Ground = null;
 			Grounded = false;
+		}
 		else
 		{
+			Ground = RaySettings.Hits[0].collider;
 			Grounded = true;
 			Friction = Ground.sharedMaterial == null ? 1 : Ground.sharedMaterial.friction;
 		}

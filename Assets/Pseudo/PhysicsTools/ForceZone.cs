@@ -14,30 +14,20 @@ namespace Pseudo
 		public float Damping;
 		[Range(0, 1)]
 		public float DistanceScaling;
-
-		bool _colliderCached;
-		Collider _collider;
-		public Collider Collider
-		{
-			get
-			{
-				_collider = _colliderCached ? _collider : this.FindComponent<Collider>();
-				_colliderCached = true;
-				return _collider;
-			}
-		}
+		public Collider Collider;
 
 		void FixedUpdate()
 		{
-			foreach (KeyValuePair<Rigidbody, int> pair in RigidbodyCountDict)
+			for (int i = 0; i < Rigidbodies.Count; i++)
 			{
+				Rigidbody body = Rigidbodies[i];
 				Vector2 adjustedForce = Force;
 				float adjustedDamping = Damping;
 
 				if (DistanceScaling > 0)
 				{
 					Bounds zoneBounds = Collider.bounds;
-					Vector3 bodyPosition = pair.Key.transform.position;
+					Vector3 bodyPosition = body.transform.position;
 					float xAttenuation = Mathf.Clamp01(Mathf.Abs(zoneBounds.center.x - bodyPosition.x) / zoneBounds.extents.x) * DistanceScaling;
 					float yAttenuation = Mathf.Clamp01(Mathf.Abs(zoneBounds.center.y - bodyPosition.y) / zoneBounds.extents.y) * DistanceScaling;
 					float attenuation = 1 - (xAttenuation + yAttenuation) / 2;
@@ -47,10 +37,10 @@ namespace Pseudo
 					adjustedDamping *= attenuation;
 				}
 
-				pair.Key.AddForce(Force);
+				body.AddForce(Force);
 
 				if (adjustedDamping > 0)
-					pair.Key.SetVelocity(pair.Key.velocity * (1 - adjustedDamping));
+					body.SetVelocity(body.velocity * (1 - adjustedDamping));
 			}
 		}
 	}

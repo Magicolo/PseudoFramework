@@ -8,94 +8,96 @@ namespace Pseudo.Internal.PhysicsTools
 	public class GravityBase : PMonoBehaviour
 	{
 		[SerializeField, PropertyField(typeof(RangeAttribute), 0, 360)]
-		float _angle = 90;
+		float angle = 90;
 		public float Angle
 		{
-			get { return _angle; }
+			get { return angle; }
 			set
 			{
-				_angle = value % 360;
-				_force = (Vector2.right.Rotate(_angle) * _strength).Round(0.0001F);
-				_direction = _force.normalized;
-				_hasChanged = true;
+				angle = value % 360;
+				force = (Vector2.right.Rotate(angle) * strength).Round(0.0001F);
+				direction = force.normalized;
+				hasChanged = true;
 			}
 		}
 
 		[SerializeField, PropertyField(typeof(MinAttribute))]
-		float _strength = 20;
+		float strength = 20;
 		public float Strength
 		{
-			get { return _strength; }
+			get { return strength; }
 			set
 			{
-				_strength = value;
-				_force = (Vector2.right.Rotate(_angle) * _strength).Round(0.0001F);
-				_direction = _force.normalized;
-				_hasChanged = true;
+				strength = value;
+				force = (Vector2.right.Rotate(angle) * strength).Round(0.0001F);
+				direction = force.normalized;
+				hasChanged = true;
 			}
 		}
 
 		[SerializeField, PropertyField]
-		Vector2 _direction = new Vector2(0, -1);
+		Vector2 direction = new Vector2(0, -1);
 		public Vector2 Direction
 		{
-			get { return _direction; }
+			get { return direction; }
 			set
 			{
-				_direction = value.normalized.Round(0.0001F);
-				_force = _direction * _strength;
-				_angle = _direction.Angle();
-				_hasChanged = true;
+				direction = value.normalized.Round(0.0001F);
+				force = direction * strength;
+				angle = direction.Angle();
+				hasChanged = true;
 			}
 		}
 
 		[SerializeField, PropertyField]
-		Vector2 _force = new Vector2(0, -20);
+		Vector2 force = new Vector2(0, -20);
 		public Vector2 Force
 		{
-			get { return _force; }
+			get { return force; }
 			set
 			{
-				_force = value;
-				_strength = _force.magnitude;
-				_direction = _force.normalized;
-				_angle = _direction.Angle();
-				_hasChanged = true;
+				force = value;
+				strength = force.magnitude;
+				direction = force.normalized;
+				angle = direction.Angle();
+				hasChanged = true;
 			}
 		}
 
-		Vector2 _left;
+		Vector2 left;
 		public Vector2 Left
 		{
 			get
 			{
-				if (_hasChanged)
+				if (hasChanged)
 					UpdateForces();
 
-				return _right;
+				return right;
 			}
 		}
 
-		Vector2 _right;
+		Vector2 right;
 		public Vector2 Right
 		{
 			get
 			{
-				if (_hasChanged)
+				if (hasChanged)
 					UpdateForces();
 
-				return _right;
+				return right;
 			}
 		}
 
-		bool _hasChanged = true;
+		public Vector2 Up { get { return -force; } }
+
+		bool hasChanged = true;
 
 		void UpdateForces()
 		{
-			_left = _force.Rotate(90).normalized;
-			_right = -_left;
+			left = force.Rotate(90).normalized;
+			right = -left;
 
-			_hasChanged = false;
+			hasChanged = false;
 		}
 
 		public Vector2 WorldToRelative(Vector2 vector)

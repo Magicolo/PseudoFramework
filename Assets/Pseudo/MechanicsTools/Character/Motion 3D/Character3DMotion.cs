@@ -6,8 +6,7 @@ using Pseudo;
 [RequireComponent(typeof(Animator), typeof(Gravity), typeof(InputSystem))]
 public class Character3DMotion : StateLayer
 {
-
-	public GroundCastSettings RaySettings;
+	public MultipleRaycastSettings RaySettings;
 
 	[Disable]
 	public Collider Ground;
@@ -138,12 +137,16 @@ public class Character3DMotion : StateLayer
 		base.OnUpdate();
 
 		RaySettings.Angle = Gravity.Angle - 90;
-		Ground = RaySettings.GetGround(CachedTransform.position, Vector3.down, Application.isEditor);
+		RaySettings.Cast(CachedTransform.position, Vector3.down, Vector3.right);
 
-		if (Ground == null)
+		if (RaySettings.Hits.Count == 0)
+		{
+			Ground = null;
 			Grounded = false;
+		}
 		else
 		{
+			Ground = RaySettings.Hits[0].collider;
 			Grounded = true;
 			Friction = Ground.sharedMaterial == null ? 1 : Ground.sharedMaterial.dynamicFriction;
 		}

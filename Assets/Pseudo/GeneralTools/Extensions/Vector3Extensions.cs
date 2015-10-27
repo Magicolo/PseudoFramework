@@ -266,10 +266,10 @@ namespace Pseudo
 			return vector.Rotate(angle, Vector3.forward);
 		}
 
-		public static Vector3 Rotate(this Vector3 vector, float angle, Vector3 axes)
+		public static Vector3 Rotate(this Vector3 vector, float angle, Vector3 axis)
 		{
 			angle %= 360;
-			return Quaternion.AngleAxis(-angle, axes) * vector;
+			return Quaternion.AngleAxis(-angle, axis) * vector;
 		}
 
 		public static Vector3 ClampMagnitude(this Vector3 vector, float min, float max)
