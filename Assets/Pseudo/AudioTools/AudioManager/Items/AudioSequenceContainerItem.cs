@@ -37,7 +37,7 @@ namespace Pseudo.Internal.Audio
 		protected override void InitializeSources()
 		{
 			_sourcesIndex = 0;
-			CopyHelper.CopyTo(_originalSettings.Delays, ref _settings.Delays);
+			CopyUtility.CopyTo(_originalSettings.Delays, ref _settings.Delays);
 
 			if (_originalSettings.Sources.Count > 0)
 				AddSource(_originalSettings.Sources[_sourcesIndex++]);

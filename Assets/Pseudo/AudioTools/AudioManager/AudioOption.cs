@@ -47,12 +47,12 @@ namespace Pseudo
 		[SerializeField]
 		Types _type;
 		[SerializeField]
-		DynamicValue _value;
+		PDynamicValue _value;
 		[SerializeField, Min]
 		float _delay;
 
 		public Types Type { get { return _type; } }
-		public DynamicValue Value { get { return _value; } }
+		public PDynamicValue Value { get { return _value; } }
 		public float Delay { get { return _delay; } }
 
 		public static readonly AudioOption Default = new AudioOption();
@@ -233,7 +233,7 @@ namespace Pseudo
 
 		public object GetValue()
 		{
-			DynamicValue.ValueTypes valueType;
+			PDynamicValue.ValueTypes valueType;
 			bool isArray;
 
 			ToValueType(_type, HasCurve(), out valueType, out isArray);
@@ -260,19 +260,19 @@ namespace Pseudo
 		public void Initialize(Types type, object value, float delay = 0f)
 		{
 			_type = type;
-			_value = Pool<DynamicValue>.Create(_value);
+			_value = Pool<PDynamicValue>.Create(_value);
 			_value.SetValue(value);
 			_delay = delay;
 		}
 
 		public void OnCreate()
 		{
-			_value = Pool<DynamicValue>.Create(_value);
+			_value = Pool<PDynamicValue>.Create(_value);
 		}
 
 		public void OnRecycle()
 		{
-			Pool<DynamicValue>.Recycle(ref _value);
+			Pool<PDynamicValue>.Recycle(ref _value);
 		}
 
 		public void Copy(AudioOption reference)
@@ -397,103 +397,103 @@ namespace Pseudo
 			return defaultValue;
 		}
 
-		public static void ToValueType(Types type, bool hasCurve, out DynamicValue.ValueTypes valueType, out bool isArray)
+		public static void ToValueType(Types type, bool hasCurve, out PDynamicValue.ValueTypes valueType, out bool isArray)
 		{
-			valueType = DynamicValue.ValueTypes.Null;
+			valueType = PDynamicValue.ValueTypes.Null;
 			isArray = false;
 
 			switch (type)
 			{
 				case Types.VolumeScale:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.PitchScale:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.RandomVolume:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.RandomPitch:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.FadeIn:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.FadeOut:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.Loop:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Clip:
-					valueType = DynamicValue.ValueTypes.Object;
+					valueType = PDynamicValue.ValueTypes.Object;
 					break;
 				case Types.Output:
-					valueType = DynamicValue.ValueTypes.Object;
+					valueType = PDynamicValue.ValueTypes.Object;
 					break;
 				case Types.DopplerLevel:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.RolloffMode:
-					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Int;
+					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Int;
 					break;
 				case Types.MinDistance:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.MaxDistance:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.Spread:
-					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.Mute:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassEffects:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassListenerEffects:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassReverbZones:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Priority:
-					valueType = DynamicValue.ValueTypes.Int;
+					valueType = PDynamicValue.ValueTypes.Int;
 					break;
 				case Types.StereoPan:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.SpatialBlend:
-					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.ReverbZoneMix:
-					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.PlayRange:
-					valueType = DynamicValue.ValueTypes.Vector2;
+					valueType = PDynamicValue.ValueTypes.Vector2;
 					break;
 				case Types.Time:
-					valueType = DynamicValue.ValueTypes.Float;
+					valueType = PDynamicValue.ValueTypes.Float;
 					break;
 				case Types.TimeSamples:
-					valueType = DynamicValue.ValueTypes.Int;
+					valueType = PDynamicValue.ValueTypes.Int;
 					break;
 				case Types.VelocityUpdateMode:
-					valueType = DynamicValue.ValueTypes.Int;
+					valueType = PDynamicValue.ValueTypes.Int;
 					break;
 				case Types.IgnoreListenerPause:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.IgnoreListenerVolume:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Spatialize:
-					valueType = DynamicValue.ValueTypes.Bool;
+					valueType = PDynamicValue.ValueTypes.Bool;
 					break;
 			}
 		}

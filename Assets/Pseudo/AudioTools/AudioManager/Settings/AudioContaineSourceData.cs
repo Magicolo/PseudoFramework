@@ -32,7 +32,7 @@ namespace Pseudo.Internal.Audio
 		public void Copy(AudioContainerSourceData reference)
 		{
 			Settings = reference.Settings;
-			CopyHelper.CopyTo(reference.Options, ref Options);
+			CopyUtility.CopyTo(reference.Options, ref Options);
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Copy(reference);
 
-			CopyHelper.CopyTo(reference.Delays, ref Delays);
+			CopyUtility.CopyTo(reference.Delays, ref Delays);
 		}
 	}
 }

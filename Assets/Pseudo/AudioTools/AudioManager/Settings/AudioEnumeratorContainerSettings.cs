@@ -35,7 +35,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Copy(reference);
 
-			CopyHelper.CopyTo(reference.Repeats, ref Repeats);
+			CopyUtility.CopyTo(reference.Repeats, ref Repeats);
 			CurrentIndex = reference.CurrentIndex;
 			CurrentRepeat = reference.CurrentRepeat;
 		}

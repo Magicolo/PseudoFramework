@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Editor
 		[MenuItem("Pseudo/Create/Sprite", false, -10)]
 		static void CreateSprite()
 		{
-			if (System.Array.TrueForAll(Selection.objects, selected => !(selected is Texture)))
+			if (Array.TrueForAll(Selection.objects, selected => !(selected is Texture)))
 			{
 				Debug.LogError("No sprites were selected.");
 				return;
@@ -63,7 +63,7 @@ namespace Pseudo.Internal.Editor
 		[MenuItem("Pseudo/Create/Particle", false, -9)]
 		static void CreateParticle()
 		{
-			if (System.Array.TrueForAll(Selection.objects, selected => !(selected is Texture)))
+			if (Array.TrueForAll(Selection.objects, selected => !(selected is Texture)))
 			{
 				Debug.LogError("No textures were selected.");
 				return;
@@ -261,7 +261,7 @@ namespace Pseudo.Internal.Editor
 			if (!membersToIgnore.Contains(fieldName))
 			{
 				if (fieldType.IsArray || typeof(ICollection).IsAssignableFrom(fieldType))
-					line += indentString + "CopyHelper.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
+					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
 				else
 					line += indentString + fieldName + " = reference." + fieldName + ";\n";
 			}

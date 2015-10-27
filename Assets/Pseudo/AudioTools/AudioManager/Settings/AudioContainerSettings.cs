@@ -29,7 +29,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Copy(reference);
 
-			CopyHelper.CopyTo(reference.Sources, ref Sources);
+			CopyUtility.CopyTo(reference.Sources, ref Sources);
 		}
 	}
 }
