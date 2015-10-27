@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class PTime : PSingleton<PTime>
+public class PTime : Singleton<PTime>
 {
 	public class TimeChannel
 	{

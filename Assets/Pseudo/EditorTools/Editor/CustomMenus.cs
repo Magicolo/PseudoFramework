@@ -41,7 +41,7 @@ namespace Pseudo.Internal.Editor
 					continue;
 				}
 
-				AssetDatabase.CopyAsset(HelperFunctions.GetAssetPath("GraphicsTools/SpriteMaterial.mat"), materialPath);
+				AssetDatabase.CopyAsset(AssetDatabaseUtility.GetAssetPath("GraphicsTools/SpriteMaterial.mat"), materialPath);
 				AssetDatabase.Refresh();
 
 				Material material = AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) as Material;
@@ -80,7 +80,7 @@ namespace Pseudo.Internal.Editor
 				string texturePath = AssetDatabase.GetAssetPath(texture);
 				string materialPath = Path.GetDirectoryName(texturePath) + "/" + textureName + ".mat";
 
-				AssetDatabase.CopyAsset(HelperFunctions.GetAssetPath("GraphicsTools/ParticleMaterial.mat"), materialPath);
+				AssetDatabase.CopyAsset(AssetDatabaseUtility.GetAssetPath("GraphicsTools/ParticleMaterial.mat"), materialPath);
 				AssetDatabase.Refresh();
 
 				Material material = AssetDatabase.LoadAssetAtPath(materialPath, typeof(Material)) as Material;

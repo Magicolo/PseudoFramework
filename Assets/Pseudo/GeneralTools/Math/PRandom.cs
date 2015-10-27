@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,17 +6,7 @@ using Pseudo;
 
 public static class PRandom
 {
-	static System.Random randomGenerator;
-	public static System.Random RandomGenerator
-	{
-		get
-		{
-			if (randomGenerator == null)
-				randomGenerator = new System.Random(System.Environment.TickCount);
-
-			return randomGenerator;
-		}
-	}
+	public static readonly Random RandomGenerator = new Random(Environment.TickCount);
 
 	public static double RandomRange(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{

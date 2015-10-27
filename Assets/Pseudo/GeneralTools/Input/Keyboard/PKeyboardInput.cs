@@ -6,7 +6,7 @@ using Pseudo;
 namespace Pseudo.Internal
 {
 	[System.Serializable]
-	public class PKeyboardInput
+	public class KeyboardInput
 	{
 		readonly string keyboardName;
 		public string KeyboardName
@@ -26,7 +26,7 @@ namespace Pseudo.Internal
 			}
 		}
 
-		public PKeyboardInput(string keyboardName, string inputName)
+		public KeyboardInput(string keyboardName, string inputName)
 		{
 			this.keyboardName = keyboardName;
 			this.inputName = inputName;

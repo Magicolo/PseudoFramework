@@ -12,7 +12,7 @@ namespace Pseudo.Internal
 		PInput pInput;
 
 		SerializedProperty keyboardInfosProperty;
-		PKeyboardInfo currentKeyboardInfo;
+		KeyboardInfo currentKeyboardInfo;
 		SerializedProperty currentKeyboardInfoProperty;
 		SerializedProperty keyboardButtonsProperty;
 		SerializedProperty currentKeyboardButtonProperty;
@@ -20,7 +20,7 @@ namespace Pseudo.Internal
 		SerializedProperty currentKeyboardAxisProperty;
 
 		SerializedProperty joystickInfosProperty;
-		PJoystickInfo currentJoystickInfo;
+		JoystickInfo currentJoystickInfo;
 		SerializedProperty currentJoystickInfoProperty;
 		SerializedProperty joystickButtonsProperty;
 		SerializedProperty currentJoystickButtonProperty;
@@ -38,7 +38,7 @@ namespace Pseudo.Internal
 			pInput = (PInput)target;
 			keyboardKeys = PInput.GetNonJoystickKeys();
 			keyboardKeyNames = keyboardKeyNames ?? keyboardKeys.ToStringArray();
-			keyboardAxes = PInputUtility.GetKeyboardAxes();
+			keyboardAxes = InputUtility.GetKeyboardAxes();
 		}
 
 		public override void OnInspectorGUI()
@@ -59,8 +59,8 @@ namespace Pseudo.Internal
 
 			if (AddFoldOut(keyboardInfosProperty, "Keyboards".ToGUIContent()))
 			{
-				PKeyboardInfo[] keyboardInfos = pInput.GetKeyboardInfos();
-				PKeyboardInfo keyboardInfo = keyboardInfos.Last();
+				KeyboardInfo[] keyboardInfos = pInput.GetKeyboardInfos();
+				KeyboardInfo keyboardInfo = keyboardInfos.Last();
 
 				keyboardInfo.SetUniqueName(keyboardInfos, "default", "");
 
@@ -129,7 +129,7 @@ namespace Pseudo.Internal
 					EditorGUILayout.BeginHorizontal();
 					EditorGUI.BeginChangeCheck();
 
-					PKeyboardButton currentKeyboardKey = currentKeyboardInfo.GetButtons()[i];
+					KeyboardButton currentKeyboardKey = currentKeyboardInfo.GetButtons()[i];
 					int index = System.Array.IndexOf(keyboardKeys, currentKeyboardKey.Key);
 
 					index = EditorGUILayout.Popup(index, keyboardKeyNames);
@@ -219,8 +219,8 @@ namespace Pseudo.Internal
 
 			if (AddFoldOut(joystickInfosProperty, "Joysticks".ToGUIContent()))
 			{
-				PJoystickInfo[] joystickInfos = pInput.GetJoystickInfos();
-				PJoystickInfo joystickInfo = joystickInfos.Last();
+				JoystickInfo[] joystickInfos = pInput.GetJoystickInfos();
+				JoystickInfo joystickInfo = joystickInfos.Last();
 
 				joystickInfo.SetUniqueName(joystickInfos, "default", "");
 
@@ -284,7 +284,7 @@ namespace Pseudo.Internal
 			{
 				joystickButtonsProperty.Last().FindPropertyRelative("name").SetValue("default");
 
-				PJoystickButton button = currentJoystickInfo.GetButtons().Last();
+				JoystickButton button = currentJoystickInfo.GetButtons().Last();
 
 				button.Joystick = currentJoystickInfo.Joystick;
 				button.Button = JoystickButtons.Cross_A;
@@ -337,7 +337,7 @@ namespace Pseudo.Internal
 			{
 				joystickAxesProperty.Last().FindPropertyRelative("name").SetValue("default");
 
-				PJoystickAxis axis = currentJoystickInfo.GetAxes().Last();
+				JoystickAxis axis = currentJoystickInfo.GetAxes().Last();
 
 				axis.Joystick = currentJoystickInfo.Joystick;
 				axis.AxisInput = JoystickAxes.LeftStickX;

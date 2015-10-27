@@ -7,9 +7,9 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PKeyboardButton : PButtonBase
+	public class KeyboardButton : ButtonBase
 	{
-		public PKeyboardButton(string name, KeyCode key) : base(name, key)
+		public KeyboardButton(string name, KeyCode key) : base(name, key)
 		{
 
 		}

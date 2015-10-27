@@ -7,15 +7,15 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PKeyboardInfo : PControllerInfo
+	public class KeyboardInfo : ControllerInfo
 	{
 		[SerializeField]
-		List<PKeyboardButton> buttons = new List<PKeyboardButton>();
+		List<KeyboardButton> buttons = new List<KeyboardButton>();
 		[SerializeField]
-		List<PKeyboardAxis> axes = new List<PKeyboardAxis>();
+		List<KeyboardAxis> axes = new List<KeyboardAxis>();
 
-		Dictionary<string, List<PKeyboardButton>> nameButtonDict;
-		Dictionary<string, List<PKeyboardButton>> NameButtonDict
+		Dictionary<string, List<KeyboardButton>> nameButtonDict;
+		Dictionary<string, List<KeyboardButton>> NameButtonDict
 		{
 			get
 			{
@@ -26,8 +26,8 @@ namespace Pseudo
 			}
 		}
 
-		Dictionary<string, List<PKeyboardAxis>> nameAxisDict;
-		Dictionary<string, List<PKeyboardAxis>> NameAxisDict
+		Dictionary<string, List<KeyboardAxis>> nameAxisDict;
+		Dictionary<string, List<KeyboardAxis>> NameAxisDict
 		{
 			get
 			{
@@ -38,21 +38,21 @@ namespace Pseudo
 			}
 		}
 
-		public PKeyboardInfo(string name, PKeyboardButton[] buttons, PKeyboardAxis[] axes) : base(name)
+		public KeyboardInfo(string name, KeyboardButton[] buttons, KeyboardAxis[] axes) : base(name)
 		{
-			this.buttons = new List<PKeyboardButton>(buttons);
-			this.axes = new List<PKeyboardAxis>(axes);
+			this.buttons = new List<KeyboardButton>(buttons);
+			this.axes = new List<KeyboardAxis>(axes);
 
 			BuildNameButtonDict();
 			BuildNameAxisDict();
 		}
 
-		public PKeyboardButton[] GetButtons()
+		public KeyboardButton[] GetButtons()
 		{
 			return buttons.ToArray();
 		}
 
-		public PKeyboardButton[] GetButtons(string buttonName)
+		public KeyboardButton[] GetButtons(string buttonName)
 		{
 			return NameButtonDict[buttonName].ToArray();
 		}
@@ -62,35 +62,35 @@ namespace Pseudo
 			return NameButtonDict.GetKeyArray();
 		}
 
-		public void SetButtons(PKeyboardButton[] buttons)
+		public void SetButtons(KeyboardButton[] buttons)
 		{
-			this.buttons = new List<PKeyboardButton>(buttons);
+			this.buttons = new List<KeyboardButton>(buttons);
 			BuildNameButtonDict();
 		}
 
-		public void CopyButtons(PKeyboardInfo info)
+		public void CopyButtons(KeyboardInfo info)
 		{
 			SetButtons(info.GetButtons());
 		}
 
-		public void SwitchButtons(PKeyboardInfo info)
+		public void SwitchButtons(KeyboardInfo info)
 		{
-			PKeyboardButton[] otherButtons = info.GetButtons();
+			KeyboardButton[] otherButtons = info.GetButtons();
 			info.SetButtons(GetButtons());
 			SetButtons(otherButtons);
 		}
 
-		public void AddButton(PKeyboardButton button)
+		public void AddButton(KeyboardButton button)
 		{
 			buttons.Add(button);
 
 			if (!NameButtonDict.ContainsKey(button.Name))
-				NameButtonDict[button.Name] = new List<PKeyboardButton>();
+				NameButtonDict[button.Name] = new List<KeyboardButton>();
 
 			NameButtonDict[button.Name].Add(button);
 		}
 
-		public void RemoveButton(PKeyboardButton button)
+		public void RemoveButton(KeyboardButton button)
 		{
 			buttons.Remove(button);
 
@@ -98,12 +98,12 @@ namespace Pseudo
 				NameButtonDict[button.Name].Remove(button);
 		}
 
-		public PKeyboardAxis[] GetAxes()
+		public KeyboardAxis[] GetAxes()
 		{
 			return axes.ToArray();
 		}
 
-		public PKeyboardAxis[] GetAxes(string axisName)
+		public KeyboardAxis[] GetAxes(string axisName)
 		{
 			return NameAxisDict[axisName].ToArray();
 		}
@@ -113,39 +113,39 @@ namespace Pseudo
 			return NameAxisDict.GetKeyArray();
 		}
 
-		public void SetAxes(PKeyboardAxis[] axes)
+		public void SetAxes(KeyboardAxis[] axes)
 		{
-			this.axes = new List<PKeyboardAxis>(axes);
+			this.axes = new List<KeyboardAxis>(axes);
 
 			BuildNameAxisDict();
 		}
 
-		public void CopyAxes(PKeyboardInfo info)
+		public void CopyAxes(KeyboardInfo info)
 		{
 			SetAxes(info.GetAxes());
 		}
 
-		public void SwitchAxes(PKeyboardInfo info)
+		public void SwitchAxes(KeyboardInfo info)
 		{
-			PKeyboardAxis[] otherAxes = info.GetAxes();
+			KeyboardAxis[] otherAxes = info.GetAxes();
 
 			info.SetAxes(GetAxes());
 			SetAxes(otherAxes);
 		}
 
-		public void AddAxis(PKeyboardAxis axis)
+		public void AddAxis(KeyboardAxis axis)
 		{
 			axes.Add(axis);
 
 			if (!NameAxisDict.ContainsKey(axis.Name))
 			{
-				NameAxisDict[axis.Name] = new List<PKeyboardAxis>();
+				NameAxisDict[axis.Name] = new List<KeyboardAxis>();
 			}
 
 			NameAxisDict[axis.Name].Add(axis);
 		}
 
-		public void RemoveAxis(PKeyboardAxis axis)
+		public void RemoveAxis(KeyboardAxis axis)
 		{
 			axes.Remove(axis);
 
@@ -155,13 +155,13 @@ namespace Pseudo
 			}
 		}
 
-		public void CopyInput(PKeyboardInfo info)
+		public void CopyInput(KeyboardInfo info)
 		{
 			CopyButtons(info);
 			CopyAxes(info);
 		}
 
-		public void SwitchInput(PKeyboardInfo info)
+		public void SwitchInput(KeyboardInfo info)
 		{
 			SwitchButtons(info);
 			SwitchAxes(info);
@@ -169,14 +169,14 @@ namespace Pseudo
 
 		void BuildNameButtonDict()
 		{
-			nameButtonDict = new Dictionary<string, List<PKeyboardButton>>();
+			nameButtonDict = new Dictionary<string, List<KeyboardButton>>();
 
 			for (int i = 0; i < buttons.Count; i++)
 			{
-				PKeyboardButton key = buttons[i];
+				KeyboardButton key = buttons[i];
 
 				if (!nameButtonDict.ContainsKey(key.Name))
-					nameButtonDict[key.Name] = new List<PKeyboardButton>();
+					nameButtonDict[key.Name] = new List<KeyboardButton>();
 
 				nameButtonDict[key.Name].Add(key);
 			}
@@ -184,14 +184,14 @@ namespace Pseudo
 
 		void BuildNameAxisDict()
 		{
-			nameAxisDict = new Dictionary<string, List<PKeyboardAxis>>();
+			nameAxisDict = new Dictionary<string, List<KeyboardAxis>>();
 
 			for (int i = 0; i < axes.Count; i++)
 			{
-				PKeyboardAxis axis = axes[i];
+				KeyboardAxis axis = axes[i];
 
 				if (!nameAxisDict.ContainsKey(axis.Name))
-					nameAxisDict[axis.Name] = new List<PKeyboardAxis>();
+					nameAxisDict[axis.Name] = new List<KeyboardAxis>();
 
 				nameAxisDict[axis.Name].Add(axis);
 			}

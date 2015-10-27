@@ -34,7 +34,7 @@ public class zTestEditor : CustomEditorBase
 
 		parser.Parse();
 		parser.CompilationUnit.AcceptVisitor(replacer, null);
-		PLogger.Log(script.Concat('\n'));
+		PDebug.Log(script.Concat('\n'));
 	}
 }
 
