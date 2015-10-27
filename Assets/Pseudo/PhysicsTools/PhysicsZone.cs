@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal.PhysicsTools
+namespace Pseudo.Internal.Physics
 {
 	[RequireComponent(typeof(Rigidbody))]
 	public class PhysicsZone : PMonoBehaviour

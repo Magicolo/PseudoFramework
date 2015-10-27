@@ -10,28 +10,28 @@ namespace Pseudo
 {
 	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
 	{
-		AudioOption _option;
-		bool _recycle;
-		Func<float> _getDeltaTime;
-		float _delayCounter;
+		AudioOption option;
+		bool recycle;
+		Func<float> getDeltaTime;
+		float delayCounter;
 
-		public AudioOption Option { get { return _option; } }
-		public bool Recycle { get { return _recycle; } }
+		public AudioOption Option { get { return option; } }
+		public bool Recycle { get { return recycle; } }
 
 		public static AudioDelayedOption Default = new AudioDelayedOption();
 
 		public void Initialize(AudioOption option, bool recycle, Func<float> getDeltaTime)
 		{
-			_option = option;
-			_recycle = recycle;
-			_getDeltaTime = getDeltaTime;
+			this.option = option;
+			this.recycle = recycle;
+			this.getDeltaTime = getDeltaTime;
 		}
 
 		public bool Update()
 		{
-			_delayCounter += _getDeltaTime();
+			delayCounter += getDeltaTime();
 
-			return _delayCounter >= _option.Delay;
+			return delayCounter >= option.Delay;
 		}
 
 		public void OnCreate()
@@ -44,10 +44,10 @@ namespace Pseudo
 
 		public void Copy(AudioDelayedOption reference)
 		{
-			_option = reference._option;
-			_recycle = reference._recycle;
-			_getDeltaTime = reference._getDeltaTime;
-			_delayCounter = reference._delayCounter;
+			option = reference.option;
+			recycle = reference.recycle;
+			getDeltaTime = reference.getDeltaTime;
+			delayCounter = reference.delayCounter;
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DRotate : StateLayer
+public class Character2DRotate : PStateLayer
 {
 	public bool Invert;
 

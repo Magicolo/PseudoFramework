@@ -11,18 +11,18 @@ namespace Pseudo.Internal.Editor
 {
 	public class CustomPropertyDrawerBase : PropertyDrawer
 	{
-		protected UnityEngine.Object _target;
-		protected UnityEngine.Object[] _targets;
-		protected SerializedProperty _currentProperty;
-		protected SerializedObject _serializedObject;
-		protected Rect _currentPosition;
-		protected float _lineHeight;
-		protected bool _isArray;
-		protected int _index;
-		protected float _scrollbarThreshold;
-		protected GUIContent _currentLabel = GUIContent.none;
-		protected Rect _initPosition;
-		protected SerializedProperty _arrayProperty;
+		protected UnityEngine.Object target;
+		protected UnityEngine.Object[] targets;
+		protected SerializedProperty currentProperty;
+		protected SerializedObject serializedObject;
+		protected Rect currentPosition;
+		protected float lineHeight;
+		protected bool isArray;
+		protected int index;
+		protected float scrollbarThreshold;
+		protected GUIContent currentLabel = GUIContent.none;
+		protected Rect initPosition;
+		protected SerializedProperty arrayProperty;
 
 		static MethodInfo _getPropertyDrawerMethod;
 		public static MethodInfo GetPropertyDrawerMethod
@@ -30,7 +30,7 @@ namespace Pseudo.Internal.Editor
 			get
 			{
 				if (_getPropertyDrawerMethod == null)
-					_getPropertyDrawerMethod = HelperFunctions.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ObjectExtensions.AllFlags);
+					_getPropertyDrawerMethod = HelperFunctions.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
 
 				return _getPropertyDrawerMethod;
 			}
@@ -41,36 +41,36 @@ namespace Pseudo.Internal.Editor
 		public virtual void Initialize(SerializedProperty property, GUIContent label)
 		{
 			_initialized = true;
-			_isArray = typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
-			_lineHeight = EditorGUIUtility.singleLineHeight;
+			isArray = typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
+			lineHeight = EditorGUIUtility.singleLineHeight;
 
-			if (_isArray)
+			if (isArray)
 			{
-				_index = AttributeUtility.GetIndexFromLabel(label);
-				_arrayProperty = property.GetParent();
+				index = AttributeUtility.GetIndexFromLabel(label);
+				arrayProperty = property.GetParent();
 			}
 		}
 
 		public virtual void Begin(Rect position, SerializedProperty property, GUIContent label)
 		{
-			_initPosition = position;
-			_currentPosition = position;
-			_currentProperty = property;
-			_currentLabel = label;
-			_serializedObject = property.serializedObject;
-			_target = _serializedObject.targetObject;
-			_targets = _serializedObject.targetObjects;
-			_scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
+			initPosition = position;
+			currentPosition = position;
+			currentProperty = property;
+			currentLabel = label;
+			serializedObject = property.serializedObject;
+			target = serializedObject.targetObject;
+			targets = serializedObject.targetObjects;
+			scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
 
 			EditorGUI.BeginChangeCheck();
 		}
 
 		public virtual void End()
 		{
-			_serializedObject.ApplyModifiedProperties();
+			serializedObject.ApplyModifiedProperties();
 
 			if (EditorGUI.EndChangeCheck())
-				EditorUtility.SetDirty(_serializedObject.targetObject);
+				EditorUtility.SetDirty(serializedObject.targetObject);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -83,19 +83,19 @@ namespace Pseudo.Internal.Editor
 
 		public void ToggleButton(SerializedProperty boolProperty, GUIContent trueLabel, GUIContent falseLabel)
 		{
-			Rect indentedPosition = EditorGUI.IndentedRect(_currentPosition);
+			Rect indentedPosition = EditorGUI.IndentedRect(currentPosition);
 			boolProperty.SetValue(ToggleButton(indentedPosition, boolProperty.GetValue<bool>(), trueLabel, falseLabel));
 
-			_currentPosition.y += _currentPosition.height + 2;
+			currentPosition.y += currentPosition.height + 2;
 		}
 
 		public void PropertyField(SerializedProperty property, GUIContent label, bool includeChildren)
 		{
-			_currentPosition.height = EditorGUI.GetPropertyHeight(property, label, includeChildren);
+			currentPosition.height = EditorGUI.GetPropertyHeight(property, label, includeChildren);
 
-			EditorGUI.PropertyField(_currentPosition, property, label, includeChildren);
+			EditorGUI.PropertyField(currentPosition, property, label, includeChildren);
 
-			_currentPosition.y += _currentPosition.height + 2f;
+			currentPosition.y += currentPosition.height + 2f;
 		}
 
 		public void PropertyField(SerializedProperty property, GUIContent label)

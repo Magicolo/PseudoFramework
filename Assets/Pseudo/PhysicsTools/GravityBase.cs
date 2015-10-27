@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal.PhysicsTools
+namespace Pseudo.Internal.Physics
 {
 	public class GravityBase : PMonoBehaviour
 	{

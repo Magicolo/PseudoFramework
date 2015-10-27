@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DJump : StateLayer
+public class Character3DJump : PStateLayer
 {
 	public Gravity Gravity { get { return Layer.Gravity; } }
 	public bool Grounded { get { return Layer.Grounded; } set { Layer.Grounded = value; } }

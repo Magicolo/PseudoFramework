@@ -44,9 +44,8 @@ namespace Pseudo
 				char c = s.Pop(startIndex, out s);
 
 				if (c == stopCharacter)
-				{
 					break;
-				}
+
 				popped += c;
 			}
 
@@ -65,9 +64,7 @@ namespace Pseudo
 			string popped = "";
 
 			for (int i = 0; i < length; i++)
-			{
 				popped += s.Pop(startIndex, out s);
-			}
 
 			remaining = s;
 
@@ -88,9 +85,7 @@ namespace Pseudo
 				char c = s[i];
 
 				if (c == stopCharacter)
-				{
 					break;
-				}
 
 				substring += c;
 			}
@@ -108,9 +103,7 @@ namespace Pseudo
 			string substring = "";
 
 			for (int i = startIndex; i < startIndex + length; i++)
-			{
 				substring += s[i];
-			}
 
 			return substring;
 		}
@@ -137,13 +130,9 @@ namespace Pseudo
 			if (!string.IsNullOrEmpty(s))
 			{
 				if (s.Length == 1)
-				{
 					capitalized = char.ToUpper(s[0]).ToString();
-				}
 				else
-				{
 					capitalized = char.ToUpper(s[0]) + s.Substring(1);
-				}
 			}
 
 			return capitalized;
@@ -180,9 +169,7 @@ namespace Pseudo
 		public static T Capitalized<T>(this T stringArray) where T : IList<string>
 		{
 			for (int i = 0; i < stringArray.Count; i++)
-			{
 				stringArray[i] = stringArray[i].Capitalized();
-			}
 
 			return stringArray;
 		}
@@ -194,10 +181,9 @@ namespace Pseudo
 			for (int i = startIndex; i < Mathf.Min(startIndex + count, stringArray.Count); i++)
 			{
 				concat += stringArray[i];
+
 				if (i < stringArray.Count - 1)
-				{
 					concat += separator;
-				}
 			}
 			return concat;
 		}
@@ -226,8 +212,9 @@ namespace Pseudo
 		{
 			float widthSum = 0;
 
-			foreach (var letter in s)
+			for (int i = 0; i < s.Length; i++)
 			{
+				char letter = s[i];
 				CharacterInfo charInfo;
 				font.GetCharacterInfo(letter, out charInfo);
 				widthSum += charInfo.advance;
@@ -298,8 +285,10 @@ namespace Pseudo
 					else if (split.Length == 2) guiContents[i] = new GUIContent(split[0], split[1]);
 					else guiContents[i] = new GUIContent(labels[i]);
 				}
-				else guiContents[i] = new GUIContent(labels[i]);
+				else
+					guiContents[i] = new GUIContent(labels[i]);
 			}
+
 			return guiContents;
 		}
 
@@ -308,9 +297,7 @@ namespace Pseudo
 			GUIContent[] guiContents = new GUIContent[labels.Count];
 
 			for (int i = 0; i < labels.Count; i++)
-			{
 				guiContents[i] = new GUIContent(labels[i], tooltips[i]);
-			}
 
 			return guiContents;
 		}

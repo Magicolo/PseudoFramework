@@ -18,42 +18,32 @@ namespace Pseudo
 			rigidbody.SetVelocity(new Vector3(velocity, velocity, velocity), axes);
 		}
 
-		public static void Accelerate(this Rigidbody rigidbody, Vector3 acceleration, Axes axes = Axes.XYZ)
+		public static void Accelerate(this Rigidbody rigidbody, Vector3 speed, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetVelocity(rigidbody.velocity + acceleration * Time.fixedDeltaTime, axes);
+			rigidbody.SetVelocity(rigidbody.velocity + speed, axes);
 		}
 
-		public static void Accelerate(this Rigidbody rigidbody, float acceleration, Axes axes = Axes.XYZ)
+		public static void Accelerate(this Rigidbody rigidbody, float speed, Axes axes = Axes.XYZ)
 		{
-			rigidbody.Accelerate(new Vector3(acceleration, acceleration, acceleration), axes);
+			rigidbody.Accelerate(new Vector3(speed, speed, speed), axes);
 		}
 
-		public static void AccelerateTowards(this Rigidbody rigidbody, Vector3 targetAcceleration, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
+		public static void AccelerateTowards(this Rigidbody rigidbody, Vector3 targetSpeed, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					rigidbody.SetVelocity(rigidbody.velocity.Lerp(targetAcceleration, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetVelocity(rigidbody.velocity.Lerp(targetSpeed, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					rigidbody.SetVelocity(rigidbody.velocity.LerpLinear(targetAcceleration, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetVelocity(rigidbody.velocity.LerpLinear(targetSpeed, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void AccelerateTowards(this Rigidbody rigidbody, Vector3 targetAcceleration, float speed, Axes axes = Axes.XYZ)
+		public static void AccelerateTowards(this Rigidbody rigidbody, float targetSpeed, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			rigidbody.AccelerateTowards(targetAcceleration, speed, InterpolationModes.Quadratic, axes);
-		}
-
-		public static void AccelerateTowards(this Rigidbody rigidbody, float targetAcceleration, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
-		{
-			rigidbody.AccelerateTowards(new Vector3(targetAcceleration, targetAcceleration, targetAcceleration), speed, interpolation, axes);
-		}
-
-		public static void AccelerateTowards(this Rigidbody rigidbody, float targetAcceleration, float speed, Axes axes = Axes.XYZ)
-		{
-			rigidbody.AccelerateTowards(new Vector3(targetAcceleration, targetAcceleration, targetAcceleration), speed, InterpolationModes.Quadratic, axes);
+			rigidbody.AccelerateTowards(new Vector3(targetSpeed, targetSpeed, targetSpeed), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillateVelocity(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -80,7 +70,7 @@ namespace Pseudo
 
 		public static void Translate(this Rigidbody rigidbody, Vector3 translation, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position + translation * Time.fixedDeltaTime, axes);
+			rigidbody.SetPosition(rigidbody.transform.position + translation, axes);
 		}
 
 		public static void Translate(this Rigidbody rigidbody, float translation, Axes axes = Axes.XYZ)
@@ -88,32 +78,22 @@ namespace Pseudo
 			rigidbody.Translate(new Vector3(translation, translation, translation), axes);
 		}
 
-		public static void TranslateTowards(this Rigidbody rigidbody, Vector3 targetPosition, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Rigidbody rigidbody, Vector3 targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					rigidbody.SetPosition(rigidbody.transform.position.Lerp(targetPosition, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetPosition(rigidbody.transform.position.Lerp(targetPosition, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					rigidbody.SetPosition(rigidbody.transform.position.LerpLinear(targetPosition, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetPosition(rigidbody.transform.position.LerpLinear(targetPosition, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void TranslateTowards(this Rigidbody rigidbody, Vector3 targetPosition, float speed, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Rigidbody rigidbody, float targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			rigidbody.TranslateTowards(targetPosition, speed, InterpolationModes.Quadratic, axes);
-		}
-
-		public static void TranslateTowards(this Rigidbody rigidbody, float targetPosition, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
-		{
-			rigidbody.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), speed, interpolation, axes);
-		}
-
-		public static void TranslateTowards(this Rigidbody rigidbody, float targetPosition, float speed, Axes axes = Axes.XYZ)
-		{
-			rigidbody.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), speed, InterpolationModes.Quadratic, axes);
+			rigidbody.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillatePosition(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -140,7 +120,7 @@ namespace Pseudo
 
 		public static void Rotate(this Rigidbody rigidbody, Vector3 rotation, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles + rotation * Time.fixedDeltaTime, axes);
+			rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles + rotation, axes);
 		}
 
 		public static void Rotate(this Rigidbody rigidbody, float rotation, Axes axes = Axes.XYZ)
@@ -148,32 +128,22 @@ namespace Pseudo
 			rigidbody.Rotate(new Vector3(rotation, rotation, rotation), axes);
 		}
 
-		public static void RotateTowards(this Rigidbody rigidbody, Vector3 targetAngles, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
+		public static void RotateTowards(this Rigidbody rigidbody, Vector3 targetAngles, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.LerpAngles(targetAngles, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.LerpAnglesLinear(targetAngles, Time.fixedDeltaTime * speed, axes), axes);
+					rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.LerpAnglesLinear(targetAngles, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void RotateTowards(this Rigidbody rigidbody, Vector3 targetAngles, float speed, Axes axes = Axes.XYZ)
+		public static void RotateTowards(this Rigidbody rigidbody, float targetAngle, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			rigidbody.RotateTowards(targetAngles, speed, InterpolationModes.Quadratic, axes);
-		}
-
-		public static void RotateTowards(this Rigidbody rigidbody, float targetAngle, float speed, InterpolationModes interpolation, Axes axes = Axes.XYZ)
-		{
-			rigidbody.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), speed, interpolation, axes);
-		}
-
-		public static void RotateTowards(this Rigidbody rigidbody, float targetAngle, float speed, Axes axes = Axes.XYZ)
-		{
-			rigidbody.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), speed, InterpolationModes.Quadratic, axes);
+			rigidbody.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillateEulerAngles(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)

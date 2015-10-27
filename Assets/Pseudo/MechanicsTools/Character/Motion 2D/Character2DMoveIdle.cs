@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DMoveIdle : State
+public class Character2DMoveIdle : PState
 {
 	new public Character2DMove Layer { get { return ((Character2DMove)base.Layer); } }
 

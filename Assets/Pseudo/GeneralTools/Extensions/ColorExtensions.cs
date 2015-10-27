@@ -5,22 +5,23 @@ namespace Pseudo
 {
 	public static class ColorExtensions
 	{
-
 		const float epsilon = 0.001F;
 
 		public static Color SetValues(this Color color, Color values, Channels channels)
 		{
-			color.r = channels.Contains(Channels.R) ? values.r : color.r;
-			color.g = channels.Contains(Channels.G) ? values.g : color.g;
-			color.b = channels.Contains(Channels.B) ? values.b : color.b;
-			color.a = channels.Contains(Channels.A) ? values.a : color.a;
+			if ((channels & Channels.R) != 0)
+				color.r = values.r;
+
+			if ((channels & Channels.G) != 0)
+				color.g = values.g;
+
+			if ((channels & Channels.B) != 0)
+				color.b = values.b;
+
+			if ((channels & Channels.A) != 0)
+				color.a = values.a;
 
 			return color;
-		}
-
-		public static Color SetValues(this Color color, Color values)
-		{
-			return color.SetValues(values, Channels.RGBA);
 		}
 
 		public static Color SetValues(this Color color, float value, Channels channels)
@@ -28,82 +29,74 @@ namespace Pseudo
 			return color.SetValues(new Color(value, value, value, value), channels);
 		}
 
-		public static Color SetValues(this Color color, float value)
+		public static Color Lerp(this Color color, Color target, float deltaTime, Channels channels)
 		{
-			return color.SetValues(new Color(value, value, value, value), Channels.RGBA);
-		}
+			if ((channels & Channels.R) != 0 && Mathf.Abs(target.r - color.r) > epsilon)
+				color.r = Mathf.Lerp(color.r, target.r, deltaTime);
 
-		public static Color Lerp(this Color color, Color target, float time, Channels channels)
-		{
-			color.r = channels.Contains(Channels.R) && Mathf.Abs(target.r - color.r) > epsilon ? Mathf.Lerp(color.r, target.r, time) : color.r;
-			color.g = channels.Contains(Channels.G) && Mathf.Abs(target.g - color.g) > epsilon ? Mathf.Lerp(color.g, target.g, time) : color.g;
-			color.b = channels.Contains(Channels.B) && Mathf.Abs(target.b - color.b) > epsilon ? Mathf.Lerp(color.b, target.b, time) : color.b;
-			color.a = channels.Contains(Channels.A) && Mathf.Abs(target.a - color.a) > epsilon ? Mathf.Lerp(color.a, target.a, time) : color.a;
+			if ((channels & Channels.G) != 0 && Mathf.Abs(target.g - color.g) > epsilon)
+				color.g = Mathf.Lerp(color.g, target.g, deltaTime);
+
+			if ((channels & Channels.B) != 0 && Mathf.Abs(target.b - color.b) > epsilon)
+				color.b = Mathf.Lerp(color.b, target.b, deltaTime);
+
+			if ((channels & Channels.A) != 0 && Mathf.Abs(target.a - color.a) > epsilon)
+				color.a = Mathf.Lerp(color.a, target.a, deltaTime);
 
 			return color;
 		}
 
-		public static Color Lerp(this Color color, Color target, float time)
-		{
-			return color.Lerp(target, time, Channels.RGBA);
-		}
-
-		public static Color LerpLinear(this Color color, Color target, float time, Channels channels)
+		public static Color LerpLinear(this Color color, Color target, float deltaTime, Channels channels)
 		{
 			Vector4 difference = target - color;
 			Vector4 direction = Vector4.zero.SetValues(difference, (Axes)channels);
 			float distance = direction.magnitude;
 
-			Vector4 adjustedDirection = direction.normalized * time;
+			Vector4 adjustedDirection = direction.normalized * deltaTime;
 
 			if (adjustedDirection.magnitude < distance)
-			{
 				color += Color.clear.SetValues(adjustedDirection, channels);
-			}
 			else
-			{
 				color = color.SetValues(target, channels);
-			}
 
 			return color;
 		}
 
-		public static Color LerpLinear(this Color color, Color target, float time)
+		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, float offset, float time, Channels channels)
 		{
-			return color.LerpLinear(target, time, Channels.RGBA);
-		}
+			if ((channels & Channels.R) != 0)
+				color.r = center.r + amplitude.r * Mathf.Sin(frequency.r * time + offset);
 
-		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, float offset, Channels channels)
-		{
-			color.r = channels.Contains(Channels.R) ? center.r + amplitude.r * Mathf.Sin(frequency.r * Time.time + offset) : color.r;
-			color.g = channels.Contains(Channels.G) ? center.g + amplitude.g * Mathf.Sin(frequency.g * Time.time + offset) : color.g;
-			color.b = channels.Contains(Channels.B) ? center.b + amplitude.b * Mathf.Sin(frequency.b * Time.time + offset) : color.b;
-			color.a = channels.Contains(Channels.A) ? center.a + amplitude.a * Mathf.Sin(frequency.a * Time.time + offset) : color.a;
+			if ((channels & Channels.G) != 0)
+				color.g = center.g + amplitude.g * Mathf.Sin(frequency.g * time + offset);
+
+			if ((channels & Channels.B) != 0)
+				color.b = center.b + amplitude.b * Mathf.Sin(frequency.b * time + offset);
+
+			if ((channels & Channels.A) != 0)
+				color.a = center.a + amplitude.a * Mathf.Sin(frequency.a * time + offset);
 
 			return color;
 		}
 
-		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, float offset)
+		public static Color Oscillate(this Color color, float frequency, float amplitude, float center, float offset, float time, Channels channels)
 		{
-			return color.Oscillate(frequency, amplitude, center, offset, Channels.RGBA);
+			return color.Oscillate(new Color(frequency, frequency, frequency, frequency), new Color(amplitude, amplitude, amplitude, amplitude), new Color(center, center, center, center), offset, time, channels);
 		}
 
-		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, Channels channels)
+		public static Color Mult(this Color color, Color values, Channels channels)
 		{
-			return color.Oscillate(frequency, amplitude, center, 0, channels);
-		}
+			if ((channels & Channels.R) != 0)
+				color.r *= values.r;
 
-		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center)
-		{
-			return color.Oscillate(frequency, amplitude, center, 0, Channels.RGBA);
-		}
+			if ((channels & Channels.G) != 0)
+				color.g *= values.g;
 
-		public static Color Mult(this Color color, Color otherVector, Channels channels)
-		{
-			color.r = channels.Contains(Channels.R) ? color.r * otherVector.r : color.r;
-			color.g = channels.Contains(Channels.G) ? color.g * otherVector.g : color.g;
-			color.b = channels.Contains(Channels.B) ? color.b * otherVector.b : color.b;
-			color.a = channels.Contains(Channels.A) ? color.a * otherVector.a : color.a;
+			if ((channels & Channels.B) != 0)
+				color.b *= values.b;
+
+			if ((channels & Channels.A) != 0)
+				color.a *= values.a;
 
 			return color;
 		}
@@ -113,12 +106,19 @@ namespace Pseudo
 			return color.Mult(otherVector, Channels.RGBA);
 		}
 
-		public static Color Div(this Color color, Color otherVector, Channels channels)
+		public static Color Div(this Color color, Color values, Channels channels)
 		{
-			color.r = channels.Contains(Channels.R) ? color.r / otherVector.r : color.r;
-			color.g = channels.Contains(Channels.G) ? color.g / otherVector.g : color.g;
-			color.b = channels.Contains(Channels.B) ? color.b / otherVector.b : color.b;
-			color.a = channels.Contains(Channels.A) ? color.a / otherVector.a : color.a;
+			if ((channels & Channels.R) != 0)
+				color.r /= values.r;
+
+			if ((channels & Channels.G) != 0)
+				color.g /= values.g;
+
+			if ((channels & Channels.B) != 0)
+				color.b /= values.b;
+
+			if ((channels & Channels.A) != 0)
+				color.a /= values.a;
 
 			return color;
 		}
@@ -130,10 +130,17 @@ namespace Pseudo
 
 		public static Color Pow(this Color color, float power, Channels channels)
 		{
-			color.r = channels.Contains(Channels.R) ? color.r.Pow(power) : color.r;
-			color.g = channels.Contains(Channels.G) ? color.g.Pow(power) : color.g;
-			color.b = channels.Contains(Channels.B) ? color.b.Pow(power) : color.b;
-			color.a = channels.Contains(Channels.A) ? color.a.Pow(power) : color.a;
+			if ((channels & Channels.R) != 0)
+				color.r = Mathf.Pow(color.r, power);
+
+			if ((channels & Channels.G) != 0)
+				color.g = Mathf.Pow(color.g, power);
+
+			if ((channels & Channels.B) != 0)
+				color.b = Mathf.Pow(color.b, power);
+
+			if ((channels & Channels.A) != 0)
+				color.a = Mathf.Pow(color.a, power);
 
 			return color;
 		}
@@ -143,12 +150,56 @@ namespace Pseudo
 			return color.Pow(power, Channels.RGBA);
 		}
 
+		public static float Average(this Color color, Channels channels)
+		{
+			float sum = 0f;
+			int channelCount = 0;
+
+			if ((channels & Channels.R) != 0)
+			{
+				sum += color.r;
+				channelCount++;
+			}
+
+			if ((channels & Channels.G) != 0)
+			{
+				sum += color.g;
+				channelCount++;
+			}
+
+			if ((channels & Channels.B) != 0)
+			{
+				sum += color.b;
+				channelCount++;
+			}
+
+			if ((channels & Channels.A) != 0)
+			{
+				sum += color.a;
+				channelCount++;
+			}
+
+			return sum / channelCount;
+		}
+
+		public static float Average(this Color color)
+		{
+			return color.Average(Channels.RGBA);
+		}
+
 		public static Color Round(this Color color, float step, Channels channels)
 		{
-			color.r = channels.Contains(Channels.R) ? color.r.Round(step) : color.r;
-			color.g = channels.Contains(Channels.G) ? color.g.Round(step) : color.g;
-			color.b = channels.Contains(Channels.B) ? color.b.Round(step) : color.b;
-			color.a = channels.Contains(Channels.A) ? color.a.Round(step) : color.a;
+			if ((channels & Channels.R) != 0)
+				color.r = color.r.Round(step);
+
+			if ((channels & Channels.G) != 0)
+				color.g = color.g.Round(step);
+
+			if ((channels & Channels.B) != 0)
+				color.b = color.b.Round(step);
+
+			if ((channels & Channels.A) != 0)
+				color.a = color.a.Round(step);
 
 			return color;
 		}
@@ -160,149 +211,93 @@ namespace Pseudo
 
 		public static Color Round(this Color color)
 		{
-			return color.Round(1, Channels.RGBA);
+			return color.Round(1f, Channels.RGBA);
 		}
 
-		public static float Average(this Color color, Channels channels)
+		public static Color ToHsv(this Color RgbColor)
 		{
-			float average = 0;
-			int axisCount = 0;
+			float hue = 0f;
+			float saturation = 0f;
+			float value = 0f;
+			float d = 0f;
+			float h = 0f;
 
-			if (channels.Contains(Channels.R))
-			{
-				average += color.r;
-				axisCount += 1;
-			}
+			float minRgb = Mathf.Min(RgbColor.r, Mathf.Min(RgbColor.g, RgbColor.b));
+			float maxRgb = Mathf.Max(RgbColor.r, Mathf.Max(RgbColor.g, RgbColor.b));
 
-			if (channels.Contains(Channels.G))
-			{
-				average += color.g;
-				axisCount += 1;
-			}
+			if (minRgb == maxRgb)
+				return new Color(0f, 0f, minRgb, RgbColor.a);
 
-			if (channels.Contains(Channels.B))
-			{
-				average += color.b;
-				axisCount += 1;
-			}
-
-			if (channels.Contains(Channels.A))
-			{
-				average += color.a;
-				axisCount += 1;
-			}
-
-			return average / axisCount;
-		}
-
-		public static float Average(this Color color)
-		{
-			return ((Color)color).Average(Channels.RGBA);
-		}
-
-		public static Color ToHSV(this Color RGBColor)
-		{
-			float R = RGBColor.r;
-			float G = RGBColor.g;
-			float B = RGBColor.b;
-			float H = 0;
-			float S = 0;
-			float V = 0;
-			float d = 0;
-			float h = 0;
-
-			float minRGB = Mathf.Min(R, Mathf.Min(G, B));
-			float maxRGB = Mathf.Max(R, Mathf.Max(G, B));
-
-			if (minRGB == maxRGB)
-			{
-				return new Color(0, 0, minRGB, RGBColor.a);
-			}
-
-			if (R == minRGB)
-			{
-				d = G - B;
-			}
-			else if (B == minRGB)
-			{
-				d = R - G;
-			}
+			if (RgbColor.r == minRgb)
+				d = RgbColor.g - RgbColor.b;
+			else if (RgbColor.b == minRgb)
+				d = RgbColor.r - RgbColor.g;
 			else
-			{
-				d = B - R;
-			}
+				d = RgbColor.b - RgbColor.r;
 
-			if (R == minRGB)
-			{
-				h = 3;
-			}
-			else if (B == minRGB)
-			{
-				h = 1;
-			}
+			if (RgbColor.r == minRgb)
+				h = 3f;
+			else if (RgbColor.b == minRgb)
+				h = 1f;
 			else
-			{
-				h = 5;
-			}
+				h = 5f;
 
-			H = (60 * (h - d / (maxRGB - minRGB))) / 360;
-			S = (maxRGB - minRGB) / maxRGB;
-			V = maxRGB;
+			hue = (60f * (h - d / (maxRgb - minRgb))) / 360f;
+			saturation = (maxRgb - minRgb) / maxRgb;
+			value = maxRgb;
 
-			return new Color(H, S, V, RGBColor.a);
+			return new Color(hue, saturation, value, RgbColor.a);
 		}
 
-		public static Color ToRGB(this Color HSVColor)
+		public static Color ToRgb(this Color HsvColor)
 		{
-			float H = HSVColor.r;
-			float S = HSVColor.g;
-			float V = HSVColor.b;
-			float R = 0;
-			float G = 0;
-			float B = 0;
-			float maxHSV = 255 * V;
-			float minHSV = maxHSV * (1 - S);
-			float h = H * 360;
-			float z = (maxHSV - minHSV) * (1 - Mathf.Abs((h / 60) % 2 - 1));
+			float red = 0f;
+			float green = 0f;
+			float blue = 0f;
+			float maxHSV = 255f * HsvColor.b;
+			float minHSV = maxHSV * (1f - HsvColor.g);
+			float h = HsvColor.r * 360f;
+			float z = (maxHSV - minHSV) * (1f - Mathf.Abs((h / 60f) % 2f - 1f));
 
-			if (0 <= h && h < 60)
+			if (0f <= h && h < 60f)
 			{
-				R = maxHSV;
-				G = z + minHSV;
-				B = minHSV;
+				red = maxHSV;
+				green = z + minHSV;
+				blue = minHSV;
 			}
-			else if (60 <= h && h < 120)
+			else if (60f <= h && h < 120f)
 			{
-				R = z + minHSV;
-				G = maxHSV;
-				B = minHSV;
+				red = z + minHSV;
+				green = maxHSV;
+				blue = minHSV;
 			}
-			else if (120 <= h && h < 180)
+			else if (120f <= h && h < 180f)
 			{
-				R = minHSV;
-				G = maxHSV;
-				B = z + minHSV;
+				red = minHSV;
+				green = maxHSV;
+				blue = z + minHSV;
 			}
-			else if (180 <= h && h < 240)
+			else if (180f <= h && h < 240f)
 			{
-				R = minHSV;
-				G = z + minHSV;
+				red = minHSV;
+				green = z + minHSV;
 				;
-				B = maxHSV;
+				blue = maxHSV;
 			}
-			else if (240 <= h && h < 300)
+			else if (240f <= h && h < 300f)
 			{
-				R = z + minHSV;
-				G = minHSV;
-				B = maxHSV;
+				red = z + minHSV;
+				green = minHSV;
+				blue = maxHSV;
 			}
-			else if (300 <= h && h < 360)
+			else if (300f <= h && h < 360f)
 			{
-				R = maxHSV;
-				G = minHSV;
-				B = z + minHSV;
+				red = maxHSV;
+				green = minHSV;
+				blue = z + minHSV;
 			}
-			return new Color(R / 255, G / 255, B / 255, HSVColor.a);
+
+			return new Color(red / 255f, green / 255f, blue / 255f, HsvColor.a);
 		}
 	}
 }

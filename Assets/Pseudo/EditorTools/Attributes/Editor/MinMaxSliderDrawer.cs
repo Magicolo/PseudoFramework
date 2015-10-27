@@ -29,42 +29,42 @@ namespace Pseudo.Internal.Editor
 
             int indent = EditorGUI.indentLevel;
             EditorGUI.indentLevel = 0;
-            float width = _currentPosition.width;
+            float width = currentPosition.width;
 
-            _currentPosition.width = width / 4 - 4f;
+            currentPosition.width = width / 4 - 4f;
             if (!noFieldLabel && !string.IsNullOrEmpty(minLabel) && width / 8 >= 16)
             {
-                _currentPosition.width = Mathf.Min(minLabel.GetWidth(EditorStyles.standardFont) + 4, width / 8);
-                EditorGUI.LabelField(_currentPosition, minLabel);
-                _currentPosition.x += _currentPosition.width;
-                _currentPosition.width = width / 4 - _currentPosition.width;
-                x = EditorGUI.FloatField(_currentPosition, x);
+                currentPosition.width = Mathf.Min(minLabel.GetWidth(EditorStyles.standardFont) + 4, width / 8);
+                EditorGUI.LabelField(currentPosition, minLabel);
+                currentPosition.x += currentPosition.width;
+                currentPosition.width = width / 4 - currentPosition.width;
+                x = EditorGUI.FloatField(currentPosition, x);
             }
             else
-                x = EditorGUI.FloatField(_currentPosition, x);
+                x = EditorGUI.FloatField(currentPosition, x);
 
-            _currentPosition.x += _currentPosition.width + 2;
+            currentPosition.x += currentPosition.width + 2;
 
-            _currentPosition.width = width / 2;
-            EditorGUI.MinMaxSlider(_currentPosition, ref x, ref y, min, max);
+            currentPosition.width = width / 2;
+            EditorGUI.MinMaxSlider(currentPosition, ref x, ref y, min, max);
 
-            _currentPosition.x += _currentPosition.width + 2;
-            _currentPosition.width = width / 4;
+            currentPosition.x += currentPosition.width + 2;
+            currentPosition.width = width / 4;
 
             if (!noFieldLabel && !string.IsNullOrEmpty(maxLabel) && width / 8 >= 16)
             {
                 float labelWidth = Mathf.Min(maxLabel.GetWidth(EditorStyles.standardFont) + 4, width / 8);
-                _currentPosition.width = width / 4 - labelWidth;
+                currentPosition.width = width / 4 - labelWidth;
                 GUIStyle style = new GUIStyle(EditorStyles.label);
                 style.alignment = TextAnchor.MiddleRight;
-                y = EditorGUI.FloatField(_currentPosition, y);
-                _currentPosition.x += _currentPosition.width;
-                _currentPosition.width = labelWidth;
-                EditorGUI.LabelField(_currentPosition, maxLabel, style);
+                y = EditorGUI.FloatField(currentPosition, y);
+                currentPosition.x += currentPosition.width;
+                currentPosition.width = labelWidth;
+                EditorGUI.LabelField(currentPosition, maxLabel, style);
 
             }
             else
-                y = EditorGUI.FloatField(_currentPosition, y);
+                y = EditorGUI.FloatField(currentPosition, y);
 
             property.FindPropertyRelative("x").floatValue = Mathf.Clamp(x, min, y).Round(0.001f);
             property.FindPropertyRelative("y").floatValue = Mathf.Clamp(y, x, max).Round(0.001f);

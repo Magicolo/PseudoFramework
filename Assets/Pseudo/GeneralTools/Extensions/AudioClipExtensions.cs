@@ -5,54 +5,31 @@ namespace Pseudo
 {
 	public static class AudioClipExtensions
 	{
-		public static AudioSource PlayOnListener(this AudioClip audioClip)
+		public static AudioClip Concat(this AudioClip audioClip, AudioClip otherClip)
 		{
-			AudioListener listener = Object.FindObjectOfType<AudioListener>();
-
-			if (listener == null)
-			{
-				Debug.LogError("No listener was found in the scene.");
-				return null;
-			}
-
-			GameObject gameObject = new GameObject(audioClip.name);
-			gameObject.hideFlags = HideFlags.HideInHierarchy;
-			AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-			audioSource.clip = audioClip;
-			gameObject.transform.parent = listener.transform;
-			gameObject.transform.Reset();
-			audioSource.Play();
-
-			return audioSource;
-		}
-
-		public static AudioClip Add(this AudioClip audioClip, AudioClip otherAudioClip)
-		{
-			int length = audioClip.samples >= otherAudioClip.samples ? audioClip.samples : otherAudioClip.samples;
-			AudioClip clipSum = AudioClip.Create(audioClip.name + " + " + otherAudioClip.name, length, audioClip.channels, audioClip.frequency, false);
+			int length = audioClip.samples >= otherClip.samples ? audioClip.samples : otherClip.samples;
+			AudioClip clipSum = AudioClip.Create(audioClip.name + " + " + otherClip.name, length, audioClip.channels, audioClip.frequency, false);
 
 			float[] dataSum;
 			float[] otherData;
 
-			if (audioClip.samples >= otherAudioClip.samples)
+			if (audioClip.samples >= otherClip.samples)
 			{
 				dataSum = new float[audioClip.samples];
 				audioClip.GetData(dataSum, 0);
-				otherData = new float[otherAudioClip.samples];
-				otherAudioClip.GetData(otherData, 0);
+				otherData = new float[otherClip.samples];
+				otherClip.GetData(otherData, 0);
 			}
 			else
 			{
-				dataSum = new float[otherAudioClip.samples];
-				otherAudioClip.GetData(dataSum, 0);
+				dataSum = new float[otherClip.samples];
+				otherClip.GetData(dataSum, 0);
 				otherData = new float[audioClip.samples];
 				audioClip.GetData(otherData, 0);
 			}
 
 			for (int i = 0; i < otherData.Length; i++)
-			{
 				dataSum[i] += otherData[i];
-			}
 
 			clipSum.SetData(dataSum, 0);
 
@@ -82,7 +59,6 @@ namespace Pseudo
 			}
 
 			data = null;
-			System.GC.Collect();
 		}
 
 		public static void GetUntangledData(this AudioClip audioClip, out float[] dataLeft, out float[] dataRight)

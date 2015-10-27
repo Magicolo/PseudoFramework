@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DJumpJumping : State, IInputListener
+public class Character2DJumpJumping : PState, IInputListener
 {
 	[Min]
 	public float MinHeight = 1;

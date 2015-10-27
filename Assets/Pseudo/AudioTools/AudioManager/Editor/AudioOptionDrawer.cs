@@ -40,7 +40,7 @@ namespace Pseudo.Internal.Audio
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					_serializedObject.ApplyModifiedProperties();
+					serializedObject.ApplyModifiedProperties();
 					_hasCurve = false;
 					UpdateProperties();
 
@@ -119,17 +119,17 @@ namespace Pseudo.Internal.Audio
 			{
 				EditorGUI.BeginChangeCheck();
 
-				_hasCurve = ToggleButton(new Rect(_currentPosition.x + _currentPosition.width - 16f, _currentPosition.y + 1f, 16f, 14f), _hasCurve, "C".ToGUIContent(), "C".ToGUIContent());
+				_hasCurve = ToggleButton(new Rect(currentPosition.x + currentPosition.width - 16f, currentPosition.y + 1f, 16f, 14f), _hasCurve, "C".ToGUIContent(), "C".ToGUIContent());
 
 				if (EditorGUI.EndChangeCheck())
 					UpdateProperties();
 
-				EditorGUI.PropertyField(new Rect(_currentPosition.x, _currentPosition.y, _currentPosition.width - 20f, _currentPosition.height), _valueProperty, "Value".ToGUIContent());
+				EditorGUI.PropertyField(new Rect(currentPosition.x, currentPosition.y, currentPosition.width - 20f, currentPosition.height), _valueProperty, "Value".ToGUIContent());
 			}
 			else
-				EditorGUI.PropertyField(_currentPosition, _valueProperty, "Value".ToGUIContent());
+				EditorGUI.PropertyField(currentPosition, _valueProperty, "Value".ToGUIContent());
 
-			_currentPosition.y += EditorGUI.GetPropertyHeight(_valueProperty) + 2f;
+			currentPosition.y += EditorGUI.GetPropertyHeight(_valueProperty) + 2f;
 		}
 
 		SerializedProperty GetValueProperty(AudioOption.Types type, bool hasCurve, SerializedObject dummy)
@@ -188,7 +188,7 @@ namespace Pseudo.Internal.Audio
 
 				_valueProperty.SetValue(data[0]);
 				_timeProperty.SetValue(data[1]);
-				_easeProperty.SetValue((TweenManager.Ease)data[2]);
+				_easeProperty.SetValue((Tweening.Ease)data[2]);
 			}
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
 			{
@@ -196,7 +196,7 @@ namespace Pseudo.Internal.Audio
 				data = data == null || data.Length != 2 ? AudioOption.GetDefaultValue(type) as float[] : data;
 
 				_valueProperty.SetValue(data[0]);
-				_easeProperty.SetValue((TweenManager.Ease)data[1]);
+				_easeProperty.SetValue((Tweening.Ease)data[1]);
 			}
 			else
 				_valueProperty.SetValue(_dynamicValue.GetValue());
@@ -204,7 +204,7 @@ namespace Pseudo.Internal.Audio
 
 		void SetValue(AudioOption.Types type, bool hasCurve)
 		{
-			_serializedObject.ApplyModifiedProperties();
+			serializedObject.ApplyModifiedProperties();
 
 			DynamicValue.ValueTypes valueType;
 			bool isArray;
@@ -213,13 +213,13 @@ namespace Pseudo.Internal.Audio
 			_dynamicValue.SetValueType(valueType, isArray);
 
 			if (type == AudioOption.Types.VolumeScale || type == AudioOption.Types.PitchScale)
-				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), _timeProperty.GetValue<float>(), (float)_easeProperty.GetValue<TweenManager.Ease>() });
+				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), _timeProperty.GetValue<float>(), (float)_easeProperty.GetValue<Tweening.Ease>() });
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
-				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), (float)_easeProperty.GetValue<TweenManager.Ease>() });
+				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), (float)_easeProperty.GetValue<Tweening.Ease>() });
 			else
 				_dynamicValue.SetValue(_valueProperty.GetValue());
 
-			_serializedObject.Update();
+			serializedObject.Update();
 		}
 	}
 }

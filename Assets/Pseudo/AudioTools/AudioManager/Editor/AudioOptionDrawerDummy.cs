@@ -10,7 +10,7 @@ public class AudioOptionDrawerDummy : ScriptableObject
 {
     [Min]
     public float EaseTime = 0f;
-    public TweenManager.Ease EaseType = TweenManager.Ease.Linear;
+    public Tweening.Ease EaseType = Tweening.Ease.Linear;
     [Range(0f, 5f)]
     public float VolumeScale = 1f;
     [Range(0f, 5f)]

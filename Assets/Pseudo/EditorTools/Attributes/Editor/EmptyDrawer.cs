@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Editor {
 			
 			Begin(position, property, label);
 			
-			EditorGUI.PropertyField(_currentPosition, property, label, true);
+			EditorGUI.PropertyField(currentPosition, property, label, true);
 			
 			End();
 		}

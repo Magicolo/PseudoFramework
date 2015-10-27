@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Editor {
 			
 			Begin(position, property, label);
 			
-			property.SetValue(EditorGUI.LayerField(_currentPosition, label, property.GetValue<int>()));
+			property.SetValue(EditorGUI.LayerField(currentPosition, label, property.GetValue<int>()));
 			
 			End();
 		}

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DStickIdle : State
+public class Character3DStickIdle : PState
 {
 	new public Character3DStick Layer { get { return ((Character3DStick)base.Layer); } }
 

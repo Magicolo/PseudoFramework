@@ -19,7 +19,7 @@ namespace Pseudo
 	// TODO Remove memory allocation when doing WeightedRandom()
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
-	public class PAudio : Singleton<PAudio>
+	public class PAudio : PSingleton<PAudio>
 	{
 		[SerializeField]
 		AudioSource _reference;

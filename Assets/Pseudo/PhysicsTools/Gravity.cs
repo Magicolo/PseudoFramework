@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
-using Pseudo.Internal.PhysicsTools;
+using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
@@ -14,7 +14,7 @@ namespace Pseudo
 
 		public Gravity()
 		{
-			CachedRigidbody = new CachedValue<Rigidbody>(this.FindComponent<Rigidbody>);
+			CachedRigidbody = new CachedValue<Rigidbody>(CachedGameObject.FindComponent<Rigidbody>);
 		}
 
 		void FixedUpdate()

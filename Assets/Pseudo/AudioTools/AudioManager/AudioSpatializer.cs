@@ -16,23 +16,23 @@ namespace Pseudo.Internal.Audio
 			Dynamic
 		}
 
-		Vector3 _position;
-		Transform _follow;
-		Func<Vector3> _getPosition;
-		SpatializeModes _spatializeMode;
+		public readonly static AudioSpatializer Default = new AudioSpatializer();
 
-		readonly List<Transform> _sources = new List<Transform>();
+		Vector3 position;
+		Transform follow;
+		Func<Vector3> getPosition;
+		SpatializeModes spatializeMode;
 
-		public static AudioSpatializer Default = new AudioSpatializer();
+		readonly List<Transform> sources = new List<Transform>();
 
 		/// <summary>
 		/// The behaviour of the spatialization.
 		/// </summary>
-		public SpatializeModes SpatializeMode { get { return _spatializeMode; } }
+		public SpatializeModes SpatializeMode { get { return spatializeMode; } }
 		/// <summary>
 		/// The current position of the AudioSpatializer
 		/// </summary>
-		public Vector3 Position { get { return _position; } }
+		public Vector3 Position { get { return position; } }
 
 		/// <summary>
 		/// Initializes the AudioSpatializer with a static position.
@@ -40,8 +40,8 @@ namespace Pseudo.Internal.Audio
 		/// <param name="position">The static position.</param>
 		public void Initialize(Vector3 position)
 		{
-			_position = position;
-			_spatializeMode = SpatializeModes.Static;
+			this.position = position;
+			spatializeMode = SpatializeModes.Static;
 		}
 
 		/// <summary>
@@ -50,9 +50,9 @@ namespace Pseudo.Internal.Audio
 		/// <param name="follow">The dynamic Transform.</param>
 		public void Initialize(Transform follow)
 		{
-			_follow = follow;
-			_position = _follow.position;
-			_spatializeMode = SpatializeModes.Dynamic;
+			this.follow = follow;
+			position = this.follow.position;
+			spatializeMode = SpatializeModes.Dynamic;
 		}
 
 		/// <summary>
@@ -61,9 +61,9 @@ namespace Pseudo.Internal.Audio
 		/// <param name="getPosition">The dynamic delegate.</param>
 		public void Initialize(Func<Vector3> getPosition)
 		{
-			_getPosition = getPosition;
-			_position = getPosition();
-			_spatializeMode = SpatializeModes.Dynamic;
+			this.getPosition = getPosition;
+			position = getPosition();
+			spatializeMode = SpatializeModes.Dynamic;
 		}
 
 		/// <summary>
@@ -71,17 +71,17 @@ namespace Pseudo.Internal.Audio
 		/// </summary>
 		public void Spatialize()
 		{
-			if (_spatializeMode == SpatializeModes.Dynamic)
+			if (spatializeMode == SpatializeModes.Dynamic)
 			{
-				if (_getPosition != null)
-					_position = _getPosition();
-				else if (_follow != null)
-					_position = _follow.position;
+				if (getPosition != null)
+					position = getPosition();
+				else if (follow != null)
+					position = follow.position;
 				else
-					_spatializeMode = SpatializeModes.Static;
+					spatializeMode = SpatializeModes.Static;
 
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].position = _position;
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].position = position;
 			}
 		}
 
@@ -91,8 +91,8 @@ namespace Pseudo.Internal.Audio
 		/// <param name="source">The Transform to be added.</param>
 		public void AddSource(Transform source)
 		{
-			_sources.Add(source);
-			source.position = _position;
+			sources.Add(source);
+			source.position = position;
 		}
 
 		/// <summary>
@@ -101,7 +101,7 @@ namespace Pseudo.Internal.Audio
 		/// <param name="source">The Transform to remove.</param>
 		public void RemoveSource(Transform source)
 		{
-			_sources.Remove(source);
+			sources.Remove(source);
 		}
 
 		/// <summary>
@@ -117,7 +117,7 @@ namespace Pseudo.Internal.Audio
 		/// </summary>
 		public void OnRecycle()
 		{
-			_sources.Clear();
+			sources.Clear();
 		}
 
 		/// <summary>
@@ -126,10 +126,10 @@ namespace Pseudo.Internal.Audio
 		/// <param name="reference"> The AudioSpatializer to copy. </param>
 		public void Copy(AudioSpatializer reference)
 		{
-			_position = reference._position;
-			_follow = reference._follow;
-			_getPosition = reference._getPosition;
-			_spatializeMode = reference._spatializeMode;
+			position = reference.position;
+			follow = reference.follow;
+			getPosition = reference.getPosition;
+			spatializeMode = reference.spatializeMode;
 		}
 	}
 }

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DJumpIdle : State, IInputListener
+public class Character2DJumpIdle : PState, IInputListener
 {
 	new public Character2DJump Layer { get { return ((Character2DJump)base.Layer); } }
 

@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.Collections;
+using Pseudo.Internal;
 
-namespace Pseudo
+namespace Pseudo.Internal.Editor
 {
 	public static class SerializedPropertyExtensions
 	{
@@ -65,6 +66,7 @@ namespace Pseudo
 					property.serializedObject.ApplyModifiedProperties();
 					return property.serializedObject.targetObject.GetValueFromMemberAtPath(property.GetAdjustedPath());
 			}
+
 			return null;
 		}
 

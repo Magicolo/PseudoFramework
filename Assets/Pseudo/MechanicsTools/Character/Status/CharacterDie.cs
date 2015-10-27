@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class CharacterDie : StateLayer
+public class CharacterDie : PStateLayer
 {
 	bool _spriteRendererCached;
 	SpriteRenderer _spriteRenderer;

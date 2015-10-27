@@ -8,7 +8,6 @@ namespace Pseudo.Internal.Editor
 	[System.Serializable]
 	public static class CustomEditorStyles
 	{
-
 		public static GUIStyle BoldFoldout
 		{
 			get
@@ -39,7 +38,6 @@ namespace Pseudo.Internal.Editor
 				if (greenBox == null)
 				{
 					float green = Mathf.Clamp(1.25f - Brightness, 0.5f, 1f);
-
 					greenBox = ColoredBox(new Color(0.5f, green, 0.5f, 1f), 1);
 				}
 
@@ -55,7 +53,6 @@ namespace Pseudo.Internal.Editor
 				if (redBox == null)
 				{
 					float red = Mathf.Clamp(1.25F - Brightness, 0.5F, 1);
-
 					redBox = ColoredBox(new Color(red, 0.5F, 0.5F, 1), 1);
 				}
 
@@ -75,14 +72,7 @@ namespace Pseudo.Internal.Editor
 			}
 		}
 
-
-		public static float Brightness
-		{
-			get
-			{
-				return new GUIStyle("label").normal.textColor.Average();
-			}
-		}
+		public static float Brightness { get { return new GUIStyle("label").normal.textColor.Average(); } }
 
 		public static GUIStyle ColoredBox(Color boxColor, int border = 1, float alphaFalloff = 1f)
 		{

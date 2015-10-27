@@ -18,7 +18,7 @@ namespace Pseudo.Internal.Editor {
 			Array enumValues = Enum.GetValues(fieldInfo.FieldType);
 			int value = (int)enumValues.GetValue(property.GetValue<int>());
 			string[] options = GetDisplayOptions();
-			value = EditorGUI.MaskField(_currentPosition, label, value, options);
+			value = EditorGUI.MaskField(currentPosition, label, value, options);
 			
 			if (EditorGUI.EndChangeCheck()) {
 				object enumValue = value == -1 ? Array.IndexOf(enumValues, Enum.ToObject(fieldInfo.FieldType, SumOptions(options))) : Array.IndexOf(enumValues, Enum.ToObject(fieldInfo.FieldType, value));

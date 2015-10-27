@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
-using Pseudo.Internal.PhysicsTools;
+using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
@@ -10,21 +10,16 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Gravity2D")]
 	public class Gravity2D : GravityBase
 	{
-		bool _rigidbody2DCached;
-		Rigidbody2D _rigidbody2D;
-		public Rigidbody2D Rigidbody2D
+		public CachedValue<Rigidbody2D> CachedRigidbody;
+
+		public Gravity2D()
 		{
-			get
-			{
-				_rigidbody2D = _rigidbody2DCached ? _rigidbody2D : this.FindComponent<Rigidbody2D>();
-				_rigidbody2DCached = true;
-				return _rigidbody2D;
-			}
+			CachedRigidbody = new CachedValue<Rigidbody2D>(CachedGameObject.FindComponent<Rigidbody2D>);
 		}
 
 		void FixedUpdate()
 		{
-			Rigidbody2D.AddForce(Force * Rigidbody2D.mass);
+			CachedRigidbody.Value.AddForce(Force * CachedRigidbody.Value.mass);
 		}
 	}
 }

@@ -2,54 +2,67 @@
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Internal.Editor;
 
-namespace Pseudo.Internal {
-	public static class InputSystemUtility {
+namespace Pseudo.Internal
+{
+	public static class InputSystemUtility
+	{
 
 		static Dictionary<string, IInputListener> nameInputListenerDict;
-		public static Dictionary<string, IInputListener> NameInputListenerDict {
-			get {
-				if (nameInputListenerDict == null) {
+		public static Dictionary<string, IInputListener> NameInputListenerDict
+		{
+			get
+			{
+				if (nameInputListenerDict == null)
+				{
 					BuildInputListenerDict();
 				}
-				
+
 				return nameInputListenerDict;
 			}
 		}
 
-		public static string[] GetKeyboardAxes() {
+		public static string[] GetKeyboardAxes()
+		{
 			List<string> axes = new List<string>();
-			
-			#if UNITY_EDITOR
+
+#if UNITY_EDITOR
 			UnityEditor.SerializedObject inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
 			UnityEditor.SerializedProperty inputManagerAxesProperty = inputManagerSerialized.FindProperty("m_Axes");
-		
-			for (int i = 0; i < inputManagerAxesProperty.arraySize; i++) {
+
+			for (int i = 0; i < inputManagerAxesProperty.arraySize; i++)
+			{
 				string axisName = inputManagerAxesProperty.GetArrayElementAtIndex(i).FindPropertyRelative("m_Name").GetValue<string>();
-				
-				if (!axisName.StartsWith("Any") && !axisName.StartsWith("Joystick") && !axes.Contains(axisName)) {
+
+				if (!axisName.StartsWith("Any") && !axisName.StartsWith("Joystick") && !axes.Contains(axisName))
+				{
 					axes.Add(axisName);
 				}
 			}
-			#endif
-			
+#endif
+
 			return axes.ToArray();
 		}
-		
-		public static void SetInputManager() {
-			#if UNITY_EDITOR
+
+		public static void SetInputManager()
+		{
+#if UNITY_EDITOR
 			UnityEditor.SerializedObject inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
 			UnityEditor.SerializedProperty axesProperty = inputManagerSerialized.FindProperty("m_Axes");
-			
-			foreach (Joysticks joystick in System.Enum.GetValues(typeof(Joysticks))) {
-				foreach (JoystickAxes joystickAxis in System.Enum.GetValues(typeof(JoystickAxes))) {
+
+			foreach (Joysticks joystick in System.Enum.GetValues(typeof(Joysticks)))
+			{
+				foreach (JoystickAxes joystickAxis in System.Enum.GetValues(typeof(JoystickAxes)))
+				{
 					string axis = joystick.ToString() + joystickAxis;
-					
+
 					UnityEditor.SerializedProperty currentAxisProperty = axesProperty.Find(property => property.FindPropertyRelative("m_Name").GetValue<string>() == axis);
-				
-					if (currentAxisProperty == null) {
+
+					if (currentAxisProperty == null)
+					{
 						axesProperty.arraySize += 1;
-						
+
 						currentAxisProperty = axesProperty.Last();
 						currentAxisProperty.FindPropertyRelative("m_Name").SetValue(axis);
 						currentAxisProperty.FindPropertyRelative("dead").SetValue(0.19F);
@@ -61,32 +74,37 @@ namespace Pseudo.Internal {
 					}
 				}
 			}
-			
+
 			inputManagerSerialized.ApplyModifiedProperties();
-			#endif
+#endif
 		}
-		
-		public static string FormatListener(MonoBehaviour listener) {
+
+		public static string FormatListener(MonoBehaviour listener)
+		{
 			return string.Format("{0}/{1}", listener.gameObject.name, listener.GetTypeName());
 		}
 
-		static void BuildInputListenerDict() {
+		static void BuildInputListenerDict()
+		{
 			nameInputListenerDict = new Dictionary<string, IInputListener>();
-			
-			foreach (MonoBehaviour script in Object.FindObjectsOfType<MonoBehaviour>()) {
+
+			foreach (MonoBehaviour script in Object.FindObjectsOfType<MonoBehaviour>())
+			{
 				IInputListener inputListener = script as IInputListener;
-				
-				if (inputListener != null) {
+
+				if (inputListener != null)
+				{
 					nameInputListenerDict[FormatListener(script)] = inputListener;
 				}
 			}
 		}
-		
-		#if UNITY_EDITOR
+
+#if UNITY_EDITOR
 		[UnityEditor.Callbacks.DidReloadScripts]
-		static void OnReloadScripts() {
+		static void OnReloadScripts()
+		{
 			nameInputListenerDict = null;
 		}
-		#endif
+#endif
 	}
 }

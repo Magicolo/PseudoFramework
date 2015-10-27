@@ -19,26 +19,26 @@ namespace Pseudo.Internal.Editor
 				string buttonPressedMethodName = string.IsNullOrEmpty(((ButtonAttribute)attribute).methodName) ? label.text.Replace(" ", "").Replace("_", "").Capitalized() : ((ButtonAttribute)attribute).methodName;
 				string buttonIndexVariableName = ((ButtonAttribute)attribute).indexVariableName;
 				GUIStyle buttonStyle = ((ButtonAttribute)attribute).style;
-				_currentPosition = AttributeUtility.BeginIndentation(_currentPosition);
+				currentPosition = AttributeUtility.BeginIndentation(currentPosition);
 
 				if (noFieldLabel) buttonLabel = "";
 
 				bool pressed;
 				if (buttonStyle != null)
-					pressed = GUI.Button(_currentPosition, buttonLabel, buttonStyle);
+					pressed = GUI.Button(currentPosition, buttonLabel, buttonStyle);
 				else
-					pressed = GUI.Button(_currentPosition, buttonLabel);
+					pressed = GUI.Button(currentPosition, buttonLabel);
 
 				AttributeUtility.EndIndentation();
 
 				if (pressed)
 				{
 					if (!string.IsNullOrEmpty(buttonIndexVariableName))
-						property.serializedObject.FindProperty(buttonIndexVariableName).intValue = _index;
+						property.serializedObject.FindProperty(buttonIndexVariableName).intValue = index;
 
 					if (!string.IsNullOrEmpty(buttonPressedMethodName))
 					{
-						MethodInfo method = property.serializedObject.targetObject.GetType().GetMethod(buttonPressedMethodName, ObjectExtensions.AllFlags);
+						MethodInfo method = property.serializedObject.targetObject.GetType().GetMethod(buttonPressedMethodName, ReflectionExtensions.AllFlags);
 
 						if (method != null)
 							method.Invoke(property.serializedObject.targetObject, null);
@@ -49,7 +49,7 @@ namespace Pseudo.Internal.Editor
 				property.boolValue = pressed;
 			}
 			else
-				EditorGUI.LabelField(_currentPosition, "Button variable must be of type boolean.");
+				EditorGUI.LabelField(currentPosition, "Button variable must be of type boolean.");
 
 			End();
 		}

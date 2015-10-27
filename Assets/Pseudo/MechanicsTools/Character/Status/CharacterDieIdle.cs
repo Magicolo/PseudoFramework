@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class CharacterDieIdle : State
+public class CharacterDieIdle : PState
 {
 	public float FadeSpeed = 5;
 
@@ -13,6 +13,6 @@ public class CharacterDieIdle : State
 	{
 		base.OnUpdate();
 
-		Layer.spriteRenderer.FadeTowards(0, FadeSpeed, Channels.A);
+		Layer.spriteRenderer.FadeTowards(0f, Time.deltaTime * FadeSpeed, channels: Channels.A);
 	}
 }

@@ -2,19 +2,17 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Pseudo {
-	public static class GUITextExtentions {
-
-		public static void SetColor(this GUIText guiText, Color color, string channels) {
-			Color newColor = guiText.color;
-			if (channels.Contains("R")) newColor.r = color.r;
-			if (channels.Contains("G")) newColor.g = color.g;
-			if (channels.Contains("B")) newColor.b = color.b;
-			if (channels.Contains("A")) newColor.a = color.a;
-			guiText.color = newColor;
+namespace Pseudo
+{
+	public static class GUITextExtentions
+	{
+		public static void SetColor(this GUIText guiText, Color color, Channels channels)
+		{
+			guiText.color = guiText.color.SetValues(color, channels);
 		}
-		
-		public static void SetColor(this GUIText guiText, float color, string channels) {
+
+		public static void SetColor(this GUIText guiText, float color, Channels channels)
+		{
 			guiText.SetColor(new Color(color, color, color, color), channels);
 		}
 	}

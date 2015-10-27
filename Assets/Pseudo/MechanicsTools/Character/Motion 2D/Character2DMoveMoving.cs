@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DMoveMoving : State
+public class Character2DMoveMoving : PState
 {
 	[Min]
 	public float Speed = 3;
@@ -33,22 +33,22 @@ public class Character2DMoveMoving : State
 
 		if (Layer.Gravity.Angle == 90)
 		{
-			Layer.Rigidbody.AccelerateTowards(CurrentSpeed, CurrentAcceleration, Time.fixedDeltaTime, axes: Axes.X);
+			Layer.Rigidbody.AccelerateTowards(CurrentSpeed, CurrentAcceleration * Time.fixedDeltaTime, axes: Axes.X);
 			Layer.MoveVelocity = Layer.Rigidbody.velocity.x;
 		}
 		else if (Layer.Gravity.Angle == 180)
 		{
-			Layer.Rigidbody.AccelerateTowards(-CurrentSpeed, CurrentAcceleration, Time.fixedDeltaTime, axes: Axes.Y);
+			Layer.Rigidbody.AccelerateTowards(-CurrentSpeed, CurrentAcceleration * Time.fixedDeltaTime, axes: Axes.Y);
 			Layer.MoveVelocity = Layer.Rigidbody.velocity.y;
 		}
 		else if (Layer.Gravity.Angle == 270)
 		{
-			Layer.Rigidbody.AccelerateTowards(-CurrentSpeed, CurrentAcceleration, Time.fixedDeltaTime, axes: Axes.X);
+			Layer.Rigidbody.AccelerateTowards(-CurrentSpeed, CurrentAcceleration * Time.fixedDeltaTime, axes: Axes.X);
 			Layer.MoveVelocity = Layer.Rigidbody.velocity.x;
 		}
 		else if (Layer.Gravity.Angle == 0)
 		{
-			Layer.Rigidbody.AccelerateTowards(CurrentSpeed, CurrentAcceleration, Time.fixedDeltaTime, axes: Axes.Y);
+			Layer.Rigidbody.AccelerateTowards(CurrentSpeed, CurrentAcceleration * Time.fixedDeltaTime, axes: Axes.Y);
 			Layer.MoveVelocity = Layer.Rigidbody.velocity.y;
 		}
 		else

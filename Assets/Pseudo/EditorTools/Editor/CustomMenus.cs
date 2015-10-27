@@ -103,7 +103,7 @@ namespace Pseudo.Internal.Editor
 				for (int i = 0; i < Selection.gameObjects.Length; i++)
 				{
 					GameObject gameObject = Selection.gameObjects[i];
-					GameObject[] children = gameObject.GetChildrenRecursive();
+					GameObject[] children = gameObject.GetChildren(true);
 
 					if (gameObject.GetComponent<T>() != null)
 						selected.Add(gameObject);

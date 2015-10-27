@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DJumpFalling : State
+public class Character3DJumpFalling : PState
 {
 	new public Character3DJump Layer { get { return ((Character3DJump)base.Layer); } }
 

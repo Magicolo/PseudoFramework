@@ -5,27 +5,12 @@ namespace Pseudo
 {
 	public static class AudioSourceExtensions
 	{
-		public static AudioSource PlayOnListener(this AudioSource audioSource)
-		{
-			if (audioSource == null || audioSource.clip == null)
-				return null;
-
-			AudioSource source = audioSource.clip.PlayOnListener();
-			source.Copy(audioSource);
-			source.Play();
-
-			return source;
-		}
-
 		public static float RemainingTime(this AudioSource audioSource)
 		{
 			if (!audioSource.isPlaying)
 				return 0f;
 
-			if (audioSource.pitch >= 0f)
-				return (audioSource.clip.length - audioSource.time) / audioSource.pitch;
-			else
-				return audioSource.time / audioSource.pitch;
+			return (audioSource.clip.length - audioSource.time) / audioSource.pitch;
 		}
 
 		public static void Copy(this AudioSource target, AudioSource source, bool useCustomCurves = true)

@@ -59,8 +59,8 @@ namespace Pseudo.Internal.Editor
 		{
 			base.Begin(position, property, label);
 
-			_initPosition = position;
-			_scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
+			initPosition = position;
+			scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
 
 			if (beforeSeparator)
 			{
@@ -72,7 +72,7 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.BeginDisabledGroup((Application.isPlaying && disableOnPlay) || (!Application.isPlaying && disableOnStop) || boolDisabled);
 			EditorGUI.indentLevel += indent;
 
-			if (_isArray)
+			if (isArray)
 			{
 				if (noIndex)
 				{
@@ -83,7 +83,7 @@ namespace Pseudo.Internal.Editor
 				}
 				else if (!string.IsNullOrEmpty(prefixLabel))
 				{
-					prefixLabel += " " + _index;
+					prefixLabel += " " + index;
 				}
 			}
 
@@ -111,8 +111,8 @@ namespace Pseudo.Internal.Editor
 				}
 			}
 
-			_currentPosition = position;
-			_currentLabel = label;
+			currentPosition = position;
+			currentLabel = label;
 		}
 
 		public override void End()
@@ -124,7 +124,7 @@ namespace Pseudo.Internal.Editor
 
 			if (afterSeparator)
 			{
-				EditorGUI.LabelField(new Rect(_initPosition.x, _initPosition.yMax - 10, _initPosition.width, _initPosition.height), "", new GUIStyle("RL DragHandle"));
+				EditorGUI.LabelField(new Rect(initPosition.x, initPosition.yMax - 10, initPosition.width, initPosition.height), "", new GUIStyle("RL DragHandle"));
 			}
 		}
 

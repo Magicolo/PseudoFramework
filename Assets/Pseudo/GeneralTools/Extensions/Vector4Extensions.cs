@@ -5,15 +5,21 @@ namespace Pseudo
 {
 	public static class Vector4Extensions
 	{
-
-		const float epsilon = 0.001F;
+		const float epsilon = 0.0001F;
 
 		public static Vector4 SetValues(this Vector4 vector, Vector4 values, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) ? values.x : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? values.y : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? values.z : vector.z;
-			vector.w = axes.Contains(Axes.W) ? values.w : vector.w;
+			if ((axes & Axes.X) != 0)
+				vector.x = values.x;
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = values.y;
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = values.z;
+
+			if ((axes & Axes.W) != 0)
+				vector.w = values.w;
 
 			return vector;
 		}
@@ -33,92 +39,62 @@ namespace Pseudo
 			return vector.SetValues(new Vector4(value, value, value, value), Axes.XYZW);
 		}
 
-		public static Vector4 Lerp(this Vector4 vector, Vector4 target, float time, Axes axes)
+		public static Vector4 Lerp(this Vector4 vector, Vector4 target, float deltaTime, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) && Mathf.Abs(target.x - vector.x) > epsilon ? Mathf.Lerp(vector.x, target.x, time) : vector.x;
-			vector.y = axes.Contains(Axes.Y) && Mathf.Abs(target.y - vector.y) > epsilon ? Mathf.Lerp(vector.y, target.y, time) : vector.y;
-			vector.z = axes.Contains(Axes.Z) && Mathf.Abs(target.z - vector.z) > epsilon ? Mathf.Lerp(vector.z, target.z, time) : vector.z;
-			vector.w = axes.Contains(Axes.W) && Mathf.Abs(target.w - vector.w) > epsilon ? Mathf.Lerp(vector.w, target.w, time) : vector.w;
+			if ((axes & Axes.X) != 0 && Mathf.Abs(target.x - vector.x) > epsilon)
+				vector.x = Mathf.Lerp(vector.x, target.x, deltaTime);
+
+			if ((axes & Axes.Y) != 0 && Mathf.Abs(target.y - vector.y) > epsilon)
+				vector.y = Mathf.Lerp(vector.y, target.y, deltaTime);
+
+			if ((axes & Axes.Z) != 0 && Mathf.Abs(target.z - vector.z) > epsilon)
+				vector.z = Mathf.Lerp(vector.z, target.z, deltaTime);
+
+			if ((axes & Axes.W) != 0 && Mathf.Abs(target.w - vector.w) > epsilon)
+				vector.w = Mathf.Lerp(vector.w, target.w, deltaTime);
 
 			return vector;
 		}
 
-		public static Vector4 Lerp(this Vector4 vector, Vector4 target, float time)
+		public static Vector4 Lerp(this Vector4 vector, Vector4 target, float deltaTime)
 		{
-			return vector.Lerp(target, time, Axes.XYZW);
+			return vector.Lerp(target, deltaTime, Axes.XYZW);
 		}
 
-		public static Vector4 LerpLinear(this Vector4 vector, Vector4 target, float time, Axes axes)
+		public static Vector4 LerpLinear(this Vector4 vector, Vector4 target, float deltaTime, Axes axes)
 		{
 			Vector4 difference = target - vector;
 			Vector4 direction = Vector4.zero.SetValues(difference, axes);
 			float distance = direction.magnitude;
 
-			Vector4 adjustedDirection = direction.normalized * time;
+			Vector4 adjustedDirection = direction.normalized * deltaTime;
 
 			if (adjustedDirection.magnitude < distance)
-			{
 				vector += Vector4.zero.SetValues(adjustedDirection, axes);
-			}
 			else
-			{
 				vector = vector.SetValues(target, axes);
-			}
 
 			return vector;
 		}
 
-		public static Vector4 LerpLinear(this Vector4 vector, Vector4 target, float time)
+		public static Vector4 LerpLinear(this Vector4 vector, Vector4 target, float deltaTime)
 		{
-			return vector.LerpLinear(target, time, Axes.XYZW);
-		}
-
-		public static Vector4 LerpAngles(this Vector4 vector, Vector4 targetAngles, float time, Axes axes)
-		{
-			vector.x = axes.Contains(Axes.X) && Mathf.Abs(targetAngles.x - vector.x) > epsilon ? Mathf.LerpAngle(vector.x, targetAngles.x, time) : vector.x;
-			vector.y = axes.Contains(Axes.Y) && Mathf.Abs(targetAngles.y - vector.y) > epsilon ? Mathf.LerpAngle(vector.y, targetAngles.y, time) : vector.y;
-			vector.z = axes.Contains(Axes.Z) && Mathf.Abs(targetAngles.z - vector.z) > epsilon ? Mathf.LerpAngle(vector.z, targetAngles.z, time) : vector.z;
-			vector.w = axes.Contains(Axes.W) && Mathf.Abs(targetAngles.w - vector.w) > epsilon ? Mathf.LerpAngle(vector.w, targetAngles.w, time) : vector.w;
-
-			return vector;
-		}
-
-		public static Vector4 LerpAngles(this Vector4 vector, Vector4 targetAngles, float time)
-		{
-			return vector.LerpAngles(targetAngles, time, Axes.XYZW);
-		}
-
-		public static Vector4 LerpAnglesLinear(this Vector4 vector, Vector4 targetAngles, float time, Axes axes)
-		{
-			Vector4 difference = new Vector4(Mathf.DeltaAngle(vector.x, targetAngles.x), Mathf.DeltaAngle(vector.y, targetAngles.y), Mathf.DeltaAngle(vector.z, targetAngles.z), Mathf.DeltaAngle(vector.w, targetAngles.w));
-			Vector4 direction = Vector4.zero.SetValues(difference, axes);
-			float distance = direction.magnitude * Mathf.Rad2Deg;
-
-			Vector4 adjustedDirection = direction.normalized * time;
-
-			if (adjustedDirection.magnitude < distance)
-			{
-				vector += Vector4.zero.SetValues(adjustedDirection, axes);
-			}
-			else
-			{
-				vector = vector.SetValues(targetAngles, axes);
-			}
-
-			return vector;
-		}
-
-		public static Vector4 LerpAnglesLinear(this Vector4 vector, Vector4 targetAngles, float time)
-		{
-			return vector.LerpAnglesLinear(targetAngles, time, Axes.XYZW);
+			return vector.LerpLinear(target, deltaTime, Axes.XYZW);
 		}
 
 		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center, float offset, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) ? center.x + amplitude.x * Mathf.Sin(frequency.x * Time.time + offset) : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? center.y + amplitude.y * Mathf.Sin(frequency.y * Time.time + offset) : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? center.z + amplitude.z * Mathf.Sin(frequency.z * Time.time + offset) : vector.z;
-			vector.w = axes.Contains(Axes.W) ? center.w + amplitude.w * Mathf.Sin(frequency.w * Time.time + offset) : vector.w;
+			if ((axes & Axes.X) != 0)
+				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * Time.time + offset);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * Time.time + offset);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = center.z + amplitude.z * Mathf.Sin(frequency.z * Time.time + offset);
+
+			if ((axes & Axes.W) != 0)
+				vector.w = center.w + amplitude.w * Mathf.Sin(frequency.w * Time.time + offset);
 
 			return vector;
 		}
@@ -138,82 +114,63 @@ namespace Pseudo
 			return vector.Oscillate(frequency, amplitude, center, 0, Axes.XYZW);
 		}
 
-		public static Vector4 Mult(this Vector4 vector, Vector4 otherVector, Axes axes)
+		public static Vector4 Mult(this Vector4 vector, Vector4 values, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) ? vector.x * otherVector.x : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? vector.y * otherVector.y : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? vector.z * otherVector.z : vector.z;
-			vector.w = axes.Contains(Axes.W) ? vector.w * otherVector.w : vector.w;
+			if ((axes & Axes.X) != 0)
+				vector.x *= values.x;
+
+			if ((axes & Axes.Y) != 0)
+				vector.y *= values.y;
+
+			if ((axes & Axes.Z) != 0)
+				vector.z *= values.z;
+
+			if ((axes & Axes.W) != 0)
+				vector.w *= values.w;
 
 			return vector;
 		}
 
-		public static Vector4 Mult(this Vector4 vector, Vector4 otherVector)
+		public static Vector4 Mult(this Vector4 vector, Vector4 values)
 		{
-			return vector.Mult(otherVector, Axes.XYZW);
+			return vector.Mult(values, Axes.XYZW);
 		}
 
-		public static Vector4 Mult(this Vector4 vector, Vector2 otherVector, Axes axes)
+		public static Vector4 Div(this Vector4 vector, Vector4 values, Axes axes)
 		{
-			return vector.Mult((Vector4)otherVector, axes);
-		}
+			if ((axes & Axes.X) != 0)
+				vector.x /= values.x;
 
-		public static Vector4 Mult(this Vector4 vector, Vector2 otherVector)
-		{
-			return vector.Mult((Vector4)otherVector, Axes.XYZW);
-		}
+			if ((axes & Axes.Y) != 0)
+				vector.y /= values.y;
 
-		public static Vector4 Mult(this Vector4 vector, Vector3 otherVector, Axes axes)
-		{
-			return vector.Mult((Vector4)otherVector, axes);
-		}
+			if ((axes & Axes.Z) != 0)
+				vector.z /= values.z;
 
-		public static Vector4 Mult(this Vector4 vector, Vector3 otherVector)
-		{
-			return vector.Mult((Vector4)otherVector, Axes.XYZW);
-		}
-
-		public static Vector4 Div(this Vector4 vector, Vector4 otherVector, Axes axes)
-		{
-			vector.x = axes.Contains(Axes.X) ? vector.x / otherVector.x : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? vector.y / otherVector.y : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? vector.z / otherVector.z : vector.z;
-			vector.w = axes.Contains(Axes.W) ? vector.w / otherVector.w : vector.w;
+			if ((axes & Axes.W) != 0)
+				vector.w /= values.w;
 
 			return vector;
 		}
 
-		public static Vector4 Div(this Vector4 vector, Vector4 otherVector)
+		public static Vector4 Div(this Vector4 vector, Vector4 values)
 		{
-			return vector.Div(otherVector, Axes.XYZW);
-		}
-
-		public static Vector4 Div(this Vector4 vector, Vector2 otherVector, Axes axes)
-		{
-			return vector.Div((Vector4)otherVector, axes);
-		}
-
-		public static Vector4 Div(this Vector4 vector, Vector2 otherVector)
-		{
-			return vector.Div((Vector4)otherVector, Axes.XYZW);
-		}
-
-		public static Vector4 Div(this Vector4 vector, Vector3 otherVector, Axes axes)
-		{
-			return vector.Div((Vector4)otherVector, axes);
-		}
-
-		public static Vector4 Div(this Vector4 vector, Vector3 otherVector)
-		{
-			return vector.Div((Vector4)otherVector, Axes.XYZW);
+			return vector.Div(values, Axes.XYZW);
 		}
 
 		public static Vector4 Pow(this Vector4 vector, float power, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) ? vector.x.Pow(power) : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? vector.y.Pow(power) : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? vector.z.Pow(power) : vector.z;
-			vector.w = axes.Contains(Axes.W) ? vector.w.Pow(power) : vector.w;
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Pow(vector.x, power);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Pow(vector.y, power);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = Mathf.Pow(vector.z, power);
+
+			if ((axes & Axes.W) != 0)
+				vector.w = Mathf.Pow(vector.w, power);
 
 			return vector;
 		}
@@ -225,10 +182,17 @@ namespace Pseudo
 
 		public static Vector4 Round(this Vector4 vector, float step, Axes axes)
 		{
-			vector.x = axes.Contains(Axes.X) ? vector.x.Round(step) : vector.x;
-			vector.y = axes.Contains(Axes.Y) ? vector.y.Round(step) : vector.y;
-			vector.z = axes.Contains(Axes.Z) ? vector.z.Round(step) : vector.z;
-			vector.w = axes.Contains(Axes.W) ? vector.w.Round(step) : vector.w;
+			if ((axes & Axes.X) != 0)
+				vector.x = vector.x.Round(step);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = vector.y.Round(step);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = vector.z.Round(step);
+
+			if ((axes & Axes.W) != 0)
+				vector.w = vector.w.Round(step);
 
 			return vector;
 		}
@@ -248,25 +212,25 @@ namespace Pseudo
 			float average = 0;
 			int axisCount = 0;
 
-			if (axes.Contains(Axes.X))
+			if ((axes & Axes.X) != 0)
 			{
 				average += vector.x;
 				axisCount += 1;
 			}
 
-			if (axes.Contains(Axes.Y))
+			if ((axes & Axes.Y) != 0)
 			{
 				average += vector.y;
 				axisCount += 1;
 			}
 
-			if (axes.Contains(Axes.Z))
+			if ((axes & Axes.Z) != 0)
 			{
 				average += vector.z;
 				axisCount += 1;
 			}
 
-			if (axes.Contains(Axes.W))
+			if ((axes & Axes.W) != 0)
 			{
 				average += vector.w;
 				axisCount += 1;
@@ -277,26 +241,21 @@ namespace Pseudo
 
 		public static float Average(this Vector4 vector)
 		{
-			return ((Vector4)vector).Average(Axes.XYZW);
+			return vector.Average(Axes.XYZW);
 		}
 
 		public static Vector4 ClampMagnitude(this Vector4 vector, float min, float max)
 		{
-			Vector4 clamped = vector;
 			float sqrMagniture = vector.sqrMagnitude;
 			float sqrMin = min * min;
 			float sqrMax = max * max;
 
 			if (sqrMagniture < sqrMin)
-			{
-				clamped = vector.normalized * min;
-			}
+				vector = vector.normalized * min;
 			else if (sqrMagniture > sqrMax)
-			{
-				clamped = vector.normalized * max;
-			}
+				vector = vector.normalized * max;
 
-			return clamped;
+			return vector;
 		}
 	}
 }

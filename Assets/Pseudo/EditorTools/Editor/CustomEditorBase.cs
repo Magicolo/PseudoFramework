@@ -885,7 +885,7 @@ namespace Pseudo.Internal.Editor
 
 			if (EditorGUI.EndChangeCheck())
 			{
-				namable.SetUniqueName(currentName, namable.Name, "default", namables);
+				INamableExtensions.SetUniqueName(namable, namables, currentName, namable.Name, "default");
 				changed = true;
 			}
 
@@ -911,23 +911,15 @@ namespace Pseudo.Internal.Editor
 
 			float minValue = 0;
 			if (minProperty.propertyType == SerializedPropertyType.Integer)
-			{
 				minValue = (int)minProperty.GetValue();
-			}
 			else if (minProperty.propertyType == SerializedPropertyType.Float)
-			{
 				minValue = (float)minProperty.GetValue();
-			}
 
 			float maxValue = 0;
 			if (maxProperty.propertyType == SerializedPropertyType.Integer)
-			{
 				maxValue = (int)maxProperty.GetValue();
-			}
 			else if (maxProperty.propertyType == SerializedPropertyType.Float)
-			{
 				maxValue = (float)maxProperty.GetValue();
-			}
 
 			EditorGUI.BeginDisabledGroup(Application.isPlaying && disableOnPlay);
 			EditorGUILayout.BeginHorizontal();

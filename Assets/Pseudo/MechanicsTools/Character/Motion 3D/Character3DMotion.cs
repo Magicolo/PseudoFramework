@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Pseudo;
 
 [RequireComponent(typeof(Animator), typeof(Gravity), typeof(InputSystem))]
-public class Character3DMotion : StateLayer
+public class Character3DMotion : PStateLayer
 {
 	public MultipleRaycastSettings RaySettings;
 
@@ -90,7 +90,7 @@ public class Character3DMotion : StateLayer
 	{
 		get
 		{
-			_animator = _animatorCached ? _animator : this.FindComponent<Animator>();
+			_animator = _animatorCached ? _animator : CachedGameObject.FindComponent<Animator>();
 			_animatorCached = true;
 			return _animator;
 		}
@@ -102,7 +102,7 @@ public class Character3DMotion : StateLayer
 	{
 		get
 		{
-			_rigidbody = _rigidbodyCached ? _rigidbody : this.FindComponent<Rigidbody>();
+			_rigidbody = _rigidbodyCached ? _rigidbody : CachedGameObject.FindComponent<Rigidbody>();
 			_rigidbodyCached = true;
 			return _rigidbody;
 		}
@@ -114,7 +114,7 @@ public class Character3DMotion : StateLayer
 	{
 		get
 		{
-			_inputSystem = _inputSystemCached ? _inputSystem : this.FindComponent<InputSystem>();
+			_inputSystem = _inputSystemCached ? _inputSystem : CachedGameObject.FindComponent<InputSystem>();
 			_inputSystemCached = true;
 			return _inputSystem;
 		}
@@ -126,7 +126,7 @@ public class Character3DMotion : StateLayer
 	{
 		get
 		{
-			_gravity = _gravityCached ? _gravity : this.FindComponent<Gravity>();
+			_gravity = _gravityCached ? _gravity : CachedGameObject.FindComponent<Gravity>();
 			_gravityCached = true;
 			return _gravity;
 		}

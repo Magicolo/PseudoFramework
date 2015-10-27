@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DStick : StateLayer
+public class Character3DStick : PStateLayer
 {
 	[Layer]
 	public int StickyLayer;

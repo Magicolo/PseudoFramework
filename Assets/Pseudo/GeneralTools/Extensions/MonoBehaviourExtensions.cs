@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
 	public static class MonoBehaviourExtensions
 	{
-
 		public static void SetScriptIcon(this MonoBehaviour behaviour, Texture2D icon)
 		{
 #if UNITY_EDITOR
@@ -16,9 +16,9 @@ namespace Pseudo
 			if (currentIconPath != iconPath)
 			{
 				UnityEditor.MonoScript script = UnityEditor.MonoScript.FromMonoBehaviour(behaviour);
-				typeof(UnityEditor.EditorGUIUtility).GetMethod("SetIconForObject", ObjectExtensions.AllFlags).Invoke(null, new object[] { script, icon });
-				typeof(UnityEditor.EditorUtility).GetMethod("ForceReloadInspectors", ObjectExtensions.AllFlags).Invoke(null, null);
-				typeof(UnityEditor.MonoImporter).GetMethod("CopyMonoScriptIconToImporters", ObjectExtensions.AllFlags).Invoke(null, new object[] { script });
+				typeof(UnityEditor.EditorGUIUtility).GetMethod("SetIconForObject", ReflectionExtensions.AllFlags).Invoke(null, new object[] { script, icon });
+				typeof(UnityEditor.EditorUtility).GetMethod("ForceReloadInspectors", ReflectionExtensions.AllFlags).Invoke(null, null);
+				typeof(UnityEditor.MonoImporter).GetMethod("CopyMonoScriptIconToImporters", ReflectionExtensions.AllFlags).Invoke(null, new object[] { script });
 				UnityEditor.EditorPrefs.SetString(behaviour.GetType().AssemblyQualifiedName + "Icon", iconPath);
 			}
 #endif
@@ -44,16 +44,6 @@ namespace Pseudo
 				action();
 		}
 
-		public static void SetTransformHasChanged(this MonoBehaviour behaviour, bool hasChanged)
-		{
-			behaviour.StartCoroutine(SetHasChanged(behaviour.transform, hasChanged));
-		}
-
-		public static void SetTransformHasChanged(this MonoBehaviour behaviour, Transform transform, bool hasChanged)
-		{
-			behaviour.StartCoroutine(SetHasChanged(transform, hasChanged));
-		}
-
 		static IEnumerator InvokeRoutine(Action action, float delay, Func<float> getDeltaTime)
 		{
 			getDeltaTime = getDeltaTime ?? delegate { return Time.deltaTime; };
@@ -62,13 +52,6 @@ namespace Pseudo
 				yield return null;
 
 			action();
-		}
-
-		static IEnumerator SetHasChanged(Transform transform, bool hasChanged)
-		{
-			yield return new WaitForEndOfFrame();
-
-			transform.hasChanged = hasChanged;
 		}
 	}
 }

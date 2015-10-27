@@ -18,11 +18,11 @@ namespace Pseudo
 			After
 		}
 
+		public readonly static AudioDynamicData Default = new AudioDynamicData();
+
 		public PlayModes PlayMode = PlayModes.After;
 		public double Delay;
 		public Action<AudioItem> OnInitialize;
-
-		public static AudioDynamicData Default = new AudioDynamicData();
 
 		public void OnCreate()
 		{

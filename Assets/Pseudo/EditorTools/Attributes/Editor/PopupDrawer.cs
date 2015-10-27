@@ -41,7 +41,7 @@ namespace Pseudo.Internal.Editor {
 			}
 		
 			EditorGUI.BeginChangeCheck();
-			selectedIndex = Mathf.Clamp(EditorGUI.Popup(_currentPosition, label, selectedIndex, displayedOptions.ToGUIContents()), 0, array.arraySize - 1);
+			selectedIndex = Mathf.Clamp(EditorGUI.Popup(currentPosition, label, selectedIndex, displayedOptions.ToGUIContents()), 0, array.arraySize - 1);
 		
 			if (array != null && array.arraySize != 0 && array.arraySize > selectedIndex) {
 				property.SetValue(array.GetArrayElementAtIndex(selectedIndex).GetValue());

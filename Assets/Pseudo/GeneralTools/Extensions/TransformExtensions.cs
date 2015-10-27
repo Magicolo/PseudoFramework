@@ -28,22 +28,22 @@ namespace Pseudo
 			transform.Translate(new Vector3(translation, translation, translation), axes);
 		}
 
-		public static void TranslateTowards(this Transform transform, Vector3 targetPosition, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Transform transform, Vector3 targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					transform.SetPosition(transform.position.Lerp(targetPosition, acceleration, axes), axes);
+					transform.SetPosition(transform.position.Lerp(targetPosition, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					transform.SetPosition(transform.position.LerpLinear(targetPosition, acceleration, axes), axes);
+					transform.SetPosition(transform.position.LerpLinear(targetPosition, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void TranslateTowards(this Transform transform, float targetPosition, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Transform transform, float targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			transform.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), acceleration, interpolation, axes);
+			transform.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillatePosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -76,22 +76,22 @@ namespace Pseudo
 			transform.TranslateLocal(new Vector3(translation, translation, translation), axes);
 		}
 
-		public static void TranslateLocalTowards(this Transform transform, Vector3 targetPosition, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateLocalTowards(this Transform transform, Vector3 targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					transform.SetLocalPosition(transform.localPosition.Lerp(targetPosition, acceleration, axes), axes);
+					transform.SetLocalPosition(transform.localPosition.Lerp(targetPosition, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					transform.SetLocalPosition(transform.localPosition.LerpLinear(targetPosition, acceleration, axes), axes);
+					transform.SetLocalPosition(transform.localPosition.LerpLinear(targetPosition, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void TranslateLocalTowards(this Transform transform, float targetPosition, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateLocalTowards(this Transform transform, float targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			transform.TranslateLocalTowards(new Vector3(targetPosition, targetPosition, targetPosition), acceleration, interpolation, axes);
+			transform.TranslateLocalTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillateLocalPosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -224,22 +224,22 @@ namespace Pseudo
 			transform.SetScale(new Vector3(scale, scale, scale), axes);
 		}
 
-		public static void ScaleTowards(this Transform transform, Vector3 targetScale, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleTowards(this Transform transform, Vector3 targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					transform.SetScale(transform.lossyScale.Lerp(targetScale, acceleration, axes), axes);
+					transform.SetScale(transform.lossyScale.Lerp(targetScale, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					transform.SetScale(transform.lossyScale.LerpLinear(targetScale, acceleration, axes), axes);
+					transform.SetScale(transform.lossyScale.LerpLinear(targetScale, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void ScaleTowards(this Transform transform, float targetScale, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleTowards(this Transform transform, float targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			transform.ScaleTowards(new Vector3(targetScale, targetScale, targetScale), acceleration, interpolation, axes);
+			transform.ScaleTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillateScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -277,22 +277,22 @@ namespace Pseudo
 			transform.ScaleLocal(new Vector3(scale, scale, scale), axes);
 		}
 
-		public static void ScaleLocalTowards(this Transform transform, Vector3 targetScale, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleLocalTowards(this Transform transform, Vector3 targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
 			switch (interpolation)
 			{
 				case InterpolationModes.Quadratic:
-					transform.SetLocalScale(transform.localScale.Lerp(targetScale, acceleration, axes), axes);
+					transform.SetLocalScale(transform.localScale.Lerp(targetScale, deltaTime, axes), axes);
 					break;
 				case InterpolationModes.Linear:
-					transform.SetLocalScale(transform.localScale.LerpLinear(targetScale, acceleration, axes), axes);
+					transform.SetLocalScale(transform.localScale.LerpLinear(targetScale, deltaTime, axes), axes);
 					break;
 			}
 		}
 
-		public static void ScaleLocalTowards(this Transform transform, float targetScale, float acceleration, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleLocalTowards(this Transform transform, float targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
 		{
-			transform.ScaleLocalTowards(new Vector3(targetScale, targetScale, targetScale), acceleration, interpolation, axes);
+			transform.ScaleLocalTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, interpolation, axes);
 		}
 
 		public static void OscillateLocalScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -326,41 +326,51 @@ namespace Pseudo
 			return parents.ToArray();
 		}
 
-		public static Transform[] GetChildren(this Transform parent)
+		public static int GetChildCount(this Transform parent, bool recursive = false)
 		{
-			Transform[] children = new Transform[parent.childCount];
+			int childCount = 0;
+
+			if (recursive)
+			{
+				for (int i = 0; i < parent.childCount; i++)
+				{
+					Transform child = parent.GetChild(i);
+					childCount++;
+
+					if (child.childCount > 0)
+						childCount += child.GetChildCount(recursive);
+				}
+			}
+			else
+				childCount += parent.childCount;
+
+			return childCount;
+		}
+
+		public static Transform[] GetChildren(this Transform parent, bool recursive = false)
+		{
+			List<Transform> children = new List<Transform>(parent.childCount);
 
 			for (int i = 0; i < parent.childCount; i++)
-				children[i] = parent.GetChild(i);
-
-			return children;
-		}
-
-		public static Transform[] GetChildrenRecursive(this Transform parent)
-		{
-			List<Transform> childrenRecursive = new List<Transform>();
-			Transform[] children = parent.GetChildren();
-
-			for (int i = 0; i < children.Length; i++)
 			{
-				Transform child = children[i];
-				childrenRecursive.Add(child);
+				Transform child = parent.GetChild(i);
+				children.Add(child);
 
-				if (child.childCount > 0)
-					childrenRecursive.AddRange(child.GetChildrenRecursive());
+				if (recursive && child.childCount > 0)
+					children.AddRange(child.GetChildren(recursive));
 			}
 
-			return childrenRecursive.ToArray();
+			return children.ToArray();
 		}
 
-		public static Transform FindChild(this Transform parent, string childName)
+		public static Transform FindChild(this Transform parent, string childName, bool recursive = false)
 		{
-			return parent.FindChild(child => child.name == childName);
+			return parent.FindChild(child => child.name == childName, recursive);
 		}
 
-		public static Transform FindChild(this Transform parent, Predicate<Transform> predicate)
+		public static Transform FindChild(this Transform parent, Predicate<Transform> predicate, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren();
+			Transform[] children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 			{
@@ -373,56 +383,15 @@ namespace Pseudo
 			return null;
 		}
 
-		public static Transform FindChildRecursive(this Transform parent, string childName)
-		{
-			return parent.FindChildRecursive(child => child.name == childName);
-		}
-
-		public static Transform FindChildRecursive(this Transform parent, Predicate<Transform> predicate)
-		{
-			Transform[] children = parent.GetChildrenRecursive();
-
-			for (int i = 0; i < children.Length; i++)
-			{
-				Transform child = children[i];
-
-				if (predicate(child))
-					return child;
-			}
-
-			return null;
-		}
-
-		public static Transform[] FindChildren(this Transform parent, string childName)
+		public static Transform[] FindChildren(this Transform parent, string childName, bool recursive = false)
 		{
 			return parent.FindChildren(child => child.name == childName);
 		}
 
-		public static Transform[] FindChildren(this Transform parent, Predicate<Transform> predicate)
+		public static Transform[] FindChildren(this Transform parent, Predicate<Transform> predicate, bool recursive = false)
 		{
 			List<Transform> validChildren = new List<Transform>();
-			Transform[] children = parent.GetChildren();
-
-			for (int i = 0; i < children.Length; i++)
-			{
-				Transform child = children[i];
-
-				if (predicate(child))
-					validChildren.Add(child);
-			}
-
-			return validChildren.ToArray();
-		}
-
-		public static Transform[] FindChildrenRecursive(this Transform parent, string childName)
-		{
-			return parent.FindChildrenRecursive(child => child.name == childName);
-		}
-
-		public static Transform[] FindChildrenRecursive(this Transform parent, Predicate<Transform> predicate)
-		{
-			List<Transform> validChildren = new List<Transform>();
-			Transform[] children = parent.GetChildrenRecursive();
+			Transform[] children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 			{
@@ -476,7 +445,7 @@ namespace Pseudo
 			return child;
 		}
 
-		public static void SortChildren(this Transform parent)
+		public static void SortChildren(this Transform parent, bool recursive = false)
 		{
 			Transform[] children = parent.GetChildren();
 			string[] childrendNames = new string[children.Length];
@@ -492,26 +461,15 @@ namespace Pseudo
 
 				child.parent = null;
 				child.parent = parent;
+
+				if (recursive && child.childCount > 0)
+					child.SortChildren(recursive);
 			}
 		}
 
-		public static void SortChildrenRecursive(this Transform parent)
+		public static void SetChildrenActive(this Transform parent, bool value, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren();
-			parent.SortChildren();
-
-			for (int i = 0; i < children.Length; i++)
-			{
-				Transform child = children[i];
-
-				if (child.childCount > 0)
-					child.SortChildrenRecursive();
-			}
-		}
-
-		public static void SetChildrenActive(this Transform parent, bool value)
-		{
-			Transform[] children = parent.GetChildren();
+			Transform[] children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].gameObject.SetActive(value);
@@ -523,6 +481,48 @@ namespace Pseudo
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].gameObject.Destroy();
+		}
+
+		public static int GetHierarchyDepth(this Transform transform)
+		{
+			int depth = 0;
+			Transform currentTransform = transform;
+
+			while (currentTransform.parent != null)
+			{
+				currentTransform = currentTransform.parent;
+				depth += 1;
+			}
+
+			return depth;
+		}
+
+		public static T GetClosest<T>(this Transform transform, IList<T> targets) where T : Component
+		{
+			float closestDistance = float.MaxValue;
+			T closestTarget = null;
+
+			for (int i = 0; i < targets.Count; i++)
+			{
+				T target = targets[i];
+				float distance = Vector3.Distance(transform.position, target.transform.position);
+
+				if (distance < closestDistance)
+				{
+					closestTarget = target;
+					closestDistance = distance;
+				}
+			}
+
+			return closestTarget;
+		}
+
+		public static void ResetChildren(this Transform parent, bool recursive = false)
+		{
+			Transform[] children = parent.GetChildren(recursive);
+
+			for (int i = 0; i < children.Length; i++)
+				children[i].Reset();
 		}
 
 		public static void Reset(this Transform transform)

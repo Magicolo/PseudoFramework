@@ -17,7 +17,7 @@ namespace Pseudo.Internal.Editor
 
 			EditorGUI.BeginChangeCheck();
 
-			EditorGUI.PropertyField(_currentPosition, property, label, true);
+			EditorGUI.PropertyField(currentPosition, property, label, true);
 
 			if (EditorGUI.EndChangeCheck())
 			{

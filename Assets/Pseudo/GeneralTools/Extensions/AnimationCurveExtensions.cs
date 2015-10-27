@@ -4,7 +4,6 @@ namespace Pseudo
 {
 	public static class AnimationCurveExtensions
 	{
-
 		public static AnimationCurve Clamp(this AnimationCurve curve, float minTime, float maxTime, float minValue, float maxValue)
 		{
 			for (int i = 0; i < curve.keys.Length; i++)

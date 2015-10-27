@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DRotateRotating : State
+public class Character2DRotateRotating : PState
 {
 	[Min]
 	public float Speed = 20;
@@ -27,6 +27,6 @@ public class Character2DRotateRotating : State
 	public override void OnFixedUpdate()
 	{
 		Layer.CurrentAngle = Mathf.LerpAngle(CachedTransform.localEulerAngles.z, Layer.TargetAngle, Speed * Time.fixedDeltaTime);
-		Layer.Rigidbody.RotateTowards(Layer.CurrentAngle, Speed, Time.fixedDeltaTime);
+		Layer.Rigidbody.RotateTowards(Layer.CurrentAngle, Speed * Time.fixedDeltaTime);
 	}
 }

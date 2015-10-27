@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 using System.Collections;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
@@ -12,12 +13,12 @@ namespace Pseudo
 		static Dictionary<Type, Type[]> AssignableTypesDict = new Dictionary<Type, Type[]>();
 		static Dictionary<Type, Type[]> SubclassTypes = new Dictionary<Type, Type[]>();
 
-		static Type[] _allTypes;
+		static Type[] allTypes;
 		public static Type[] AllTypes
 		{
 			get
 			{
-				if (_allTypes == null)
+				if (allTypes == null)
 				{
 					List<Type> types = new List<Type>();
 					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
@@ -25,18 +26,17 @@ namespace Pseudo
 					for (int i = 0; i < assemblies.Length; i++)
 					{
 						Assembly assembly = assemblies[i];
-
 						types.AddRange(assembly.GetTypes());
 					}
 
-					_allTypes = types.ToArray();
+					allTypes = types.ToArray();
 				}
 
-				return _allTypes;
+				return allTypes;
 			}
 		}
 
-		public static Type[] GetSubclassTypes(this Type type)
+		public static Type[] GetSubclasses(this Type type)
 		{
 			if (!SubclassTypes.ContainsKey(type))
 			{
@@ -81,13 +81,9 @@ namespace Pseudo
 			object instance = null;
 
 			if (type == typeof(string))
-			{
 				instance = string.Empty;
-			}
 			else
-			{
 				instance = Activator.CreateInstance(type, type.GetDefaultConstructorParameters());
-			}
 
 			return instance;
 		}
@@ -100,8 +96,9 @@ namespace Pseudo
 			{
 				ParameterInfo[] parameterInfos = type.GetConstructors()[0].GetParameters();
 
-				foreach (ParameterInfo info in parameterInfos)
+				for (int i = 0; i < parameterInfos.Length; i++)
 				{
+					ParameterInfo info = parameterInfos[i];
 					parameters.Add(info.ParameterType.CreateDefaultInstance());
 				}
 			}
@@ -131,7 +128,7 @@ namespace Pseudo
 
 		public static bool IsNumerical(this Type type)
 		{
-			return type == typeof(int) || type == typeof(float) || type == typeof(double);
+			return type == typeof(int) || type == typeof(float) || type == typeof(double) || type == typeof(short) || type == typeof(long) || type == typeof(byte);
 		}
 
 		public static bool IsVector(this Type type)
@@ -142,33 +139,6 @@ namespace Pseudo
 		public static string GetName(this Type type)
 		{
 			return type.Name.Split('.').Last().GetRange('`');
-		}
-
-		public static string[] GetFieldsPropertiesNames(this Type type, BindingFlags flags, params Type[] filter)
-		{
-			List<string> names = new List<string>();
-
-			foreach (FieldInfo field in type.GetFields(flags))
-			{
-				if (filter == null || filter.Length == 0 || filter.Any(t => t.IsAssignableFrom(field.FieldType)))
-				{
-					names.Add(field.Name);
-				}
-			}
-
-			foreach (PropertyInfo property in type.GetProperties(flags))
-			{
-				if (filter == null || filter.Length == 0 || filter.Any(t => t.IsAssignableFrom(property.PropertyType)))
-				{
-					names.Add(property.Name);
-				}
-			}
-			return names.ToArray();
-		}
-
-		public static string[] GetFieldsPropertiesNames(this Type type, params Type[] filter)
-		{
-			return GetFieldsPropertiesNames(type, ObjectExtensions.AllFlags, filter);
 		}
 
 #if UNITY_EDITOR

@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DMove : StateLayer, IInputListener
+public class Character3DMove : PStateLayer, IInputListener
 {
 	[Min]
 	public float MoveThreshold;

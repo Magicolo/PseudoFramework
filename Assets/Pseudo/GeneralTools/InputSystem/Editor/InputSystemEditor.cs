@@ -66,7 +66,7 @@ namespace Pseudo.Internal
 				KeyboardInfo[] keyboardInfos = _inputSystem.GetKeyboardInfos();
 				KeyboardInfo keyboardInfo = keyboardInfos.Last();
 
-				keyboardInfo.SetUniqueName("default", "", keyboardInfos);
+				keyboardInfo.SetUniqueName(keyboardInfos, "default", "");
 
 				serializedObject.Update();
 			}
@@ -299,7 +299,7 @@ namespace Pseudo.Internal
 				JoystickInfo[] joystickInfos = _inputSystem.GetJoystickInfos();
 				JoystickInfo joystickInfo = joystickInfos.Last();
 
-				joystickInfo.SetUniqueName("default", "", joystickInfos);
+				joystickInfo.SetUniqueName(joystickInfos, "default", "");
 
 				serializedObject.Update();
 			}

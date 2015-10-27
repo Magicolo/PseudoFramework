@@ -32,9 +32,9 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.BeginChangeCheck();
 
 			if (drawerOverride == null)
-				EditorGUI.PropertyField(_currentPosition, property, label, true);
+				EditorGUI.PropertyField(currentPosition, property, label, true);
 			else
-				drawerOverride.OnGUI(_currentPosition, property, label);
+				drawerOverride.OnGUI(currentPosition, property, label);
 
 			if (EditorGUI.EndChangeCheck())
 			{
@@ -44,7 +44,7 @@ namespace Pseudo.Internal.Editor
 				propertyPathSplit[propertyPathSplit.Length - 1] = propertyPathSplit.Last().Replace("_", "").Capitalized();
 				propertyPath = propertyPathSplit.Concat(".");
 				property.serializedObject.ApplyModifiedProperties();
-				Array.ForEach(_targets, t => t.SetValueToMemberAtPath(propertyPath, t.GetValueFromMemberAtPath(propertyPath)));
+				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, t.GetValueFromMemberAtPath(propertyPath)));
 				property.serializedObject.Update();
 			}
 

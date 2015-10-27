@@ -13,7 +13,7 @@ namespace Pseudo.Internal.Editor {
 			float max = ((MaxAttribute)attribute).max;
 		
 			EditorGUI.BeginChangeCheck();
-			EditorGUI.PropertyField(_currentPosition, property, label, true);
+			EditorGUI.PropertyField(currentPosition, property, label, true);
 			if (EditorGUI.EndChangeCheck()) {
 				property.Max(max);
 			}

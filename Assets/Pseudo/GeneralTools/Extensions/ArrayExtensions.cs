@@ -96,28 +96,21 @@ namespace Pseudo
 			T[] slicedArray = new T[count];
 
 			for (int i = 0; i < count; i++)
-			{
 				slicedArray[i] = array[i + startIndex];
-			}
 
 			return slicedArray;
 		}
 
-		public static U[] Convert<T, U>(this T[] array, Func<T, U> conversion)
+		public static U[] Convert<T, U>(this IList<T> array, Func<T, U> conversion)
 		{
-			U[] converted = new U[array.Length];
-
-			for (int i = 0; i < array.Length; i++)
-				converted[i] = conversion(array[i]);
-
-			return converted;
+			return array.Convert(conversion, 0, array.Count);
 		}
 
-		public static U[] Convert<T, U>(this T[] array, Func<T, U> conversion, int startIndex, int count)
+		public static U[] Convert<T, U>(this IList<T> array, Func<T, U> conversion, int startIndex, int count)
 		{
-			U[] converted = new U[array.Length];
+			U[] converted = new U[array.Count];
 
-			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Length); i++)
+			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Count); i++)
 				converted[i] = conversion(array[i]);
 
 			return converted;
@@ -128,9 +121,7 @@ namespace Pseudo
 			T[] reversedArray = new T[array.Length];
 
 			for (int i = 0; i < array.Length / 2; i++)
-			{
 				reversedArray[i] = array[array.Length - i - 1];
-			}
 
 			return reversedArray;
 		}
@@ -171,9 +162,7 @@ namespace Pseudo
 			Type[] types = new Type[array.Count];
 
 			for (int i = 0; i < array.Count; i++)
-			{
 				types[i] = array[i].GetType();
-			}
 
 			return types;
 		}
@@ -183,16 +172,15 @@ namespace Pseudo
 			string[] typeNames = new string[array.Count];
 
 			for (int i = 0; i < array.Count; i++)
-			{
 				typeNames[i] = array[i].GetType().Name;
-			}
 
 			return typeNames;
 		}
 
 		public static T GetRandom<T>(this IList<T> array)
 		{
-			if (array == null || array.Count == 0) return default(T);
+			if (array == null || array.Count == 0)
+				return default(T);
 
 			return array[UnityEngine.Random.Range(0, array.Count)];
 		}
@@ -202,9 +190,7 @@ namespace Pseudo
 			int delta = Mathf.Abs(targetIndex - sourceIndex);
 
 			if (delta == 0)
-			{
 				return;
-			}
 
 			int direction = (targetIndex - sourceIndex) / delta;
 
@@ -225,78 +211,17 @@ namespace Pseudo
 			array[targetIndex] = temp;
 		}
 
-		public static void ForEachReversed<T>(this IList<T> array, Action<T> action)
-		{
-			for (int i = array.Count; i-- > 0;)
-				action(array[i]);
-		}
-
 		public static bool ContentEquals(this IList array, IList otherArray)
 		{
 			if (otherArray == null || array.Count != otherArray.Count)
-			{
 				return false;
-			}
 
 			for (int i = 0; i < array.Count; i++)
 			{
 				if (!Equals(array[i], otherArray[i]))
-				{
 					return false;
-				}
 			}
 			return true;
-		}
-
-		public static int[] ToIntArray<T>(this IList<T> array)
-		{
-			int[] intArray = new int[array.Count];
-
-			for (int i = 0; i < array.Count; i++)
-			{
-				T element = array[i];
-
-				if (element is ValueType || element != null)
-				{
-					intArray[i] = array[i].GetHashCode();
-				}
-			}
-
-			return intArray;
-		}
-
-		public static float[] ToFloatArray<T>(this IList<T> array)
-		{
-			float[] floatArray = new float[array.Count];
-
-			for (int i = 0; i < array.Count; i++)
-			{
-				T element = array[i];
-
-				if (element is ValueType || element != null)
-				{
-					floatArray[i] = (float)(array[i].GetHashCode());
-				}
-			}
-
-			return floatArray;
-		}
-
-		public static double[] ToDoubleArray<T>(this IList<T> array)
-		{
-			double[] doubleArray = new double[array.Count];
-
-			for (int i = 0; i < array.Count; i++)
-			{
-				T element = array[i];
-
-				if (element is ValueType || element != null)
-				{
-					doubleArray[i] = (double)(array[i].GetHashCode());
-				}
-			}
-
-			return doubleArray;
 		}
 
 		public static string[] ToStringArray<T>(this IList<T> array)
@@ -308,9 +233,7 @@ namespace Pseudo
 				T element = array[i];
 
 				if (element is ValueType || element != null)
-				{
 					stringArray[i] = array[i].ToString();
-				}
 			}
 
 			return stringArray;

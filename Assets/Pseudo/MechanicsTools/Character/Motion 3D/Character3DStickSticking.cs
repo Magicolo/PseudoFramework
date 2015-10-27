@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character3DStickSticking : State
+public class Character3DStickSticking : PState
 {
 	[Disable]
 	public int ColliderCounter;

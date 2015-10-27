@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class Character2DRotateIdle : State
+public class Character2DRotateIdle : PState
 {
 	new public Character2DRotate Layer { get { return ((Character2DRotate)base.Layer); } }
 

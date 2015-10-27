@@ -30,23 +30,23 @@ namespace Pseudo
 			Object,
 		}
 
-		public bool IsArray { get { return _isArray; } }
+		public bool IsArray { get { return isArray; } }
 
-		object _valueCached;
-		object _value;
+		object valueCached;
+		object value;
 		[SerializeField]
-		ValueTypes _type;
+		ValueTypes type;
 		[SerializeField, Toggle("Array", "Array")]
-		bool _isArray;
+		bool isArray;
 		[SerializeField, HideInInspector]
-		byte[] _data;
+		byte[] data;
 		[SerializeField]
-		UnityEngine.Object[] _objectValue;
+		UnityEngine.Object[] objectValue;
 
-		static readonly object _dummy = new object();
-		static readonly MemoryStream _stream = new MemoryStream();
-		static readonly BinaryReader _reader = new BinaryReader(_stream);
-		static readonly BinaryWriter _writer = new BinaryWriter(_stream);
+		static readonly object dummy = new object();
+		static readonly MemoryStream stream = new MemoryStream();
+		static readonly BinaryReader reader = new BinaryReader(stream);
+		static readonly BinaryWriter writer = new BinaryWriter(stream);
 
 		public static readonly DynamicValue Default = new DynamicValue();
 
@@ -57,55 +57,55 @@ namespace Pseudo
 
 		public object GetValue()
 		{
-			if (_valueCached == null)
+			if (valueCached == null)
 			{
-				if (_type == ValueTypes.Object)
-					if (_isArray)
-						_value = _objectValue;
-					else if (_objectValue == null || _objectValue.Length == 0)
-						_value = null;
+				if (type == ValueTypes.Object)
+					if (isArray)
+						value = objectValue;
+					else if (objectValue == null || objectValue.Length == 0)
+						value = null;
 					else
-						_value = _objectValue[0];
+						value = objectValue[0];
 				else
 					Deserialize();
 
-				_valueCached = _dummy;
+				valueCached = dummy;
 			}
 
-			return _value;
+			return value;
 		}
 
 		public void SetValue(object value)
 		{
-			_value = value;
-			_isArray = value is Array;
+			this.value = value;
+			isArray = value is Array;
 
 			if (value == null)
 			{
-				if (_type != ValueTypes.Null || _type != ValueTypes.Object)
-					_value = GetDefaultValue(_type, _isArray);
+				if (type != ValueTypes.Null || type != ValueTypes.Object)
+					this.value = GetDefaultValue(type, isArray);
 			}
 			else
 			{
-				if ((_isArray && _value is UnityEngine.Object[]) || (!_isArray && _value is UnityEngine.Object))
-					_type = ValueTypes.Object;
+				if ((isArray && this.value is UnityEngine.Object[]) || (!isArray && this.value is UnityEngine.Object))
+					type = ValueTypes.Object;
 				else
-					_type = TypeToEnum(_value.GetType());
+					type = TypeToEnum(this.value.GetType());
 			}
 
 #if UNITY_EDITOR
-			if (_type == ValueTypes.Object)
+			if (type == ValueTypes.Object)
 			{
-				if (_isArray)
-					_objectValue = (UnityEngine.Object[])_value;
+				if (isArray)
+					objectValue = (UnityEngine.Object[])this.value;
 				else
 				{
-					if (_objectValue == null)
-						_objectValue = new UnityEngine.Object[1];
-					else if (_objectValue.Length != 1)
-						Array.Resize(ref _objectValue, 1);
+					if (objectValue == null)
+						objectValue = new UnityEngine.Object[1];
+					else if (objectValue.Length != 1)
+						Array.Resize(ref objectValue, 1);
 
-					_objectValue[0] = (UnityEngine.Object)_value;
+					objectValue[0] = (UnityEngine.Object)this.value;
 				}
 			}
 			else
@@ -115,28 +115,28 @@ namespace Pseudo
 
 		public ValueTypes GetValueType()
 		{
-			return _type;
+			return type;
 		}
 
 		public void SetValueType(ValueTypes type, bool isArray)
 		{
-			if (_type == type && _isArray == isArray)
+			if (this.type == type && this.isArray == isArray)
 				return;
 
-			_type = type;
-			_isArray = isArray;
+			this.type = type;
+			this.isArray = isArray;
 
 			SetValue(GetDefaultValue(type, isArray));
 		}
 
 		void Serialize()
 		{
-			_data = Serialize(_type, _isArray, _value);
+			data = Serialize(type, isArray, value);
 		}
 
 		void Deserialize()
 		{
-			_value = Deserialize(_type, _isArray, _data);
+			value = Deserialize(type, isArray, data);
 		}
 
 		public void OnCreate()
@@ -149,17 +149,17 @@ namespace Pseudo
 
 		public void Copy(DynamicValue reference)
 		{
-			_valueCached = reference._valueCached;
-			_value = reference._value;
-			_type = reference._type;
-			_isArray = reference._isArray;
-			CopyHelper.CopyTo(reference._data, ref _data);
-			CopyHelper.CopyTo(reference._objectValue, ref _objectValue);
+			valueCached = reference.valueCached;
+			value = reference.value;
+			type = reference.type;
+			isArray = reference.isArray;
+			CopyHelper.CopyTo(reference.data, ref data);
+			CopyHelper.CopyTo(reference.objectValue, ref objectValue);
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}{2}, {3})", GetType().Name, _type, _isArray ? "[]" : "", GetValue());
+			return string.Format("{0}({1}{2}, {3})", GetType().Name, type, isArray ? "[]" : "", GetValue());
 		}
 
 		public static Type EnumToType(ValueTypes type)
@@ -329,85 +329,85 @@ namespace Pseudo
 
 		public static byte[] Serialize(ValueTypes type, bool isArray, object value)
 		{
-			_stream.Position = 0L;
+			stream.Position = 0L;
 
 			switch (type)
 			{
 				case ValueTypes.Int:
 					if (isArray)
-						_writer.Write((int[])value);
+						writer.Write((int[])value);
 					else
-						_writer.Write((int)value);
+						writer.Write((int)value);
 					break;
 				case ValueTypes.Float:
 					if (isArray)
-						_writer.Write((float[])value);
+						writer.Write((float[])value);
 					else
-						_writer.Write((float)value);
+						writer.Write((float)value);
 					break;
 				case ValueTypes.Bool:
 					if (isArray)
-						_writer.Write((bool[])value);
+						writer.Write((bool[])value);
 					else
-						_writer.Write((bool)value);
+						writer.Write((bool)value);
 					break;
 				case ValueTypes.String:
 					if (isArray)
-						_writer.Write((string[])value);
+						writer.Write((string[])value);
 					else
-						_writer.Write((string)value);
+						writer.Write((string)value);
 					break;
 				case ValueTypes.Vector2:
 					if (isArray)
-						_writer.Write((Vector2[])value);
+						writer.Write((Vector2[])value);
 					else
-						_writer.Write((Vector2)value);
+						writer.Write((Vector2)value);
 					break;
 				case ValueTypes.Vector3:
 					if (isArray)
-						_writer.Write((Vector3[])value);
+						writer.Write((Vector3[])value);
 					else
-						_writer.Write((Vector3)value);
+						writer.Write((Vector3)value);
 					break;
 				case ValueTypes.Vector4:
 					if (isArray)
-						_writer.Write((Vector4[])value);
+						writer.Write((Vector4[])value);
 					else
-						_writer.Write((Vector4)value);
+						writer.Write((Vector4)value);
 					break;
 				case ValueTypes.Quaternion:
 					if (isArray)
-						_writer.Write((Quaternion[])value);
+						writer.Write((Quaternion[])value);
 					else
-						_writer.Write((Quaternion)value);
+						writer.Write((Quaternion)value);
 					break;
 				case ValueTypes.Color:
 					if (isArray)
-						_writer.Write((Color[])value);
+						writer.Write((Color[])value);
 					else
-						_writer.Write((Color)value);
+						writer.Write((Color)value);
 					break;
 				case ValueTypes.Rect:
 					if (isArray)
-						_writer.Write((Rect[])value);
+						writer.Write((Rect[])value);
 					else
-						_writer.Write((Rect)value);
+						writer.Write((Rect)value);
 					break;
 				case ValueTypes.Bounds:
 					if (isArray)
-						_writer.Write((Bounds[])value);
+						writer.Write((Bounds[])value);
 					else
-						_writer.Write((Bounds)value);
+						writer.Write((Bounds)value);
 					break;
 				case ValueTypes.AnimationCurve:
 					if (isArray)
-						_writer.Write((AnimationCurve[])value);
+						writer.Write((AnimationCurve[])value);
 					else
-						_writer.Write((AnimationCurve)value);
+						writer.Write((AnimationCurve)value);
 					break;
 			}
 
-			return _stream.ToArray();
+			return stream.ToArray();
 		}
 
 		public static object Deserialize(ValueTypes type, bool isArray, byte[] bytes)
@@ -417,9 +417,9 @@ namespace Pseudo
 			else if (bytes == null || bytes.Length == 0)
 				return GetDefaultValue(type, isArray);
 
-			_stream.Position = 0L;
-			_stream.Write(bytes, 0, bytes.Length);
-			_stream.Position = 0L;
+			stream.Position = 0L;
+			stream.Write(bytes, 0, bytes.Length);
+			stream.Position = 0L;
 
 			object value = null;
 
@@ -427,75 +427,75 @@ namespace Pseudo
 			{
 				case ValueTypes.Int:
 					if (isArray)
-						value = _reader.ReadInt32Array();
+						value = reader.ReadInt32Array();
 					else
-						value = _reader.ReadInt32();
+						value = reader.ReadInt32();
 					break;
 				case ValueTypes.Float:
 					if (isArray)
-						value = _reader.ReadSingleArray();
+						value = reader.ReadSingleArray();
 					else
-						value = _reader.ReadSingle();
+						value = reader.ReadSingle();
 					break;
 				case ValueTypes.Bool:
 					if (isArray)
-						value = _reader.ReadBooleanArray();
+						value = reader.ReadBooleanArray();
 					else
-						value = _reader.ReadBoolean();
+						value = reader.ReadBoolean();
 					break;
 				case ValueTypes.String:
 					if (isArray)
-						value = _reader.ReadStringArray();
+						value = reader.ReadStringArray();
 					else
-						value = _reader.ReadString();
+						value = reader.ReadString();
 					break;
 				case ValueTypes.Vector2:
 					if (isArray)
-						value = _reader.ReadVector2Array();
+						value = reader.ReadVector2Array();
 					else
-						value = _reader.ReadVector2();
+						value = reader.ReadVector2();
 					break;
 				case ValueTypes.Vector3:
 					if (isArray)
-						value = _reader.ReadVector3Array();
+						value = reader.ReadVector3Array();
 					else
-						value = _reader.ReadVector3();
+						value = reader.ReadVector3();
 					break;
 				case ValueTypes.Vector4:
 					if (isArray)
-						value = _reader.ReadVector4Array();
+						value = reader.ReadVector4Array();
 					else
-						value = _reader.ReadVector4();
+						value = reader.ReadVector4();
 					break;
 				case ValueTypes.Quaternion:
 					if (isArray)
-						value = _reader.ReadQuaternionArray();
+						value = reader.ReadQuaternionArray();
 					else
-						value = _reader.ReadQuaternion();
+						value = reader.ReadQuaternion();
 					break;
 				case ValueTypes.Color:
 					if (isArray)
-						value = _reader.ReadColorArray();
+						value = reader.ReadColorArray();
 					else
-						value = _reader.ReadColor();
+						value = reader.ReadColor();
 					break;
 				case ValueTypes.Rect:
 					if (isArray)
-						value = _reader.ReadRectArray();
+						value = reader.ReadRectArray();
 					else
-						value = _reader.ReadRect();
+						value = reader.ReadRect();
 					break;
 				case ValueTypes.Bounds:
 					if (isArray)
-						value = _reader.ReadBoundsArray();
+						value = reader.ReadBoundsArray();
 					else
-						value = _reader.ReadBounds();
+						value = reader.ReadBounds();
 					break;
 				case ValueTypes.AnimationCurve:
 					if (isArray)
-						value = _reader.ReadAnimationCurveArray();
+						value = reader.ReadAnimationCurveArray();
 					else
-						value = _reader.ReadAnimationCurve();
+						value = reader.ReadAnimationCurve();
 					break;
 			}
 
