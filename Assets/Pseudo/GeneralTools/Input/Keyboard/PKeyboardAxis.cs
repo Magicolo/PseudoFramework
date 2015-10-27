@@ -7,9 +7,9 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PKeyboardAxis : PAxisBase
+	public class KeyboardAxis : AxisBase
 	{
-		public PKeyboardAxis(string name, string axis) : base(name, axis)
+		public KeyboardAxis(string name, string axis) : base(name, axis)
 		{
 		}
 	}

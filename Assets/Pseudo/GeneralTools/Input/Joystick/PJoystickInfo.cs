@@ -7,7 +7,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PJoystickInfo : PControllerInfo
+	public class JoystickInfo : ControllerInfo
 	{
 		[SerializeField, PropertyField]
 		Joysticks joystick;
@@ -22,12 +22,12 @@ namespace Pseudo
 		}
 
 		[SerializeField]
-		List<PJoystickButton> buttons = new List<PJoystickButton>();
+		List<JoystickButton> buttons = new List<JoystickButton>();
 		[SerializeField]
-		List<PJoystickAxis> axes = new List<PJoystickAxis>();
+		List<JoystickAxis> axes = new List<JoystickAxis>();
 
-		Dictionary<string, List<PJoystickButton>> nameButtonDict;
-		Dictionary<string, List<PJoystickButton>> NameButtonDict
+		Dictionary<string, List<JoystickButton>> nameButtonDict;
+		Dictionary<string, List<JoystickButton>> NameButtonDict
 		{
 			get
 			{
@@ -38,8 +38,8 @@ namespace Pseudo
 			}
 		}
 
-		Dictionary<string, List<PJoystickAxis>> nameAxisDict;
-		Dictionary<string, List<PJoystickAxis>> NameAxisDict
+		Dictionary<string, List<JoystickAxis>> nameAxisDict;
+		Dictionary<string, List<JoystickAxis>> NameAxisDict
 		{
 			get
 			{
@@ -50,19 +50,19 @@ namespace Pseudo
 			}
 		}
 
-		public PJoystickInfo(string name, Joysticks joystick, PJoystickButton[] buttons, PJoystickAxis[] axes) : base(name)
+		public JoystickInfo(string name, Joysticks joystick, JoystickButton[] buttons, JoystickAxis[] axes) : base(name)
 		{
 			this.joystick = joystick;
-			this.buttons = new List<PJoystickButton>(buttons);
-			this.axes = new List<PJoystickAxis>(axes);
+			this.buttons = new List<JoystickButton>(buttons);
+			this.axes = new List<JoystickAxis>(axes);
 		}
 
-		public PJoystickButton[] GetButtons()
+		public JoystickButton[] GetButtons()
 		{
 			return buttons.ToArray();
 		}
 
-		public PJoystickButton[] GetButtons(string buttonName)
+		public JoystickButton[] GetButtons(string buttonName)
 		{
 			return NameButtonDict[buttonName].ToArray();
 		}
@@ -72,37 +72,37 @@ namespace Pseudo
 			return NameButtonDict.GetKeyArray();
 		}
 
-		public void SetButtons(PJoystickButton[] buttons)
+		public void SetButtons(JoystickButton[] buttons)
 		{
-			this.buttons = new List<PJoystickButton>(buttons);
+			this.buttons = new List<JoystickButton>(buttons);
 
 			BuildNameButtonDict();
 		}
 
-		public void CopyButtons(PJoystickInfo info)
+		public void CopyButtons(JoystickInfo info)
 		{
 			SetButtons(info.GetButtons());
 		}
 
-		public void SwitchButtons(PJoystickInfo info)
+		public void SwitchButtons(JoystickInfo info)
 		{
-			PJoystickButton[] otherButtons = info.GetButtons();
+			JoystickButton[] otherButtons = info.GetButtons();
 
 			info.SetButtons(GetButtons());
 			SetButtons(otherButtons);
 		}
 
-		public void AddButton(PJoystickButton button)
+		public void AddButton(JoystickButton button)
 		{
 			buttons.Add(button);
 
 			if (!NameButtonDict.ContainsKey(button.Name))
-				NameButtonDict[button.Name] = new List<PJoystickButton>();
+				NameButtonDict[button.Name] = new List<JoystickButton>();
 
 			NameButtonDict[button.Name].Add(button);
 		}
 
-		public void RemoveButton(PJoystickButton button)
+		public void RemoveButton(JoystickButton button)
 		{
 			buttons.Remove(button);
 
@@ -110,12 +110,12 @@ namespace Pseudo
 				NameButtonDict[button.Name].Remove(button);
 		}
 
-		public PJoystickAxis[] GetAxes()
+		public JoystickAxis[] GetAxes()
 		{
 			return axes.ToArray();
 		}
 
-		public PJoystickAxis[] GetAxes(string axisName)
+		public JoystickAxis[] GetAxes(string axisName)
 		{
 			return NameAxisDict[axisName].ToArray();
 		}
@@ -125,37 +125,37 @@ namespace Pseudo
 			return NameAxisDict.GetKeyArray();
 		}
 
-		public void SetAxes(PJoystickAxis[] axes)
+		public void SetAxes(JoystickAxis[] axes)
 		{
-			this.axes = new List<PJoystickAxis>(axes);
+			this.axes = new List<JoystickAxis>(axes);
 
 			BuildNameAxisDict();
 		}
 
-		public void CopyAxes(PJoystickInfo info)
+		public void CopyAxes(JoystickInfo info)
 		{
 			SetAxes(info.GetAxes());
 		}
 
-		public void SwitchAxes(PJoystickInfo info)
+		public void SwitchAxes(JoystickInfo info)
 		{
-			PJoystickAxis[] otherAxes = info.GetAxes();
+			JoystickAxis[] otherAxes = info.GetAxes();
 
 			info.SetAxes(GetAxes());
 			SetAxes(otherAxes);
 		}
 
-		public void AddAxis(PJoystickAxis axis)
+		public void AddAxis(JoystickAxis axis)
 		{
 			axes.Add(axis);
 
 			if (!NameAxisDict.ContainsKey(axis.Name))
-				NameAxisDict[axis.Name] = new List<PJoystickAxis>();
+				NameAxisDict[axis.Name] = new List<JoystickAxis>();
 
 			NameAxisDict[axis.Name].Add(axis);
 		}
 
-		public void RemoveAxis(PJoystickAxis axis)
+		public void RemoveAxis(JoystickAxis axis)
 		{
 			axes.Remove(axis);
 
@@ -163,13 +163,13 @@ namespace Pseudo
 				NameAxisDict[axis.Name].Remove(axis);
 		}
 
-		public void CopyInput(PJoystickInfo info)
+		public void CopyInput(JoystickInfo info)
 		{
 			CopyButtons(info);
 			CopyAxes(info);
 		}
 
-		public void SwitchInput(PJoystickInfo info)
+		public void SwitchInput(JoystickInfo info)
 		{
 			SwitchButtons(info);
 			SwitchAxes(info);
@@ -186,14 +186,14 @@ namespace Pseudo
 
 		void BuildNameButtonDict()
 		{
-			nameButtonDict = new Dictionary<string, List<PJoystickButton>>();
+			nameButtonDict = new Dictionary<string, List<JoystickButton>>();
 
 			for (int i = 0; i < buttons.Count; i++)
 			{
-				PJoystickButton button = buttons[i];
+				JoystickButton button = buttons[i];
 
 				if (!nameButtonDict.ContainsKey(button.Name))
-					nameButtonDict[button.Name] = new List<PJoystickButton>();
+					nameButtonDict[button.Name] = new List<JoystickButton>();
 
 				nameButtonDict[button.Name].Add(button);
 			}
@@ -201,14 +201,14 @@ namespace Pseudo
 
 		void BuildNameAxisDict()
 		{
-			nameAxisDict = new Dictionary<string, List<PJoystickAxis>>();
+			nameAxisDict = new Dictionary<string, List<JoystickAxis>>();
 
 			for (int i = 0; i < axes.Count; i++)
 			{
-				PJoystickAxis axis = axes[i];
+				JoystickAxis axis = axes[i];
 
 				if (!nameAxisDict.ContainsKey(axis.Name))
-					nameAxisDict[axis.Name] = new List<PJoystickAxis>();
+					nameAxisDict[axis.Name] = new List<JoystickAxis>();
 
 				nameAxisDict[axis.Name].Add(axis);
 			}

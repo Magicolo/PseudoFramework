@@ -7,7 +7,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PJoystickButton : PButtonBase
+	public class JoystickButton : ButtonBase
 	{
 		[SerializeField]
 		Joysticks _joystick;
@@ -44,13 +44,13 @@ namespace Pseudo
 			}
 		}
 
-		public PJoystickButton(string name, Joysticks joystick, JoystickButtons button) : base(name, PInput.JoystickInputToKey(joystick, button))
+		public JoystickButton(string name, Joysticks joystick, JoystickButtons button) : base(name, PInput.JoystickInputToKey(joystick, button))
 		{
 			_joystick = joystick;
 			_button = button;
 		}
 
-		public PJoystickButton(string name, KeyCode key) : base(name, key)
+		public JoystickButton(string name, KeyCode key) : base(name, key)
 		{
 			_joystick = PInput.KeyToJoystick(key);
 			_button = PInput.KeyToJoystickButton(key);

@@ -10,12 +10,12 @@ namespace Pseudo
 	public class PInput : PMonoBehaviour
 	{
 		[SerializeField]
-		List<PKeyboardInfo> keyboardInfos = new List<PKeyboardInfo>();
+		List<KeyboardInfo> keyboardInfos = new List<KeyboardInfo>();
 		[SerializeField]
-		List<PJoystickInfo> joystickInfos = new List<PJoystickInfo>();
+		List<JoystickInfo> joystickInfos = new List<JoystickInfo>();
 
-		Dictionary<string, PKeyboardInfo> nameKeyboardInfosDict;
-		Dictionary<string, PKeyboardInfo> NameKeyboardInfosDict
+		Dictionary<string, KeyboardInfo> nameKeyboardInfosDict;
+		Dictionary<string, KeyboardInfo> NameKeyboardInfosDict
 		{
 			get
 			{
@@ -26,8 +26,8 @@ namespace Pseudo
 			}
 		}
 
-		Dictionary<string, PJoystickInfo> nameJoystickInfosDict;
-		Dictionary<string, PJoystickInfo> NameJoystickInfosDict
+		Dictionary<string, JoystickInfo> nameJoystickInfosDict;
+		Dictionary<string, JoystickInfo> NameJoystickInfosDict
 		{
 			get
 			{
@@ -185,16 +185,16 @@ namespace Pseudo
 		void Reset()
 		{
 			this.SetExecutionOrder(-13);
-			PInputUtility.SetInputManager();
+			InputUtility.SetInputManager();
 		}
 
-		public void AddKeyboardInfo(PKeyboardInfo info)
+		public void AddKeyboardInfo(KeyboardInfo info)
 		{
 			NameKeyboardInfosDict[info.Name] = info;
 			keyboardInfos.Add(info);
 		}
 
-		public void RemoveKeyboardInfo(PKeyboardInfo info)
+		public void RemoveKeyboardInfo(KeyboardInfo info)
 		{
 			NameKeyboardInfosDict.Remove(info.Name);
 			keyboardInfos.Remove(info);
@@ -205,9 +205,9 @@ namespace Pseudo
 			RemoveKeyboardInfo(GetKeyboardInfo(infoName));
 		}
 
-		public PKeyboardInfo GetKeyboardInfo(string infoName)
+		public KeyboardInfo GetKeyboardInfo(string infoName)
 		{
-			PKeyboardInfo keyboardInfo = null;
+			KeyboardInfo keyboardInfo = null;
 
 			try
 			{
@@ -221,18 +221,18 @@ namespace Pseudo
 			return keyboardInfo;
 		}
 
-		public PKeyboardInfo[] GetKeyboardInfos()
+		public KeyboardInfo[] GetKeyboardInfos()
 		{
 			return keyboardInfos.ToArray();
 		}
 
-		public void AddJoystickInfo(PJoystickInfo info)
+		public void AddJoystickInfo(JoystickInfo info)
 		{
 			NameJoystickInfosDict[info.Name] = info;
 			joystickInfos.Add(info);
 		}
 
-		public void RemoveJoystickInfo(PJoystickInfo info)
+		public void RemoveJoystickInfo(JoystickInfo info)
 		{
 			NameJoystickInfosDict.Remove(info.Name);
 			joystickInfos.Remove(info);
@@ -243,9 +243,9 @@ namespace Pseudo
 			RemoveJoystickInfo(GetJoystickInfo(infoName));
 		}
 
-		public PJoystickInfo GetJoystickInfo(string infoName)
+		public JoystickInfo GetJoystickInfo(string infoName)
 		{
-			PJoystickInfo joystickInfo = null;
+			JoystickInfo joystickInfo = null;
 
 			try
 			{
@@ -259,29 +259,29 @@ namespace Pseudo
 			return joystickInfo;
 		}
 
-		public PJoystickInfo[] GetJoystickInfos()
+		public JoystickInfo[] GetJoystickInfos()
 		{
 			return joystickInfos.ToArray();
 		}
 		
 		void BuildKeyboardInfosDict()
 		{
-			nameKeyboardInfosDict = new Dictionary<string, PKeyboardInfo>();
+			nameKeyboardInfosDict = new Dictionary<string, KeyboardInfo>();
 
 			for (int i = 0; i < keyboardInfos.Count; i++)
 			{
-				PKeyboardInfo info = keyboardInfos[i];
+				KeyboardInfo info = keyboardInfos[i];
 				nameKeyboardInfosDict[info.Name] = info;
 			}
 		}
 
 		void BuildJoystickInfosDict()
 		{
-			nameJoystickInfosDict = new Dictionary<string, PJoystickInfo>();
+			nameJoystickInfosDict = new Dictionary<string, JoystickInfo>();
 
 			for (int i = 0; i < joystickInfos.Count; i++)
 			{
-				PJoystickInfo info = joystickInfos[i];
+				JoystickInfo info = joystickInfos[i];
 				nameJoystickInfosDict[info.Name] = info;
 			}
 		}

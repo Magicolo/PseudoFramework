@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public class PAxisBase
+	public class AxisBase
 	{
 		[SerializeField]
 		protected string name = "";
@@ -28,7 +28,7 @@ namespace Pseudo.Internal
 		protected float lastValue;
 		public float LastValue { get { return lastValue; } set { lastValue = value; } }
 
-		public PAxisBase(string name, string axis)
+		public AxisBase(string name, string axis)
 		{
 			this.name = name;
 			this.axis = axis;

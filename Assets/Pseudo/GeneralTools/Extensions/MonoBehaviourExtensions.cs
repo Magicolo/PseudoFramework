@@ -11,7 +11,7 @@ namespace Pseudo
 		{
 #if UNITY_EDITOR
 			string currentIconPath = UnityEditor.EditorPrefs.GetString(behaviour.GetType().AssemblyQualifiedName + "Icon", "");
-			string iconPath = HelperFunctions.GetAssetPath(icon);
+			string iconPath = AssetDatabaseUtility.GetAssetPath(icon);
 
 			if (currentIconPath != iconPath)
 			{

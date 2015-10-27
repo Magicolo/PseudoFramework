@@ -30,7 +30,7 @@ namespace Pseudo.Internal.Editor
 			get
 			{
 				if (_getPropertyDrawerMethod == null)
-					_getPropertyDrawerMethod = HelperFunctions.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
+					_getPropertyDrawerMethod = AssetDatabaseUtility.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
 
 				return _getPropertyDrawerMethod;
 			}

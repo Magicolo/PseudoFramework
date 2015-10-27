@@ -7,6 +7,8 @@ using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
+	// TODO Add ability to rotate with transform angles (including X and Y rotation)
+	// TODO Cache direction vectors and update them when Amount, Angle or Spread is changed
 	[Serializable]
 	public class MultipleRaycast2DSettings : RaycastSettings2DBase
 	{

@@ -7,7 +7,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class PJoystickAxis : PAxisBase
+	public class JoystickAxis : AxisBase
 	{
 		[SerializeField]
 		Joysticks _joystick;
@@ -50,13 +50,13 @@ namespace Pseudo
 			}
 		}
 
-		public PJoystickAxis(string name, Joysticks joystick, JoystickAxes axis) : base(name, PInput.JoystickInputToAxis(joystick, axis))
+		public JoystickAxis(string name, Joysticks joystick, JoystickAxes axis) : base(name, PInput.JoystickInputToAxis(joystick, axis))
 		{
 			_joystick = joystick;
 			_axisInput = axis;
 		}
 
-		public PJoystickAxis(string name, string axisName) : base(name, axisName)
+		public JoystickAxis(string name, string axisName) : base(name, axisName)
 		{
 			_joystick = PInput.AxisToJoystick(axisName);
 			_axisInput = PInput.AxisToJoystickAxis(axisName);
