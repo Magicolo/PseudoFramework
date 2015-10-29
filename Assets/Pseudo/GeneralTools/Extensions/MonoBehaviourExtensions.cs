@@ -30,9 +30,7 @@ namespace Pseudo
 			UnityEditor.MonoScript script = UnityEditor.MonoScript.FromMonoBehaviour(behaviour);
 
 			if (UnityEditor.MonoImporter.GetExecutionOrder(script) != order)
-			{
 				UnityEditor.MonoImporter.SetExecutionOrder(script, order);
-			}
 #endif
 		}
 

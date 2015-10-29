@@ -8,14 +8,18 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[Serializable]
-	public class PlayerInput
+	public class PlayerInput : PMonoBehaviour
 	{
 		[SerializeField]
 		List<PlayerInputAction> actions = new List<PlayerInputAction>();
 
 		public bool GetKeyDown(string action)
 		{
+			for (int i = 0; i < actions.Count; i++)
+			{
+
+			}
+
 			return false;
 		}
 

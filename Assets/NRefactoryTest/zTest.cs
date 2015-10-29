@@ -17,23 +17,13 @@ public class zTest : PMonoBehaviour, ICopyable<zTest>
 	public AnimationCurve Curve2;
 	public AnimationCurve Curve3;
 
+	public ParticleEffect[] SomeEffects;
+	const int iterations = 1000;
+
 	[Button]
 	public bool test;
 	void Test()
 	{
-	}
-
-	void OnDrawGizmos()
-	{
-		if (test)
-		{
-			Curve1 = PRandom.DistributionToCurve(ProbabilityDistributions.Uniform, 5000);
-			Curve2 = PRandom.DistributionToCurve(ProbabilityDistributions.Proportional, 5000);
-			Curve3 = PRandom.DistributionToCurve(ProbabilityDistributions.Normal, 5000);
-		}
-
-		RaySettings.Cast(CachedTransform.position, CachedTransform.right, CachedTransform.up);
-		RaySettings2D.Cast(CachedTransform);
 	}
 
 	public void Copy(zTest reference)

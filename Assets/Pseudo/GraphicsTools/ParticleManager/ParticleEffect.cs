@@ -5,23 +5,39 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-[Serializable]
-public class ParticleEffect : IPoolable, ICopyable<ParticleEffect>
+namespace Pseudo
 {
-	public string Name;
-	public ParticleSystem Prefab;
-
-	public void OnCreate()
+	[RequireComponent(typeof(ParticleSystem))]
+	public class ParticleEffect : PMonoBehaviour, IPoolable
 	{
-	}
+		readonly CachedValue<ParticleSystem> cachedParticleSystem;
 
-	public void OnRecycle()
-	{
-	}
+		public ParticleSystem CachedParticleSystem { get { return cachedParticleSystem; } }
+		public bool IsAlive { get { return cachedParticleSystem.Value.IsAlive(true); } }
 
-	public void Copy(ParticleEffect reference)
-	{
-		Name = reference.Name;
-		Prefab = reference.Prefab;
+		public ParticleEffect()
+		{
+			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
+		}
+
+		protected virtual void Awake()
+		{
+			CachedGameObject.SetActive(false);
+		}
+
+		protected virtual void Update()
+		{
+			if (!IsAlive)
+				PoolManager.Instance.Recycle(this);
+		}
+
+		public virtual void OnCreate()
+		{
+			CachedParticleSystem.Play(true);
+		}
+
+		public virtual void OnRecycle()
+		{
+		}
 	}
 }

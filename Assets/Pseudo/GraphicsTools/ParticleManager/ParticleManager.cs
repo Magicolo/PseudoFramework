@@ -7,19 +7,18 @@ using Pseudo;
 
 public class ParticleManager : Singleton<ParticleManager>
 {
-	public List<ParticleEffect> ParticleEffects = new List<ParticleEffect>();
+	public ParticleEffect[] ParticleEffects = new ParticleEffect[0];
 
-	List<ParticleSystem> activeParticleEffects = new List<ParticleSystem>();
+	Dictionary<string, ParticleEffect> particleEffects = new Dictionary<string, ParticleEffect>();
 
-	Dictionary<string, ParticleEffect> nameEffectsDict;
-	Dictionary<string, ParticleEffect> NameEffectsDict
+	protected override void Awake()
 	{
-		get
-		{
-			if (nameEffectsDict == null)
-				BuildDict();
+		base.Awake();
 
-			return nameEffectsDict;
+		for (int i = 0; i < ParticleEffects.Length; i++)
+		{
+			ParticleEffect particleEffect = ParticleEffects[i];
+			particleEffects[particleEffect.name] = particleEffect;
 		}
 	}
 
@@ -28,10 +27,18 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// </summary>
 	/// <param name="name">The name of the ParticleEffect.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
-	/// <returns>The instantiated particle system.</returns>
-	public ParticleSystem CreateParticleEffect(string name, Vector3 position)
+	/// <returns>The instantiated ParticleEffect.</returns>
+	public ParticleEffect Create(string name, Vector3 position, Transform parent = null)
 	{
-		return CreateParticleEffect(NameEffectsDict[name], position);
+		ParticleEffect particleEffect;
+
+		if (!particleEffects.TryGetValue(name, out particleEffect))
+		{
+			Debug.LogError(string.Format("ParticleEffect named {0} was not found.", name));
+			return null;
+		}
+
+		return Create(particleEffect, position);
 	}
 
 	/// <summary>
@@ -39,56 +46,11 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// </summary>
 	/// <param name="effect">The ParticleEffect to instantiate.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
-	/// <returns>The instantiated particle system.</returns>
-	public ParticleSystem CreateParticleEffect(ParticleEffect effect, Vector3 position)
+	/// <returns>The instantiated ParticleEffect.</returns>
+	public ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
 	{
-		// TODO Insert Pooling Logic Herer
-		ParticleSystem particleSystem = Instantiate(effect.Prefab);
+		ParticleEffect particleEffect = PoolManager.Instance.Create(effect, position: position, parent: parent);
 
-		particleSystem.transform.parent = transform;
-		particleSystem.transform.position = position;
-		activeParticleEffects.Add(particleSystem);
-
-		return particleSystem;
-	}
-
-	public void AddParticleEffect(ParticleEffect effect)
-	{
-		NameEffectsDict[effect.Name] = effect;
-	}
-
-	public void RemoveParticleEffect(ParticleEffect effect)
-	{
-		RemoveParticleEffect(effect.Name);
-	}
-
-	public void RemoveParticleEffect(string name)
-	{
-		NameEffectsDict.Remove(name);
-	}
-
-	void Update()
-	{
-		for (int i = 0; i < activeParticleEffects.Count; i++)
-		{
-			ParticleSystem particleSystem = activeParticleEffects[i];
-
-			if (!particleSystem.IsAlive(true))
-			{
-				// TODO Insert Pool Recycle Logic
-				activeParticleEffects.RemoveAt(i--);
-			}
-		}
-	}
-
-	void BuildDict()
-	{
-		nameEffectsDict = new Dictionary<string, ParticleEffect>();
-
-		for (int i = 0; i < ParticleEffects.Count; i++)
-		{
-			ParticleEffect effect = ParticleEffects[i];
-			nameEffectsDict[effect.Name] = effect;
-		}
+		return particleEffect;
 	}
 }

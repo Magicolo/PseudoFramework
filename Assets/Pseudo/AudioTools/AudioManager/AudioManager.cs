@@ -181,13 +181,11 @@ namespace Pseudo
 		{
 			AudioValue<int> value;
 
-			if (!switchValues.ContainsKey(name))
+			if (!switchValues.TryGetValue(name, out value))
 			{
 				value = Pool<AudioValue<int>>.Create();
 				switchValues[name] = value;
 			}
-			else
-				value = switchValues[name];
 
 			return value;
 		}

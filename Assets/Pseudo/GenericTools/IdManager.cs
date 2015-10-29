@@ -33,16 +33,10 @@ namespace Pseudo
 
 		public virtual T GetIdentifiable(int id)
 		{
-			T identifiable = default(T);
+			T identifiable;
 
-			try
-			{
-				identifiable = IdIdentifiableDict[id];
-			}
-			catch
-			{
+			if (!IdIdentifiableDict.TryGetValue(id, out identifiable))
 				Debug.LogError(string.Format("{0} with id {1} was not found.", typeof(T).Name, id));
-			}
 
 			return identifiable;
 		}

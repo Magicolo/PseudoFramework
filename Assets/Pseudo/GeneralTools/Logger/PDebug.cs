@@ -68,9 +68,11 @@ namespace Pseudo
 
 		public static void LogSingleInstance(Object instanceToLog, params object[] toLog)
 		{
-			if (instanceDict.ContainsKey(instanceToLog.GetType()))
+			int instanceId;
+
+			if (instanceDict.TryGetValue(instanceToLog.GetType(), out instanceId))
 			{
-				if (instanceDict[instanceToLog.GetType()] == instanceToLog.GetInstanceID())
+				if (instanceId == instanceToLog.GetInstanceID())
 					Log(toLog);
 			}
 			else

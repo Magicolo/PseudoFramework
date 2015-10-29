@@ -97,13 +97,11 @@ namespace Pseudo
 		{
 			AudioValue<float> value;
 
-			if (!rtpcValues.ContainsKey(name))
+			if (!rtpcValues.TryGetValue(name, out value))
 			{
 				value = Pool<AudioValue<float>>.Create();
 				rtpcValues[name] = value;
 			}
-			else
-				value = rtpcValues[name];
 
 			return value;
 		}

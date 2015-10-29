@@ -8,29 +8,28 @@ namespace Pseudo
 {
 	public class PoolManager : Singleton<PoolManager>
 	{
+		public Pool[] Pools = new Pool[0];
 		public event System.Action<Object> OnCreate;
 		public event System.Action<Object> OnRecycle;
 
-		readonly Dictionary<Object, PrefabPool> pools = new Dictionary<Object, PrefabPool>();
+		readonly Dictionary<Object, Pool> pools = new Dictionary<Object, Pool>();
 		readonly Dictionary<Object, Object> instancePrefabs = new Dictionary<Object, Object>();
 
 		protected override void Awake()
 		{
 			base.Awake();
 
-			PrefabPool[] childPools = GetComponentsInChildren<PrefabPool>();
-
-			for (int i = 0; i < childPools.Length; i++)
+			for (int i = 0; i < Pools.Length; i++)
 			{
-				PrefabPool childPool = childPools[i];
-				pools[childPool.Prefab] = childPool;
+				Pool pool = Instantiate(Pools[i]);
+				pool.CachedTransform.parent = CachedTransform;
+				pools[pool.Prefab] = pool;
 			}
 		}
 
-		public T Create<T>(T prefab, Transform parent = null, Vector3 position = default(Vector3)) where T : Object
+		public T Create<T>(T prefab, Vector3 position = default(Vector3), Transform parent = null) where T : Object
 		{
-			PrefabPool pool = GetPool(prefab);
-			T item = pool.Create<T>(parent, position);
+			T item = GetPool(prefab).Create<T>(position, parent);
 			instancePrefabs[item] = prefab;
 			RaiseOnCreateEvent(item);
 
@@ -42,12 +41,12 @@ namespace Pseudo
 			if (item == null)
 				return;
 
-			if (!instancePrefabs.ContainsKey(item))
+			Object prefab;
+
+			if (!instancePrefabs.TryGetValue(item, out prefab))
 				return;
 
-			Object prefab = instancePrefabs[item];
-			PrefabPool pool = GetPool(prefab);
-			pool.Recycle(item);
+			GetPool(prefab).Recycle(item);
 			RaiseOnRecycleEvent(item);
 		}
 
@@ -58,19 +57,17 @@ namespace Pseudo
 			item = null;
 		}
 
-		public PrefabPool GetPool(Object prefab)
+		public Pool GetPool(Object prefab)
 		{
-			PrefabPool pool;
+			Pool pool;
 
-			if (!pools.ContainsKey(prefab))
+			if (!pools.TryGetValue(prefab, out pool))
 			{
 				GameObject poolGameObject = CachedGameObject.AddChild(prefab.name);
-				pool = poolGameObject.AddComponent<PrefabPool>();
+				pool = poolGameObject.AddComponent<Pool>();
 				pool.Initialize(prefab, 0);
 				pools[prefab] = pool;
 			}
-			else
-				pool = pools[prefab];
 
 			return pool;
 		}

@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal.Editor;
 
-public class GizmosTests : MonoBehaviour
+namespace Pseudo.Internal.Tests
 {
-
-	void OnDrawGizmos()
+	public class GizmosTests : MonoBehaviour
 	{
-		DrawUtility.DrawText(transform.position, "KWAME est content");
+		void OnDrawGizmos()
+		{
+			DrawUtility.DrawText(transform.position, "KWAME est content");
+		}
 	}
 }

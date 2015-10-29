@@ -25,24 +25,29 @@ namespace Pseudo.Internal.Audio
 
 		public void Deactivate(AudioItem item)
 		{
-			if (idActiveItems.ContainsKey(item.Id))
-				idActiveItems[item.Id].Remove(item);
+			List<AudioItem> items;
+
+			if (idActiveItems.TryGetValue(item.Id, out items))
+				items.Remove(item);
 
 			toUpdate.Remove(item);
 		}
 
 		public void TrimInstances(AudioItem item, int maxInstances)
 		{
-			if (!idActiveItems.ContainsKey(item.Id))
-				idActiveItems[item.Id] = new List<AudioItem>();
+			List<AudioItem> items;
 
-			List<AudioItem> activeItems = idActiveItems[item.Id];
+			if (!idActiveItems.TryGetValue(item.Id, out items))
+			{
+				items = new List<AudioItem>();
+				idActiveItems[item.Id] = items;
+			}
 
 			if (maxInstances > 0)
-				while (activeItems.Count >= maxInstances)
-					activeItems.Pop().StopImmediate();
+				while (items.Count >= maxInstances)
+					items.Pop().StopImmediate();
 
-			idActiveItems[item.Id].Add(item);
+			items.Add(item);
 		}
 
 		public AudioItem CreateItem(AudioSettingsBase settings)

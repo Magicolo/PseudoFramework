@@ -13,7 +13,7 @@ namespace Pseudo
 		public TransformModes Mode = TransformModes.Position;
 		[Mask(Axes.XYZ)]
 		public Axes Axes = Axes.XYZ;
-		public PTime.TimeChannels TimeChannel;
+		public TimeManager.TimeChannels TimeChannel;
 		public bool Culling = true;
 
 		[Slider(BeforeSeparator = true)]
@@ -40,7 +40,7 @@ namespace Pseudo
 
 			if (!Culling || CachedRenderer.isVisible)
 			{
-				float deltaTime = PTime.GetDeltaTime(TimeChannel);
+				float deltaTime = TimeManager.GetDeltaTime(TimeChannel);
 
 				if ((Mode & TransformModes.Position) != 0)
 					CachedTransform.TranslateLocal(Speed * deltaTime, Axes);

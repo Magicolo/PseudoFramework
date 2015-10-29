@@ -6,7 +6,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class PTime : Singleton<PTime>
+	public class TimeManager : Singleton<TimeManager>
 	{
 		public class TimeChannel
 		{

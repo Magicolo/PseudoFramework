@@ -13,11 +13,11 @@ namespace Pseudo
 		public float Amplitude = 1;
 		public float Center;
 		public float Offset;
-		public PTime.TimeChannels TimeChannel;
+		public TimeManager.TimeChannels TimeChannel;
 
 		public float Oscillate()
 		{
-			return Amplitude * (float)Math.Sin(Frequency * PTime.GetTime(TimeChannel) + Offset) + Center;
+			return Amplitude * (float)Math.Sin(Frequency * TimeManager.GetTime(TimeChannel) + Offset) + Center;
 		}
 
 		public void OnCreate()

@@ -22,7 +22,7 @@ namespace Pseudo
 		static KeyCode[] modifierKeys;
 
 		[SerializeField]
-		PlayerInput[] players;
+		PlayerInput[] players = new PlayerInput[0];
 
 		static InputManager()
 		{
@@ -36,7 +36,6 @@ namespace Pseudo
 
 		void Reset()
 		{
-			this.SetExecutionOrder(-51);
 			InputUtility.SetInputManager();
 		}
 

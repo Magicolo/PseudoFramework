@@ -12,7 +12,7 @@ namespace Pseudo
 		public TransformModes Mode = TransformModes.Position;
 		[Mask(Axes.XYZ)]
 		public Axes Axes = Axes.XYZ;
-		public PTime.TimeChannels TimeChannel;
+		public TimeManager.TimeChannels TimeChannel;
 		public bool Culling = true;
 
 		[Slider(BeforeSeparator = true)]
@@ -48,13 +48,13 @@ namespace Pseudo
 			if (!Culling || Renderer.isVisible)
 			{
 				if ((Mode & TransformModes.Position) != 0)
-					CachedTransform.OscillateLocalPosition(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalPosition(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 
 				if ((Mode & TransformModes.Rotation) != 0)
-					CachedTransform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 
 				if ((Mode & TransformModes.Scale) != 0)
-					CachedTransform.OscillateLocalScale(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalScale(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 			}
 		}
 
