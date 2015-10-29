@@ -9,7 +9,7 @@ public class ParticleManager : Singleton<ParticleManager>
 {
 	public ParticleEffect[] ParticleEffects = new ParticleEffect[0];
 
-	Dictionary<string, ParticleEffect> particleEffects = new Dictionary<string, ParticleEffect>();
+	protected readonly Dictionary<string, ParticleEffect> particleEffects = new Dictionary<string, ParticleEffect>();
 
 	protected override void Awake()
 	{
@@ -28,7 +28,7 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <param name="name">The name of the ParticleEffect.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
-	public ParticleEffect Create(string name, Vector3 position, Transform parent = null)
+	public virtual ParticleEffect Create(string name, Vector3 position, Transform parent = null)
 	{
 		ParticleEffect particleEffect;
 
@@ -47,7 +47,7 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <param name="effect">The ParticleEffect to instantiate.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
-	public ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
+	public virtual ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
 	{
 		ParticleEffect particleEffect = PoolManager.Instance.Create(effect, position: position, parent: parent);
 

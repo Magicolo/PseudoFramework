@@ -5,38 +5,48 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Input
 {
-	public class AxisBase
+	public abstract class AxisBase
 	{
-		[SerializeField]
-		protected string name = "";
-		public string Name { get { return name; } }
+		protected bool axisJustDown;
+		protected bool axisJustUp;
+		protected bool axisDown;
 
-		[SerializeField]
-		protected string axis;
-		public virtual string Axis
-		{
-			get { return axis; }
-			set
-			{
-				axis = value;
-				lastValue = 0;
-			}
-		}
-
-		protected float lastValue;
-		public float LastValue { get { return lastValue; } set { lastValue = value; } }
-
-		public AxisBase(string name, string axis)
-		{
-			this.name = name;
-			this.axis = axis;
-		}
+		protected abstract string AxisName { get; }
+		public abstract float Threshold { get; set; }
 
 		public float GetValue()
 		{
-			return Input.GetAxis(axis);
+			float value = UnityEngine.Input.GetAxisRaw(AxisName);
+			value = Mathf.Abs(value) >= Threshold ? value : 0f;
+
+			axisJustDown = !axisDown && value != 0f;
+			axisJustUp = axisDown && value == 0f;
+			axisDown = value != 0f;
+
+			return value;
+		}
+
+		public bool GetAxisDown()
+		{
+			GetValue();
+
+			return axisJustDown;
+		}
+
+		public bool GetAxisUp()
+		{
+			GetValue();
+
+			return axisJustUp;
+		}
+
+		public bool GetAxis()
+		{
+			GetValue();
+
+			return axisDown;
 		}
 	}
 }

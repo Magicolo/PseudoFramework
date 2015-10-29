@@ -8,6 +8,7 @@ using System.Reflection;
 using System;
 using System.Runtime.CompilerServices;
 using Pseudo.Internal.Audio;
+using Pseudo.Internal.Input;
 
 namespace Pseudo.Internal.Editor
 {
@@ -121,7 +122,13 @@ namespace Pseudo.Internal.Editor
 			Selection.objects = selected.ToArray();
 		}
 
-		[MenuItem("Pseudo/Misc/Update Copy Methods", false, -5)]
+		[MenuItem("Pseudo/Utility/Setup Input Manager", false, -6)]
+		static void SetupInputManager()
+		{
+			InputUtility.SetupInputManager();
+		}
+
+		[MenuItem("Pseudo/Utility/Update Copy Methods", false, -5)]
 		static void UpdateCopyMethods()
 		{
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();

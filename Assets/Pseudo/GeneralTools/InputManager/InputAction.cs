@@ -4,12 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal.Input;
 
-namespace Pseudo.Internal
+namespace Pseudo
 {
 	[Serializable]
-	public class PlayerInputAction : INamable
+	public class InputAction : INamable
 	{
+		[SerializeField]
 		string name;
 		public string Name { get { return name; } set { name = value; } }
 
@@ -32,6 +34,18 @@ namespace Pseudo.Internal
 					return true;
 			}
 
+			for (int i = 0; i < KeyboardAxes.Length; i++)
+			{
+				if (KeyboardAxes[i].GetAxisDown())
+					return true;
+			}
+
+			for (int i = 0; i < JoystickAxes.Length; i++)
+			{
+				if (JoystickAxes[i].GetAxisDown())
+					return true;
+			}
+
 			return false;
 		}
 
@@ -46,6 +60,18 @@ namespace Pseudo.Internal
 			for (int i = 0; i < JoystickButtons.Length; i++)
 			{
 				if (JoystickButtons[i].GetKeyUp())
+					return true;
+			}
+
+			for (int i = 0; i < KeyboardAxes.Length; i++)
+			{
+				if (KeyboardAxes[i].GetAxisUp())
+					return true;
+			}
+
+			for (int i = 0; i < JoystickAxes.Length; i++)
+			{
+				if (JoystickAxes[i].GetAxisUp())
 					return true;
 			}
 
@@ -66,14 +92,32 @@ namespace Pseudo.Internal
 					return true;
 			}
 
+			for (int i = 0; i < KeyboardAxes.Length; i++)
+			{
+				if (KeyboardAxes[i].GetAxis())
+					return true;
+			}
+
+			for (int i = 0; i < JoystickAxes.Length; i++)
+			{
+				if (JoystickAxes[i].GetAxis())
+					return true;
+			}
+
 			return false;
 		}
 
 		public float GetAxis()
 		{
+			float value = 0f;
 
+			for (int i = 0; i < KeyboardAxes.Length; i++)
+				value += KeyboardAxes[i].GetValue();
 
-			return 0f;
+			for (int i = 0; i < JoystickAxes.Length; i++)
+				value += JoystickAxes[i].GetValue();
+
+			return value;
 		}
 	}
 }

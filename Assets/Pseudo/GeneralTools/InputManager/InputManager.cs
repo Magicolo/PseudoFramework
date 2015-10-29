@@ -3,188 +3,167 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Input;
 
 namespace Pseudo
 {
 	public class InputManager : Singleton<InputManager>
 	{
-		static KeyCode[] allKeys;
-		static KeyCode[] keyboardKeys;
-		static KeyCode[] joystickKeys;
-		static Dictionary<int, KeyCode[]> joystickKeysDict;
-		static KeyCode[] nonjoystickKeys;
-		static KeyCode[] mouseKeys;
-		static KeyCode[] letterKeys;
-		static KeyCode[] functionKeys;
-		static KeyCode[] numberKeys;
-		static KeyCode[] keypadKeys;
-		static KeyCode[] arrowKeys;
-		static KeyCode[] modifierKeys;
-
-		[SerializeField]
-		PlayerInput[] players = new PlayerInput[0];
-
-		static InputManager()
+		public enum ControllerTypes
 		{
-			SortKeys();
+			Keyboard,
+			Joystick
 		}
 
-		public PlayerInput GetPlayer(int playerIndex)
+		public enum Joysticks
 		{
-			return players[playerIndex];
+			Any = 0,
+			Joystick1 = 1,
+			Joystick2 = 2,
+			Joystick3 = 3,
+			Joystick4 = 4,
+			Joystick5 = 5,
+			Joystick6 = 6,
+			Joystick7 = 7,
+			Joystick8 = 8,
 		}
 
-		void Reset()
+		public enum JoystickButtons
 		{
-			InputUtility.SetInputManager();
+			Cross_A = 0,
+			Circle_B = 1,
+			Square_X = 2,
+			Triangle_Y = 3,
+			L1 = 4,
+			R1 = 5,
+			Select = 6,
+			Start = 7,
+			LeftStick = 8,
+			RigthStick = 9,
+			Button10 = 10,
+			Button11 = 11,
+			Button12 = 12,
+			Button13 = 13,
+			Button14 = 14,
+			Button15 = 15,
+			Button16 = 16,
+			Button17 = 17,
+			Button18 = 18,
+			Button19 = 19
 		}
 
-		public static Joysticks KeyToJoystick(KeyCode key)
+		public enum JoystickAxes
 		{
-			string keyName = key.ToString();
-			int joystickIndex = int.Parse(char.IsNumber(keyName[8]) ? char.IsNumber(keyName[9]) ? keyName.GetRange(8, 2) : keyName.GetRange(8, 1) : "0");
-
-			return (Joysticks)joystickIndex;
+			LeftStickX = 0,
+			LeftStickY = 1,
+			RightStickX = 3,
+			RightStickY = 4,
+			DirectionalPadX = 5,
+			DirectionalPadY = 6,
+			LeftTrigger = 7,
+			RightTrigger = 8
 		}
 
-		public static JoystickButtons KeyToJoystickButton(KeyCode key)
+		public enum Players
 		{
-			string keyName = key.ToString();
-			int joystickIndex = int.Parse(char.IsNumber(keyName[keyName.Length - 2]) ? keyName.GetRange(keyName.Length - 2) : keyName.GetRange(keyName.Length - 1));
-
-			return (JoystickButtons)joystickIndex;
+			None,
+			Player1,
+			Player2,
+			Player3,
+			Player4,
+			Player5,
+			Player6,
+			Player7,
+			Player8
 		}
 
-		public static KeyCode JoystickInputToKey(Joysticks joystick, JoystickButtons button)
+		public PlayerInput[] Inputs = new PlayerInput[0];
+
+		protected readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
+		protected readonly Dictionary<Players, PlayerInput> assignedInputs = new Dictionary<Players, PlayerInput>();
+
+		protected override void Awake()
 		{
-			return GetJoystickKeys(joystick)[(int)button];
-		}
+			base.Awake();
 
-		public static Joysticks AxisToJoystick(string axis)
-		{
-			int length = axis.StartsWith("Any") ? 3 : char.IsNumber(axis[9]) ? 9 : 8;
-			string joystickName = axis.Substring(0, length);
-
-			return (Joysticks)System.Enum.Parse(typeof(Joysticks), joystickName);
-		}
-
-		public static JoystickAxes AxisToJoystickAxis(string axis)
-		{
-			int startIndex = axis.StartsWith("Any") ? 3 : char.IsNumber(axis[9]) ? 9 : 8;
-			string axisName = axis.Substring(startIndex);
-
-			return (JoystickAxes)System.Enum.Parse(typeof(JoystickAxes), axisName);
-		}
-
-		public static string JoystickInputToAxis(Joysticks joystick, JoystickAxes axis)
-		{
-			return joystick.ToString() + axis;
-		}
-
-		public static KeyCode[] GetPressedKeys(KeyCode[] keys)
-		{
-			List<KeyCode> pressed = new List<KeyCode>();
-
-			for (int i = 0; i < keys.Length; i++)
+			for (int i = 0; i < Inputs.Length; i++)
 			{
-				KeyCode key = keys[i];
+				PlayerInput playerInput = Instantiate(Inputs[i]);
+				playerInput.CachedTransform.parent = CachedTransform;
+				AddInput(playerInput);
 
-				if (Input.GetKey(key))
-					pressed.Add(key);
+				if (playerInput.Player != Players.None)
+					AssignInput(playerInput.Player, playerInput);
 			}
-
-			return pressed.ToArray();
 		}
 
-		public static KeyCode[] GetPressedKeys() { return GetPressedKeys(allKeys); }
-		public static KeyCode[] GetAllKeys() { return allKeys; }
-		public static KeyCode[] GetKeyboardKeys() { return keypadKeys; }
-		public static KeyCode[] GetJoystickKeys() { return joystickKeys; }
-		public static KeyCode[] GetJoystickKeys(Joysticks joystick) { return joystickKeysDict[(int)joystick]; }
-		public static KeyCode[] GetNonJoystickKeys() { return nonjoystickKeys; }
-		public static KeyCode[] GetMouseKeys() { return mouseKeys; }
-		public static KeyCode[] GetLetterKeys() { return letterKeys; }
-		public static KeyCode[] GetFunctionKeys() { return functionKeys; }
-		public static KeyCode[] GetNumberKeys() { return numberKeys; }
-		public static KeyCode[] GetKeypadKeys() { return keypadKeys; }
-		public static KeyCode[] GetArrowKeys() { return arrowKeys; }
-		public static KeyCode[] GetModifierKeys() { return modifierKeys; }
-
-		public static bool IsKeyboardKey(KeyCode key) { return keyboardKeys.Contains(key); }
-		public static bool IsJoystickKey(KeyCode key) { return joystickKeys.Contains(key); }
-		public static bool IsMouseKey(KeyCode key) { return mouseKeys.Contains(key); }
-
-		static void SortKeys()
+		public virtual PlayerInput GetInput(string inputName)
 		{
-			allKeys = new KeyCode[321];
-			keyboardKeys = new KeyCode[134];
-			joystickKeys = new KeyCode[180];
-			joystickKeysDict = new Dictionary<int, KeyCode[]>();
-			nonjoystickKeys = new KeyCode[141];
-			mouseKeys = new KeyCode[7];
-			letterKeys = new KeyCode[26];
-			functionKeys = new KeyCode[15];
-			numberKeys = new KeyCode[10];
-			keypadKeys = new KeyCode[17];
-			arrowKeys = new KeyCode[4];
-			modifierKeys = new KeyCode[7];
+			PlayerInput playerInput;
 
-			int allCounter = 0;
-			int keyboardCounter = 0;
-			int joystickCounter = 0;
-			int nonJoystickCounter = 0;
-			int mouseCounter = 0;
-			int letterCounter = 0;
-			int functionCounter = 0;
-			int alphaCounter = 0;
-			int keypadCounter = 0;
-			int arrowCounter = 0;
-			int modifierCounter = 0;
+			if (!unassignedInputs.TryGetValue(inputName, out playerInput))
+				Debug.LogError(string.Format("PlayerInput named {0} was not found.", inputName));
 
-			foreach (KeyCode key in System.Enum.GetValues(typeof(KeyCode)))
-			{
-				string keyName = key.ToString();
+			return playerInput;
+		}
 
-				allKeys[allCounter++] = key;
+		public virtual PlayerInput GetAssignedInput(Players player)
+		{
+			PlayerInput playerInput;
 
-				if (!keyName.StartsWith("Joystick") && !keyName.StartsWith("Mouse"))
-					keyboardKeys[keyboardCounter++] = key;
+			if (!assignedInputs.TryGetValue(player, out playerInput))
+				Debug.LogError(string.Format("No PlayerInput has been assigned to {0}.", player));
 
-				if (keyName.StartsWith("Joystick"))
-				{
-					int joystick = (int)KeyToJoystick(key);
-					int joystickButton = (int)KeyToJoystickButton(key);
+			return playerInput;
+		}
 
-					if (!joystickKeysDict.ContainsKey(joystick))
-						joystickKeysDict[joystick] = new KeyCode[20];
+		public virtual void AssignInput(Players player, string inputName)
+		{
+			AssignInput(player, GetInput(inputName));
+		}
 
-					joystickKeysDict[joystick][joystickButton] = key;
-					joystickKeys[joystickCounter++] = key;
-				}
-				else
-					nonjoystickKeys[nonJoystickCounter++] = key;
+		public virtual void AssignInput(Players player, PlayerInput input)
+		{
+			input.Player = player;
+			assignedInputs[player] = input;
+		}
 
-				if (keyName.StartsWith("Mouse"))
-					mouseKeys[mouseCounter++] = key;
+		public virtual void UnassignInput(Players player)
+		{
+			PlayerInput playerInput;
 
-				if (keyName.Length == 1 && char.IsLetter(keyName[0]))
-					letterKeys[letterCounter++] = key;
+			if (assignedInputs.Pop(player, out playerInput))
+				playerInput.Player = Players.None;
+		}
 
-				if ((keyName.Length == 2 || keyName.Length == 3) && keyName.StartsWith("F"))
-					functionKeys[functionCounter++] = key;
+		public virtual bool IsAssigned(Players player)
+		{
+			return assignedInputs.ContainsKey(player);
+		}
 
-				if (keyName.StartsWith("Alpha"))
-					numberKeys[alphaCounter++] = key;
+		public virtual void AddInput(PlayerInput input)
+		{
+			unassignedInputs[input.name] = input;
+		}
 
-				if (keyName.StartsWith("Keypad"))
-					keypadKeys[keypadCounter++] = key;
+		public virtual bool GetKeyDown(Players player, string actionName)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyDown();
+		}
 
-				if (keyName.EndsWith("Arrow"))
-					arrowKeys[arrowCounter++] = key;
+		public virtual bool GetKeyUp(Players player, string actionName)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyUp();
+		}
 
-				if (keyName.EndsWith("Shift") || keyName.EndsWith("Alt") || keyName.EndsWith("Control") || keyName.StartsWith("Alt"))
-					modifierKeys[modifierCounter++] = key;
-			}
+		public virtual bool GetKey(Players player, string actionName)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKey();
+		}
+
+		public virtual float GetAxis(Players player, string actionName)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetAxis();
 		}
 	}
 }

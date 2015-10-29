@@ -6,28 +6,29 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[AddComponentMenu("Pseudo/General/Pool")]
 	public class Pool : PMonoBehaviour
 	{
 		[SerializeField]
-		Object prefab;
+		protected Object prefab;
 		[SerializeField, Min]
-		int startCount;
-		bool isPoolable;
-		bool isCopyable;
+		protected int startCount;
+		protected bool isPoolable;
+		protected bool isCopyable;
 
-		readonly Queue<Object> pool = new Queue<Object>(4);
-		readonly Queue<int> timeStamps = new Queue<int>(4);
+		protected readonly Queue<Object> pool = new Queue<Object>(4);
+		protected readonly Queue<int> timeStamps = new Queue<int>(4);
 
 		public Object Prefab { get { return prefab; } }
 		public int StartCount { get { return startCount; } }
 
-		void Awake()
+		protected virtual void Awake()
 		{
 			if (prefab != null)
 				Initialize(prefab, startCount);
 		}
 
-		public void Initialize(Object prefab, int startCount)
+		public virtual void Initialize(Object prefab, int startCount)
 		{
 			Clear();
 
@@ -40,7 +41,7 @@ namespace Pseudo
 				Recycle(GetItem());
 		}
 
-		public T Create<T>(Vector3 position = default(Vector3), Transform parent = null) where T : Object
+		public virtual T Create<T>(Vector3 position = default(Vector3), Transform parent = null) where T : Object
 		{
 			T item = (T)GetItem();
 
@@ -59,7 +60,7 @@ namespace Pseudo
 			return item;
 		}
 
-		public void Recycle<T>(T item) where T : Object
+		public virtual void Recycle<T>(T item) where T : Object
 		{
 			if (item == null)
 				return;
@@ -75,17 +76,17 @@ namespace Pseudo
 			timeStamps.Enqueue(Time.frameCount);
 		}
 
-		public bool Contains<T>(T item) where T : Object
+		public virtual bool Contains<T>(T item) where T : Object
 		{
 			return pool.Contains(item);
 		}
 
-		public int Count()
+		public virtual int Count()
 		{
 			return pool.Count;
 		}
 
-		public void Clear()
+		public virtual void Clear()
 		{
 			while (pool.Count > 0)
 				pool.Dequeue().Destroy();
@@ -93,7 +94,7 @@ namespace Pseudo
 			timeStamps.Clear();
 		}
 
-		Object GetItem()
+		protected virtual Object GetItem()
 		{
 			Object item = null;
 

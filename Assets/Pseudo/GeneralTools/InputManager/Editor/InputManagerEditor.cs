@@ -6,7 +6,7 @@ using Pseudo.Internal.Editor;
 
 namespace Pseudo.Internal
 {
-	[CustomEditor(typeof(InputManager)), CanEditMultipleObjects]
+	//[CustomEditor(typeof(InputManager)), CanEditMultipleObjects]
 	public class InputManagerEditor : CustomEditorBase
 	{
 		//InputManager input;

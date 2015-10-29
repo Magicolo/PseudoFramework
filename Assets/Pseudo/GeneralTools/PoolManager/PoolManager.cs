@@ -10,8 +10,8 @@ namespace Pseudo
 	{
 		public Pool[] Pools = new Pool[0];
 
-		readonly Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
-		readonly Dictionary<Object, Pool> instancePool = new Dictionary<Object, Pool>();
+		protected readonly Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
+		protected readonly Dictionary<Object, Pool> instancePool = new Dictionary<Object, Pool>();
 
 		protected override void Awake()
 		{
@@ -25,7 +25,7 @@ namespace Pseudo
 			}
 		}
 
-		public T Create<T>(T prefab, Vector3 position = default(Vector3), Transform parent = null) where T : Object
+		public virtual T Create<T>(T prefab, Vector3 position = default(Vector3), Transform parent = null) where T : Object
 		{
 			Pool pool = GetPool(prefab);
 			T item = pool.Create<T>(position, parent);
@@ -34,7 +34,7 @@ namespace Pseudo
 			return item;
 		}
 
-		public void Recycle<T>(T item) where T : Object
+		public virtual void Recycle<T>(T item) where T : Object
 		{
 			if (item == null)
 				return;
@@ -47,14 +47,14 @@ namespace Pseudo
 			pool.Recycle(item);
 		}
 
-		public void Recycle<T>(ref T item) where T : Object
+		public virtual void Recycle<T>(ref T item) where T : Object
 		{
 			Recycle(item);
 
 			item = null;
 		}
 
-		public Pool GetPool(Object prefab)
+		public virtual Pool GetPool(Object prefab)
 		{
 			Pool pool;
 			GameObject prefabGameObject = GetGameObject(prefab);

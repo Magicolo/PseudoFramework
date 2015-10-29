@@ -8,34 +8,31 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
+	[AddComponentMenu("Pseudo/General/Player Input")]
 	public class PlayerInput : PMonoBehaviour
 	{
-		[SerializeField]
-		List<PlayerInputAction> actions = new List<PlayerInputAction>();
+		public InputManager.Players Player;
+		public InputAction[] Actions = new InputAction[0];
 
-		public bool GetKeyDown(string action)
+		protected readonly Dictionary<string, InputAction> actions = new Dictionary<string, InputAction>();
+
+		public virtual void Awake()
 		{
-			for (int i = 0; i < actions.Count; i++)
+			for (int i = 0; i < Actions.Length; i++)
 			{
-
+				InputAction action = Actions[i];
+				actions[action.Name] = action;
 			}
-
-			return false;
 		}
 
-		public bool GetKeyUp(string action)
+		public virtual InputAction GetAction(string name)
 		{
-			return false;
-		}
+			InputAction action;
 
-		public bool GetKey(string action)
-		{
-			return false;
-		}
+			if (!actions.TryGetValue(name, out action))
+				Debug.LogError(string.Format("Action named {0} was not found.", name));
 
-		public float GetAxis(string action)
-		{
-			return 0f;
+			return action;
 		}
 	}
 }

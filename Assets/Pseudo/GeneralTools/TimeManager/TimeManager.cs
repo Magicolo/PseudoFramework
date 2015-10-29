@@ -8,6 +8,16 @@ namespace Pseudo
 {
 	public class TimeManager : Singleton<TimeManager>
 	{
+		public enum TimeChannels
+		{
+			Unity,
+			UI,
+			World,
+			Player,
+			Enemy,
+			Count
+		}
+
 		public class TimeChannel
 		{
 			public float Time;
@@ -24,24 +34,14 @@ namespace Pseudo
 			}
 		}
 
-		public enum TimeChannels
-		{
-			Unity,
-			UI,
-			World,
-			Player,
-			Enemy,
-			Count
-		}
-
-		readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
+		protected readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
 		public readonly static TimeChannel UI = new TimeChannel(TimeChannels.UI);
 		public readonly static TimeChannel World = new TimeChannel(TimeChannels.World);
 		public readonly static TimeChannel Player = new TimeChannel(TimeChannels.Player);
 		public readonly static TimeChannel Enemy = new TimeChannel(TimeChannels.Enemy);
-		readonly static List<TimeChannel> channels = new List<TimeChannel> { Unity, UI, World, Player, Enemy };
+		protected readonly static List<TimeChannel> channels = new List<TimeChannel> { Unity, UI, World, Player, Enemy };
 
-		void Update()
+		protected virtual void Update()
 		{
 			for (int i = 0; i < channels.Count; i++)
 			{
@@ -51,7 +51,7 @@ namespace Pseudo
 			}
 		}
 
-		void FixedUpdate()
+		protected virtual void FixedUpdate()
 		{
 			for (int i = 0; i < channels.Count; i++)
 			{

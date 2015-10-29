@@ -59,5 +59,16 @@ namespace Pseudo
 
 			return values;
 		}
+
+		public static bool Pop<T, U>(this IDictionary<T, U> dictionary, T key, out U value)
+		{
+			if (dictionary.TryGetValue(key, out value))
+			{
+				dictionary.Remove(key);
+				return true;
+			}
+			else
+				return false;
+		}
 	}
 }
