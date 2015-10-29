@@ -123,7 +123,7 @@ namespace Pseudo
 
 		public static bool HasInterface(this Type type, Type interfaceType)
 		{
-			return interfaceType.IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), iType => iType.IsGenericType && iType.GetGenericTypeDefinition() == interfaceType);
+			return interfaceType.IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), t => t.IsGenericType && t.GetGenericTypeDefinition() == interfaceType);
 		}
 
 		public static bool IsNumerical(this Type type)

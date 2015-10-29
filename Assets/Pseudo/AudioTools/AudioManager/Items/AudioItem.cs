@@ -31,53 +31,53 @@ namespace Pseudo
 			SequenceContainer,
 		}
 
-		protected int _id;
-		protected string _name;
-		protected AudioStates _state;
-		protected AudioSpatializer _spatializer;
-		protected AudioItem _parent;
-		protected double _scheduledTime;
-		protected bool _scheduleStarted;
-		protected AudioModifier _volumeModifier;
-		protected AudioModifier _pitchModifier;
-		protected FloatTweener _rampVolumeTweener;
-		protected FloatTweener _rampParentVolumeTweener;
-		protected FloatTweener _rampPitchTweener;
-		protected FloatTweener _rampParentPitchTweener;
-		protected FloatTweener _fadeTweener;
-		protected AudioStates _pausedState;
-		protected bool _hasFaded;
-		protected bool _break;
-		protected List<AudioDelayedOption> _delayedOptions = new List<AudioDelayedOption>();
+		protected int id;
+		protected string name;
+		protected AudioStates state;
+		protected AudioSpatializer spatializer;
+		protected AudioItem parent;
+		protected double scheduledTime;
+		protected bool scheduleStarted;
+		protected AudioModifier volumeModifier;
+		protected AudioModifier pitchModifier;
+		protected FloatTweener rampVolumeTweener;
+		protected FloatTweener rampParentVolumeTweener;
+		protected FloatTweener rampPitchTweener;
+		protected FloatTweener rampParentPitchTweener;
+		protected FloatTweener fadeTweener;
+		protected AudioStates pausedState;
+		protected bool hasFaded;
+		protected bool hasBreak;
+		protected List<AudioDelayedOption> delayedOptions = new List<AudioDelayedOption>();
 
-		protected readonly Action _stopImmediate;
-		protected readonly Func<float> _getDeltaTime;
-		protected readonly Action<float> _setVolumeRampModifier;
-		protected readonly Action<float> _setVolumeParentModifier;
-		protected readonly Action<float> _setPitchRampModifier;
-		protected readonly Action<float> _setPitchParentModifier;
-		protected readonly Action<float> _setVolumeFadeModifier;
+		protected readonly Action stopImmediate;
+		protected readonly Func<float> getDeltaTime;
+		protected readonly Action<float> setVolumeRampModifier;
+		protected readonly Action<float> setVolumeParentModifier;
+		protected readonly Action<float> setPitchRampModifier;
+		protected readonly Action<float> setPitchParentModifier;
+		protected readonly Action<float> setVolumeFadeModifier;
 
 		/// <summary>
 		/// The name of the AudioSettingsBase or method from which the AudioItem has been created.
 		/// </summary>
-		public string Name { get { return _name; } }
+		public string Name { get { return name; } }
 		/// <summary>
 		/// The hashcode of the AudioSettingsBase or method from which the AudioItem has been created.
 		/// </summary>
-		public int Id { get { return _id; } }
+		public int Id { get { return id; } }
 		/// <summary>
 		/// The current state of the AudioItem.
 		/// </summary>
-		public AudioStates State { get { return _state; } }
+		public AudioStates State { get { return state; } }
 		/// <summary>
 		/// The shared module that spatializes the AudioItem.
 		/// </summary>
-		public AudioSpatializer Spatializer { get { return _spatializer; } }
+		public AudioSpatializer Spatializer { get { return spatializer; } }
 		/// <summary>
 		/// Is the AudioItem actually emitting sound (takes into account scheduled sounds)?
 		/// </summary>
-		public bool IsPlaying { get { return (_state == AudioStates.Playing || _state == AudioStates.Stopping) && (_scheduledTime <= 0d || _scheduleStarted); } }
+		public bool IsPlaying { get { return (state == AudioStates.Playing || state == AudioStates.Stopping) && (scheduledTime <= 0d || scheduleStarted); } }
 		/// <summary>
 		/// The AudioSettingsBase used by the AudioItem (a copy of the AudioSettingsBase from which the AudioItem has been created).
 		/// </summary>
@@ -125,33 +125,33 @@ namespace Pseudo
 
 		protected AudioItem()
 		{
-			_stopImmediate = StopImmediate;
-			_getDeltaTime = GetDeltaTime;
-			_setVolumeRampModifier = value => _volumeModifier.RampModifier = value;
-			_setVolumeParentModifier = value => _volumeModifier.ParentModifier = value;
-			_setPitchRampModifier = value => _pitchModifier.RampModifier = value;
-			_setPitchParentModifier = value => _pitchModifier.ParentModifier = value;
-			_setVolumeFadeModifier = value => _volumeModifier.FadeModifier = value;
+			stopImmediate = StopImmediate;
+			getDeltaTime = GetDeltaTime;
+			setVolumeRampModifier = value => volumeModifier.RampModifier = value;
+			setVolumeParentModifier = value => volumeModifier.ParentModifier = value;
+			setPitchRampModifier = value => pitchModifier.RampModifier = value;
+			setPitchParentModifier = value => pitchModifier.ParentModifier = value;
+			setVolumeFadeModifier = value => volumeModifier.FadeModifier = value;
 		}
 
 		protected virtual void Initialize(int id, string name, AudioSpatializer spatializer, AudioItem parent)
 		{
-			_id = id;
-			_name = name;
-			_spatializer = spatializer;
-			_parent = parent;
+			this.id = id;
+			this.name = name;
+			this.spatializer = spatializer;
+			this.parent = parent;
 
-			if (_parent == null)
-				PAudio.Instance.ItemManager.Activate(this);
+			if (this.parent == null)
+				AudioManager.Instance.ItemManager.Activate(this);
 
 			SetState(AudioStates.Waiting);
 		}
 
 		protected virtual void SetState(AudioStates state)
 		{
-			_break |= state == AudioStates.Stopping || state == AudioStates.Stopped;
+			hasBreak |= state == AudioStates.Stopping || state == AudioStates.Stopped;
 
-			RaiseStateChangeEvent(_state, (_state = state));
+			RaiseStateChangeEvent(this.state, (this.state = state));
 		}
 
 		protected virtual void RaisePlayEvent()
@@ -198,16 +198,16 @@ namespace Pseudo
 
 		protected virtual void FadeIn()
 		{
-			if (_hasFaded)
+			if (hasFaded)
 				return;
 
-			_hasFaded = true;
-			_fadeTweener.Ramp(0f, 1f, Settings.FadeIn, _setVolumeFadeModifier, ease: Settings.FadeInEase, getDeltaTime: _getDeltaTime);
+			hasFaded = true;
+			fadeTweener.Ramp(0f, 1f, Settings.FadeIn, setVolumeFadeModifier, ease: Settings.FadeInEase, getDeltaTime: getDeltaTime);
 		}
 
 		protected virtual void FadeOut()
 		{
-			_fadeTweener.Ramp(_volumeModifier.FadeModifier, 0f, Settings.FadeOut, _setVolumeFadeModifier, ease: Settings.FadeOutEase, getDeltaTime: _getDeltaTime, endCallback: _stopImmediate);
+			fadeTweener.Ramp(volumeModifier.FadeModifier, 0f, Settings.FadeOut, setVolumeFadeModifier, ease: Settings.FadeOutEase, getDeltaTime: getDeltaTime, endCallback: stopImmediate);
 		}
 
 		protected virtual float GetDeltaTime()
@@ -217,20 +217,20 @@ namespace Pseudo
 
 		protected virtual void Spatialize()
 		{
-			if (_parent == null)
-				_spatializer.Spatialize();
+			if (parent == null)
+				spatializer.Spatialize();
 		}
 
 		protected virtual void UpdateOptions()
 		{
-			for (int i = 0; i < _delayedOptions.Count; i++)
+			for (int i = 0; i < delayedOptions.Count; i++)
 			{
-				AudioDelayedOption delayedOption = _delayedOptions[i];
+				AudioDelayedOption delayedOption = delayedOptions[i];
 
 				if (delayedOption.Update())
 				{
 					ApplyOptionNow(delayedOption.Option, delayedOption.Recycle);
-					_delayedOptions.RemoveAt(i--);
+					delayedOptions.RemoveAt(i--);
 					Pool<AudioDelayedOption>.Recycle(delayedOption);
 				}
 			}
@@ -238,19 +238,19 @@ namespace Pseudo
 
 		protected void UpdateTweeners()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
-			_rampVolumeTweener.Update();
-			_rampParentVolumeTweener.Update();
-			_rampPitchTweener.Update();
-			_rampParentPitchTweener.Update();
-			_fadeTweener.Update();
+			rampVolumeTweener.Update();
+			rampParentVolumeTweener.Update();
+			rampPitchTweener.Update();
+			rampParentPitchTweener.Update();
+			fadeTweener.Update();
 		}
 
 		protected void UpdateRTPCs()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			float volumeRtpc = 1f;
@@ -271,8 +271,8 @@ namespace Pseudo
 				}
 			}
 
-			_volumeModifier.RTPCModifier = volumeRtpc;
-			_pitchModifier.RTPCModifier = pitchRtpc;
+			volumeModifier.RTPCModifier = volumeRtpc;
+			pitchModifier.RTPCModifier = pitchRtpc;
 		}
 
 		/// <summary>
@@ -280,11 +280,11 @@ namespace Pseudo
 		/// </summary>
 		public virtual void Update()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
-			if (_scheduledTime > 0d)
-				_scheduleStarted |= _scheduledTime <= AudioSettings.dspTime;
+			if (scheduledTime > 0d)
+				scheduleStarted |= scheduledTime <= AudioSettings.dspTime;
 
 			Spatialize();
 			UpdateOptions();
@@ -335,14 +335,14 @@ namespace Pseudo
 		protected virtual void ApplyOptionDelayed(AudioOption option, bool recycle)
 		{
 			AudioDelayedOption delayedOption = Pool<AudioDelayedOption>.Create(AudioDelayedOption.Default);
-			delayedOption.Initialize(option, recycle, _getDeltaTime);
-			_delayedOptions.Add(delayedOption);
+			delayedOption.Initialize(option, recycle, getDeltaTime);
+			delayedOptions.Add(delayedOption);
 		}
 		protected abstract void ApplyOptionNow(AudioOption option, bool recycle);
 		/// <summary>
 		/// </summary>
 		/// <returns> The dsp time at which the AudioItem has be scheduled or 0. </returns>
-		public virtual double GetScheduledTime() { return _scheduledTime; }
+		public virtual double GetScheduledTime() { return scheduledTime; }
 		/// <summary>
 		/// Sets the dsp time at which the AudioItem should be played.
 		/// Trying to set the scheduled time after the AudioItem has started playing will not work.
@@ -368,7 +368,7 @@ namespace Pseudo
 		/// <summary>
 		/// </summary>
 		/// <returns> The parent of the AudioItem or null if the AudioItem is the root of its hierarchy. </returns>
-		public virtual AudioItem GetParent() { return _parent; }
+		public virtual AudioItem GetParent() { return parent; }
 		/// <summary>
 		/// The returned List<AudioItem> is the actual list used by the AudioItem, so care must be used when modifying it.
 		/// </summary>
@@ -393,33 +393,33 @@ namespace Pseudo
 		/// <returns> The volume scale of the AudioItem. </returns>
 		public virtual float GetVolumeScale()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return 0f;
 
-			return _volumeModifier.Value;
+			return volumeModifier.Value;
 		}
 		protected virtual void SetVolumeScale(float volume, float time, Tweening.Ease ease, bool fromSelf)
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			if (fromSelf)
 			{
-				_rampVolumeTweener.Stop();
+				rampVolumeTweener.Stop();
 
 				if (time > 0f)
-					_rampVolumeTweener.Ramp(_volumeModifier.RampModifier, volume, time, _setVolumeRampModifier, ease, _getDeltaTime);
+					rampVolumeTweener.Ramp(volumeModifier.RampModifier, volume, time, setVolumeRampModifier, ease, getDeltaTime);
 				else
-					_volumeModifier.RampModifier = volume;
+					volumeModifier.RampModifier = volume;
 			}
 			else
 			{
-				_rampParentVolumeTweener.Stop();
+				rampParentVolumeTweener.Stop();
 
 				if (time > 0f)
-					_rampParentVolumeTweener.Ramp(_volumeModifier.ParentModifier, volume, time, _setVolumeParentModifier, ease, _getDeltaTime);
+					rampParentVolumeTweener.Ramp(volumeModifier.ParentModifier, volume, time, setVolumeParentModifier, ease, getDeltaTime);
 				else
-					_volumeModifier.ParentModifier = volume;
+					volumeModifier.ParentModifier = volume;
 			}
 		}
 		/// <summary>
@@ -442,33 +442,33 @@ namespace Pseudo
 		/// <returns> The pitch scale of the AudioItem. </returns>
 		public virtual float GetPitchScale()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return 0f;
 
-			return _pitchModifier.Value;
+			return pitchModifier.Value;
 		}
 		protected virtual void SetPitchScale(float pitch, float time, Tweening.Ease ease, bool fromSelf)
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			if (fromSelf)
 			{
-				_rampPitchTweener.Stop();
+				rampPitchTweener.Stop();
 
 				if (time > 0f)
-					_rampPitchTweener.Ramp(_pitchModifier.RampModifier, pitch, time, _setPitchRampModifier, ease, _getDeltaTime);
+					rampPitchTweener.Ramp(pitchModifier.RampModifier, pitch, time, setPitchRampModifier, ease, getDeltaTime);
 				else
-					_pitchModifier.RampModifier = pitch;
+					pitchModifier.RampModifier = pitch;
 			}
 			else
 			{
-				_rampParentPitchTweener.Stop();
+				rampParentPitchTweener.Stop();
 
 				if (time > 0f)
-					_rampParentPitchTweener.Ramp(_pitchModifier.ParentModifier, pitch, time, _setPitchParentModifier, ease, _getDeltaTime);
+					rampParentPitchTweener.Ramp(pitchModifier.ParentModifier, pitch, time, setPitchParentModifier, ease, getDeltaTime);
 				else
-					_pitchModifier.ParentModifier = pitch;
+					pitchModifier.ParentModifier = pitch;
 			}
 		}
 		/// <summary>
@@ -491,14 +491,14 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnCreate()
 		{
-			_volumeModifier = Pool<AudioModifier>.Create(AudioModifier.Default);
-			_pitchModifier = Pool<AudioModifier>.Create(AudioModifier.Default);
-			_fadeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
-			_rampVolumeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
-			_rampParentVolumeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
-			_rampPitchTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
-			_rampParentPitchTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
-			Pool<AudioDelayedOption>.CreateElements(_delayedOptions);
+			volumeModifier = Pool<AudioModifier>.Create(AudioModifier.Default);
+			pitchModifier = Pool<AudioModifier>.Create(AudioModifier.Default);
+			fadeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
+			rampVolumeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
+			rampParentVolumeTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
+			rampPitchTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
+			rampParentPitchTweener = Pool<FloatTweener>.Create(FloatTweener.Default);
+			Pool<AudioDelayedOption>.CreateElements(delayedOptions);
 		}
 
 		/// <summary>
@@ -506,17 +506,17 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			Pool<AudioModifier>.Recycle(ref _volumeModifier);
-			Pool<AudioModifier>.Recycle(ref _pitchModifier);
-			Pool<FloatTweener>.Recycle(ref _fadeTweener);
-			Pool<FloatTweener>.Recycle(ref _rampVolumeTweener);
-			Pool<FloatTweener>.Recycle(ref _rampParentVolumeTweener);
-			Pool<FloatTweener>.Recycle(ref _rampPitchTweener);
-			Pool<FloatTweener>.Recycle(ref _rampParentPitchTweener);
+			Pool<AudioModifier>.Recycle(ref volumeModifier);
+			Pool<AudioModifier>.Recycle(ref pitchModifier);
+			Pool<FloatTweener>.Recycle(ref fadeTweener);
+			Pool<FloatTweener>.Recycle(ref rampVolumeTweener);
+			Pool<FloatTweener>.Recycle(ref rampParentVolumeTweener);
+			Pool<FloatTweener>.Recycle(ref rampPitchTweener);
+			Pool<FloatTweener>.Recycle(ref rampParentPitchTweener);
 
 			// Only the AudioItem root should recycle the spatializer as it is shared with it's children
-			if (_parent == null)
-				Pool<AudioSpatializer>.Recycle(ref _spatializer);
+			if (parent == null)
+				Pool<AudioSpatializer>.Recycle(ref spatializer);
 
 			RecycleDelayedOptions();
 			ClearEvents();
@@ -524,9 +524,9 @@ namespace Pseudo
 
 		void RecycleDelayedOptions()
 		{
-			for (int i = 0; i < _delayedOptions.Count; i++)
+			for (int i = 0; i < delayedOptions.Count; i++)
 			{
-				AudioDelayedOption delayedOption = _delayedOptions[i];
+				AudioDelayedOption delayedOption = delayedOptions[i];
 
 				if (delayedOption.Recycle)
 					Pool<AudioOption>.Recycle(delayedOption.Option);
@@ -534,7 +534,7 @@ namespace Pseudo
 				Pool<AudioDelayedOption>.Recycle(delayedOption);
 			}
 
-			_delayedOptions.Clear();
+			delayedOptions.Clear();
 		}
 
 		/// <summary>
@@ -543,24 +543,24 @@ namespace Pseudo
 		/// <param name="reference"> The AudioItem to copy. </param>
 		public void Copy(AudioItem reference)
 		{
-			_id = reference._id;
-			_name = reference._name;
-			_state = reference._state;
-			_spatializer = reference._spatializer;
-			_parent = reference._parent;
-			_scheduledTime = reference._scheduledTime;
-			_scheduleStarted = reference._scheduleStarted;
-			_volumeModifier = reference._volumeModifier;
-			_pitchModifier = reference._pitchModifier;
-			_rampVolumeTweener = reference._rampVolumeTweener;
-			_rampParentVolumeTweener = reference._rampParentVolumeTweener;
-			_rampPitchTweener = reference._rampPitchTweener;
-			_rampParentPitchTweener = reference._rampParentPitchTweener;
-			_fadeTweener = reference._fadeTweener;
-			_pausedState = reference._pausedState;
-			_hasFaded = reference._hasFaded;
-			_break = reference._break;
-			CopyUtility.CopyTo(reference._delayedOptions, ref _delayedOptions);
+			id = reference.id;
+			name = reference.name;
+			state = reference.state;
+			spatializer = reference.spatializer;
+			parent = reference.parent;
+			scheduledTime = reference.scheduledTime;
+			scheduleStarted = reference.scheduleStarted;
+			volumeModifier = reference.volumeModifier;
+			pitchModifier = reference.pitchModifier;
+			rampVolumeTweener = reference.rampVolumeTweener;
+			rampParentVolumeTweener = reference.rampParentVolumeTweener;
+			rampPitchTweener = reference.rampPitchTweener;
+			rampParentPitchTweener = reference.rampParentPitchTweener;
+			fadeTweener = reference.fadeTweener;
+			pausedState = reference.pausedState;
+			hasFaded = reference.hasFaded;
+			hasBreak = reference.hasBreak;
+			CopyUtility.CopyTo(reference.delayedOptions, ref delayedOptions);
 			OnPlay = reference.OnPlay;
 			OnPause = reference.OnPause;
 			OnResume = reference.OnResume;
@@ -572,7 +572,7 @@ namespace Pseudo
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}, {2})", GetType(), Name, _state);
+			return string.Format("{0}({1}, {2})", GetType(), Name, state);
 		}
 	}
 }

@@ -9,40 +9,40 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioItemManager
 	{
-		Dictionary<int, List<AudioItem>> _idActiveItems = new Dictionary<int, List<AudioItem>>();
-		List<AudioItem> _toUpdate = new List<AudioItem>();
+		Dictionary<int, List<AudioItem>> idActiveItems = new Dictionary<int, List<AudioItem>>();
+		List<AudioItem> toUpdate = new List<AudioItem>();
 
 		public void Update()
 		{
-			for (int i = _toUpdate.Count; i-- > 0;)
-				_toUpdate[i].Update();
+			for (int i = toUpdate.Count; i-- > 0;)
+				toUpdate[i].Update();
 		}
 
 		public void Activate(AudioItem item)
 		{
-			_toUpdate.Add(item);
+			toUpdate.Add(item);
 		}
 
 		public void Deactivate(AudioItem item)
 		{
-			if (_idActiveItems.ContainsKey(item.Id))
-				_idActiveItems[item.Id].Remove(item);
+			if (idActiveItems.ContainsKey(item.Id))
+				idActiveItems[item.Id].Remove(item);
 
-			_toUpdate.Remove(item);
+			toUpdate.Remove(item);
 		}
 
 		public void TrimInstances(AudioItem item, int maxInstances)
 		{
-			if (!_idActiveItems.ContainsKey(item.Id))
-				_idActiveItems[item.Id] = new List<AudioItem>();
+			if (!idActiveItems.ContainsKey(item.Id))
+				idActiveItems[item.Id] = new List<AudioItem>();
 
-			List<AudioItem> _activeItems = _idActiveItems[item.Id];
+			List<AudioItem> activeItems = idActiveItems[item.Id];
 
 			if (maxInstances > 0)
-				while (_activeItems.Count >= maxInstances)
-					_activeItems.Pop().StopImmediate();
+				while (activeItems.Count >= maxInstances)
+					activeItems.Pop().StopImmediate();
 
-			_idActiveItems[item.Id].Add(item);
+			idActiveItems[item.Id].Add(item);
 		}
 
 		public AudioItem CreateItem(AudioSettingsBase settings)
@@ -87,8 +87,8 @@ namespace Pseudo.Internal.Audio
 			{
 				default:
 					AudioSourceItem sourceItem = Pool<AudioSourceItem>.Create(AudioSourceItem.Default);
-					AudioSource source = ComponentPool<AudioSource>.Create(PAudio.Instance.Reference);
-					source.Copy(PAudio.Instance.Reference, PAudio.Instance.UseCustomCurves);
+					AudioSource source = PoolManager.Instance.Create(AudioManager.Instance.Reference);
+					source.Copy(AudioManager.Instance.Reference, AudioManager.Instance.UseCustomCurves);
 					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
 					item = sourceItem;
 					break;
@@ -163,8 +163,8 @@ namespace Pseudo.Internal.Audio
 
 		public void StopAll()
 		{
-			for (int i = _toUpdate.Count; i-- > 0;)
-				_toUpdate[i].StopImmediate();
+			for (int i = toUpdate.Count; i-- > 0;)
+				toUpdate[i].StopImmediate();
 		}
 	}
 }

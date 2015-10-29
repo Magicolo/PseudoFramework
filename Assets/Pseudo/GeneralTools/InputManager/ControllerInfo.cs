@@ -9,12 +9,12 @@ namespace Pseudo
 	public abstract class ControllerInfo : INamable
 	{
 		[SerializeField]
-		string _name = "";
-		public string Name { get { return _name; } set { _name = value; } }
+		string name = "";
+		public string Name { get { return name; } set { name = value; } }
 
 		protected ControllerInfo(string name)
 		{
-			_name = name;
+			this.name = name;
 		}
 	}
 }

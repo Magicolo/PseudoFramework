@@ -8,64 +8,64 @@ namespace Pseudo.Internal.Audio
 {
 	public abstract class AudioContainerItem : AudioItem, ICopyable<AudioContainerItem>
 	{
-		protected readonly List<AudioItem> _sources = new List<AudioItem>();
+		protected readonly List<AudioItem> sources = new List<AudioItem>();
 
-		protected readonly Action<AudioModifier> _setVolumeScale;
-		protected readonly Action<AudioModifier> _setPitchScale;
+		protected readonly Action<AudioModifier> setVolumeScale;
+		protected readonly Action<AudioModifier> setPitchScale;
 
 		protected AudioContainerItem()
 		{
-			_setVolumeScale = modifer =>
+			setVolumeScale = modifer =>
 			{
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].SetVolumeScale(modifer.Value);
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].SetVolumeScale(modifer.Value);
 			};
 
-			_setPitchScale = modifer =>
+			setPitchScale = modifer =>
 			{
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].SetPitchScale(modifer.Value);
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].SetPitchScale(modifer.Value);
 			};
 		}
 
 		protected virtual void InitializeModifiers(AudioSettingsBase settings)
 		{
-			_volumeModifier.OnValueChanged += _setVolumeScale;
-			_volumeModifier.InitialValue = settings.VolumeScale;
-			_volumeModifier.RandomModifier = 1f + UnityEngine.Random.Range(-settings.RandomVolume, settings.RandomVolume);
+			volumeModifier.OnValueChanged += setVolumeScale;
+			volumeModifier.InitialValue = settings.VolumeScale;
+			volumeModifier.RandomModifier = 1f + UnityEngine.Random.Range(-settings.RandomVolume, settings.RandomVolume);
 
-			_pitchModifier.OnValueChanged += _setPitchScale;
-			_pitchModifier.InitialValue = settings.PitchScale;
-			_pitchModifier.RandomModifier = 1f + UnityEngine.Random.Range(-settings.RandomPitch, settings.RandomPitch);
+			pitchModifier.OnValueChanged += setPitchScale;
+			pitchModifier.InitialValue = settings.PitchScale;
+			pitchModifier.RandomModifier = 1f + UnityEngine.Random.Range(-settings.RandomPitch, settings.RandomPitch);
 		}
 
 		protected abstract void InitializeSources();
 
 		protected virtual void UpdateSources()
 		{
-			for (int i = _sources.Count; i-- > 0;)
+			for (int i = sources.Count; i-- > 0;)
 			{
-				AudioItem source = _sources[i];
+				AudioItem source = sources[i];
 
 				source.Update();
 
-				if (source.State == AudioStates.Stopped || (_state == AudioStates.Stopping && source.State == AudioStates.Waiting))
+				if (source.State == AudioStates.Stopped || (state == AudioStates.Stopping && source.State == AudioStates.Waiting))
 					RemoveSource(i);
 			}
 		}
 
 		public override void Update()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			UpdateSources();
 
 			base.Update();
 
-			if (_sources.Count == 0)
+			if (sources.Count == 0)
 			{
-				if (!_break && Settings.Loop)
+				if (!hasBreak && Settings.Loop)
 					Reset();
 				else
 					StopImmediate();
@@ -74,21 +74,21 @@ namespace Pseudo.Internal.Audio
 
 		public override void Play()
 		{
-			if (_state != AudioStates.Waiting)
+			if (state != AudioStates.Waiting)
 				return;
 
 			if (Settings.FadeIn > 0f)
 				FadeIn();
 
-			if (_scheduledTime > 0d)
+			if (scheduledTime > 0d)
 			{
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].PlayScheduled(_scheduledTime);
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].PlayScheduled(scheduledTime);
 			}
 			else
 			{
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].Play();
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].Play();
 			}
 
 			SetState(AudioStates.Playing);
@@ -97,7 +97,7 @@ namespace Pseudo.Internal.Audio
 
 		public override void PlayScheduled(double time)
 		{
-			if (_state != AudioStates.Waiting)
+			if (state != AudioStates.Waiting)
 				return;
 
 			SetScheduledTime(time);
@@ -106,42 +106,42 @@ namespace Pseudo.Internal.Audio
 
 		public override void Pause()
 		{
-			if (_state != AudioStates.Playing && _state != AudioStates.Stopping)
+			if (state != AudioStates.Playing && state != AudioStates.Stopping)
 				return;
 
-			for (int i = 0; i < _sources.Count; i++)
-				_sources[i].Pause();
+			for (int i = 0; i < sources.Count; i++)
+				sources[i].Pause();
 
-			_pausedState = _state;
+			pausedState = state;
 			SetState(AudioStates.Paused);
 			RaisePauseEvent();
 		}
 
 		public override void Resume()
 		{
-			if (_state != AudioStates.Paused)
+			if (state != AudioStates.Paused)
 				return;
 
-			for (int i = 0; i < _sources.Count; i++)
-				_sources[i].Resume();
+			for (int i = 0; i < sources.Count; i++)
+				sources[i].Resume();
 
-			SetState(_pausedState);
+			SetState(pausedState);
 			RaiseResumeEvent();
 		}
 
 		public override void Stop()
 		{
-			if (_state == AudioStates.Stopping || _state == AudioStates.Stopped)
+			if (state == AudioStates.Stopping || state == AudioStates.Stopped)
 				return;
 
-			_fadeTweener.Stop();
+			fadeTweener.Stop();
 
-			if (Settings.FadeOut > 0f && _state != AudioStates.Paused)
+			if (Settings.FadeOut > 0f && state != AudioStates.Paused)
 				FadeOut();
 			else
 			{
-				for (int i = 0; i < _sources.Count; i++)
-					_sources[i].Stop();
+				for (int i = 0; i < sources.Count; i++)
+					sources[i].Stop();
 			}
 
 			SetState(AudioStates.Stopping);
@@ -150,24 +150,24 @@ namespace Pseudo.Internal.Audio
 
 		public override void StopImmediate()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
-			for (int i = 0; i < _sources.Count; i++)
-				_sources[i].StopImmediate();
+			for (int i = 0; i < sources.Count; i++)
+				sources[i].StopImmediate();
 
 			SetState(AudioStates.Stopped);
 			RaiseStopEvent();
 
-			if (_parent == null)
-				PAudio.Instance.ItemManager.Deactivate(this);
+			if (parent == null)
+				AudioManager.Instance.ItemManager.Deactivate(this);
 
 			Recycle();
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
 		{
-			if (_state != AudioStates.Stopped)
+			if (state != AudioStates.Stopped)
 			{
 				switch (option.Type)
 				{
@@ -182,12 +182,12 @@ namespace Pseudo.Internal.Audio
 					case AudioOption.Types.RandomVolume:
 						float randomVolume = option.GetValue<float>();
 						Settings.RandomVolume = randomVolume;
-						_volumeModifier.RandomModifier = 1f + UnityEngine.Random.Range(-randomVolume, randomVolume);
+						volumeModifier.RandomModifier = 1f + UnityEngine.Random.Range(-randomVolume, randomVolume);
 						break;
 					case AudioOption.Types.RandomPitch:
 						float randomPitch = option.GetValue<float>();
 						Settings.RandomPitch = randomPitch;
-						_pitchModifier.RandomModifier = 1f + UnityEngine.Random.Range(-randomPitch, randomPitch);
+						pitchModifier.RandomModifier = 1f + UnityEngine.Random.Range(-randomPitch, randomPitch);
 						break;
 					case AudioOption.Types.FadeIn:
 						float[] fadeInData = option.GetValue<float[]>();
@@ -203,8 +203,8 @@ namespace Pseudo.Internal.Audio
 						Settings.Loop = option.GetValue<bool>();
 						break;
 					default:
-						for (int i = 0; i < _sources.Count; i++)
-							_sources[i].ApplyOption(option, false);
+						for (int i = 0; i < sources.Count; i++)
+							sources[i].ApplyOption(option, false);
 						break;
 				}
 			}
@@ -215,39 +215,39 @@ namespace Pseudo.Internal.Audio
 
 		public override void SetScheduledTime(double time)
 		{
-			if (_state == AudioStates.Stopped || _scheduleStarted)
+			if (state == AudioStates.Stopped || scheduleStarted)
 				return;
 
-			_scheduledTime = time;
+			scheduledTime = time;
 
-			for (int i = 0; i < _sources.Count; i++)
-				_sources[i].SetScheduledTime(_scheduledTime);
+			for (int i = 0; i < sources.Count; i++)
+				sources[i].SetScheduledTime(scheduledTime);
 		}
 
 		public override double RemainingTime()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return 0d;
 
 			double remainingTime = 0d;
 
-			for (int i = 0; i < _sources.Count; i++)
-				remainingTime = Math.Max(remainingTime, _sources[i].RemainingTime());
+			for (int i = 0; i < sources.Count; i++)
+				remainingTime = Math.Max(remainingTime, sources[i].RemainingTime());
 
 			return remainingTime;
 		}
 
 		public override void Break()
 		{
-			for (int i = 0; i < _sources.Count; i++)
+			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem source = _sources[i];
+				AudioItem source = sources[i];
 
 				if (source.State != AudioStates.Waiting && source.GetScheduledTime() <= AudioSettings.dspTime)
 					source.Break();
 			}
 
-			_break = true;
+			hasBreak = true;
 		}
 
 		public override void SetRTPCValue(string name, float value)
@@ -260,16 +260,16 @@ namespace Pseudo.Internal.Audio
 			if (rtpc != null)
 				rtpc.SetValue(value);
 
-			for (int i = 0; i < _sources.Count; i++)
-				_sources[i].SetRTPCValue(name, value);
+			for (int i = 0; i < sources.Count; i++)
+				sources[i].SetRTPCValue(name, value);
 		}
 
 		public override List<AudioItem> GetChildren()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return null;
 
-			return _sources;
+			return sources;
 		}
 
 		protected virtual AudioItem AddSource(AudioContainerSourceData data)
@@ -288,7 +288,7 @@ namespace Pseudo.Internal.Audio
 
 			if (settings != null)
 			{
-				item = PAudio.Instance.ItemManager.CreateItem(settings, _spatializer, this);
+				item = AudioManager.Instance.ItemManager.CreateItem(settings, spatializer, this);
 
 				if (options != null)
 				{
@@ -296,9 +296,9 @@ namespace Pseudo.Internal.Audio
 						item.ApplyOption(options[i], false);
 				}
 
-				_sources.Add(item);
-				_volumeModifier.SimulateChange();
-				_pitchModifier.SimulateChange();
+				sources.Add(item);
+				volumeModifier.SimulateChange();
+				pitchModifier.SimulateChange();
 			}
 
 			return item;
@@ -306,7 +306,7 @@ namespace Pseudo.Internal.Audio
 
 		protected virtual void RemoveSource(int index)
 		{
-			_sources.RemoveAt(index);
+			sources.RemoveAt(index);
 		}
 
 		protected virtual void Reset()
@@ -322,7 +322,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			_sources.Clear();
+			sources.Clear();
 		}
 
 		public void Copy(AudioContainerItem reference)

@@ -35,7 +35,7 @@ namespace Pseudo
 			else
 				return outQuadEase(ratio * 2 - 1f) / 2f + 0.5f;
 		};
-		static readonly Func<float, float> _outInQuadEase = ratio =>
+		static readonly Func<float, float> outInQuadEase = ratio =>
 		{
 			if (ratio < 0.5f)
 				return outQuadEase(ratio * 2) / 2f;
@@ -57,13 +57,13 @@ namespace Pseudo
 				case Ease.InOutQuad:
 					return inOutQuadEase;
 				case Ease.OutInQuad:
-					return _outInQuadEase;
+					return outInQuadEase;
 				case Ease.SmoothStep:
 					return smoothStepEase;
 			}
 		}
 
-		public static AnimationCurve ToCurve(Ease ease, int definition)
+		public static AnimationCurve EaseToCurve(Ease ease, int definition)
 		{
 			Keyframe[] keys = new Keyframe[definition];
 			Func<float, float> easeFunction = ToEaseFunction(ease);

@@ -9,14 +9,15 @@ namespace Pseudo
 	[Serializable]
 	public class Oscillator : IPoolable, ICopyable<Oscillator>
 	{
-		public float frequency = 1;
-		public float amplitude = 1;
-		public float center;
-		public float offset;
+		public float Frequency = 1;
+		public float Amplitude = 1;
+		public float Center;
+		public float Offset;
+		public PTime.TimeChannels TimeChannel;
 
 		public float Oscillate()
 		{
-			return amplitude * (float)Math.Sin(frequency * Time.time + offset) + center;
+			return Amplitude * (float)Math.Sin(Frequency * PTime.GetTime(TimeChannel) + Offset) + Center;
 		}
 
 		public void OnCreate()
@@ -29,10 +30,10 @@ namespace Pseudo
 
 		public void Copy(Oscillator reference)
 		{
-			frequency = reference.frequency;
-			amplitude = reference.amplitude;
-			center = reference.center;
-			offset = reference.offset;
+			Frequency = reference.Frequency;
+			Amplitude = reference.Amplitude;
+			Center = reference.Center;
+			Offset = reference.Offset;
 		}
 	}
 }

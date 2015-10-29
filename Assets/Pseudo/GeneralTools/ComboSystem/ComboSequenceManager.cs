@@ -9,7 +9,6 @@ namespace Pseudo.Internal
 	[System.Serializable]
 	public class ComboSequenceManager
 	{
-
 		public string inputEnumName;
 		public string inputEnumTypeName;
 		public Type inputEnumType;

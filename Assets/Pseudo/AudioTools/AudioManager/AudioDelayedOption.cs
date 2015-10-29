@@ -6,7 +6,7 @@ using UnityEngine;
 using Pseudo;
 using UnityEngine.Audio;
 
-namespace Pseudo
+namespace Pseudo.Internal.Audio
 {
 	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
 	{

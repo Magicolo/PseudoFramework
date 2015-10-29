@@ -7,12 +7,12 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioSwitchContainerItem : AudioContainerItem, ICopyable<AudioSwitchContainerItem>
 	{
-		AudioSwitchContainerSettings _originalSettings;
-		AudioSwitchContainerSettings _settings;
-		AudioValue<int> _switchValue;
+		AudioSwitchContainerSettings originalSettings;
+		AudioSwitchContainerSettings settings;
+		AudioValue<int> switchValue;
 
 		public override AudioTypes Type { get { return AudioTypes.SwitchContainer; } }
-		public override AudioSettingsBase Settings { get { return _settings; } }
+		public override AudioSettingsBase Settings { get { return settings; } }
 
 		public static AudioSwitchContainerItem Default = new AudioSwitchContainerItem();
 
@@ -20,25 +20,25 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
-			_originalSettings = settings;
-			_settings = Pool<AudioSwitchContainerSettings>.Create(settings);
+			originalSettings = settings;
+			this.settings = Pool<AudioSwitchContainerSettings>.Create(settings);
 
-			InitializeModifiers(_originalSettings);
+			InitializeModifiers(originalSettings);
 			InitializeSources();
 
-			for (int i = 0; i < _originalSettings.Options.Count; i++)
-				ApplyOption(_originalSettings.Options[i], false);
+			for (int i = 0; i < originalSettings.Options.Count; i++)
+				ApplyOption(originalSettings.Options[i], false);
 		}
 
 		protected override void InitializeSources()
 		{
-			_switchValue = PAudio.Instance.GetSwitchValue(_settings.SwitchName);
-			int stateValue = _switchValue.Value;
+			switchValue = AudioManager.Instance.GetSwitchValue(settings.SwitchName);
+			int stateValue = switchValue.Value;
 
-			for (int i = 0; i < _originalSettings.Sources.Count; i++)
+			for (int i = 0; i < originalSettings.Sources.Count; i++)
 			{
-				if (_originalSettings.SwitchValues[i] == stateValue)
-					AddSource(_originalSettings.Sources[i]);
+				if (originalSettings.SwitchValues[i] == stateValue)
+					AddSource(originalSettings.Sources[i]);
 			}
 		}
 
@@ -51,16 +51,16 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			Pool<AudioSwitchContainerSettings>.Recycle(ref _settings);
+			Pool<AudioSwitchContainerSettings>.Recycle(ref settings);
 		}
 
 		public void Copy(AudioSwitchContainerItem reference)
 		{
 			base.Copy(reference);
 
-			_originalSettings = reference._originalSettings;
-			_settings = reference._settings;
-			_switchValue = reference._switchValue;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			switchValue = reference.switchValue;
 		}
 	}
 }

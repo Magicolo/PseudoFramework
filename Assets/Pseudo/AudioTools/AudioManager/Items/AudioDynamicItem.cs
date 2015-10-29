@@ -12,19 +12,19 @@ namespace Pseudo
 {
 	public class AudioDynamicItem : AudioContainerItem, ICopyable<AudioDynamicItem>
 	{
-		Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> _getNextSettings;
-		AudioDynamicSettings _settings;
-		int _currentStep;
-		bool _requestNextSettings = true;
-		bool _breakSequence;
-		double _deltaTime;
-		double _lastTime;
+		Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings;
+		AudioDynamicSettings settings;
+		int currentStep;
+		bool requestNextSettings = true;
+		bool breakSequence;
+		double deltaTime;
+		double lastTime;
 
-		protected readonly List<AudioDynamicData> _data = new List<AudioDynamicData>();
+		protected readonly List<AudioDynamicData> dynamicData = new List<AudioDynamicData>();
 
 		public override AudioTypes Type { get { return AudioTypes.Dynamic; } }
-		public override AudioSettingsBase Settings { get { return _settings; } }
-		public int CurrentStep { get { return _currentStep; } }
+		public override AudioSettingsBase Settings { get { return settings; } }
+		public int CurrentStep { get { return currentStep; } }
 
 		public static AudioDynamicItem Default = new AudioDynamicItem();
 
@@ -32,10 +32,10 @@ namespace Pseudo
 		{
 			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, spatializer, parent);
 
-			_getNextSettings = getNextSettings;
-			_settings = Pool<AudioDynamicSettings>.Create(AudioDynamicSettings.Default);
+			this.getNextSettings = getNextSettings;
+			settings = Pool<AudioDynamicSettings>.Create(AudioDynamicSettings.Default);
 
-			InitializeModifiers(_settings);
+			InitializeModifiers(settings);
 			InitializeSources();
 		}
 
@@ -46,7 +46,7 @@ namespace Pseudo
 
 		public override void Update()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			UpdateSequence();
@@ -56,66 +56,66 @@ namespace Pseudo
 
 		protected void UpdateSequence()
 		{
-			if (_breakSequence || (_sources.Count > 0 && !_requestNextSettings))
+			if (breakSequence || (sources.Count > 0 && !requestNextSettings))
 				return;
 
 			AudioDynamicData data = Pool<AudioDynamicData>.Create(AudioDynamicData.Default);
-			AudioSettingsBase settings = _getNextSettings(this, data);
+			AudioSettingsBase settings = getNextSettings(this, data);
 
-			_currentStep++;
+			currentStep++;
 
-			if (settings == null || _state == AudioStates.Stopped)
-				_breakSequence = true;
+			if (settings == null || state == AudioStates.Stopped)
+				breakSequence = true;
 			else
 				AddSource(settings, data);
 		}
 
 		protected void UpdateDeltaTime()
 		{
-			double dspTime = Math.Max(AudioSettings.dspTime, _scheduledTime);
-			_deltaTime = dspTime - _lastTime;
-			_lastTime = dspTime;
+			double dspTime = Math.Max(AudioSettings.dspTime, scheduledTime);
+			deltaTime = dspTime - lastTime;
+			lastTime = dspTime;
 		}
 
 		protected void UpdateScheduledTime()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			UpdateDeltaTime();
 			double remainingTime = 0d;
 
-			_requestNextSettings = _state != AudioStates.Paused;
+			requestNextSettings = state != AudioStates.Paused;
 
-			for (int i = 0; i < _sources.Count; i++)
+			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem source = _sources[i];
-				AudioDynamicData data = _data[i];
+				AudioItem source = sources[i];
+				AudioDynamicData data = dynamicData[i];
 
 				// Decrease delay
-				if (_state != AudioStates.Paused)
+				if (state != AudioStates.Paused)
 				{
 					switch (data.PlayMode)
 					{
 						case AudioDynamicData.PlayModes.Now:
-							data.Delay = Math.Max(data.Delay - _deltaTime, 0d);
+							data.Delay = Math.Max(data.Delay - deltaTime, 0d);
 							break;
 						case AudioDynamicData.PlayModes.After:
 							if (i == 0)
-								data.Delay = Math.Max(data.Delay - _deltaTime, 0d);
+								data.Delay = Math.Max(data.Delay - deltaTime, 0d);
 							else
-								_requestNextSettings = false;
+								requestNextSettings = false;
 							break;
 					}
 
 					if (data.Delay > 0d)
-						_requestNextSettings = false;
+						requestNextSettings = false;
 				}
 
 				// Schedule source
-				double time = Math.Max(AudioSettings.dspTime, _scheduledTime) + remainingTime + data.Delay;
+				double time = Math.Max(AudioSettings.dspTime, scheduledTime) + remainingTime + data.Delay;
 
-				if (_state == AudioStates.Playing && source.State == AudioStates.Waiting)
+				if (state == AudioStates.Playing && source.State == AudioStates.Waiting)
 					source.PlayScheduled(time);
 				else
 					source.SetScheduledTime(time);
@@ -135,30 +135,30 @@ namespace Pseudo
 
 		public override void Play()
 		{
-			if (_state != AudioStates.Waiting)
+			if (state != AudioStates.Waiting)
 				return;
 
-			_lastTime = Math.Max(AudioSettings.dspTime, _scheduledTime);
+			lastTime = Math.Max(AudioSettings.dspTime, scheduledTime);
 
 			base.Play();
 		}
 
 		public override void Stop()
 		{
-			if (_state == AudioStates.Stopped || _state == AudioStates.Stopping)
+			if (state == AudioStates.Stopped || state == AudioStates.Stopping)
 				return;
 
-			_breakSequence = true;
+			breakSequence = true;
 
 			base.Stop();
 		}
 
 		public override void StopImmediate()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
-			_breakSequence = true;
+			breakSequence = true;
 
 			base.StopImmediate();
 		}
@@ -176,14 +176,14 @@ namespace Pseudo
 				data.OnInitialize = null;
 			}
 
-			_data.Add(data);
+			dynamicData.Add(data);
 		}
 
 		protected override void RemoveSource(int index)
 		{
 			base.RemoveSource(index);
 
-			Pool<AudioDynamicData>.Recycle(_data.Pop(index));
+			Pool<AudioDynamicData>.Recycle(dynamicData.Pop(index));
 			UpdateSequence();
 		}
 
@@ -196,22 +196,22 @@ namespace Pseudo
 		{
 			base.OnRecycle();
 
-			Pool<AudioDynamicSettings>.Recycle(ref _settings);
-			Pool<AudioDynamicData>.RecycleElements(_data);
-			_data.Clear();
+			Pool<AudioDynamicSettings>.Recycle(ref settings);
+			Pool<AudioDynamicData>.RecycleElements(dynamicData);
+			dynamicData.Clear();
 		}
 
 		public void Copy(AudioDynamicItem reference)
 		{
 			base.Copy(reference);
 
-			_getNextSettings = reference._getNextSettings;
-			_settings = reference._settings;
-			_currentStep = reference._currentStep;
-			_requestNextSettings = reference._requestNextSettings;
-			_breakSequence = reference._breakSequence;
-			_deltaTime = reference._deltaTime;
-			_lastTime = reference._lastTime;
+			getNextSettings = reference.getNextSettings;
+			settings = reference.settings;
+			currentStep = reference.currentStep;
+			requestNextSettings = reference.requestNextSettings;
+			breakSequence = reference.breakSequence;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
 		}
 	}
 }

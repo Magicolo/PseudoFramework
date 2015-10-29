@@ -8,13 +8,13 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal
 {
-	[CustomPropertyDrawer(typeof(PDynamicValue))]
-	public class PDynamicValueDrawer : CustomPropertyDrawerBase
+	[CustomPropertyDrawer(typeof(DynamicValue))]
+	public class DynamicValueDrawer : CustomPropertyDrawerBase
 	{
-		PDynamicValueDrawerDummy dummy;
+		DynamicValueDrawerDummy dummy;
 		SerializedObject dummySerialized;
 
-		PDynamicValue dynamicValue;
+		DynamicValue dynamicValue;
 		SerializedProperty typeProperty;
 		SerializedProperty isArrayProperty;
 		SerializedProperty valueProperty;
@@ -42,7 +42,7 @@ namespace Pseudo.Internal
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					valueProperty = GetValueProperty(typeProperty.GetValue<PDynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+					valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
 					dynamicValue.SetValue(valueProperty == null ? null : valueProperty.GetValue());
 				}
 
@@ -55,7 +55,7 @@ namespace Pseudo.Internal
 					if (EditorGUI.EndChangeCheck())
 					{
 						dummySerialized.ApplyModifiedProperties();
-						valueProperty = GetValueProperty(typeProperty.GetValue<PDynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+						valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
 						dynamicValue.SetValue(valueProperty.GetValue());
 					}
 				}
@@ -70,7 +70,7 @@ namespace Pseudo.Internal
 		{
 			base.Initialize(property, label);
 
-			dummy = ScriptableObject.CreateInstance<PDynamicValueDrawerDummy>();
+			dummy = ScriptableObject.CreateInstance<DynamicValueDrawerDummy>();
 			dummy.hideFlags = HideFlags.DontSave;
 			dummySerialized = new SerializedObject(dummy);
 		}
@@ -79,10 +79,10 @@ namespace Pseudo.Internal
 		{
 			base.GetPropertyHeight(property, label);
 
-			dynamicValue = property.GetValue<PDynamicValue>();
+			dynamicValue = property.GetValue<DynamicValue>();
 			typeProperty = property.FindPropertyRelative("type");
 			isArrayProperty = property.FindPropertyRelative("isArray");
-			valueProperty = GetValueProperty(typeProperty.GetValue<PDynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+			valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
 
 			if (property.isExpanded)
 				if (valueProperty == null)
@@ -93,12 +93,12 @@ namespace Pseudo.Internal
 				return 16f;
 		}
 
-		SerializedProperty GetValueProperty(PDynamicValue.ValueTypes type, bool isArray)
+		SerializedProperty GetValueProperty(DynamicValue.ValueTypes type, bool isArray)
 		{
 			string propertyName = type.ToString();
 			SerializedProperty valueProperty = null;
 
-			if (type != PDynamicValue.ValueTypes.Null)
+			if (type != DynamicValue.ValueTypes.Null)
 				valueProperty = dummySerialized.FindProperty(isArray ? propertyName + "Array" : propertyName);
 
 			return valueProperty;

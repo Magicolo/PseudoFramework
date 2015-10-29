@@ -9,9 +9,9 @@ namespace Pseudo
 {
 	public class AudioValue<T> : IPoolable, ICopyable<AudioValue<T>>
 	{
-		T _value;
+		T value;
 
-		public T Value { get { return _value; } set { _value = value; } }
+		public T Value { get { return value; } set { this.value = value; } }
 
 		public virtual void OnCreate()
 		{
@@ -23,7 +23,7 @@ namespace Pseudo
 
 		public void Copy(AudioValue<T> reference)
 		{
-			_value = reference._value;
+			value = reference.value;
 		}
 	}
 }

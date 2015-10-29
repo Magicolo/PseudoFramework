@@ -8,15 +8,15 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioMixContainerItem : AudioContainerItem, ICopyable<AudioMixContainerItem>
 	{
-		AudioMixContainerSettings _originalSettings;
-		AudioMixContainerSettings _settings;
-		double _deltaTime;
-		double _lastTime;
+		AudioMixContainerSettings originalSettings;
+		AudioMixContainerSettings settings;
+		double deltaTime;
+		double lastTime;
 
-		readonly List<double> _delays = new List<double>();
+		readonly List<double> delays = new List<double>();
 
 		public override AudioTypes Type { get { return AudioTypes.MixContainer; } }
-		public override AudioSettingsBase Settings { get { return _settings; } }
+		public override AudioSettingsBase Settings { get { return settings; } }
 
 		public static AudioMixContainerItem Default = new AudioMixContainerItem();
 
@@ -24,22 +24,22 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
-			_originalSettings = settings;
-			_settings = Pool<AudioMixContainerSettings>.Create(settings);
+			originalSettings = settings;
+			this.settings = Pool<AudioMixContainerSettings>.Create(settings);
 
-			InitializeModifiers(_originalSettings);
+			InitializeModifiers(originalSettings);
 			InitializeSources();
 
-			for (int i = 0; i < _originalSettings.Options.Count; i++)
-				ApplyOption(_originalSettings.Options[i], false);
+			for (int i = 0; i < originalSettings.Options.Count; i++)
+				ApplyOption(originalSettings.Options[i], false);
 		}
 
 		protected override void InitializeSources()
 		{
-			for (int i = 0; i < _originalSettings.Sources.Count; i++)
+			for (int i = 0; i < originalSettings.Sources.Count; i++)
 			{
-				if (AddSource(_originalSettings.Sources[i]) != null)
-					_delays.Add(_originalSettings.Delays[i]);
+				if (AddSource(originalSettings.Sources[i]) != null)
+					delays.Add(originalSettings.Delays[i]);
 			}
 		}
 
@@ -52,29 +52,29 @@ namespace Pseudo.Internal.Audio
 
 		protected void UpdateScheduledTime()
 		{
-			if (_state == AudioStates.Stopped)
+			if (state == AudioStates.Stopped)
 				return;
 
 			// Update delta time
-			double dspTime = Math.Max(AudioSettings.dspTime, _scheduledTime);
+			double dspTime = Math.Max(AudioSettings.dspTime, scheduledTime);
 
-			_deltaTime = dspTime - _lastTime;
-			_lastTime = dspTime;
+			deltaTime = dspTime - lastTime;
+			lastTime = dspTime;
 
 			// Decrease delay counters
-			for (int i = 0; i < _delays.Count; i++)
+			for (int i = 0; i < delays.Count; i++)
 			{
-				if (_state != AudioStates.Paused)
-					_delays[i] = Math.Max(_delays[i] - _deltaTime, 0d);
+				if (state != AudioStates.Paused)
+					delays[i] = Math.Max(delays[i] - deltaTime, 0d);
 			}
 
 			// Schedule sources
-			for (int i = 0; i < _sources.Count; i++)
+			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem item = _sources[i];
-				double time = Math.Max(AudioSettings.dspTime, _scheduledTime) + _delays[i];
+				AudioItem item = sources[i];
+				double time = Math.Max(AudioSettings.dspTime, scheduledTime) + delays[i];
 
-				if (_state == AudioStates.Playing && item.State == AudioStates.Waiting)
+				if (state == AudioStates.Playing && item.State == AudioStates.Waiting)
 					item.PlayScheduled(time);
 				else
 					item.SetScheduledTime(time);
@@ -83,10 +83,10 @@ namespace Pseudo.Internal.Audio
 
 		public override void Play()
 		{
-			if (_state != AudioStates.Waiting)
+			if (state != AudioStates.Waiting)
 				return;
 
-			_lastTime = Math.Max(AudioSettings.dspTime, _scheduledTime);
+			lastTime = Math.Max(AudioSettings.dspTime, scheduledTime);
 			UpdateScheduledTime();
 
 			base.Play();
@@ -94,11 +94,11 @@ namespace Pseudo.Internal.Audio
 
 		public override void SetScheduledTime(double time)
 		{
-			if (_state == AudioStates.Stopped || _scheduleStarted)
+			if (state == AudioStates.Stopped || scheduleStarted)
 				return;
 
-			_scheduledTime = time;
-			_lastTime = time;
+			scheduledTime = time;
+			lastTime = time;
 
 			UpdateScheduledTime();
 		}
@@ -107,7 +107,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.RemoveSource(index);
 
-			_delays.RemoveAt(index);
+			delays.RemoveAt(index);
 		}
 
 		protected override void Recycle()
@@ -119,18 +119,18 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			_delays.Clear();
-			Pool<AudioMixContainerSettings>.Recycle(ref _settings);
+			delays.Clear();
+			Pool<AudioMixContainerSettings>.Recycle(ref settings);
 		}
 
 		public void Copy(AudioMixContainerItem reference)
 		{
 			base.Copy(reference);
 
-			_originalSettings = reference._originalSettings;
-			_settings = reference._settings;
-			_deltaTime = reference._deltaTime;
-			_lastTime = reference._lastTime;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
 		}
 	}
 }

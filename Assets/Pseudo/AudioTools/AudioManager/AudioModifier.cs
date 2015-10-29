@@ -9,20 +9,20 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
 	{
-		float _initialValue = 1f;
-		float _fadeModifier = 1f;
-		float _rampModifier = 1f;
-		float _parentModifier = 1f;
-		float _randomModifier = 1f;
-		float _rtpcModifier = 1f;
+		float initialValue = 1f;
+		float fadeModifier = 1f;
+		float rampModifier = 1f;
+		float parentModifier = 1f;
+		float randomModifier = 1f;
+		float rtpcModifier = 1f;
 
-		public virtual float Value { get { return _initialValue * _rampModifier * _parentModifier * _randomModifier * _fadeModifier * _rtpcModifier; } }
-		public float InitialValue { get { return _initialValue; } set { if (_initialValue != value) { _initialValue = value; RaiseValueChangedEvent(); }; } }
-		public float FadeModifier { get { return _fadeModifier; } set { if (_fadeModifier != value) { _fadeModifier = value; RaiseValueChangedEvent(); }; } }
-		public float RampModifier { get { return _rampModifier; } set { if (_rampModifier != value) { _rampModifier = value; RaiseValueChangedEvent(); }; } }
-		public float ParentModifier { get { return _parentModifier; } set { if (_parentModifier != value) { _parentModifier = value; RaiseValueChangedEvent(); }; } }
-		public float RandomModifier { get { return _randomModifier; } set { if (_randomModifier != value) { _randomModifier = value; RaiseValueChangedEvent(); }; } }
-		public float RTPCModifier { get { return _rtpcModifier; } set { if (_rtpcModifier != value) { _rtpcModifier = value; RaiseValueChangedEvent(); }; } }
+		public virtual float Value { get { return initialValue * rampModifier * parentModifier * randomModifier * fadeModifier * rtpcModifier; } }
+		public float InitialValue { get { return initialValue; } set { if (initialValue != value) { initialValue = value; RaiseValueChangedEvent(); }; } }
+		public float FadeModifier { get { return fadeModifier; } set { if (fadeModifier != value) { fadeModifier = value; RaiseValueChangedEvent(); }; } }
+		public float RampModifier { get { return rampModifier; } set { if (rampModifier != value) { rampModifier = value; RaiseValueChangedEvent(); }; } }
+		public float ParentModifier { get { return parentModifier; } set { if (parentModifier != value) { parentModifier = value; RaiseValueChangedEvent(); }; } }
+		public float RandomModifier { get { return randomModifier; } set { if (randomModifier != value) { randomModifier = value; RaiseValueChangedEvent(); }; } }
+		public float RTPCModifier { get { return rtpcModifier; } set { if (rtpcModifier != value) { rtpcModifier = value; RaiseValueChangedEvent(); }; } }
 
 		public static readonly AudioModifier Default = new AudioModifier();
 
@@ -50,12 +50,12 @@ namespace Pseudo.Internal.Audio
 
 		public void Copy(AudioModifier reference)
 		{
-			_initialValue = reference._initialValue;
-			_fadeModifier = reference._fadeModifier;
-			_rampModifier = reference._rampModifier;
-			_parentModifier = reference._parentModifier;
-			_randomModifier = reference._randomModifier;
-			_rtpcModifier = reference._rtpcModifier;
+			initialValue = reference.initialValue;
+			fadeModifier = reference.fadeModifier;
+			rampModifier = reference.rampModifier;
+			parentModifier = reference.parentModifier;
+			randomModifier = reference.randomModifier;
+			rtpcModifier = reference.rtpcModifier;
 			OnValueChanged = reference.OnValueChanged;
 		}
 	}

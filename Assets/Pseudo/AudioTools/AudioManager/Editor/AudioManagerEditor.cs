@@ -8,11 +8,11 @@ using Pseudo;
 
 namespace Pseudo.Internal.Editor
 {
-	[CustomEditor(typeof(PAudio), true), CanEditMultipleObjects]
+	[CustomEditor(typeof(AudioManager), true), CanEditMultipleObjects]
 	public class AudioManagerEditor : CustomEditorBase
 	{
-		static AudioItem _previewItem;
-		static AudioSettingsBase _previewSettings;
+		static AudioItem previewItem;
+		static AudioSettingsBase previewSettings;
 
 		public override void OnInspectorGUI()
 		{
@@ -33,7 +33,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnPlaymodeStateChanged()
 		{
-			if (PAudio.Find() == null)
+			if (AudioManager.Find() == null)
 				return;
 
 			StopPreview();
@@ -41,7 +41,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnProjectWindowItemGUI(string guid, Rect selectionRect)
 		{
-			if (PAudio.Find() == null)
+			if (AudioManager.Find() == null)
 				return;
 
 			AudioSettingsBase settings = AssetDatabase.LoadAssetAtPath<AudioSettingsBase>(AssetDatabase.GUIDToAssetPath(guid));
@@ -52,31 +52,31 @@ namespace Pseudo.Internal.Editor
 
 		static void Update()
 		{
-			if (PAudio.Find() == null || Application.isPlaying)
+			if (AudioManager.Find() == null || Application.isPlaying)
 				return;
 
-			if (_previewItem == null || _previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != _previewSettings)
+			if (previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)
 				StopPreview();
 
-			PAudio.Instance.ItemManager.Update();
+			AudioManager.Instance.ItemManager.Update();
 		}
 
 		static void StopPreview()
 		{
-			if (PAudio.Find() == null)
+			if (AudioManager.Find() == null)
 				return;
 
-			if (_previewItem != null)
+			if (previewItem != null)
 			{
-				_previewItem.StopImmediate();
-				_previewItem = null;
-				_previewSettings = null;
+				previewItem.StopImmediate();
+				previewItem = null;
+				previewSettings = null;
 			}
 		}
 
 		public static void ShowPreviewButton(Rect rect, AudioSettingsBase settings)
 		{
-			if (PAudio.Find() == null)
+			if (AudioManager.Find() == null)
 				return;
 
 			// Check if scrollbar is visible
@@ -95,23 +95,23 @@ namespace Pseudo.Internal.Editor
 			{
 				Selection.activeObject = settings;
 
-				if (_previewSettings != settings || (_previewItem != null && _previewItem.State == AudioItem.AudioStates.Stopping))
+				if (previewSettings != settings || (previewItem != null && previewItem.State == AudioItem.AudioStates.Stopping))
 				{
 					StopPreview();
 
 					EditorUtility.SetDirty(settings);
-					_previewSettings = settings;
-					_previewItem = PAudio.Instance.CreateItem(_previewSettings);
-					_previewItem.OnStop += item => { StopPreview(); EditorUtility.SetDirty(settings); EditorApplication.RepaintProjectWindow(); };
-					_previewItem.Play();
+					previewSettings = settings;
+					previewItem = AudioManager.Instance.CreateItem(previewSettings);
+					previewItem.OnStop += item => { StopPreview(); EditorUtility.SetDirty(settings); EditorApplication.RepaintProjectWindow(); };
+					previewItem.Play();
 				}
-				else if (_previewItem != null)
-					_previewItem.Stop();
+				else if (previewItem != null)
+					previewItem.Stop();
 				else
 					StopPreview();
 			}
 
-			bool playing = _previewItem == null || _previewItem.State == AudioItem.AudioStates.Stopping || _previewSettings != settings;
+			bool playing = previewItem == null || previewItem.State == AudioItem.AudioStates.Stopping || previewSettings != settings;
 			GUIStyle labelStyle = new GUIStyle("boldLabel");
 			labelStyle.fixedHeight += 1;
 			labelStyle.fontSize = playing ? 14 : 20;

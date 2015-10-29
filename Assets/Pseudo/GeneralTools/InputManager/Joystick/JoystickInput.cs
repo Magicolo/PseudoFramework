@@ -6,7 +6,7 @@ using Pseudo;
 namespace Pseudo.Internal
 {
 	[System.Serializable]
-	public class PJoystickInput
+	public class JoystickInput
 	{
 		readonly string joystickName;
 		public string JoystickName
@@ -35,7 +35,7 @@ namespace Pseudo.Internal
 			}
 		}
 
-		public PJoystickInput(string joystickName, Joysticks joystick, string inputName)
+		public JoystickInput(string joystickName, Joysticks joystick, string inputName)
 		{
 			this.joystickName = joystickName;
 			this.joystick = joystick;

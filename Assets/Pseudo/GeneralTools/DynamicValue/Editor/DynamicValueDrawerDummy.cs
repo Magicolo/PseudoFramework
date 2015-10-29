@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PDynamicValueDrawerDummy : ScriptableObject
+public class DynamicValueDrawerDummy : ScriptableObject
 {
 	public int Int = 0;
 	public float Float = 0f;

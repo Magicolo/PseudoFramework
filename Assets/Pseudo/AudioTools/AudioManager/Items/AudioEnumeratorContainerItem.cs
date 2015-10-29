@@ -7,11 +7,11 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioEnumeratorContainerItem : AudioContainerItem, ICopyable<AudioEnumeratorContainerItem>
 	{
-		AudioEnumeratorContainerSettings _originalSettings;
-		AudioEnumeratorContainerSettings _settings;
+		AudioEnumeratorContainerSettings originalSettings;
+		AudioEnumeratorContainerSettings settings;
 
 		public override AudioTypes Type { get { return AudioTypes.EnumeratorContainer; } }
-		public override AudioSettingsBase Settings { get { return _settings; } }
+		public override AudioSettingsBase Settings { get { return settings; } }
 
 		public static AudioEnumeratorContainerItem Default = new AudioEnumeratorContainerItem();
 
@@ -19,26 +19,26 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
-			_originalSettings = settings;
-			_settings = Pool<AudioEnumeratorContainerSettings>.Create(settings);
+			originalSettings = settings;
+			this.settings = Pool<AudioEnumeratorContainerSettings>.Create(settings);
 
-			InitializeModifiers(_originalSettings);
+			InitializeModifiers(originalSettings);
 			InitializeSources();
 
-			for (int i = 0; i < _originalSettings.Options.Count; i++)
-				ApplyOption(_originalSettings.Options[i], false);
+			for (int i = 0; i < originalSettings.Options.Count; i++)
+				ApplyOption(originalSettings.Options[i], false);
 		}
 
 		protected override void InitializeSources()
 		{
-			if (_originalSettings.CurrentRepeat >= _originalSettings.Repeats[_originalSettings.CurrentIndex])
+			if (originalSettings.CurrentRepeat >= originalSettings.Repeats[originalSettings.CurrentIndex])
 			{
-				_originalSettings.CurrentIndex = (_originalSettings.CurrentIndex + 1) % _originalSettings.Sources.Count;
-				_originalSettings.CurrentRepeat = 0;
+				originalSettings.CurrentIndex = (originalSettings.CurrentIndex + 1) % originalSettings.Sources.Count;
+				originalSettings.CurrentRepeat = 0;
 			}
 
-			AddSource(_originalSettings.Sources[_originalSettings.CurrentIndex]);
-			_originalSettings.CurrentRepeat++;
+			AddSource(originalSettings.Sources[originalSettings.CurrentIndex]);
+			originalSettings.CurrentRepeat++;
 		}
 
 		protected override void Recycle()
@@ -50,15 +50,15 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			Pool<AudioEnumeratorContainerSettings>.Recycle(ref _settings);
+			Pool<AudioEnumeratorContainerSettings>.Recycle(ref settings);
 		}
 
 		public void Copy(AudioEnumeratorContainerItem reference)
 		{
 			base.Copy(reference);
 
-			_originalSettings = reference._originalSettings;
-			_settings = reference._settings;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
 		}
 	}
 }

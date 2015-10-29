@@ -14,12 +14,12 @@ namespace Pseudo
 			Semitone
 		}
 
-		string _name;
+		string cachedName;
 
 		/// <summary>
 		/// The name of the AudioSettingsBase.
 		/// </summary>
-		public string Name { get { return string.IsNullOrEmpty(_name) ? (_name = name) : _name; } set { _name = value; } }
+		public string Name { get { return string.IsNullOrEmpty(cachedName) ? (cachedName = name) : cachedName; } set { cachedName = value; } }
 		/// <summary>
 		/// The type of the AudioSettingsBase.
 		/// </summary>
@@ -134,7 +134,7 @@ namespace Pseudo
 		/// <param name="reference"> The AudioSettingsBase to copy. </param>
 		public void Copy(AudioSettingsBase reference)
 		{
-			_name = reference._name;
+			cachedName = reference.cachedName;
 			Loop = reference.Loop;
 			FadeIn = reference.FadeIn;
 			FadeInEase = reference.FadeInEase;

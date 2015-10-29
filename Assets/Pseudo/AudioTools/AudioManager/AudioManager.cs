@@ -16,16 +16,15 @@ namespace Pseudo
 	// TODO Add random selection types in AudioRandomContainerSettings
 	// TODO Documentation for everything
 	// TODO Drop zone on ContainerSettingsBase Sources that adds all selected settings
-	// TODO Remove memory allocation when doing WeightedRandom()
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
-	public class PAudio : Singleton<PAudio>
+	public class AudioManager : Singleton<AudioManager>
 	{
 		[SerializeField]
-		AudioSource _reference;
-		AudioItemManager _itemManager = new AudioItemManager();
+		AudioSource reference;
+		AudioItemManager itemManager = new AudioItemManager();
 
-		Dictionary<string, AudioValue<int>> _switchValues = new Dictionary<string, AudioValue<int>>();
+		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
 
 		/// <summary>
 		/// If you use custom curves in the Reference AudioSource, set this to true.
@@ -39,16 +38,16 @@ namespace Pseudo
 		{
 			get
 			{
-				if (_reference == null)
+				if (reference == null)
 					InitializeReference();
 
-				return _reference;
+				return reference;
 			}
 		}
 		/// <summary>
 		/// Used internaly to manager AudioItems
 		/// </summary>
-		public AudioItemManager ItemManager { get { return _itemManager; } }
+		public AudioItemManager ItemManager { get { return itemManager; } }
 
 		protected override void Awake()
 		{
@@ -64,15 +63,15 @@ namespace Pseudo
 
 		void Update()
 		{
-			_itemManager.Update();
+			itemManager.Update();
 		}
 
 		void InitializeReference()
 		{
-			_reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
-			_reference.gameObject.SetActive(false);
-			_reference.playOnAwake = false;
-			_reference.spatialBlend = 1f;
+			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			reference.gameObject.SetActive(false);
+			reference.playOnAwake = false;
+			reference.spatialBlend = 1f;
 		}
 
 		/// <summary>
@@ -82,7 +81,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings)
 		{
-			return _itemManager.CreateItem(settings);
+			return itemManager.CreateItem(settings);
 		}
 
 		/// <summary>
@@ -92,7 +91,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
-			return _itemManager.CreateItem(settings, position);
+			return itemManager.CreateItem(settings, position);
 		}
 
 		/// <summary>
@@ -103,7 +102,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
-			return _itemManager.CreateItem(settings, follow);
+			return itemManager.CreateItem(settings, follow);
 		}
 
 		/// <summary>
@@ -113,7 +112,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
-			return _itemManager.CreateItem(settings, getPosition);
+			return itemManager.CreateItem(settings, getPosition);
 		}
 
 		/// <summary>
@@ -182,13 +181,13 @@ namespace Pseudo
 		{
 			AudioValue<int> value;
 
-			if (!_switchValues.ContainsKey(name))
+			if (!switchValues.ContainsKey(name))
 			{
 				value = Pool<AudioValue<int>>.Create();
-				_switchValues[name] = value;
+				switchValues[name] = value;
 			}
 			else
-				value = _switchValues[name];
+				value = switchValues[name];
 
 			return value;
 		}

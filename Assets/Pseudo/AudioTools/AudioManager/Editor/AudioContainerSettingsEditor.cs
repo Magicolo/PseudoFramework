@@ -11,7 +11,7 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioContainerSettingsEditor : AudioSettingsBaseEditor
 	{
-		protected SerializedProperty _sourceSettingsProperty;
+		protected SerializedProperty sourceSettingsProperty;
 
 		public override void OnInspectorGUI()
 		{
@@ -32,8 +32,8 @@ namespace Pseudo.Internal.Audio
 
 		public virtual void ShowSource(SerializedProperty arrayProperty, int index, SerializedProperty sourceProperty)
 		{
-			_sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
-			AudioSettingsBase settings = _sourceSettingsProperty.GetValue<AudioSettingsBase>();
+			sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
+			AudioSettingsBase settings = sourceSettingsProperty.GetValue<AudioSettingsBase>();
 
 			Foldout(sourceProperty, string.Format("{0}", settings == null ? "null" : settings.Name).ToGUIContent(), CustomEditorStyles.BoldFoldout);
 
@@ -100,7 +100,7 @@ namespace Pseudo.Internal.Audio
 
 		public virtual void OnSettingsDropped(AudioSettingsBase settings)
 		{
-			_sourceSettingsProperty.SetValue(settings);
+			sourceSettingsProperty.SetValue(settings);
 		}
 
 		public override float GetSettingsLength(AudioSettingsBase settings)

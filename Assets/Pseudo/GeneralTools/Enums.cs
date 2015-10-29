@@ -66,8 +66,8 @@ namespace Pseudo
 	public enum ProbabilityDistributions
 	{
 		Uniform,
-		Normal,
-		Proportional
+		Proportional,
+		Normal
 	}
 
 	public enum RaycastHitModes

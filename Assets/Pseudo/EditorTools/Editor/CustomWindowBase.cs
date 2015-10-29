@@ -8,7 +8,7 @@ namespace Pseudo.Internal.Editor
 {
 	public class CustomWindowBase<T> : EditorWindow where T : CustomWindowBase<T>
 	{
-		protected const char _keySeparator = '¦';
+		protected const char keySeparator = '¦';
 
 		public static T Instance;
 
@@ -76,7 +76,7 @@ namespace Pseudo.Internal.Editor
 			if (!keyList.Contains(key))
 			{
 				keyList.Add(key);
-				EditorPrefs.SetString(settingsType.Name + " keys", keyList.Concat(_keySeparator));
+				EditorPrefs.SetString(settingsType.Name + " keys", keyList.Concat(keySeparator));
 			}
 
 			if (value is int)
@@ -96,14 +96,14 @@ namespace Pseudo.Internal.Editor
 
 		protected static string[] GetKeys(System.Type settingsType)
 		{
-			return EditorPrefs.GetString(settingsType.Name + " keys").Split(_keySeparator);
+			return EditorPrefs.GetString(settingsType.Name + " keys").Split(keySeparator);
 		}
 
 		protected static void DeleteKey(string key, System.Type settingsType)
 		{
 			List<string> keyList = new List<string>(GetKeys(settingsType));
 			keyList.Remove(key);
-			EditorPrefs.SetString(settingsType.Name + " keys", keyList.Concat(_keySeparator));
+			EditorPrefs.SetString(settingsType.Name + " keys", keyList.Concat(keySeparator));
 			EditorPrefs.DeleteKey(key);
 		}
 

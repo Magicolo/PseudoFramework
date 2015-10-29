@@ -6,37 +6,9 @@ using Pseudo;
 
 public static class PRandom
 {
-	public static readonly Random RandomGenerator = new Random(Environment.TickCount);
+	public static readonly Random Generator = new Random(Environment.TickCount);
 
-	public static double Range(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
-	{
-		double randomValue = 0d;
-
-		switch (distribution)
-		{
-			default:
-				randomValue = RandomGenerator.NextDouble();
-				return PMath.Clamp(randomValue * (max - min) + min, min, max);
-			case ProbabilityDistributions.Normal:
-				while (true)
-				{
-					double value1 = 2d * RandomGenerator.NextDouble() - 1d;
-					double value2 = 2d * RandomGenerator.NextDouble() - 1d;
-					double w = value1 * value1 + value2 * value2;
-
-					if (w <= 1)
-					{
-						double y = Math.Sqrt(-2d * Math.Log(w) / w) * 0.125d;
-						randomValue = value1 * y + 0.5f;
-						break;
-					}
-				}
-
-				return PMath.Clamp(randomValue * (max - min) + min, min, max);
-			case ProbabilityDistributions.Proportional:
-				return Math.Pow(2f, Range(Math.Log(min, 2d), Math.Log(max, 2d)));
-		}
-	}
+	static List<float> weightSums = new List<float>();
 
 	public static int Range(int min, int max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
@@ -46,6 +18,36 @@ public static class PRandom
 	public static float Range(float min, float max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
 		return (float)Range((double)min, (double)max, distribution);
+	}
+
+	public static double Range(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	{
+		double randomValue = 0d;
+
+		switch (distribution)
+		{
+			default:
+				randomValue = Generator.NextDouble();
+				return PMath.Clamp(randomValue * (max - min) + min, min, max);
+			case ProbabilityDistributions.Proportional:
+				return PMath.Clamp(Math.Pow(2d, Range(Math.Log(min, 2d), Math.Log(max, 2d))), min, max);
+			case ProbabilityDistributions.Normal:
+				while (true)
+				{
+					double value1 = Range(-1d, 1d);
+					double value2 = Range(-1d, 1d);
+					double w = value1 * value1 + value2 * value2;
+
+					if (w != 0d && w <= 1d)
+					{
+						double y = Math.Sqrt(-2d * Math.Log(w) / w) * 0.1d;
+						randomValue = value1 * y + 0.5d;
+						break;
+					}
+				}
+
+				return PMath.Clamp(randomValue * (max - min) + min, min, max);
+		}
 	}
 
 	public static T WeightedRandom<T>(Dictionary<T, float> objectsAndWeights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
@@ -60,24 +62,40 @@ public static class PRandom
 
 	public static T WeightedRandom<T>(IList<T> objects, IList<float> weights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
-		float[] weightSums = new float[weights.Count];
+		weightSums.Clear();
 		float weightSum = 0f;
 		float randomValue = 0f;
 
-		for (int i = 0; i < weightSums.Length; i++)
+		for (int i = 0; i < weights.Count; i++)
 		{
 			weightSum += weights[i];
-			weightSums[i] = weightSum;
+			weightSums.Add(weightSum);
 		}
 
 		randomValue = Range(0f, weightSum, distribution);
 
-		for (int i = 0; i < weightSums.Length; i++)
+		for (int i = 0; i < weights.Count; i++)
 		{
 			if (randomValue < weightSums[i])
 				return objects[i];
 		}
 
 		return default(T);
+	}
+
+	public static UnityEngine.AnimationCurve DistributionToCurve(ProbabilityDistributions distribution, int definition)
+	{
+		UnityEngine.Keyframe[] keys = new UnityEngine.Keyframe[definition];
+
+		for (int i = 0; i < keys.Length; i++)
+			keys[i] = new UnityEngine.Keyframe((float)i / keys.Length, 0f);
+
+		for (int i = 0; i < keys.Length * 100; i++)
+		{
+			int index = (int)Math.Floor((Range(1d, 10d, distribution) - 1d) / 9d * keys.Length);
+			keys[index].value += 1f / definition;
+		}
+
+		return new UnityEngine.AnimationCurve(keys);
 	}
 }

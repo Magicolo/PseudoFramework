@@ -45,15 +45,15 @@ namespace Pseudo
 		}
 
 		[SerializeField]
-		Types _type;
+		Types type;
 		[SerializeField]
-		PDynamicValue _value;
+		DynamicValue value;
 		[SerializeField, Min]
-		float _delay;
+		float delay;
 
-		public Types Type { get { return _type; } }
-		public PDynamicValue Value { get { return _value; } }
-		public float Delay { get { return _delay; } }
+		public Types Type { get { return type; } }
+		public DynamicValue Value { get { return value; } }
+		public float Delay { get { return delay; } }
 
 		public static readonly AudioOption Default = new AudioOption();
 
@@ -233,15 +233,15 @@ namespace Pseudo
 
 		public object GetValue()
 		{
-			PDynamicValue.ValueTypes valueType;
+			DynamicValue.ValueTypes valueType;
 			bool isArray;
 
-			ToValueType(_type, HasCurve(), out valueType, out isArray);
+			ToValueType(type, HasCurve(), out valueType, out isArray);
 
-			if (_value.GetValueType() != valueType || _value.IsArray != isArray)
-				_value.SetValue(GetDefaultValue(_type));
+			if (value.GetValueType() != valueType || value.IsArray != isArray)
+				value.SetValue(GetDefaultValue(type));
 
-			return _value.GetValue();
+			return value.GetValue();
 		}
 
 		public T GetValue<T>()
@@ -251,40 +251,40 @@ namespace Pseudo
 
 		public bool HasCurve()
 		{
-			if (_type == Types.SpatialBlend || _type == Types.ReverbZoneMix || _type == Types.Spread || _type == Types.RolloffMode)
-				return _value.GetValue() is AnimationCurve;
+			if (type == Types.SpatialBlend || type == Types.ReverbZoneMix || type == Types.Spread || type == Types.RolloffMode)
+				return value.GetValue() is AnimationCurve;
 			else
 				return false;
 		}
 
 		public void Initialize(Types type, object value, float delay = 0f)
 		{
-			_type = type;
-			_value = Pool<PDynamicValue>.Create(_value);
-			_value.SetValue(value);
-			_delay = delay;
+			this.type = type;
+			this.value = Pool<DynamicValue>.Create(this.value);
+			this.value.SetValue(value);
+			this.delay = delay;
 		}
 
 		public void OnCreate()
 		{
-			_value = Pool<PDynamicValue>.Create(_value);
+			value = Pool<DynamicValue>.Create(value);
 		}
 
 		public void OnRecycle()
 		{
-			Pool<PDynamicValue>.Recycle(ref _value);
+			Pool<DynamicValue>.Recycle(ref value);
 		}
 
 		public void Copy(AudioOption reference)
 		{
-			_type = reference._type;
-			_value = reference._value;
-			_delay = reference._delay;
+			type = reference.type;
+			value = reference.value;
+			delay = reference.delay;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}, {2})", GetType().Name, _type, _value);
+			return string.Format("{0}({1}, {2})", GetType().Name, type, value);
 		}
 
 		public static object GetDefaultValue(Types type, bool hasCurve = false)
@@ -397,103 +397,103 @@ namespace Pseudo
 			return defaultValue;
 		}
 
-		public static void ToValueType(Types type, bool hasCurve, out PDynamicValue.ValueTypes valueType, out bool isArray)
+		public static void ToValueType(Types type, bool hasCurve, out DynamicValue.ValueTypes valueType, out bool isArray)
 		{
-			valueType = PDynamicValue.ValueTypes.Null;
+			valueType = DynamicValue.ValueTypes.Null;
 			isArray = false;
 
 			switch (type)
 			{
 				case Types.VolumeScale:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.PitchScale:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.RandomVolume:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.RandomPitch:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.FadeIn:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.FadeOut:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					isArray = true;
 					break;
 				case Types.Loop:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Clip:
-					valueType = PDynamicValue.ValueTypes.Object;
+					valueType = DynamicValue.ValueTypes.Object;
 					break;
 				case Types.Output:
-					valueType = PDynamicValue.ValueTypes.Object;
+					valueType = DynamicValue.ValueTypes.Object;
 					break;
 				case Types.DopplerLevel:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.RolloffMode:
-					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Int;
+					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Int;
 					break;
 				case Types.MinDistance:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.MaxDistance:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.Spread:
-					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
 					break;
 				case Types.Mute:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassEffects:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassListenerEffects:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.BypassReverbZones:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Priority:
-					valueType = PDynamicValue.ValueTypes.Int;
+					valueType = DynamicValue.ValueTypes.Int;
 					break;
 				case Types.StereoPan:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.SpatialBlend:
-					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
 					break;
 				case Types.ReverbZoneMix:
-					valueType = hasCurve ? PDynamicValue.ValueTypes.AnimationCurve : PDynamicValue.ValueTypes.Float;
+					valueType = hasCurve ? DynamicValue.ValueTypes.AnimationCurve : DynamicValue.ValueTypes.Float;
 					break;
 				case Types.PlayRange:
-					valueType = PDynamicValue.ValueTypes.Vector2;
+					valueType = DynamicValue.ValueTypes.Vector2;
 					break;
 				case Types.Time:
-					valueType = PDynamicValue.ValueTypes.Float;
+					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.TimeSamples:
-					valueType = PDynamicValue.ValueTypes.Int;
+					valueType = DynamicValue.ValueTypes.Int;
 					break;
 				case Types.VelocityUpdateMode:
-					valueType = PDynamicValue.ValueTypes.Int;
+					valueType = DynamicValue.ValueTypes.Int;
 					break;
 				case Types.IgnoreListenerPause:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.IgnoreListenerVolume:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 				case Types.Spatialize:
-					valueType = PDynamicValue.ValueTypes.Bool;
+					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 			}
 		}

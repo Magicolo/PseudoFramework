@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Pseudo
 {
 	[Serializable]
-	public class PDynamicValue : IPoolable, ICopyable<PDynamicValue>
+	public class DynamicValue : IPoolable, ICopyable<DynamicValue>
 	{
 		public enum ValueTypes
 		{
@@ -48,7 +48,7 @@ namespace Pseudo
 		static readonly BinaryReader reader = new BinaryReader(stream);
 		static readonly BinaryWriter writer = new BinaryWriter(stream);
 
-		public static readonly PDynamicValue Default = new PDynamicValue();
+		public static readonly DynamicValue Default = new DynamicValue();
 
 		public T GetValue<T>()
 		{
@@ -147,7 +147,7 @@ namespace Pseudo
 		{
 		}
 
-		public void Copy(PDynamicValue reference)
+		public void Copy(DynamicValue reference)
 		{
 			valueCached = reference.valueCached;
 			value = reference.value;

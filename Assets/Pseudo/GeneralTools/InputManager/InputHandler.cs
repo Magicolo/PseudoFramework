@@ -36,7 +36,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			KeyboardButton button = KeyboardButtons[i];
 
-			if (button.Name == name && button.IsDown())
+			if (button.Name == name && button.GetKeyDown())
 				return true;
 		}
 
@@ -44,7 +44,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			JoystickButton button = JoystickButtons[i];
 
-			if (button.Name == name && button.IsDown())
+			if (button.Name == name && button.GetKeyDown())
 				return true;
 		}
 
@@ -57,7 +57,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			KeyboardButton button = KeyboardButtons[i];
 
-			if (button.Name == name && button.IsUp())
+			if (button.Name == name && button.GetKeyUp())
 				return true;
 		}
 
@@ -65,7 +65,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			JoystickButton button = JoystickButtons[i];
 
-			if (button.Name == name && button.IsUp())
+			if (button.Name == name && button.GetKeyUp())
 				return true;
 		}
 
@@ -78,7 +78,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			KeyboardButton button = KeyboardButtons[i];
 
-			if (button.Name == name && button.IsPressed())
+			if (button.Name == name && button.GetKey())
 				return true;
 		}
 
@@ -86,7 +86,7 @@ public class InputHandler : PMonoBehaviour
 		{
 			JoystickButton button = JoystickButtons[i];
 
-			if (button.Name == name && button.IsPressed())
+			if (button.Name == name && button.GetKey())
 				return true;
 		}
 

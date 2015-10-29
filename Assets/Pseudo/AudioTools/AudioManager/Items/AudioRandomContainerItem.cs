@@ -7,11 +7,11 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioRandomContainerItem : AudioContainerItem, ICopyable<AudioRandomContainerItem>
 	{
-		AudioRandomContainerSettings _originalSettings;
-		AudioRandomContainerSettings _settings;
+		AudioRandomContainerSettings originalSettings;
+		AudioRandomContainerSettings settings;
 
 		public override AudioTypes Type { get { return AudioTypes.RandomContainer; } }
-		public override AudioSettingsBase Settings { get { return _settings; } }
+		public override AudioSettingsBase Settings { get { return settings; } }
 
 		public static AudioRandomContainerItem Default = new AudioRandomContainerItem();
 
@@ -19,19 +19,19 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
-			_originalSettings = settings;
-			_settings = Pool<AudioRandomContainerSettings>.Create(settings);
+			originalSettings = settings;
+			this.settings = Pool<AudioRandomContainerSettings>.Create(settings);
 
-			InitializeModifiers(_originalSettings);
+			InitializeModifiers(originalSettings);
 			InitializeSources();
 
-			for (int i = 0; i < _originalSettings.Options.Count; i++)
-				ApplyOption(_originalSettings.Options[i], false);
+			for (int i = 0; i < originalSettings.Options.Count; i++)
+				ApplyOption(originalSettings.Options[i], false);
 		}
 
 		protected override void InitializeSources()
 		{
-			AddSource(PRandom.WeightedRandom(_originalSettings.Sources, _originalSettings.Weights));
+			AddSource(PRandom.WeightedRandom(originalSettings.Sources, originalSettings.Weights));
 		}
 
 		protected override void Recycle()
@@ -43,15 +43,15 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			Pool<AudioRandomContainerSettings>.Recycle(ref _settings);
+			Pool<AudioRandomContainerSettings>.Recycle(ref settings);
 		}
 
 		public void Copy(AudioRandomContainerItem reference)
 		{
 			base.Copy(reference);
 
-			_originalSettings = reference._originalSettings;
-			_settings = reference._settings;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
 		}
 	}
 }

@@ -9,43 +9,42 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/General/Combo System")]
 	public class ComboSystem : PMonoBehaviour
 	{
-
 		[SerializeField]
-		ComboSequenceManager _comboManager;
+		ComboSequenceManager comboManager;
 		/// <summary>
 		/// Used internally. You should not use this.
 		/// </summary>
-		public ComboSequenceManager comboManager
+		public ComboSequenceManager ComboManager
 		{
 			get
 			{
-				return _comboManager;
+				return comboManager;
 			}
 		}
 
 		[SerializeField]
-		ComboInputManager _inputManager;
+		ComboInputManager inputManager;
 		/// <summary>
 		/// Used internally. You should not use this.
 		/// </summary>
-		public ComboInputManager inputManager
+		public ComboInputManager InputManager
 		{
 			get
 			{
-				return _inputManager;
+				return inputManager;
 			}
 		}
 
 		[SerializeField]
-		ComboMessenger _messenger;
+		ComboMessenger messenger;
 		/// <summary>
 		/// Used internally. You should not use this.
 		/// </summary>
-		public ComboMessenger messenger
+		public ComboMessenger Messenger
 		{
 			get
 			{
-				return _messenger;
+				return messenger;
 			}
 		}
 
@@ -53,7 +52,7 @@ namespace Pseudo
 		{
 			get
 			{
-				return inputManager.comboStarted;
+				return InputManager.comboStarted;
 			}
 		}
 
@@ -70,23 +69,23 @@ namespace Pseudo
 
 		void InitializeManagers()
 		{
-			_comboManager = _comboManager ?? new ComboSequenceManager(this);
-			_comboManager.Initialize(this);
+			comboManager = comboManager ?? new ComboSequenceManager(this);
+			comboManager.Initialize(this);
 		}
 
 		void InitializeRuntime()
 		{
-			_inputManager = new ComboInputManager(this);
-			_inputManager.Initialize(this);
-			_messenger = new ComboMessenger(this);
-			_messenger.Initialize(this);
+			inputManager = new ComboInputManager(this);
+			inputManager.Initialize(this);
+			messenger = new ComboMessenger(this);
+			messenger.Initialize(this);
 		}
 
 		void StartAll()
 		{
-			comboManager.Start();
-			inputManager.Start();
-			messenger.Start();
+			ComboManager.Start();
+			InputManager.Start();
+			Messenger.Start();
 		}
 
 		void Awake()
@@ -98,113 +97,113 @@ namespace Pseudo
 		{
 			if (Application.isPlaying)
 			{
-				inputManager.Update();
+				InputManager.Update();
 			}
 		}
 
 		public void Input(int input)
 		{
-			inputManager.Input(input);
+			InputManager.Input(input);
 		}
 
 		public void Input(System.Enum input)
 		{
-			inputManager.Input(input);
+			InputManager.Input(input);
 		}
 
 		public void ResetCombo()
 		{
-			inputManager.ResetCombo();
+			InputManager.ResetCombo();
 		}
 
 		public void AddListener(IComboListener listener)
 		{
-			messenger.AddListener(listener);
+			Messenger.AddListener(listener);
 		}
 
 		public void RemoveListener(IComboListener listener)
 		{
-			messenger.RemoveListener(listener);
+			Messenger.RemoveListener(listener);
 		}
 
 		public int[] GetComboInput(string comboName)
 		{
-			return comboManager.GetComboInput(comboName);
+			return ComboManager.GetComboInput(comboName);
 		}
 
 		public T[] GetComboInput<T>(string comboName)
 		{
-			return comboManager.GetComboInput<T>(comboName);
+			return ComboManager.GetComboInput<T>(comboName);
 		}
 
 		public int[] GetCurrentInput()
 		{
-			return inputManager.GetCurrentInput();
+			return InputManager.GetCurrentInput();
 		}
 
 		public T[] GetCurrentInput<T>()
 		{
-			return inputManager.GetCurrentInput<T>();
+			return InputManager.GetCurrentInput<T>();
 		}
 
 		public int[] GetValidInput()
 		{
-			return inputManager.GetValidInput();
+			return InputManager.GetValidInput();
 		}
 
 		public T[] GetValidInput<T>()
 		{
-			return inputManager.GetValidInput<T>();
+			return InputManager.GetValidInput<T>();
 		}
 
 		public string[] GetAllCombos()
 		{
-			return comboManager.GetCombos().ToStringArray();
+			return ComboManager.GetCombos().ToStringArray();
 		}
 
 		public string[] GetValidCombos()
 		{
-			return inputManager.GetValidCombos().ToStringArray();
+			return InputManager.GetValidCombos().ToStringArray();
 		}
 
 		public string[] GetLockedCombos()
 		{
-			return comboManager.GetLockedCombos().ToStringArray();
+			return ComboManager.GetLockedCombos().ToStringArray();
 		}
 
 		public string[] GetUnlockedCombos()
 		{
-			return comboManager.GetUnlockedCombos().ToStringArray();
+			return ComboManager.GetUnlockedCombos().ToStringArray();
 		}
 
 		public string GetLastSuccessfulCombo()
 		{
-			return inputManager.lastSuccessfulCombo == null ? "" : inputManager.lastSuccessfulCombo.Name;
+			return InputManager.lastSuccessfulCombo == null ? "" : InputManager.lastSuccessfulCombo.Name;
 		}
 
 		public void SetComboLocked(string comboName, bool locked)
 		{
-			comboManager.SetComboLocked(comboName, locked);
+			ComboManager.SetComboLocked(comboName, locked);
 		}
 
 		public void SetComboTimeConstraints(string comboName, bool enable, float minDelay, float maxDelay)
 		{
-			comboManager.SetComboTimeConstraints(comboName, enable, minDelay, maxDelay);
+			ComboManager.SetComboTimeConstraints(comboName, enable, minDelay, maxDelay);
 		}
 
 		public void SetComboTimeConstraints(string comboName, bool enable)
 		{
-			comboManager.SetComboTimeConstraints(comboName, enable);
+			ComboManager.SetComboTimeConstraints(comboName, enable);
 		}
 
 		public void SetComboTimeConstraints(string comboName, int inputIndex, bool enable, float minDelay, float maxDelay)
 		{
-			comboManager.SetComboTimeConstraints(comboName, inputIndex, enable, minDelay, maxDelay);
+			ComboManager.SetComboTimeConstraints(comboName, inputIndex, enable, minDelay, maxDelay);
 		}
 
 		public void SetComboTimeConstraints(string comboName, int inputIndex, bool enable)
 		{
-			comboManager.SetComboTimeConstraints(comboName, inputIndex, enable);
+			ComboManager.SetComboTimeConstraints(comboName, inputIndex, enable);
 		}
 	}
 }

@@ -23,17 +23,17 @@ namespace Pseudo.Internal
 			this.key = key;
 		}
 
-		public bool IsDown()
+		public bool GetKeyDown()
 		{
 			return Input.GetKeyDown(key);
 		}
 
-		public bool IsUp()
+		public bool GetKeyUp()
 		{
 			return Input.GetKeyUp(key);
 		}
 
-		public bool IsPressed()
+		public bool GetKey()
 		{
 			return Input.GetKey(key);
 		}

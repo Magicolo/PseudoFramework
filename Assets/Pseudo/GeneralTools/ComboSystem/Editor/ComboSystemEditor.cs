@@ -11,7 +11,6 @@ namespace Pseudo.Internal
 	[CustomEditor(typeof(ComboSystem)), CanEditMultipleObjects]
 	public class ComboSystemEditor : CustomEditorBase
 	{
-
 		ComboSystem comboSystem;
 		ComboSequenceManager comboManager;
 		SerializedProperty comboManagerProperty;
@@ -47,8 +46,8 @@ namespace Pseudo.Internal
 
 		public override void OnInspectorGUI()
 		{
-			comboManager = comboSystem.comboManager;
-			comboManagerProperty = serializedObject.FindProperty("_comboManager");
+			comboManager = comboSystem.ComboManager;
+			comboManagerProperty = serializedObject.FindProperty("comboManager");
 
 			Begin();
 
@@ -284,11 +283,11 @@ namespace Pseudo.Internal
 				{
 					textColor *= 0.75F;
 				}
-				else if (comboSystem.inputManager.comboStarted)
+				else if (comboSystem.InputManager.comboStarted)
 				{
-					textColor = comboSystem.inputManager.validCombos.Contains(currentSequence) ? new Color(0, 1, 0, 10) : new Color(1, 0, 0, 10);
+					textColor = comboSystem.InputManager.validCombos.Contains(currentSequence) ? new Color(0, 1, 0, 10) : new Color(1, 0, 0, 10);
 				}
-				else if (comboSystem.inputManager.lastSuccessfulCombo == currentSequence)
+				else if (comboSystem.InputManager.lastSuccessfulCombo == currentSequence)
 				{
 					textColor = new Color(1, 1, 0, 10);
 				}

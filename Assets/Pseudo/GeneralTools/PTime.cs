@@ -4,82 +4,85 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-public class PTime : Singleton<PTime>
+namespace Pseudo
 {
-	public class TimeChannel
+	public class PTime : Singleton<PTime>
 	{
-		public float Time;
-		public float DeltaTime;
-		public float FixedDeltaTime;
-		public float TimeScale = 1f;
-
-		TimeChannels _channel;
-		public TimeChannels Channel { get { return _channel; } }
-
-		public TimeChannel(TimeChannels channel)
+		public class TimeChannel
 		{
-			_channel = channel;
+			public float Time;
+			public float DeltaTime;
+			public float FixedDeltaTime;
+			public float TimeScale = 1f;
+
+			TimeChannels channel;
+			public TimeChannels Channel { get { return channel; } }
+
+			public TimeChannel(TimeChannels channel)
+			{
+				this.channel = channel;
+			}
 		}
-	}
 
-	public enum TimeChannels
-	{
-		Unity,
-		UI,
-		World,
-		Player,
-		Enemy,
-		Count
-	}
-
-	readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
-	public readonly static TimeChannel UI = new TimeChannel(TimeChannels.UI);
-	public readonly static TimeChannel World = new TimeChannel(TimeChannels.World);
-	public readonly static TimeChannel Player = new TimeChannel(TimeChannels.Player);
-	public readonly static TimeChannel Enemy = new TimeChannel(TimeChannels.Enemy);
-	readonly static List<TimeChannel> _channels = new List<TimeChannel>() { Unity, UI, World, Player, Enemy };
-
-	void Update()
-	{
-		for (int i = 0; i < _channels.Count; i++)
+		public enum TimeChannels
 		{
-			TimeChannel timeChannel = _channels[i];
-			timeChannel.DeltaTime = Time.deltaTime * timeChannel.TimeScale;
-			timeChannel.Time += timeChannel.DeltaTime;
+			Unity,
+			UI,
+			World,
+			Player,
+			Enemy,
+			Count
 		}
-	}
 
-	void FixedUpdate()
-	{
-		for (int i = 0; i < _channels.Count; i++)
+		readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
+		public readonly static TimeChannel UI = new TimeChannel(TimeChannels.UI);
+		public readonly static TimeChannel World = new TimeChannel(TimeChannels.World);
+		public readonly static TimeChannel Player = new TimeChannel(TimeChannels.Player);
+		public readonly static TimeChannel Enemy = new TimeChannel(TimeChannels.Enemy);
+		readonly static List<TimeChannel> channels = new List<TimeChannel> { Unity, UI, World, Player, Enemy };
+
+		void Update()
 		{
-			TimeChannel timeChannel = _channels[i];
-			timeChannel.FixedDeltaTime = Time.fixedDeltaTime * timeChannel.TimeScale;
+			for (int i = 0; i < channels.Count; i++)
+			{
+				TimeChannel timeChannel = channels[i];
+				timeChannel.DeltaTime = Time.deltaTime * timeChannel.TimeScale;
+				timeChannel.Time += timeChannel.DeltaTime;
+			}
 		}
-	}
 
-	public static float GetDeltaTime(TimeChannels channel)
-	{
-		return _channels[(int)channel].DeltaTime;
-	}
+		void FixedUpdate()
+		{
+			for (int i = 0; i < channels.Count; i++)
+			{
+				TimeChannel timeChannel = channels[i];
+				timeChannel.FixedDeltaTime = Time.fixedDeltaTime * timeChannel.TimeScale;
+			}
+		}
 
-	public static float GetFixedDeltaTime(TimeChannels channel)
-	{
-		return _channels[(int)channel].FixedDeltaTime;
-	}
+		public static float GetDeltaTime(TimeChannels channel)
+		{
+			return channels[(int)channel].DeltaTime;
+		}
 
-	public static float GetTime(TimeChannels channel)
-	{
-		return _channels[(int)channel].Time;
-	}
+		public static float GetFixedDeltaTime(TimeChannels channel)
+		{
+			return channels[(int)channel].FixedDeltaTime;
+		}
 
-	public static float GetTimeScale(TimeChannels channel)
-	{
-		return _channels[(int)channel].TimeScale;
-	}
+		public static float GetTime(TimeChannels channel)
+		{
+			return channels[(int)channel].Time;
+		}
 
-	public static void SetTimeScale(TimeChannels channel, float timeScale)
-	{
-		_channels[(int)channel].TimeScale = timeScale;
+		public static float GetTimeScale(TimeChannels channel)
+		{
+			return channels[(int)channel].TimeScale;
+		}
+
+		public static void SetTimeScale(TimeChannels channel, float timeScale)
+		{
+			channels[(int)channel].TimeScale = timeScale;
+		}
 	}
 }

@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal {
-	public class StateMachineTriggerExit2DCaller : StateMachineCaller {
+namespace Pseudo.Internal
+{
+	public class StateMachineTriggerExit2DCaller : StateMachineCaller
+	{
 
-		void OnTriggerExit2D(Collider2D collision) {
-			if (machine.IsActive) {
+		void OnTriggerExit2D(Collider2D collision)
+		{
+			if (machine.IsActive)
+			{
 				machine.TriggerExit2D(collision);
 			}
 		}

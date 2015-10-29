@@ -12,13 +12,13 @@ namespace Pseudo.Internal.Audio
 	[CustomEditor(typeof(AudioRandomContainerSettings)), CanEditMultipleObjects]
 	public class AudioRandomContainerSettingsEditor : AudioContainerSettingsEditor
 	{
-		SerializedProperty _weigthsProperty;
+		SerializedProperty weigthsProperty;
 
 		public override void OnInspectorGUI()
 		{
 			Begin(false);
 
-			_weigthsProperty = serializedObject.FindProperty("Weights");
+			weigthsProperty = serializedObject.FindProperty("Weights");
 
 			base.OnInspectorGUI();
 
@@ -29,14 +29,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.ShowSource(arrayProperty, index, sourceProperty);
 
-			_weigthsProperty.arraySize = arrayProperty.arraySize;
+			weigthsProperty.arraySize = arrayProperty.arraySize;
 
 			if (sourceProperty.isExpanded)
 			{
 				EditorGUI.indentLevel++;
 
-				EditorGUILayout.PropertyField(_sourceSettingsProperty);
-				EditorGUILayout.PropertyField(_weigthsProperty.GetArrayElementAtIndex(index), "Weight".ToGUIContent());
+				EditorGUILayout.PropertyField(sourceSettingsProperty);
+				EditorGUILayout.PropertyField(weigthsProperty.GetArrayElementAtIndex(index), "Weight".ToGUIContent());
 				ArrayFoldout(sourceProperty.FindPropertyRelative("Options"), disableOnPlay: false);
 
 				EditorGUI.indentLevel--;
@@ -47,14 +47,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnSourceDeleted(arrayProperty, index);
 
-			DeleteFromArray(_weigthsProperty, index);
+			DeleteFromArray(weigthsProperty, index);
 		}
 
 		public override void OnSourceReordered(SerializedProperty arrayProperty, int sourceIndex, int targetIndex)
 		{
 			base.OnSourceReordered(arrayProperty, sourceIndex, targetIndex);
 
-			ReorderArray(_weigthsProperty, sourceIndex, targetIndex);
+			ReorderArray(weigthsProperty, sourceIndex, targetIndex);
 		}
 	}
 }

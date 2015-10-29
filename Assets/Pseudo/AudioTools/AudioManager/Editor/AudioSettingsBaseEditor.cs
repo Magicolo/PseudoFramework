@@ -11,20 +11,20 @@ namespace Pseudo.Internal.Audio
 {
 	public abstract class AudioSettingsBaseEditor : CustomEditorBase
 	{
-		AudioSettingsBase _settings;
+		AudioSettingsBase settings;
 
 		public override void OnEnable()
 		{
 			base.OnEnable();
 
-			_settings = (AudioSettingsBase)target;
+			settings = (AudioSettingsBase)target;
 		}
 
 		public void ShowType()
 		{
 			GUIStyle style = new GUIStyle("boldLabel");
 			style.alignment = TextAnchor.MiddleCenter;
-			EditorGUILayout.LabelField(_settings.Type.ToString().ToUpper(), style);
+			EditorGUILayout.LabelField(settings.Type.ToString().ToUpper(), style);
 		}
 
 		public void ShowGeneral()
@@ -127,7 +127,7 @@ namespace Pseudo.Internal.Audio
 			if (EditorGUI.EndChangeCheck())
 			{
 				serializedObject.ApplyModifiedProperties();
-				fadeOutProperty.Clamp(0f, GetSettingsLength(_settings) - fadeInProperty.GetValue<float>());
+				fadeOutProperty.Clamp(0f, GetSettingsLength(settings) - fadeInProperty.GetValue<float>());
 			}
 
 			ShowFadeEase(fadeInEaseProperty);
@@ -142,7 +142,7 @@ namespace Pseudo.Internal.Audio
 			if (EditorGUI.EndChangeCheck())
 			{
 				serializedObject.ApplyModifiedProperties();
-				fadeInProperty.Clamp(0f, GetSettingsLength(_settings) - fadeOutProperty.GetValue<float>());
+				fadeInProperty.Clamp(0f, GetSettingsLength(settings) - fadeOutProperty.GetValue<float>());
 			}
 
 			ShowFadeEase(fadeOutEaseProperty);
