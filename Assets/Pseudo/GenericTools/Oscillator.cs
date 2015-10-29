@@ -34,6 +34,7 @@ namespace Pseudo
 			Amplitude = reference.Amplitude;
 			Center = reference.Center;
 			Offset = reference.Offset;
+			TimeChannel = reference.TimeChannel;
 		}
 	}
 }

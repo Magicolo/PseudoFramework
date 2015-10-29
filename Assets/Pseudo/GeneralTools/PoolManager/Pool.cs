@@ -8,28 +8,18 @@ namespace Pseudo
 {
 	public class Pool : PMonoBehaviour
 	{
-		public event System.Action<Object> OnCreate;
-		public event System.Action<Object> OnRecycle;
-
 		[SerializeField]
 		Object prefab;
 		[SerializeField, Min]
 		int startCount;
-
 		bool isPoolable;
 		bool isCopyable;
-		bool isGameObject;
-		bool isComponent;
-
-		public Object Prefab { get { return prefab; } }
-		public int StartCount { get { return startCount; } }
-		public bool IsPoolable { get { return isPoolable; } }
-		public bool IsCopyable { get { return isCopyable; } }
-		public bool IsGameObject { get { return isGameObject; } }
-		public bool IsComponent { get { return isComponent; } }
 
 		readonly Queue<Object> pool = new Queue<Object>(4);
 		readonly Queue<int> timeStamps = new Queue<int>(4);
+
+		public Object Prefab { get { return prefab; } }
+		public int StartCount { get { return startCount; } }
 
 		void Awake()
 		{
@@ -45,8 +35,6 @@ namespace Pseudo
 			this.startCount = startCount;
 			isPoolable = prefab is IPoolable;
 			isCopyable = typeof(ICopyable<>).MakeGenericType(prefab.GetType()).IsAssignableFrom(prefab.GetType());
-			isGameObject = prefab is GameObject;
-			isComponent = prefab is Component;
 
 			for (int i = 0; i < startCount; i++)
 				Recycle(GetItem());
@@ -56,19 +44,17 @@ namespace Pseudo
 		{
 			T item = (T)GetItem();
 
-			if (IsCopyable)
-				((ICopyable<T>)item).Copy((T)Prefab);
+			if (isCopyable)
+				((ICopyable<T>)item).Copy((T)prefab);
 
 
-			GameObject itemGameObject = GetItemGameObject(item);
+			GameObject itemGameObject = PoolManager.GetGameObject(item);
 			itemGameObject.SetActive(true);
 			itemGameObject.transform.parent = parent == null ? CachedTransform : parent;
 			itemGameObject.transform.position = position;
 
-			if (IsPoolable)
+			if (isPoolable)
 				((IPoolable)item).OnCreate();
-
-			RaiseOnCreateEvent(item);
 
 			return item;
 		}
@@ -78,14 +64,13 @@ namespace Pseudo
 			if (item == null)
 				return;
 
-			GameObject itemGameObject = GetItemGameObject(item);
+			GameObject itemGameObject = PoolManager.GetGameObject(item);
 			itemGameObject.SetActive(false);
 			itemGameObject.transform.parent = transform;
 
-			if (IsPoolable)
+			if (isPoolable)
 				((IPoolable)item).OnRecycle();
 
-			RaiseOnRecycleEvent(item);
 			pool.Enqueue(item);
 			timeStamps.Enqueue(Time.frameCount);
 		}
@@ -102,8 +87,9 @@ namespace Pseudo
 
 		public void Clear()
 		{
-			CachedTransform.DestroyChildren();
-			pool.Clear();
+			while (pool.Count > 0)
+				pool.Dequeue().Destroy();
+
 			timeStamps.Clear();
 		}
 
@@ -120,30 +106,6 @@ namespace Pseudo
 			}
 
 			return item;
-		}
-
-		GameObject GetItemGameObject(Object item)
-		{
-			GameObject itemGameObject = null;
-
-			if (IsGameObject)
-				itemGameObject = item as GameObject;
-			else if (IsComponent)
-				itemGameObject = (item as Component).gameObject;
-
-			return itemGameObject;
-		}
-
-		void RaiseOnCreateEvent(Object item)
-		{
-			if (OnCreate != null)
-				OnCreate(item);
-		}
-
-		void RaiseOnRecycleEvent(Object item)
-		{
-			if (OnRecycle != null)
-				OnRecycle(item);
 		}
 	}
 }

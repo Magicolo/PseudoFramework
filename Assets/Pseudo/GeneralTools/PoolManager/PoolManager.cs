@@ -9,11 +9,9 @@ namespace Pseudo
 	public class PoolManager : Singleton<PoolManager>
 	{
 		public Pool[] Pools = new Pool[0];
-		public event System.Action<Object> OnCreate;
-		public event System.Action<Object> OnRecycle;
 
-		readonly Dictionary<Object, Pool> pools = new Dictionary<Object, Pool>();
-		readonly Dictionary<Object, Object> instancePrefabs = new Dictionary<Object, Object>();
+		readonly Dictionary<GameObject, Pool> pools = new Dictionary<GameObject, Pool>();
+		readonly Dictionary<Object, Pool> instancePool = new Dictionary<Object, Pool>();
 
 		protected override void Awake()
 		{
@@ -23,15 +21,15 @@ namespace Pseudo
 			{
 				Pool pool = Instantiate(Pools[i]);
 				pool.CachedTransform.parent = CachedTransform;
-				pools[pool.Prefab] = pool;
+				pools[GetGameObject(pool.Prefab)] = pool;
 			}
 		}
 
 		public T Create<T>(T prefab, Vector3 position = default(Vector3), Transform parent = null) where T : Object
 		{
-			T item = GetPool(prefab).Create<T>(position, parent);
-			instancePrefabs[item] = prefab;
-			RaiseOnCreateEvent(item);
+			Pool pool = GetPool(prefab);
+			T item = pool.Create<T>(position, parent);
+			instancePool[item] = pool;
 
 			return item;
 		}
@@ -41,13 +39,12 @@ namespace Pseudo
 			if (item == null)
 				return;
 
-			Object prefab;
+			Pool pool;
 
-			if (!instancePrefabs.TryGetValue(item, out prefab))
+			if (!instancePool.TryGetValue(item, out pool))
 				return;
 
-			GetPool(prefab).Recycle(item);
-			RaiseOnRecycleEvent(item);
+			pool.Recycle(item);
 		}
 
 		public void Recycle<T>(ref T item) where T : Object
@@ -60,28 +57,27 @@ namespace Pseudo
 		public Pool GetPool(Object prefab)
 		{
 			Pool pool;
+			GameObject prefabGameObject = GetGameObject(prefab);
 
-			if (!pools.TryGetValue(prefab, out pool))
+			if (!pools.TryGetValue(prefabGameObject, out pool))
 			{
 				GameObject poolGameObject = CachedGameObject.AddChild(prefab.name);
 				pool = poolGameObject.AddComponent<Pool>();
 				pool.Initialize(prefab, 0);
-				pools[prefab] = pool;
+				pools[prefabGameObject] = pool;
 			}
 
 			return pool;
 		}
 
-		void RaiseOnCreateEvent(Object item)
+		public static GameObject GetGameObject(Object item)
 		{
-			if (OnCreate != null)
-				OnCreate(item);
-		}
+			GameObject itemGameObject = item as GameObject;
 
-		void RaiseOnRecycleEvent(Object item)
-		{
-			if (OnRecycle != null)
-				OnRecycle(item);
+			if (itemGameObject == null)
+				itemGameObject = (item as Component).gameObject;
+
+			return itemGameObject;
 		}
 	}
 }

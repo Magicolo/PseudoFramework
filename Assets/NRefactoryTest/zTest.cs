@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -28,6 +28,14 @@ public class zTest : PMonoBehaviour, ICopyable<zTest>
 
 	public void Copy(zTest reference)
 	{
-		throw new NotImplementedException();
+		AttackSpeed = reference.AttackSpeed;
+		CopyUtility.CopyTo(reference.AttackSpeeds, ref AttackSpeeds);
+		RaySettings = reference.RaySettings;
+		RaySettings2D = reference.RaySettings2D;
+		Curve1 = reference.Curve1;
+		Curve2 = reference.Curve2;
+		Curve3 = reference.Curve3;
+		CopyUtility.CopyTo(reference.SomeEffects, ref SomeEffects);
+		test = reference.test;
 	}
 }
