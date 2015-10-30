@@ -14,75 +14,77 @@ namespace Pseudo
 			UI,
 			World,
 			Player,
-			Enemy,
-			Count
+			Enemy
 		}
 
 		public class TimeChannel
 		{
-			public float Time;
-			public float DeltaTime;
-			public float FixedDeltaTime;
-			public float TimeScale = 1f;
+			public TimeChannels Channel { get { return channel; } }
+			public float Time { get { return time; } }
+			public float TimeScale { get { return timeScale; } set { timeScale = value; } }
+			public float DeltaTime { get { return deltaTime; } }
+			public float FixedDeltaTime { get { return fixedDeltaTime; } }
 
 			TimeChannels channel;
-			public TimeChannels Channel { get { return channel; } }
+			float time;
+			float timeScale = 1f;
+			float deltaTime;
+			float fixedDeltaTime;
 
 			public TimeChannel(TimeChannels channel)
 			{
 				this.channel = channel;
 			}
+
+			public void Update()
+			{
+				deltaTime = UnityEngine.Time.deltaTime * timeScale;
+				fixedDeltaTime = UnityEngine.Time.fixedDeltaTime * timeScale;
+				time += fixedDeltaTime;
+			}
 		}
 
-		protected readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
+		public readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
 		public readonly static TimeChannel UI = new TimeChannel(TimeChannels.UI);
 		public readonly static TimeChannel World = new TimeChannel(TimeChannels.World);
 		public readonly static TimeChannel Player = new TimeChannel(TimeChannels.Player);
 		public readonly static TimeChannel Enemy = new TimeChannel(TimeChannels.Enemy);
 		protected readonly static List<TimeChannel> channels = new List<TimeChannel> { Unity, UI, World, Player, Enemy };
 
-		protected virtual void Update()
-		{
-			for (int i = 0; i < channels.Count; i++)
-			{
-				TimeChannel timeChannel = channels[i];
-				timeChannel.DeltaTime = Time.deltaTime * timeChannel.TimeScale;
-				timeChannel.Time += timeChannel.DeltaTime;
-			}
-		}
-
 		protected virtual void FixedUpdate()
 		{
 			for (int i = 0; i < channels.Count; i++)
-			{
-				TimeChannel timeChannel = channels[i];
-				timeChannel.FixedDeltaTime = Time.fixedDeltaTime * timeChannel.TimeScale;
-			}
+				channels[i].Update();
 		}
 
-		public static float GetDeltaTime(TimeChannels channel)
+		public static TimeChannel GetChannel(TimeChannels channel)
 		{
-			return channels[(int)channel].DeltaTime;
-		}
-
-		public static float GetFixedDeltaTime(TimeChannels channel)
-		{
-			return channels[(int)channel].FixedDeltaTime;
+			return channels[(int)channel];
 		}
 
 		public static float GetTime(TimeChannels channel)
 		{
-			return channels[(int)channel].Time;
+			return GetChannel(channel).Time;
 		}
 
 		public static float GetTimeScale(TimeChannels channel)
 		{
-			return channels[(int)channel].TimeScale;
+			return GetChannel(channel).TimeScale;
+		}
+
+		public static float GetDeltaTime(TimeChannels channel)
+		{
+			return GetChannel(channel).DeltaTime;
+		}
+
+		public static float GetFixedDeltaTime(TimeChannels channel)
+		{
+			return GetChannel(channel).FixedDeltaTime;
 		}
 
 		public static void SetTimeScale(TimeChannels channel, float timeScale)
 		{
-			channels[(int)channel].TimeScale = timeScale;
+			GetChannel(channel).TimeScale = timeScale;
 		}
 	}
 }

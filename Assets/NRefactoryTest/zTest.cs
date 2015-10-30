@@ -7,6 +7,15 @@ using Pseudo;
 
 public class zTest : PMonoBehaviour, ICopyable<zTest>
 {
+	public Vector2 cartesian2D;
+	[Polar]
+	public Vector2 polar2D;
+
+	public Vector3 cartesian3D;
+	[PropertyField(typeof(PolarAttribute))]
+	public Vector3 polar3D;
+	Vector3 Polar3D { get { return polar3D; } set { polar3D = value; cartesian3D = value; } }
+
 	public MinMax AttackSpeed;
 	public MinMax[] AttackSpeeds;
 
@@ -37,5 +46,10 @@ public class zTest : PMonoBehaviour, ICopyable<zTest>
 		Curve3 = reference.Curve3;
 		CopyUtility.CopyTo(reference.SomeEffects, ref SomeEffects);
 		test = reference.test;
+	}
+
+	void OnDrawGizmos()
+	{
+		Gizmos.DrawLine(CachedTransform.position.SetValues(polar3D.z, Axes.Z), CachedTransform.position + polar3D);
 	}
 }

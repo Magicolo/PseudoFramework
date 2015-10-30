@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal.Physics;
+using System;
 
 namespace Pseudo
 {
@@ -10,16 +11,22 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Gravity2D")]
 	public class Gravity2D : GravityBase
 	{
-		public CachedValue<Rigidbody2D> CachedRigidbody;
+		readonly CachedValue<Rigidbody2D> cachedRigidbody;
+		public Rigidbody2D Rigidbody { get { return cachedRigidbody; } }
 
 		public Gravity2D()
 		{
-			CachedRigidbody = new CachedValue<Rigidbody2D>(CachedGameObject.FindComponent<Rigidbody2D>);
+			cachedRigidbody = new CachedValue<Rigidbody2D>(GetComponent<Rigidbody2D>);
 		}
 
 		void FixedUpdate()
 		{
-			CachedRigidbody.Value.AddForce(Force * CachedRigidbody.Value.mass);
+			cachedRigidbody.Value.velocity += gravity.ToVector2() * TimeManager.GetFixedDeltaTime(TimeChannel);
+		}
+
+		void Reset()
+		{
+			cachedRigidbody.Value.gravityScale = 0f;
 		}
 	}
 }

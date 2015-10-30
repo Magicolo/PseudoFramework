@@ -159,10 +159,11 @@ namespace Pseudo.Internal.Editor
 
 			if (propertyDrawerType != null)
 			{
-				PropertyAttribute propertyAttribute = Activator.CreateInstance(propertyAttributeType, arguments) as PropertyAttribute;
-				PropertyDrawer propertyDrawer = Activator.CreateInstance(propertyDrawerType) as PropertyDrawer;
+				PropertyAttribute propertyAttribute = (PropertyAttribute)Activator.CreateInstance(propertyAttributeType, arguments);
+				PropertyDrawer propertyDrawer = (PropertyDrawer)Activator.CreateInstance(propertyDrawerType);
 				propertyDrawer.SetValueToMember("m_Attribute", propertyAttribute);
 				propertyDrawer.SetValueToMember("m_FieldInfo", fieldInfo);
+
 				return propertyDrawer;
 			}
 

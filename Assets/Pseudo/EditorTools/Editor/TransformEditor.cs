@@ -169,7 +169,6 @@ namespace Pseudo.Internal.Editor
 		{
 			float labelWidth = EditorGUIUtility.labelWidth;
 			EditorGUIUtility.labelWidth = 15;
-
 			EditorGUILayout.BeginHorizontal();
 
 			if (GUILayout.Button(new GUIContent(buttonLabel, tooltip), EditorStyles.miniButton, GUILayout.Width(20)))
@@ -225,7 +224,6 @@ namespace Pseudo.Internal.Editor
 			}
 
 			EditorGUILayout.EndHorizontal();
-
 			EditorGUIUtility.labelWidth = labelWidth;
 		}
 
@@ -245,8 +243,8 @@ namespace Pseudo.Internal.Editor
 
 			Vector3 localEulerAngles = transform.localEulerAngles;
 			EditorGUI.BeginProperty(rect, GUIContent.none, quaternionProperty);
-			EditorGUI.BeginChangeCheck();
 
+			EditorGUI.BeginChangeCheck();
 			localEulerAngles.x = EditorGUILayout.FloatField("X", localEulerAngles.x % 360) % 360;
 			if (EditorGUI.EndChangeCheck())
 			{
@@ -259,9 +257,9 @@ namespace Pseudo.Internal.Editor
 					localEulerAngles.x = localEulerAngles.x.Round(roundValue.x) % 360;
 				}
 
-				transform.SetLocalEulerAngles(localEulerAngles, Axes.X);
-				foreach (Transform t in Selection.transforms)
+				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
+					Transform t = Selection.transforms[i];
 					t.SetLocalEulerAngles(transform.localEulerAngles, Axes.X);
 					EditorUtility.SetDirty(t);
 				}
@@ -280,7 +278,6 @@ namespace Pseudo.Internal.Editor
 					localEulerAngles.y = localEulerAngles.y.Round(roundValue.y) % 360;
 				}
 
-				transform.SetLocalEulerAngles(localEulerAngles, Axes.Y);
 				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
 					Transform selectedTransform = Selection.transforms[i];
@@ -302,7 +299,6 @@ namespace Pseudo.Internal.Editor
 					localEulerAngles.z = localEulerAngles.z.Round(roundValue.z) % 360;
 				}
 
-				transform.SetLocalEulerAngles(localEulerAngles, Axes.Z);
 				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
 					Transform selectedTransform = Selection.transforms[i];

@@ -1,24 +1,26 @@
 ﻿using System;
 using Pseudo.Internal.Editor;
 
-namespace Pseudo {
+namespace Pseudo
+{
 	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class MinMaxSliderAttribute : CustomAttributeBase {
-	
-		public float min = 0;
-		public float max = 1;
+	public sealed class MinMaxSliderAttribute : CustomAttributeBase
+	{
+		public float min = 0f;
+		public float max = 1f;
 		public string minLabel;
 		public string maxLabel;
-	
-		public MinMaxSliderAttribute() {
-		}
-	
-		public MinMaxSliderAttribute(float min, float max) {
+
+		public MinMaxSliderAttribute() { }
+
+		public MinMaxSliderAttribute(float min, float max)
+		{
 			this.min = min;
 			this.max = max;
 		}
-	
-		public MinMaxSliderAttribute(float min, float max, string minLabel, string maxLabel) {
+
+		public MinMaxSliderAttribute(float min, float max, string minLabel, string maxLabel)
+		{
 			this.min = min;
 			this.max = max;
 			this.minLabel = minLabel;

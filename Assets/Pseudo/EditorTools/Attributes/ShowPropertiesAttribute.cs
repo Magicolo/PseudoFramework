@@ -1,9 +1,8 @@
 ﻿using System;
 using Pseudo.Internal.Editor;
 
-namespace Pseudo {
+namespace Pseudo
+{
 	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class ShowPropertiesAttribute : CustomAttributeBase {
-		
-	}
+	public sealed class ShowPropertiesAttribute : CustomAttributeBase { }
 }

@@ -9,22 +9,16 @@ namespace Pseudo.Internal.Editor
 	[CustomPropertyDrawer(typeof(PropertyFieldAttribute))]
 	public class PropertyFieldDrawer : CustomAttributePropertyDrawerBase
 	{
+		PropertyDrawer drawerOverride;
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			drawPrefixLabel = false;
-			Type attributeType = ((PropertyFieldAttribute)attribute).attributeType;
-			object[] arguments = ((PropertyFieldAttribute)attribute).arguments;
-			PropertyDrawer drawerOverride = null;
 
 			if (fieldInfo.FieldType.IsArray)
 			{
 				Debug.LogError(string.Format("{0} should not be applied to arrays or lists.", attribute.GetType().Name));
 				return;
-			}
-
-			if (attributeType != null)
-			{
-				drawerOverride = GetPropertyDrawer(attributeType, arguments);
 			}
 
 			Begin(position, property, label);
@@ -49,6 +43,20 @@ namespace Pseudo.Internal.Editor
 			}
 
 			End();
+		}
+
+		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+		{
+			Type attributeType = ((PropertyFieldAttribute)attribute).attributeType;
+			object[] arguments = ((PropertyFieldAttribute)attribute).arguments;
+
+			if (attributeType != null)
+				drawerOverride = GetPropertyDrawer(attributeType, arguments);
+
+			if (drawerOverride == null)
+				return base.GetPropertyHeight(property, label);
+			else
+				return drawerOverride.GetPropertyHeight(property, label);
 		}
 	}
 }

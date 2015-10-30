@@ -5,119 +5,78 @@ using Pseudo;
 
 namespace Pseudo.Internal.Physics
 {
-	public class GravityBase : PMonoBehaviour
+	public abstract class GravityBase : PMonoBehaviour
 	{
-		[SerializeField, PropertyField(typeof(RangeAttribute), 0, 360)]
-		float angle = 90;
-		public float Angle
-		{
-			get { return angle; }
-			set
-			{
-				angle = value % 360;
-				force = (Vector2.right.Rotate(angle) * strength).Round(0.0001F);
-				direction = force.normalized;
-				hasChanged = true;
-			}
-		}
-
-		[SerializeField, PropertyField(typeof(MinAttribute))]
-		float strength = 20;
-		public float Strength
-		{
-			get { return strength; }
-			set
-			{
-				strength = value;
-				force = (Vector2.right.Rotate(angle) * strength).Round(0.0001F);
-				direction = force.normalized;
-				hasChanged = true;
-			}
-		}
-
 		[SerializeField, PropertyField]
-		Vector2 direction = new Vector2(0, -1);
-		public Vector2 Direction
-		{
-			get { return direction; }
-			set
-			{
-				direction = value.normalized.Round(0.0001F);
-				force = direction * strength;
-				angle = direction.Angle();
-				hasChanged = true;
-			}
-		}
-
+		protected GravityManager.GravityChannels gravityChannel;
+		public TimeManager.TimeChannels TimeChannel;
 		[SerializeField, PropertyField]
-		Vector2 force = new Vector2(0, -20);
-		public Vector2 Force
+		protected Vector3 gravityScale = new Vector3(1f, 1f, 1f);
+		[SerializeField, PropertyField]
+		protected Vector3 rotation;
+		protected Quaternion rotationQuaternion;
+		protected Vector3 gravity;
+		protected Vector3 lastGravity;
+
+		public GravityManager.GravityChannels GravityChannel
 		{
-			get { return force; }
+			get { return gravityChannel; }
 			set
 			{
-				force = value;
-				strength = force.magnitude;
-				direction = force.normalized;
-				angle = direction.Angle();
-				hasChanged = true;
+				gravityChannel = value;
+				UpdateGravityForce();
 			}
 		}
-
-		Vector2 left;
-		public Vector2 Left
+		public Vector3 GravityScale
 		{
-			get
+			get { return gravityScale; }
+			set
 			{
-				if (hasChanged)
-					UpdateForces();
-
-				return right;
+				gravityScale = value;
+				UpdateGravityForce();
 			}
 		}
-
-		Vector2 right;
-		public Vector2 Right
+		public Vector3 Rotation
 		{
-			get
+			get { return rotation; }
+			set
 			{
-				if (hasChanged)
-					UpdateForces();
-
-				return right;
+				rotation = value;
+				rotationQuaternion.eulerAngles = rotation;
+				UpdateGravityForce();
 			}
 		}
+		public Vector3 Gravity { get { return gravity; } }
 
-		public Vector2 Up { get { return -force; } }
-
-		bool hasChanged = true;
-
-		void UpdateForces()
+		protected virtual void Awake()
 		{
-			left = force.Rotate(90).normalized;
-			right = -left;
-
-			hasChanged = false;
+			rotationQuaternion.eulerAngles = rotation;
 		}
 
-		public Vector2 WorldToRelative(Vector2 vector)
+		protected virtual void UpdateGravityForceIfNeeded()
 		{
-			return vector.Rotate(-Angle + 90);
+			Vector3 currentGravity = GravityManager.GetGravity(gravityChannel);
+
+			if (lastGravity == currentGravity)
+				return;
+
+			lastGravity = currentGravity;
+			UpdateGravityForce();
 		}
 
-		public Vector2 RelativeToWorld(Vector2 vector)
+		protected virtual void UpdateGravityForce()
 		{
-			return vector.Rotate(Angle - 90);
+			gravity = rotationQuaternion * lastGravity.Mult(gravityScale);
 		}
 
 		public static implicit operator Vector2(GravityBase gravity)
 		{
-			return gravity.Force;
+			return gravity.gravity;
 		}
 
 		public static implicit operator Vector3(GravityBase gravity)
 		{
-			return gravity.Force;
+			return gravity.gravity;
 		}
 	}
 }

@@ -143,6 +143,8 @@ namespace Pseudo
 
 		public virtual void AddInput(PlayerInput input)
 		{
+			PlayerInput playerInput = Instantiate(input);
+			playerInput.CachedTransform.parent = CachedTransform;
 			unassignedInputs[input.name] = input;
 		}
 

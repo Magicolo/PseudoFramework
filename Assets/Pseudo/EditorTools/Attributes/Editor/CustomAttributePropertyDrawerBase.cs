@@ -9,7 +9,6 @@ namespace Pseudo.Internal.Editor
 {
 	public class CustomAttributePropertyDrawerBase : CustomPropertyDrawerBase
 	{
-
 		public string prefixLabel;
 		public bool noFieldLabel;
 		public bool noPrefixLabel;

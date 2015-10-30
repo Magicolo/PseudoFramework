@@ -17,14 +17,26 @@ namespace Pseudo.Internal.Editor
 
 			//PropertyField(property, label, false);
 			currentPosition = EditorGUI.PrefixLabel(currentPosition, label);
+			currentPosition.x -= 1f;
 
 			BeginIndent(0);
-			BeginLabelWidth(26f);
+			BeginLabelWidth(27f);
 
-			currentPosition.width = currentPosition.width / 2f - 1f;
+			EditorGUI.BeginChangeCheck();
+
+			currentPosition.width = currentPosition.width / 2f;
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("min"));
-			currentPosition.x += currentPosition.width + 2f;
+
+			if (EditorGUI.EndChangeCheck())
+				property.SetValue(Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")), "max");
+
+			EditorGUI.BeginChangeCheck();
+
+			currentPosition.x += currentPosition.width + 1f;
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("max"));
+
+			if (EditorGUI.EndChangeCheck())
+				property.SetValue(Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")), "min");
 
 			EndLabelWidth();
 			EndIndent();

@@ -1,11 +1,13 @@
 ﻿using System;
 using Pseudo.Internal.Editor;
 
-namespace Pseudo {
+namespace Pseudo
+{
 	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class DisableAttribute : CustomAttributeBase {
-	
-		public DisableAttribute() {
+	public sealed class DisableAttribute : CustomAttributeBase
+	{
+		public DisableAttribute()
+		{
 			DisableOnPlay = true;
 			DisableOnStop = true;
 		}
