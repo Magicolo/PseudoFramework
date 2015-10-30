@@ -37,6 +37,10 @@ public class zTest : PMonoBehaviour, ICopyable<zTest>
 
 	public void Copy(zTest reference)
 	{
+		cartesian2D = reference.cartesian2D;
+		polar2D = reference.polar2D;
+		cartesian3D = reference.cartesian3D;
+		polar3D = reference.polar3D;
 		AttackSpeed = reference.AttackSpeed;
 		CopyUtility.CopyTo(reference.AttackSpeeds, ref AttackSpeeds);
 		RaySettings = reference.RaySettings;

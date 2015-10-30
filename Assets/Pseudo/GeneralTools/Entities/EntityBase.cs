@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,19 +7,23 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class EntityBase : PMonoBehaviour
+	public class EntityBase : PMonoBehaviour, IPoolable, ICopyable<EntityBase>
 	{
-		[Serializable]
-		public class TimeChannel
-		{
-			public TimeManager.TimeChannels Channel;
-			public float TimeScale = 1f;
+		public LocalTimeChannel TimeSettings;
 
-			public float Time { get { return TimeManager.GetTime(Channel); } }
-			public float DeltaTime { get { return TimeManager.GetDeltaTime(Channel) * TimeScale; } }
-			public float FixedDeltaTime { get { return TimeManager.GetFixedDeltaTime(Channel) * TimeScale; } }
+		public void OnCreate()
+		{
+			TimeSettings = Pool<LocalTimeChannel>.Create(TimeSettings);
 		}
 
-		public TimeChannel TimeSettings;
+		public void OnRecycle()
+		{
+			Pool<LocalTimeChannel>.Recycle(ref TimeSettings);
+		}
+
+		public void Copy(EntityBase reference)
+		{
+			TimeSettings = reference.TimeSettings;
+		}
 	}
 }

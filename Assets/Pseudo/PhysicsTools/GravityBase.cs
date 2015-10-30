@@ -8,8 +8,8 @@ namespace Pseudo.Internal.Physics
 	public abstract class GravityBase : PMonoBehaviour
 	{
 		[SerializeField, PropertyField]
-		protected GravityManager.GravityChannels gravityChannel;
-		public TimeManager.TimeChannels TimeChannel;
+		protected GravityChannels gravityChannel;
+		public TimeChannels TimeChannel;
 		[SerializeField, PropertyField]
 		protected Vector3 gravityScale = new Vector3(1f, 1f, 1f);
 		[SerializeField, PropertyField]
@@ -18,7 +18,7 @@ namespace Pseudo.Internal.Physics
 		protected Vector3 gravity;
 		protected Vector3 lastGravity;
 
-		public GravityManager.GravityChannels GravityChannel
+		public GravityChannels GravityChannel
 		{
 			get { return gravityChannel; }
 			set

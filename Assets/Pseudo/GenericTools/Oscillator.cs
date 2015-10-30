@@ -13,7 +13,7 @@ namespace Pseudo
 		public float Amplitude = 1;
 		public float Center;
 		public float Offset;
-		public TimeManager.TimeChannels TimeChannel;
+		public TimeChannels TimeChannel;
 
 		public float Oscillate()
 		{

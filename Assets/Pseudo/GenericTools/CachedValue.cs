@@ -25,6 +25,11 @@ namespace Pseudo
 
 				return value;
 			}
+			set
+			{
+				this.value = value;
+				valueCached = true;
+			}
 		}
 
 		public CachedValue(Func<T> getValue)

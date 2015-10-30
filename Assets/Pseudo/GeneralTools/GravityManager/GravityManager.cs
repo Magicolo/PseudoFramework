@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
@@ -15,82 +16,11 @@ namespace Pseudo
 			_3D
 		}
 
-		public enum GravityChannels
-		{
-			Unity,
-			World,
-			Player,
-			Enemy
-		}
-
-		public class GravityChannel
-		{
-			public GravityChannels Channel { get { return channel; } }
-			public Vector3 Gravity
-			{
-				get
-				{
-					UpdateGravity();
-					return gravity;
-				}
-			}
-			public Vector3 GravityScale
-			{
-				get { return gravityScale; }
-				set
-				{
-					if (gravityScale != value)
-					{
-						gravityScale = value;
-						hasChanged = true;
-					}
-				}
-			}
-			public Vector3 Rotation
-			{
-				get { return rotation; }
-				set
-				{
-					if (rotation != value)
-					{
-						rotation = value;
-						rotationQuaternion.eulerAngles = rotation;
-						hasChanged = true;
-					}
-				}
-			}
-
-			GravityChannels channel;
-			Vector3 gravity;
-			Vector3 gravityScale = new Vector3(1f, 1f, 1f);
-			Vector3 rotation;
-			Quaternion rotationQuaternion = Quaternion.identity;
-			Vector3 lastGravity;
-			bool hasChanged = true;
-
-			public GravityChannel(GravityChannels channel)
-			{
-				this.channel = channel;
-			}
-
-			void UpdateGravity()
-			{
-				Vector3 currentGravity = GetDefaultGravity();
-
-				if (!hasChanged && lastGravity == currentGravity)
-					return;
-
-				hasChanged = false;
-				lastGravity = currentGravity;
-				gravity = rotationQuaternion * lastGravity.Mult(gravityScale);
-			}
-		}
-
-		public readonly static GravityChannel Unity = new GravityChannel(GravityChannels.Unity);
-		public readonly static GravityChannel World = new GravityChannel(GravityChannels.World);
-		public readonly static GravityChannel Player = new GravityChannel(GravityChannels.Player);
-		public readonly static GravityChannel Enemy = new GravityChannel(GravityChannels.Enemy);
-		protected readonly static List<GravityChannel> channels = new List<GravityChannel> { Unity, World, Player, Enemy };
+		public readonly static GlobalGravityChannel Unity = new GlobalGravityChannel(GravityChannels.Unity);
+		public readonly static GlobalGravityChannel World = new GlobalGravityChannel(GravityChannels.World);
+		public readonly static GlobalGravityChannel Player = new GlobalGravityChannel(GravityChannels.Player);
+		public readonly static GlobalGravityChannel Enemy = new GlobalGravityChannel(GravityChannels.Enemy);
+		protected readonly static List<GlobalGravityChannel> channels = new List<GlobalGravityChannel> { Unity, World, Player, Enemy };
 		protected static Vector3 lastGravity;
 		public static Dimensions Mode { get; set; }
 
@@ -104,18 +34,7 @@ namespace Pseudo
 			Mode = mode;
 		}
 
-		static Vector3 GetDefaultGravity()
-		{
-			switch (Mode)
-			{
-				default:
-					return Physics2D.gravity;
-				case Dimensions._3D:
-					return Physics.gravity;
-			}
-		}
-
-		public static GravityChannel GetChannel(GravityChannels channel)
+		public static GlobalGravityChannel GetChannel(GravityChannels channel)
 		{
 			return channels[(int)channel];
 		}
@@ -125,12 +44,12 @@ namespace Pseudo
 			return GetChannel(channel).Gravity;
 		}
 
-		public static Vector3 GetGravityScale(GravityChannels channel)
+		public static float GetGravityScale(GravityChannels channel)
 		{
 			return GetChannel(channel).GravityScale;
 		}
 
-		public static void SetGravityScale(GravityChannels channel, Vector3 gravityScale)
+		public static void SetGravityScale(GravityChannels channel, float gravityScale)
 		{
 			GetChannel(channel).GravityScale = gravityScale;
 		}

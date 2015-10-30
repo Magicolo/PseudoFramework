@@ -10,7 +10,7 @@ namespace Pseudo
 		public TransformModes Mode = TransformModes.Position;
 		[Mask(Axes.XYZ, AfterSeparator = true)]
 		public Axes Axes = Axes.XYZ;
-		public TimeManager.TimeChannels TimeChannel;
+		public TimeChannels TimeChannel;
 
 		public Transform Target;
 		public Vector3 Offset;

@@ -3,61 +3,20 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
 	public class TimeManager : Singleton<TimeManager>
 	{
-		public enum TimeChannels
-		{
-			Unity,
-			UI,
-			World,
-			Player,
-			Enemy
-		}
+		public readonly static GlobalTimeChannel Unity = new GlobalTimeChannel(TimeChannels.Unity);
+		public readonly static GlobalTimeChannel UI = new GlobalTimeChannel(TimeChannels.UI);
+		public readonly static GlobalTimeChannel World = new GlobalTimeChannel(TimeChannels.World);
+		public readonly static GlobalTimeChannel Player = new GlobalTimeChannel(TimeChannels.Player);
+		public readonly static GlobalTimeChannel Enemy = new GlobalTimeChannel(TimeChannels.Enemy);
+		protected readonly static List<GlobalTimeChannel> channels = new List<GlobalTimeChannel> { Unity, UI, World, Player, Enemy };
 
-		public class TimeChannel
-		{
-			public TimeChannels Channel { get { return channel; } }
-			public float Time { get { return time; } }
-			public float TimeScale { get { return timeScale; } set { timeScale = value; } }
-			public float DeltaTime { get { return deltaTime; } }
-			public float FixedDeltaTime { get { return fixedDeltaTime; } }
-
-			TimeChannels channel;
-			float time;
-			float timeScale = 1f;
-			float deltaTime;
-			float fixedDeltaTime;
-
-			public TimeChannel(TimeChannels channel)
-			{
-				this.channel = channel;
-			}
-
-			public void Update()
-			{
-				deltaTime = UnityEngine.Time.deltaTime * timeScale;
-				fixedDeltaTime = UnityEngine.Time.fixedDeltaTime * timeScale;
-				time += fixedDeltaTime;
-			}
-		}
-
-		public readonly static TimeChannel Unity = new TimeChannel(TimeChannels.Unity);
-		public readonly static TimeChannel UI = new TimeChannel(TimeChannels.UI);
-		public readonly static TimeChannel World = new TimeChannel(TimeChannels.World);
-		public readonly static TimeChannel Player = new TimeChannel(TimeChannels.Player);
-		public readonly static TimeChannel Enemy = new TimeChannel(TimeChannels.Enemy);
-		protected readonly static List<TimeChannel> channels = new List<TimeChannel> { Unity, UI, World, Player, Enemy };
-
-		protected virtual void FixedUpdate()
-		{
-			for (int i = 0; i < channels.Count; i++)
-				channels[i].Update();
-		}
-
-		public static TimeChannel GetChannel(TimeChannels channel)
+		public static GlobalTimeChannel GetChannel(TimeChannels channel)
 		{
 			return channels[(int)channel];
 		}
