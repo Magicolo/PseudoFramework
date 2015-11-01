@@ -33,6 +33,7 @@ public class zTest : PMonoBehaviour, ICopyable<zTest>
 	public bool test;
 	void Test()
 	{
+
 	}
 
 	public void Copy(zTest reference)

@@ -1,23 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo
+namespace Pseudo.Internal.Physics
 {
-	public enum GravityChannels
+	public abstract class GravityComponentBase : PMonoBehaviour
 	{
-		Unity,
-		World,
-		Player,
-		Enemy
-	}
-
-	public abstract class GravityChannelBase : IPoolable, ICopyable<GravityChannelBase>
-	{
-		public GravityChannels Channel { get { return channel; } }
+		public GravityManager.GravityChannels Channel { get { return channel; } }
 		public Vector3 Gravity
 		{
 			get
@@ -46,21 +38,20 @@ namespace Pseudo
 			}
 		}
 
-		[SerializeField]
-		protected GravityChannels channel;
+		[SerializeField, Empty(DisableOnPlay = true)]
+		protected GravityManager.GravityChannels channel;
 		[SerializeField, PropertyField]
 		protected float gravityScale = 1f;
 		[SerializeField, PropertyField]
 		protected Vector3 rotation;
-		Quaternion rotationQuaternion = Quaternion.identity;
+		protected Quaternion rotationQuaternion = Quaternion.identity;
 		protected Vector3 gravity;
-		protected Vector2 gravity2D;
 		protected Vector3 lastGravity;
 		protected bool hasChanged = true;
 
 		protected virtual void UpdateGravity()
 		{
-			Vector3 currentGravity = GetCurrentGravity();
+			Vector3 currentGravity = GetGravity();
 
 			if (!hasChanged && lastGravity == currentGravity)
 				return;
@@ -70,26 +61,6 @@ namespace Pseudo
 			lastGravity = currentGravity;
 		}
 
-		protected abstract Vector3 GetCurrentGravity();
-
-		public virtual void OnCreate()
-		{
-		}
-
-		public virtual void OnRecycle()
-		{
-		}
-
-		public void Copy(GravityChannelBase reference)
-		{
-			channel = reference.channel;
-			gravityScale = reference.gravityScale;
-			rotation = reference.rotation;
-			rotationQuaternion = reference.rotationQuaternion;
-			gravity = reference.gravity;
-			gravity2D = reference.gravity2D;
-			lastGravity = reference.lastGravity;
-			hasChanged = reference.hasChanged;
-		}
+		protected abstract Vector3 GetGravity();
 	}
 }

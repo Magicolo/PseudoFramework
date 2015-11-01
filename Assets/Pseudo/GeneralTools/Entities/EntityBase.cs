@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,21 +9,10 @@ namespace Pseudo
 {
 	public class EntityBase : PMonoBehaviour, IPoolable, ICopyable<EntityBase>
 	{
-		public LocalTimeChannel TimeSettings;
+		public virtual void OnCreate() { }
 
-		public void OnCreate()
-		{
-			TimeSettings = Pool<LocalTimeChannel>.Create(TimeSettings);
-		}
+		public virtual void OnRecycle() { }
 
-		public void OnRecycle()
-		{
-			Pool<LocalTimeChannel>.Recycle(ref TimeSettings);
-		}
-
-		public void Copy(EntityBase reference)
-		{
-			TimeSettings = reference.TimeSettings;
-		}
+		public void Copy(EntityBase reference) { }
 	}
 }

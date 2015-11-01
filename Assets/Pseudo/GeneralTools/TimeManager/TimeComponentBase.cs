@@ -1,24 +1,15 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo
+namespace Pseudo.Internal
 {
-	public enum TimeChannels
+	public abstract class TimeComponentBase : PMonoBehaviour
 	{
-		Unity,
-		UI,
-		World,
-		Player,
-		Enemy
-	}
-
-	public abstract class TimeChannelBase : IPoolable, ICopyable<TimeChannelBase>
-	{
-		public TimeChannels Channel { get { return channel; } }
+		public TimeManager.TimeChannels Channel { get { return channel; } }
 		public float TimeScale
 		{
 			get { return timeScale; }
@@ -39,8 +30,8 @@ namespace Pseudo
 		public float DeltaTime { get { return GetDeltaTime() * timeScale; } }
 		public float FixedDeltaTime { get { return GetFixedDeltaTime() * timeScale; } }
 
-		[SerializeField]
-		protected TimeChannels channel;
+		[SerializeField, Empty(DisableOnPlay = true)]
+		protected TimeManager.TimeChannels channel;
 		[SerializeField, PropertyField]
 		protected float timeScale = 1f;
 		protected float time;
@@ -48,29 +39,13 @@ namespace Pseudo
 
 		protected virtual void UpdateTime()
 		{
-			float currentTime = GetCurrentTime();
+			float currentTime = GetTime();
 			time += (currentTime - lastTime) * timeScale;
 			lastTime = currentTime;
 		}
 
-		protected abstract float GetCurrentTime();
+		protected abstract float GetTime();
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
-
-		public virtual void OnCreate()
-		{
-		}
-
-		public virtual void OnRecycle()
-		{
-		}
-
-		public void Copy(TimeChannelBase reference)
-		{
-			channel = reference.channel;
-			timeScale = reference.timeScale;
-			time = reference.time;
-			lastTime = reference.lastTime;
-		}
 	}
 }

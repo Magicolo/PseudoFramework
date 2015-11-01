@@ -1,16 +1,17 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[Serializable]
-	public class LocalTimeChannel : TimeChannelBase, ICopyable<LocalTimeChannel>
+	[AddComponentMenu("Pseudo/General/Time")]
+	public class TimeComponent : TimeComponentBase
 	{
-		protected override float GetCurrentTime()
+		protected override float GetTime()
 		{
 			return TimeManager.GetTime(channel);
 		}
@@ -23,12 +24,6 @@ namespace Pseudo
 		protected override float GetFixedDeltaTime()
 		{
 			return TimeManager.GetFixedDeltaTime(channel);
-		}
-
-		public void Copy(LocalTimeChannel reference)
-		{
-			base.Copy(reference);
-
 		}
 	}
 }

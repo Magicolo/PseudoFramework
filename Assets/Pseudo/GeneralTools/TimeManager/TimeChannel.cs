@@ -7,9 +7,14 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public class GlobalTimeChannel : TimeChannelBase
+	public class TimeChannel : TimeComponentBase
 	{
-		protected override float GetCurrentTime()
+		void Awake()
+		{
+			channel = (TimeManager.TimeChannels)Enum.Parse(typeof(TimeManager.TimeChannels), name);
+		}
+
+		protected override float GetTime()
 		{
 			return UnityEngine.Time.time;
 		}
@@ -22,11 +27,6 @@ namespace Pseudo.Internal
 		protected override float GetFixedDeltaTime()
 		{
 			return UnityEngine.Time.fixedDeltaTime;
-		}
-
-		public GlobalTimeChannel(TimeChannels channel)
-		{
-			this.channel = channel;
 		}
 	}
 }

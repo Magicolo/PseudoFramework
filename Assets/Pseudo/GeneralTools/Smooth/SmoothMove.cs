@@ -13,7 +13,7 @@ namespace Pseudo
 		public TransformModes Mode = TransformModes.Position;
 		[Mask(Axes.XYZ)]
 		public Axes Axes = Axes.XYZ;
-		public TimeChannels TimeChannel;
+		public TimeManager.TimeChannels TimeChannel;
 		public bool Culling = true;
 
 		[Slider(BeforeSeparator = true)]

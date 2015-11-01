@@ -9,15 +9,45 @@ namespace Pseudo
 {
 	public class TimeManager : Singleton<TimeManager>
 	{
-		public readonly static GlobalTimeChannel Unity = new GlobalTimeChannel(TimeChannels.Unity);
-		public readonly static GlobalTimeChannel UI = new GlobalTimeChannel(TimeChannels.UI);
-		public readonly static GlobalTimeChannel World = new GlobalTimeChannel(TimeChannels.World);
-		public readonly static GlobalTimeChannel Player = new GlobalTimeChannel(TimeChannels.Player);
-		public readonly static GlobalTimeChannel Enemy = new GlobalTimeChannel(TimeChannels.Enemy);
-		protected readonly static List<GlobalTimeChannel> channels = new List<GlobalTimeChannel> { Unity, UI, World, Player, Enemy };
-
-		public static GlobalTimeChannel GetChannel(TimeChannels channel)
+		public enum TimeChannels
 		{
+			Unity,
+			UI,
+			World,
+			Player,
+			Enemy
+		}
+
+		public static TimeChannel Unity { get { return GetChannel(TimeChannels.Unity); } }
+		public static TimeChannel UI { get { return GetChannel(TimeChannels.UI); } }
+		public static TimeChannel World { get { return GetChannel(TimeChannels.World); } }
+		public static TimeChannel Player { get { return GetChannel(TimeChannels.Player); } }
+		public static TimeChannel Enemy { get { return GetChannel(TimeChannels.Enemy); } }
+		protected static List<TimeChannel> channels;
+
+		protected override void Awake()
+		{
+			base.Awake();
+
+			TimeChannels[] channelValues = (TimeChannels[])Enum.GetValues(typeof(TimeChannels));
+			channels = new List<TimeChannel>(channelValues.Length);
+
+			for (int i = 0; i < channelValues.Length; i++)
+			{
+				TimeChannels channelValue = channelValues[i];
+				TimeChannel channel = CreateChannel(channelValue);
+				channels.Add(channel);
+			}
+		}
+
+		public static TimeChannel GetChannel(TimeChannels channel)
+		{
+			if (channels == null)
+			{
+				Debug.LogError("No instance of the TimeManager has been found.");
+				return null;
+			}
+
 			return channels[(int)channel];
 		}
 
@@ -44,6 +74,11 @@ namespace Pseudo
 		public static void SetTimeScale(TimeChannels channel, float timeScale)
 		{
 			GetChannel(channel).TimeScale = timeScale;
+		}
+
+		static TimeChannel CreateChannel(TimeChannels channel)
+		{
+			return instance.CachedGameObject.AddChild(channel.ToString()).AddComponent<TimeChannel>();
 		}
 	}
 }
