@@ -9,6 +9,9 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
 	{
+		public static readonly Pool<AudioModifier> Pool = new Pool<AudioModifier>(() => new AudioModifier());
+		public static readonly AudioModifier Default = new AudioModifier();
+
 		float initialValue = 1f;
 		float fadeModifier = 1f;
 		float rampModifier = 1f;
@@ -23,8 +26,6 @@ namespace Pseudo.Internal.Audio
 		public float ParentModifier { get { return parentModifier; } set { if (parentModifier != value) { parentModifier = value; RaiseValueChangedEvent(); }; } }
 		public float RandomModifier { get { return randomModifier; } set { if (randomModifier != value) { randomModifier = value; RaiseValueChangedEvent(); }; } }
 		public float RTPCModifier { get { return rtpcModifier; } set { if (rtpcModifier != value) { rtpcModifier = value; RaiseValueChangedEvent(); }; } }
-
-		public static readonly AudioModifier Default = new AudioModifier();
 
 		public event Action<AudioModifier> OnValueChanged;
 

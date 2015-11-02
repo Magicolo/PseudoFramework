@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TimeComponentBase : PMonoBehaviour
+	public abstract class TimeComponentBase : PMonoBehaviour, ICopyable<TimeComponentBase>
 	{
 		public TimeManager.TimeChannels Channel { get { return channel; } }
 		public float TimeScale
@@ -47,5 +47,13 @@ namespace Pseudo.Internal
 		protected abstract float GetTime();
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
+
+		public void Copy(TimeComponentBase reference)
+		{
+			channel = reference.channel;
+			timeScale = reference.timeScale;
+			time = reference.time;
+			lastTime = reference.lastTime;
+		}
 	}
 }

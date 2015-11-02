@@ -22,6 +22,9 @@ namespace Pseudo
 			Global
 		}
 
+		public static readonly Pool<AudioRTPC> Pool = new Pool<AudioRTPC>(() => new AudioRTPC());
+		static readonly Dictionary<string, AudioValue<float>> rtpcValues = new Dictionary<string, AudioValue<float>>();
+
 		AudioValue<float> value;
 		float lastValue;
 		float lastRatio;
@@ -35,8 +38,6 @@ namespace Pseudo
 		public AnimationCurve Curve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
 		public AudioValue<float> Value { get { return value; } }
-
-		static Dictionary<string, AudioValue<float>> rtpcValues = new Dictionary<string, AudioValue<float>>();
 
 		public float GetAdjustedValue()
 		{
@@ -67,7 +68,7 @@ namespace Pseudo
 		public virtual void OnCreate()
 		{
 			if (Scope == RTPCScope.Local)
-				value = Pool<AudioValue<float>>.Create();
+				value = AudioValue<float>.Pool.Create();
 			else
 				value = GetGlobalRTPCValue(Name);
 
@@ -77,7 +78,7 @@ namespace Pseudo
 		public virtual void OnRecycle()
 		{
 			if (Scope == RTPCScope.Local)
-				Pool<AudioValue<float>>.Recycle(ref value);
+				AudioValue<float>.Pool.Recycle(ref value);
 		}
 
 		public void Copy(AudioRTPC reference)
@@ -99,7 +100,7 @@ namespace Pseudo
 
 			if (!rtpcValues.TryGetValue(name, out value))
 			{
-				value = Pool<AudioValue<float>>.Create();
+				value = AudioValue<float>.Pool.Create();
 				rtpcValues[name] = value;
 			}
 

@@ -30,6 +30,14 @@ namespace Pseudo
 			Object,
 		}
 
+		public static readonly Pool<DynamicValue> Pool = new Pool<DynamicValue>(() => new DynamicValue());
+		public static readonly DynamicValue Default = new DynamicValue();
+
+		static readonly object dummy = new object();
+		static readonly MemoryStream stream = new MemoryStream();
+		static readonly BinaryReader reader = new BinaryReader(stream);
+		static readonly BinaryWriter writer = new BinaryWriter(stream);
+
 		public bool IsArray { get { return isArray; } }
 
 		object valueCached;
@@ -42,13 +50,6 @@ namespace Pseudo
 		byte[] data;
 		[SerializeField]
 		UnityEngine.Object[] objectValue;
-
-		static readonly object dummy = new object();
-		static readonly MemoryStream stream = new MemoryStream();
-		static readonly BinaryReader reader = new BinaryReader(stream);
-		static readonly BinaryWriter writer = new BinaryWriter(stream);
-
-		public static readonly DynamicValue Default = new DynamicValue();
 
 		public T GetValue<T>()
 		{

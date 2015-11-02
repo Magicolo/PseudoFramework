@@ -12,6 +12,8 @@ namespace Pseudo
 {
 	public class AudioDynamicItem : AudioContainerItem, ICopyable<AudioDynamicItem>
 	{
+		public static readonly AudioDynamicItem Default = new AudioDynamicItem();
+
 		Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings;
 		AudioDynamicSettings settings;
 		int currentStep;
@@ -26,14 +28,12 @@ namespace Pseudo
 		public override AudioSettingsBase Settings { get { return settings; } }
 		public int CurrentStep { get { return currentStep; } }
 
-		public static AudioDynamicItem Default = new AudioDynamicItem();
-
 		public void Initialize(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, spatializer, parent);
 
 			this.getNextSettings = getNextSettings;
-			settings = Pool<AudioDynamicSettings>.Create(AudioDynamicSettings.Default);
+			settings = AudioSettingsBase.Pool.CreateCopy(AudioDynamicSettings.Default);
 
 			InitializeModifiers(settings);
 			InitializeSources();
@@ -59,7 +59,7 @@ namespace Pseudo
 			if (breakSequence || (sources.Count > 0 && !requestNextSettings))
 				return;
 
-			AudioDynamicData data = Pool<AudioDynamicData>.Create(AudioDynamicData.Default);
+			AudioDynamicData data = AudioDynamicData.Pool.CreateCopy(AudioDynamicData.Default);
 			AudioSettingsBase settings = getNextSettings(this, data);
 
 			currentStep++;
@@ -183,21 +183,16 @@ namespace Pseudo
 		{
 			base.RemoveSource(index);
 
-			Pool<AudioDynamicData>.Recycle(dynamicData.Pop(index));
+			AudioDynamicData.Pool.Recycle(dynamicData.Pop(index));
 			UpdateSequence();
 		}
-
-		protected override void Recycle()
-		{
-			Pool<AudioDynamicItem>.Recycle(this);
-		}
-
+		
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
 
-			Pool<AudioDynamicSettings>.Recycle(ref settings);
-			Pool<AudioDynamicData>.RecycleElements(dynamicData);
+			AudioSettingsBase.Pool.Recycle(settings);
+			AudioDynamicData.Pool.RecycleElements(dynamicData);
 			dynamicData.Clear();
 		}
 

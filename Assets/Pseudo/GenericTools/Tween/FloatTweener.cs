@@ -16,6 +16,9 @@ namespace Pseudo
 			Stopped
 		}
 
+		public static readonly Pool<FloatTweener> Pool = new Pool<FloatTweener>(() => new FloatTweener());
+		public static readonly FloatTweener Default = new FloatTweener();
+
 		float start;
 		float end;
 		float time;
@@ -33,8 +36,6 @@ namespace Pseudo
 		public TweenStates State { get { return state; } }
 		public float Value { get { return value; } }
 		public float Completion { get { return completion; } }
-
-		public static readonly FloatTweener Default = new FloatTweener();
 
 		public void Update()
 		{

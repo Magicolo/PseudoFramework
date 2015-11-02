@@ -12,6 +12,8 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioSourceItem : AudioItem, ICopyable<AudioSourceItem>
 	{
+		public static readonly AudioSourceItem Default = new AudioSourceItem();
+
 		AudioSourceSettings originalSettings;
 		AudioSourceSettings settings;
 		AudioSource source;
@@ -25,8 +27,6 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.Source; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public static readonly AudioSourceItem Default = new AudioSourceItem();
-
 		public AudioSourceItem()
 		{
 			setVolumeScale = modifier => source.volume = modifier.Value;
@@ -39,7 +39,7 @@ namespace Pseudo.Internal.Audio
 
 			// General Setup
 			originalSettings = settings;
-			this.settings = Pool<AudioSourceSettings>.Create(settings);
+			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
 			source = audioSource;
 			source.transform.parent = AudioManager.Instance.CachedTransform;
 			base.spatializer.AddSource(source.transform);
@@ -205,7 +205,7 @@ namespace Pseudo.Internal.Audio
 
 			spatializer.RemoveSource(source.transform);
 
-			Pool<AudioSourceItem>.Recycle(this);
+			Pool.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -341,7 +341,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				Pool<AudioOption>.Recycle(option);
+				AudioOption.Pool.Recycle(option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -397,11 +397,11 @@ namespace Pseudo.Internal.Audio
 			base.OnRecycle();
 
 			if (Application.isPlaying)
-				PoolManager.Instance.Recycle(ref source);
+				AudioItemManager.AudioSourcePool.Recycle(ref source);
 			else
 				source.gameObject.Destroy();
 
-			Pool<AudioSourceSettings>.Recycle(ref settings);
+			AudioSettingsBase.Pool.Recycle(settings);
 		}
 
 		public void Copy(AudioSourceItem reference)

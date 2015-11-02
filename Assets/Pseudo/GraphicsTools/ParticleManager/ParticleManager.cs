@@ -49,8 +49,6 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <returns>The instantiated ParticleEffect.</returns>
 	public virtual ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
 	{
-		ParticleEffect particleEffect = PoolManager.Instance.Create(effect, position: position, parent: parent);
-
-		return particleEffect;
+		return ParticleEffect.Pool.Create(effect, position, parent);
 	}
 }

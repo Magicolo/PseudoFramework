@@ -16,16 +16,6 @@ namespace Pseudo.Internal.Audio
 
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.MixContainer; } }
 
-		public override void Recycle()
-		{
-			Pool<AudioMixContainerSettings>.Recycle(this);
-		}
-
-		public override AudioSettingsBase Clone()
-		{
-			return Pool<AudioMixContainerSettings>.Create(this);
-		}
-
 		public void Copy(AudioMixContainerSettings reference)
 		{
 			base.Copy(reference);

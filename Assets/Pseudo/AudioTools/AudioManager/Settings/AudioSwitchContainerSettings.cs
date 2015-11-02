@@ -17,16 +17,6 @@ namespace Pseudo.Internal.Audio
 
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.SwitchContainer; } }
 
-		public override void Recycle()
-		{
-			Pool<AudioSwitchContainerSettings>.Recycle(this);
-		}
-
-		public override AudioSettingsBase Clone()
-		{
-			return Pool<AudioSwitchContainerSettings>.Create(this);
-		}
-
 		public void Copy(AudioSwitchContainerSettings reference)
 		{
 			base.Copy(reference);

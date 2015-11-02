@@ -131,20 +131,17 @@ namespace Pseudo.Internal.Editor
 		[MenuItem("Pseudo/Utility/Update Copy Methods", false, -5)]
 		static void UpdateCopyMethods()
 		{
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			bool refresh = false;
 
-			for (int i = 0; i < assemblies.Length; i++)
+			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
 			{
-				Type[] types = assemblies[i].GetTypes();
+				Type type = TypeExtensions.AllTypes[i];
 
-				for (int j = 0; j < types.Length; j++)
-				{
-					Type type = types[j];
+				bool doNotCopyClass = type.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length > 0;
+				bool isCopyable = Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>));
 
-					if (!type.IsInterface && type.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length == 0 && Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>)))
-						refresh |= UpdateCopyMethod(type);
-				}
+				if (!type.IsInterface && !doNotCopyClass && isCopyable)
+					refresh |= UpdateCopyMethod(type);
 			}
 
 			if (refresh)
@@ -231,12 +228,10 @@ namespace Pseudo.Internal.Editor
 			string body = "public void Copy(" + typeName + " reference)\n";
 
 			indentString += '	';
-
 			body += indentString + "{\n";
-
 			indentString += '	';
 
-			if (type.BaseType != null && typeof(ICopyable<>).MakeGenericType(type.BaseType).IsAssignableFrom(type.BaseType))
+			if (type.BaseType != null && type.BaseType.Is(typeof(ICopyable<>), type.BaseType))
 				body += indentString + "base.Copy(reference);\n\n";
 
 			FieldInfo[] fields = type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -267,7 +262,7 @@ namespace Pseudo.Internal.Editor
 
 			if (!membersToIgnore.Contains(fieldName))
 			{
-				if (fieldType.IsArray || typeof(ICollection).IsAssignableFrom(fieldType))
+				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)))
 					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
 				else
 					line += indentString + fieldName + " = reference." + fieldName + ";\n";

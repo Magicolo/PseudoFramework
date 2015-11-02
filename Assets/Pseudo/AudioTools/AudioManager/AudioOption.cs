@@ -11,6 +11,9 @@ namespace Pseudo
 	[Serializable]
 	public class AudioOption : IPoolable, ICopyable<AudioOption>
 	{
+		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(() => new AudioOption());
+		public static readonly AudioOption Default = new AudioOption();
+
 		public enum Types
 		{
 			VolumeScale,
@@ -54,8 +57,6 @@ namespace Pseudo
 		public Types Type { get { return type; } }
 		public DynamicValue Value { get { return value; } }
 		public float Delay { get { return delay; } }
-
-		public static readonly AudioOption Default = new AudioOption();
 
 		public static AudioOption Clip(AudioClip clip, float delay = 0f)
 		{
@@ -224,7 +225,7 @@ namespace Pseudo
 
 		static AudioOption Create(Types type, object value, float delay = 0f)
 		{
-			AudioOption option = Pool<AudioOption>.Create(Default);
+			AudioOption option = AudioOption.Pool.CreateCopy(Default);
 
 			option.Initialize(type, value, delay);
 
@@ -260,19 +261,19 @@ namespace Pseudo
 		public void Initialize(Types type, object value, float delay = 0f)
 		{
 			this.type = type;
-			this.value = Pool<DynamicValue>.Create(this.value);
+			this.value = DynamicValue.Pool.CreateCopy(this.value);
 			this.value.SetValue(value);
 			this.delay = delay;
 		}
 
 		public void OnCreate()
 		{
-			value = Pool<DynamicValue>.Create(value);
+			value = DynamicValue.Pool.CreateCopy(value);
 		}
 
 		public void OnRecycle()
 		{
-			Pool<DynamicValue>.Recycle(ref value);
+			DynamicValue.Pool.Recycle(ref value);
 		}
 
 		public void Copy(AudioOption reference)

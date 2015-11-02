@@ -162,7 +162,7 @@ namespace Pseudo.Internal.Audio
 			if (parent == null)
 				AudioManager.Instance.ItemManager.Deactivate(this);
 
-			Recycle();
+			Pool.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -210,7 +210,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				Pool<AudioOption>.Recycle(option);
+				AudioOption.Pool.Recycle(option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -315,8 +315,6 @@ namespace Pseudo.Internal.Audio
 			InitializeSources();
 			Play();
 		}
-
-		protected abstract void Recycle();
 
 		public override void OnRecycle()
 		{

@@ -7,6 +7,8 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioSwitchContainerItem : AudioContainerItem, ICopyable<AudioSwitchContainerItem>
 	{
+		public static readonly AudioSwitchContainerItem Default = new AudioSwitchContainerItem();
+
 		AudioSwitchContainerSettings originalSettings;
 		AudioSwitchContainerSettings settings;
 		AudioValue<int> switchValue;
@@ -14,14 +16,12 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.SwitchContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public static AudioSwitchContainerItem Default = new AudioSwitchContainerItem();
-
 		public void Initialize(AudioSwitchContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = Pool<AudioSwitchContainerSettings>.Create(settings);
+			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -42,16 +42,11 @@ namespace Pseudo.Internal.Audio
 			}
 		}
 
-		protected override void Recycle()
-		{
-			Pool<AudioSwitchContainerItem>.Recycle(this);
-		}
-
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
 
-			Pool<AudioSwitchContainerSettings>.Recycle(ref settings);
+			AudioSettingsBase.Pool.Recycle(settings);
 		}
 
 		public void Copy(AudioSwitchContainerItem reference)

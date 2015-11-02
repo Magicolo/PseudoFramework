@@ -13,7 +13,6 @@ namespace Pseudo
 		public GravityManager GravityManager;
 		public InputManager InputManager;
 		public ParticleManager ParticleManager;
-		public PoolManager PoolManager;
 		public TimeManager TimeManager;
 
 		protected override void Awake()
@@ -31,9 +30,6 @@ namespace Pseudo
 
 			if (ParticleManager.Instance == null && ParticleManager != null)
 				Instantiate(ParticleManager).transform.parent = CachedTransform;
-
-			if (PoolManager.Instance == null && PoolManager != null)
-				Instantiate(PoolManager).transform.parent = CachedTransform;
 
 			if (TimeManager.Instance == null && TimeManager != null)
 				Instantiate(TimeManager).transform.parent = CachedTransform;

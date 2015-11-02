@@ -7,20 +7,20 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioEnumeratorContainerItem : AudioContainerItem, ICopyable<AudioEnumeratorContainerItem>
 	{
+		public static readonly AudioEnumeratorContainerItem Default = new AudioEnumeratorContainerItem();
+
 		AudioEnumeratorContainerSettings originalSettings;
 		AudioEnumeratorContainerSettings settings;
 
 		public override AudioTypes Type { get { return AudioTypes.EnumeratorContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public static AudioEnumeratorContainerItem Default = new AudioEnumeratorContainerItem();
-
 		public void Initialize(AudioEnumeratorContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = Pool<AudioEnumeratorContainerSettings>.Create(settings);
+			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -41,16 +41,11 @@ namespace Pseudo.Internal.Audio
 			originalSettings.CurrentRepeat++;
 		}
 
-		protected override void Recycle()
-		{
-			Pool<AudioEnumeratorContainerItem>.Recycle(this);
-		}
-
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
 
-			Pool<AudioEnumeratorContainerSettings>.Recycle(ref settings);
+			AudioSettingsBase.Pool.Recycle(settings);
 		}
 
 		public void Copy(AudioEnumeratorContainerItem reference)

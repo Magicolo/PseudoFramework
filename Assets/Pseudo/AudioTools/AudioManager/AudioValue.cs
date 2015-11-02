@@ -9,6 +9,8 @@ namespace Pseudo
 {
 	public class AudioValue<T> : IPoolable, ICopyable<AudioValue<T>>
 	{
+		public static readonly Pool<AudioValue<T>> Pool = new Pool<AudioValue<T>>(() => new AudioValue<T>());
+
 		T value;
 
 		public T Value { get { return value; } set { this.value = value; } }

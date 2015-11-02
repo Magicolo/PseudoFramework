@@ -11,10 +11,12 @@ namespace Pseudo
 	[RequireComponent(typeof(ParticleSystem))]
 	public class ParticleEffect : PMonoBehaviour, IPoolable, ICopyable<ParticleEffect>
 	{
+		public static readonly BehaviourPoolManager<ParticleEffect> Pool = new BehaviourPoolManager<ParticleEffect>();
+
 		protected readonly CachedValue<ParticleSystem> cachedParticleSystem;
 
 		public ParticleSystem CachedParticleSystem { get { return cachedParticleSystem; } }
-		public bool IsAlive { get { return cachedParticleSystem.Value.IsAlive(true); } }
+		public bool IsPlaying { get { return cachedParticleSystem.Value.isPlaying; } }
 
 		public ParticleEffect()
 		{
@@ -28,8 +30,8 @@ namespace Pseudo
 
 		protected virtual void Update()
 		{
-			if (!IsAlive)
-				PoolManager.Instance.Recycle(this);
+			if (!IsPlaying)
+				Pool.Recycle(this);
 		}
 
 		public virtual void Stop()
@@ -37,13 +39,11 @@ namespace Pseudo
 			cachedParticleSystem.Value.Stop(true);
 		}
 
-		public virtual void OnCreate()
+		public override void OnCreate()
 		{
-			CachedParticleSystem.Play(true);
-		}
+			base.OnCreate();
 
-		public virtual void OnRecycle()
-		{
+			CachedParticleSystem.Play(true);
 		}
 
 		public void Copy(ParticleEffect reference)

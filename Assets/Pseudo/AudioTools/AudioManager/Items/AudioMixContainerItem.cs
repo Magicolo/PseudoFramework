@@ -8,6 +8,8 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioMixContainerItem : AudioContainerItem, ICopyable<AudioMixContainerItem>
 	{
+		public static readonly AudioMixContainerItem Default = new AudioMixContainerItem();
+
 		AudioMixContainerSettings originalSettings;
 		AudioMixContainerSettings settings;
 		double deltaTime;
@@ -18,14 +20,12 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.MixContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public static AudioMixContainerItem Default = new AudioMixContainerItem();
-
 		public void Initialize(AudioMixContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = Pool<AudioMixContainerSettings>.Create(settings);
+			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -110,17 +110,12 @@ namespace Pseudo.Internal.Audio
 			delays.RemoveAt(index);
 		}
 
-		protected override void Recycle()
-		{
-			Pool<AudioMixContainerItem>.Recycle(this);
-		}
-
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
 
 			delays.Clear();
-			Pool<AudioMixContainerSettings>.Recycle(ref settings);
+			AudioSettingsBase.Pool.Recycle(settings);
 		}
 
 		public void Copy(AudioMixContainerItem reference)

@@ -3,16 +3,19 @@ using System.Collections;
 using Pseudo;
 using System;
 using System.Collections.Generic;
+using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, IClonable<AudioSettingsBase>, ICopyable<AudioSettingsBase>
+	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, ICopyable<AudioSettingsBase>
 	{
 		public enum PitchScaleModes
 		{
 			Ratio,
 			Semitone
 		}
+
+		public static readonly ScriptablePoolManager<AudioSettingsBase> Pool = new ScriptablePoolManager<AudioSettingsBase>();
 
 		string cachedName;
 
@@ -102,21 +105,12 @@ namespace Pseudo
 		}
 
 		/// <summary>
-		/// Used internaly to recycle the AudioSettingsBase.
-		/// </summary>
-		public abstract void Recycle();
-		/// <summary>
-		/// Used internaly to clone the AudioSettingsBase.
-		/// </summary>
-		public abstract AudioSettingsBase Clone();
-
-		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
 		public virtual void OnCreate()
 		{
-			Pool<AudioRTPC>.CreateElements(RTPCs);
-			Pool<AudioOption>.CreateElements(Options);
+			AudioRTPC.Pool.CreateElements(RTPCs);
+			AudioOption.Pool.CreateElements(Options);
 		}
 
 		/// <summary>
@@ -124,8 +118,8 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			Pool<AudioRTPC>.RecycleElements(RTPCs);
-			Pool<AudioOption>.RecycleElements(Options);
+			AudioRTPC.Pool.RecycleElements(RTPCs);
+			AudioOption.Pool.RecycleElements(Options);
 		}
 
 		/// <summary>

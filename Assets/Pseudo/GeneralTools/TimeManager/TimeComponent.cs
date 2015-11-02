@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,7 +9,7 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Time")]
-	public class TimeComponent : TimeComponentBase
+	public class TimeComponent : TimeComponentBase, ICopyable<TimeComponent>
 	{
 		protected override float GetTime()
 		{
@@ -24,6 +24,12 @@ namespace Pseudo
 		protected override float GetFixedDeltaTime()
 		{
 			return TimeManager.GetFixedDeltaTime(channel);
+		}
+
+		public void Copy(TimeComponent reference)
+		{
+			base.Copy(reference);
+
 		}
 	}
 }
