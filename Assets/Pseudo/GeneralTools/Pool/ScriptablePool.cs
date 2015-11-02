@@ -15,6 +15,8 @@ namespace Pseudo
 		public ScriptablePool(Type type, int startCount = 0) : base(startCount)
 		{
 			this.type = type;
+
+			Initialize();
 		}
 
 		public override T Create()

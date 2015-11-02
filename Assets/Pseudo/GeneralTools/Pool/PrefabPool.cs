@@ -10,19 +10,21 @@ namespace Pseudo.Internal
 	public abstract class PrefabPool<T> : PoolBase<T> where T : Object
 	{
 		protected T prefab;
-		protected readonly Queue<int> timeStamps = new Queue<int>();
+		protected readonly Queue<int> timeStamps;
 		protected readonly CachedValue<GameObject> cachedGameObject;
 		protected readonly CachedValue<Transform> cachedTransform;
 
 		public GameObject GameObject { get { return cachedGameObject; } }
 		public Transform Transform { get { return cachedTransform; } }
 
-		protected PrefabPool(T prefab, int startCount = 0) : base(startCount)
+		protected PrefabPool(T prefab, int startCount = 4) : base(startCount)
 		{
 			this.prefab = prefab;
 
+			timeStamps = new Queue<int>(startCount);
 			cachedGameObject = new CachedValue<GameObject>(() => new GameObject(prefab.name));
 			cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
+			Initialize();
 		}
 
 		public virtual T Create(Vector3 position, Transform parent = null)
@@ -75,7 +77,7 @@ namespace Pseudo.Internal
 				base.Enqueue(item);
 			}
 			else
-				item.Destroy();
+				GetGameObject(item).Destroy();
 		}
 
 		protected override T Dequeue()

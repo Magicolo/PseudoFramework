@@ -12,9 +12,11 @@ namespace Pseudo
 	{
 		protected readonly Func<T> getNewItem;
 
-		public Pool(Func<T> getNewItem, int startCount = 0) : base(startCount)
+		public Pool(Func<T> getNewItem, int startCount = 4) : base(startCount)
 		{
 			this.getNewItem = getNewItem;
+
+			Initialize();
 		}
 
 		public override T Create()

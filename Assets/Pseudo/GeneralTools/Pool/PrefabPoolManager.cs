@@ -36,13 +36,13 @@ namespace Pseudo.Internal
 			return item;
 		}
 
-		public virtual T Create(T prefab, Vector3 position, Transform parent = null)
+		public virtual TD Create<TD>(TD prefab, Vector3 position, Transform parent = null) where TD : class, T
 		{
 			if (prefab == null)
 				return null;
 
 			PrefabPool<T> pool = GetPool(prefab);
-			T item = pool.Create(position, parent);
+			TD item = (TD)pool.Create(position, parent);
 			instancePool[GetPoolKey(item)] = pool;
 
 			return item;

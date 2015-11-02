@@ -12,12 +12,11 @@ namespace Pseudo.Internal
 		protected readonly int startCount;
 		protected readonly Queue<T> pool;
 
-		protected PoolBase(int startCount)
+		protected PoolBase(int startCount = 4)
 		{
 			this.startCount = startCount;
 
 			pool = new Queue<T>(startCount);
-			Initialize();
 		}
 
 		public virtual T Create()

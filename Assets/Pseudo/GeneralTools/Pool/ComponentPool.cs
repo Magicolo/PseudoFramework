@@ -10,7 +10,7 @@ namespace Pseudo
 {
 	public class ComponentPool<T> : PrefabPool<T> where T : Component
 	{
-		public ComponentPool(T prefab, int startCount = 0) : base(prefab, startCount) { }
+		public ComponentPool(T prefab, int startCount = 4) : base(prefab, startCount) { }
 
 		protected override GameObject GetGameObject(T item)
 		{

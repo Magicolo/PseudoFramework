@@ -9,11 +9,19 @@ namespace Pseudo
 {
 	public class BehaviourPool<T> : ComponentPool<T> where T : MonoBehaviour, IPoolable
 	{
-		public BehaviourPool(T prefab, int startCount = 0) : base(prefab, startCount) { }
+		public BehaviourPool(T prefab, int startCount = 4) : base(prefab, startCount) { }
 
 		public override T Create()
 		{
 			T item = base.Create();
+			item.OnCreate();
+
+			return item;
+		}
+
+		public override TC CreateCopy<TC>(TC reference)
+		{
+			TC item = base.CreateCopy(reference);
 			item.OnCreate();
 
 			return item;
