@@ -28,7 +28,7 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("min"));
 
 			if (EditorGUI.EndChangeCheck())
-				property.SetValue(Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")), "max");
+				property.SetValue("max", Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")));
 
 			EditorGUI.BeginChangeCheck();
 
@@ -36,7 +36,7 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("max"));
 
 			if (EditorGUI.EndChangeCheck())
-				property.SetValue(Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")), "min");
+				property.SetValue("min", Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")));
 
 			EndLabelWidth();
 			EndIndent();

@@ -19,19 +19,19 @@ namespace Pseudo
 		{
 			base.Awake();
 
-			if (AudioManager.Instance == null && AudioManager != null)
+			if (AudioManager != null && AudioManager.Find() == null)
 				Instantiate(AudioManager).transform.parent = CachedTransform;
 
-			if (GravityManager.Instance == null && GravityManager != null)
+			if (GravityManager != null && GravityManager.Find() == null)
 				Instantiate(GravityManager).transform.parent = CachedTransform;
 
-			if (InputManager.Instance == null && InputManager != null)
+			if (InputManager != null && InputManager.Find() == null)
 				Instantiate(InputManager).transform.parent = CachedTransform;
 
-			if (ParticleManager.Instance == null && ParticleManager != null)
+			if (ParticleManager != null && ParticleManager.Find() == null)
 				Instantiate(ParticleManager).transform.parent = CachedTransform;
 
-			if (TimeManager.Instance == null && TimeManager != null)
+			if (TimeManager != null && TimeManager.Find() == null)
 				Instantiate(TimeManager).transform.parent = CachedTransform;
 
 			DontDestroyOnLoad(CachedGameObject);

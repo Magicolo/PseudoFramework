@@ -10,12 +10,12 @@ namespace Pseudo
 {
 	public static class CopyUtility
 	{
-		public static void CopyTo<T>(T source, ref T target) where T : class, ICopyable<T>, IClonable<T>
+		public static void CopyTo<T>(T source, ref T target) where T : class, ICopyable<T>
 		{
 			if (source == null)
 				target = null;
 			else if (target == null)
-				target = source.Clone();
+				target = source;
 			else
 				target.Copy(source);
 		}

@@ -10,6 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSourceItem : AudioItem, ICopyable<AudioSourceItem>
 	{
 		public static readonly AudioSourceItem Default = new AudioSourceItem();
@@ -396,11 +397,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			if (Application.isPlaying)
-				AudioItemManager.AudioSourcePool.Recycle(ref source);
-			else
-				source.gameObject.Destroy();
-
+			AudioManager.Instance.AudioSourcePool.Recycle(ref source);
 			AudioSettingsBase.Pool.Recycle(settings);
 		}
 

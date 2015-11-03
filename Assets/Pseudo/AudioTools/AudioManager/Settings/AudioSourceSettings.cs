@@ -8,6 +8,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSourceSettings : AudioSettingsBase, ICopyable<AudioSourceSettings>
 	{
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Source; } }

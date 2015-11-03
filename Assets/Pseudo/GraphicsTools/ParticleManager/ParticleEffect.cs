@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Particle Effect")]
-	[RequireComponent(typeof(ParticleSystem))]
+	[RequireComponent(typeof(ParticleSystem)),Copy]
 	public class ParticleEffect : PMonoBehaviour, IPoolable, ICopyable<ParticleEffect>
 	{
 		public static readonly BehaviourPoolManager<ParticleEffect> Pool = new BehaviourPoolManager<ParticleEffect>();

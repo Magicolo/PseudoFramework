@@ -6,7 +6,7 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Move")]
+	[AddComponentMenu("Pseudo/General/Smooth/Move"),Copy]
 	public class SmoothMove : PMonoBehaviour, ICopyable<SmoothMove>
 	{
 		[Mask]

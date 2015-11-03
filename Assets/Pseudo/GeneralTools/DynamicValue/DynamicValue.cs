@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable,Copy]
 	public class DynamicValue : IPoolable, ICopyable<DynamicValue>
 	{
 		public enum ValueTypes

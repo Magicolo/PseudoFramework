@@ -5,6 +5,7 @@ using System;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioRandomContainerItem : AudioContainerItem, ICopyable<AudioRandomContainerItem>
 	{
 		public static readonly AudioRandomContainerItem Default = new AudioRandomContainerItem();

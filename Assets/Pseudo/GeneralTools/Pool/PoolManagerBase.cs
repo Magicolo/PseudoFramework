@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class PoolManagerBase<T, TI, TK, TP> where T : class where TI : class where TP : IPool<T>
+	public abstract class PoolManagerBase<T, TI, TK, TP> where T : class where TI : class where TP : PoolBase<T>
 	{
 		protected readonly Dictionary<TK, TP> pools = new Dictionary<TK, TP>();
 

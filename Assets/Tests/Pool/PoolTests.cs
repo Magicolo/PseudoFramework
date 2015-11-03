@@ -11,6 +11,7 @@ namespace Pseudo.Internal.Tests
 	{
 		public CircleZone Zone;
 		public PMonoBehaviour[] Prefabs;
+		public PMonoBehaviour Poolable;
 
 		[Button]
 		public bool createRandomItemInPrefabs;
@@ -40,6 +41,14 @@ namespace Pseudo.Internal.Tests
 			}
 		}
 
+		[Button]
+		public bool createPoolableItem;
+		void CreatePoolableItemz()
+		{
+			PMonoBehaviour item = Pools.BehaviourPool.Create(Poolable);
+			StartCoroutine(RecycleAfterDelay(item, 1f));
+		}
+
 		void Update()
 		{
 			if (createRandomItemInPrefabs)
@@ -48,6 +57,8 @@ namespace Pseudo.Internal.Tests
 				Create1000RandomItemInPrefabsz();
 			else if (instantiate1000RandomItemInPrefabs)
 				Instantiate1000RandomItemInPrefabsz();
+			else if (createPoolableItem)
+				CreatePoolableItemz();
 		}
 
 		IEnumerator RecycleAfterDelay(PMonoBehaviour item, float delay)

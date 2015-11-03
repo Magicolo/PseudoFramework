@@ -50,21 +50,21 @@ namespace Pseudo.Internal.Input
 					{
 						axesProperty.arraySize += 1;
 						currentAxisProperty = axesProperty.Last();
-						currentAxisProperty.SetValue(axis, "m_Name");
-						currentAxisProperty.SetValue("", "descriptiveName");
-						currentAxisProperty.SetValue("", "descriptiveNegativeName");
-						currentAxisProperty.SetValue("", "negativeButton");
-						currentAxisProperty.SetValue("", "positiveButton");
-						currentAxisProperty.SetValue("", "altNegativeButton");
-						currentAxisProperty.SetValue("", "altPositiveButton");
-						currentAxisProperty.SetValue(0f, "gravity");
-						currentAxisProperty.SetValue(0.2f, "dead");
-						currentAxisProperty.SetValue(1f, "sensitivity");
-						currentAxisProperty.SetValue(false, "snap");
-						currentAxisProperty.SetValue(joystickAxis == InputManager.JoystickAxes.LeftStickY || joystickAxis == InputManager.JoystickAxes.RightStickY, "invert");
-						currentAxisProperty.SetValue(2, "type");
-						currentAxisProperty.SetValue((joystickAxis == InputManager.JoystickAxes.LeftTrigger || joystickAxis == InputManager.JoystickAxes.RightTrigger) ? 2 : (int)joystickAxis, "axis");
-						currentAxisProperty.SetValue((int)joystick, "joyNum");
+						currentAxisProperty.SetValue("m_Name", axis);
+						currentAxisProperty.SetValue("descriptiveName", "");
+						currentAxisProperty.SetValue("descriptiveNegativeName", "");
+						currentAxisProperty.SetValue("negativeButton", "");
+						currentAxisProperty.SetValue("positiveButton", "");
+						currentAxisProperty.SetValue("altNegativeButton", "");
+						currentAxisProperty.SetValue("altPositiveButton", "");
+						currentAxisProperty.SetValue("gravity", 0f);
+						currentAxisProperty.SetValue("dead", 0.2f);
+						currentAxisProperty.SetValue("sensitivity", 1f);
+						currentAxisProperty.SetValue("snap", false);
+						currentAxisProperty.SetValue("invert", joystickAxis == InputManager.JoystickAxes.LeftStickY || joystickAxis == InputManager.JoystickAxes.RightStickY);
+						currentAxisProperty.SetValue("type", value: 2);
+						currentAxisProperty.SetValue("axis", value: (joystickAxis == InputManager.JoystickAxes.LeftTrigger || joystickAxis == InputManager.JoystickAxes.RightTrigger) ? 2 : (int)joystickAxis);
+						currentAxisProperty.SetValue("joyNum", value: (int)joystick);
 					}
 					else
 						break;

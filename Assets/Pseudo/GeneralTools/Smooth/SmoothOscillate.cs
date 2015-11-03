@@ -5,7 +5,7 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Oscillate")]
+	[AddComponentMenu("Pseudo/General/Smooth/Oscillate"),Copy]
 	public class SmoothOscillate : PMonoBehaviour, ICopyable<SmoothOscillate>
 	{
 		[Mask]

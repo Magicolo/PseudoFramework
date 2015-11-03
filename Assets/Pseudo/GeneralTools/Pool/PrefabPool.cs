@@ -23,7 +23,7 @@ namespace Pseudo.Internal
 
 			timeStamps = new Queue<int>(startCount);
 			cachedGameObject = new CachedValue<GameObject>(() => new GameObject(prefab.name));
-			cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
+			cachedTransform = new CachedValue<Transform>(() => { return Application.isPlaying ? cachedGameObject.Value.transform : null; });
 			Initialize();
 		}
 
@@ -55,6 +55,7 @@ namespace Pseudo.Internal
 		protected override T CreateItem()
 		{
 			T item = Object.Instantiate(prefab);
+
 			GetTransform(item).parent = cachedTransform.Value;
 			GetGameObject(item).SetActive(true);
 

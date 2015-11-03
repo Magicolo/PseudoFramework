@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSpatializer : IPoolable, ICopyable<AudioSpatializer>
 	{
 		public static readonly Pool<AudioSpatializer> Pool = new Pool<AudioSpatializer>(() => new AudioSpatializer());

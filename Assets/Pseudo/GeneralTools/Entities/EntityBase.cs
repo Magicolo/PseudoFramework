@@ -7,10 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class EntityBase : PMonoBehaviour, ICopyable<EntityBase>
+	public class EntityBase : PMonoBehaviour
 	{
-		public void Copy(EntityBase reference)
-		{
-		}
+		
 	}
 }

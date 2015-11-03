@@ -10,6 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
+	[Copy]
 	public class AudioDynamicItem : AudioContainerItem, ICopyable<AudioDynamicItem>
 	{
 		public static readonly AudioDynamicItem Default = new AudioDynamicItem();

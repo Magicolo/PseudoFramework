@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	[Serializable]
+	[Serializable,Copy]
 	public class AudioContainerSourceData : IPoolable, ICopyable<AudioContainerSourceData>
 	{
 		public static readonly Pool<AudioContainerSourceData> Pool = new Pool<AudioContainerSourceData>(() => new AudioContainerSourceData());

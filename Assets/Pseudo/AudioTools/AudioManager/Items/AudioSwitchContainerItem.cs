@@ -5,6 +5,7 @@ using System;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSwitchContainerItem : AudioContainerItem, ICopyable<AudioSwitchContainerItem>
 	{
 		public static readonly AudioSwitchContainerItem Default = new AudioSwitchContainerItem();

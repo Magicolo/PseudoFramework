@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Delegate | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
+[AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 public sealed class CopyAttribute : Attribute
 {
 }

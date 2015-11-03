@@ -22,7 +22,8 @@ namespace Pseudo.Internal.Editor
 		public delegate void DropCallback<T>(T droppedObject);
 		public delegate void ReorderCallback(SerializedProperty arrayProperty, int sourceIndex, int targetIndex);
 		public delegate void ClearCallback(SerializedProperty property);
-		public delegate void PropertyDrawer(SerializedProperty arrayProperty, int index, SerializedProperty property);
+		public delegate void FoldoutDrawer(SerializedProperty arrayProperty);
+		public delegate void ElementDrawer(SerializedProperty arrayProperty, int index, SerializedProperty property);
 
 		public bool deleteBreak;
 
@@ -503,9 +504,12 @@ namespace Pseudo.Internal.Editor
 			DropFoldout<T>(showable, false, label, null, dropCallback);
 		}
 
-		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, PropertyDrawer drawer = null, bool disableOnPlay = true, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
+		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, bool disableOnPlay = true, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
 		{
-			AddFoldOut(arrayProperty, -1, label, style, disableOnPlay, addCallback);
+			if (foldoutDrawer == null)
+				AddFoldOut(arrayProperty, -1, label, style, disableOnPlay, addCallback);
+			else
+				foldoutDrawer(arrayProperty);
 
 			if (arrayProperty.isExpanded)
 			{
@@ -534,10 +538,10 @@ namespace Pseudo.Internal.Editor
 					if (Reorderable(arrayProperty, i, disableOnPlay, new Rect(rect.x + 8f, rect.y, rect.width - 24f, 15f), new Rect(rect.x, rect.y, rect.width - 1f, 15f), reorderCallback))
 						break;
 
-					if (drawer == null)
+					if (elementDrawer == null)
 						EditorGUILayout.PropertyField(elementProperty, true);
 					else
-						drawer(arrayProperty, i, elementProperty);
+						elementDrawer(arrayProperty, i, elementProperty);
 
 					EditorGUILayout.EndVertical();
 				}

@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[RequireComponent(typeof(TimeComponent))]
+	[RequireComponent(typeof(TimeComponent)),Copy]
 	public class CharacterEntity : EntityBase, ICopyable<CharacterEntity>
 	{
 		public TimeComponent Time;
@@ -21,8 +21,6 @@ namespace Pseudo
 
 		public void Copy(CharacterEntity reference)
 		{
-			base.Copy(reference);
-
 			Time = reference.Time;
 		}
 	}

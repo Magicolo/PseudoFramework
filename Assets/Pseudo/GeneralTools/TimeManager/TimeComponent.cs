@@ -8,7 +8,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Time")]
+	[AddComponentMenu("Pseudo/General/Time"),Copy]
 	public class TimeComponent : TimeComponentBase, ICopyable<TimeComponent>
 	{
 		protected override float GetTime()

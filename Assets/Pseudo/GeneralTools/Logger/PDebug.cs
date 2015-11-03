@@ -87,24 +87,28 @@ namespace Pseudo
 			System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 			System.Action empty = () => { };
 
-			timer.Start();
-
+			long overhead = 0L;
 			for (int i = 0; i < iterations; i++)
+			{
+				timer.Start();
 				empty();
+				timer.Stop();
+				overhead += timer.ElapsedTicks;
+				timer.Reset();
+			}
 
-			timer.Stop();
-			long overhead = timer.ElapsedTicks;
-
-			timer.Reset();
-			timer.Start();
+			long elapsed = 0L;
 
 			for (int i = 0; i < iterations; i++)
+			{
+				timer.Start();
 				test();
+				timer.Stop();
+				elapsed += timer.ElapsedTicks;
+				timer.Reset();
+			}
 
-			timer.Stop();
-			long elapsed = timer.ElapsedTicks - overhead;
-
-			Log(string.Format("Running {0} took {1} ticks.", testName, elapsed));
+			Log(string.Format("{0}: Ticks = {1}", testName, FormatTicks(elapsed - overhead)));
 		}
 
 		static string LogToString(object[] toLog)
@@ -139,6 +143,18 @@ namespace Pseudo
 				formattedTicks = formattedTicks.Insert(i, " ");
 
 			return formattedTicks;
+		}
+
+		static string FormatMemory(long memory)
+		{
+			if (memory > 100000000)
+				return memory / 1000000000d + " GB";
+			else if (memory > 100000)
+				return memory / 1000000d + " MB";
+			else if (memory > 100)
+				return memory / 1000d + " KB";
+			else
+				return memory + "B";
 		}
 
 		static string FormatType(System.Type type)

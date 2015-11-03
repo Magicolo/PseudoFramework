@@ -10,17 +10,32 @@ public static class PRandom
 
 	static List<float> weightSums = new List<float>();
 
-	public static int Range(int min, int max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static int Range(int min, int max)
+	{
+		return (int)Math.Round(Range((double)min, (double)max, ProbabilityDistributions.Uniform));
+	}
+
+	public static int Range(int min, int max, ProbabilityDistributions distribution)
 	{
 		return (int)Math.Round(Range((double)min, (double)max, distribution));
 	}
 
-	public static float Range(float min, float max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static float Range(float min, float max)
+	{
+		return (float)Range((double)min, (double)max, ProbabilityDistributions.Uniform);
+	}
+
+	public static float Range(float min, float max, ProbabilityDistributions distribution)
 	{
 		return (float)Range((double)min, (double)max, distribution);
 	}
 
-	public static double Range(double min, double max, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
+	public static double Range(double min, double max)
+	{
+		return Range(min, max, ProbabilityDistributions.Uniform);
+	}
+
+	public static double Range(double min, double max, ProbabilityDistributions distribution)
 	{
 		double randomValue = 0d;
 

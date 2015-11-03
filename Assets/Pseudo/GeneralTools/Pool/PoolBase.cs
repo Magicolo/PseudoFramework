@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class PoolBase<T> : IPool<T> where T : class
+	public abstract class PoolBase<T> where T : class
 	{
 		protected readonly int startCount;
 		protected readonly Queue<T> pool;

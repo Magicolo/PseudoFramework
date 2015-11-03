@@ -8,6 +8,7 @@ using UnityEngine.Audio;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
 	{
 		public static readonly Pool<AudioDelayedOption> Pool = new Pool<AudioDelayedOption>(() => new AudioDelayedOption());

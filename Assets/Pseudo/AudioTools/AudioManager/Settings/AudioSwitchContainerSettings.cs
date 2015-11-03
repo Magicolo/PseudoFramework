@@ -10,6 +10,7 @@ namespace Pseudo.Internal.Audio
 	/// <summary>
 	/// Container that will only play the sources that correspond to the value stored in AudioManager.Instance.States[StateName].
 	/// </summary>
+	[Copy]
 	public class AudioSwitchContainerSettings : AudioContainerSettings, ICopyable<AudioSwitchContainerSettings>
 	{
 		public string SwitchName;

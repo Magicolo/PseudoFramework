@@ -10,6 +10,7 @@ namespace Pseudo.Internal.Audio
 	/// <summary>
 	/// Container that will play a random source based on the Weights array.
 	/// </summary>
+	[Copy]
 	public class AudioRandomContainerSettings : AudioContainerSettings, ICopyable<AudioRandomContainerSettings>
 	{
 		public List<float> Weights = new List<float>();

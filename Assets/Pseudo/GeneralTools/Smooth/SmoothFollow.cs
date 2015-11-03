@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Follow")]
+	[AddComponentMenu("Pseudo/General/Smooth/Follow"),Copy]
 	public class SmoothFollow : PMonoBehaviour, ICopyable<SmoothFollow>
 	{
 		[Mask]

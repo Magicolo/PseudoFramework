@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public abstract class AudioContainerSettings : AudioSettingsBase, ICopyable<AudioContainerSettings>
 	{
 		public List<AudioContainerSourceData> Sources = new List<AudioContainerSourceData>();

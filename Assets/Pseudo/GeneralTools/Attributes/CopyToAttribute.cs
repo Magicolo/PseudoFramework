@@ -6,6 +6,6 @@ using System.Linq;
 using Pseudo;
 
 [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = true)]
-public sealed class DoNotCopyAttribute : Attribute
+public sealed class CopyToAttribute : Attribute
 {
 }

@@ -10,11 +10,11 @@ namespace Pseudo
 {
 	public class Pool<T> : PoolBase<T> where T : class, IPoolable
 	{
-		protected readonly Func<T> getNewItem;
+		protected readonly Func<T> createItem;
 
-		public Pool(Func<T> getNewItem, int startCount = 4) : base(startCount)
+		public Pool(Func<T> createItem, int startCount = 4) : base(startCount)
 		{
-			this.getNewItem = getNewItem;
+			this.createItem = createItem;
 
 			Initialize();
 		}
@@ -43,7 +43,7 @@ namespace Pseudo
 
 		protected override T CreateItem()
 		{
-			return getNewItem();
+			return createItem();
 		}
 	}
 }

@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TypePoolManager<T, TP> : PoolManagerBase<T, Type, Type, TP> where T : class where TP : IPool<T>
+	public abstract class TypePoolManager<T, TP> : PoolManagerBase<T, Type, Type, TP> where T : class where TP : PoolBase<T>
 	{
 		public virtual TD Create<TD>() where TD : class, T
 		{

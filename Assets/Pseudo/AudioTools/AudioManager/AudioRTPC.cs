@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable,Copy]
 	public class AudioRTPC : IPoolable, ICopyable<AudioRTPC>
 	{
 		public enum RTPCTypes

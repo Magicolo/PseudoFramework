@@ -6,7 +6,7 @@ using System;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable,Copy]
 	public class Oscillator : IPoolable, ICopyable<Oscillator>
 	{
 		public float Frequency = 1;

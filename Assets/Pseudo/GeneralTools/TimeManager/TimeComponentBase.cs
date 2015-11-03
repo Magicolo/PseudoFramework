@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
+	[Copy]
 	public abstract class TimeComponentBase : PMonoBehaviour, ICopyable<TimeComponentBase>
 	{
 		public TimeManager.TimeChannels Channel { get { return channel; } }

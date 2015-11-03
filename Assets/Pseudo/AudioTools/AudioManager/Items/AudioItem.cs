@@ -8,7 +8,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable, Copy]
 	public abstract class AudioItem : IPoolable, ICopyable<AudioItem>
 	{
 		public enum AudioStates

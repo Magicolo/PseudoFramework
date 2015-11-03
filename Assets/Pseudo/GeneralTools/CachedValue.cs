@@ -7,19 +7,20 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class CachedValue<T> : ICopyable<CachedValue<T>>
+	[Copy]
+	public class CachedValue<T> : ICopyable<CachedValue<T>> where T : class
 	{
 		Func<T> getValue;
-		bool valueCached;
 		T value;
+		bool isValueCached;
 
 		public T Value
 		{
 			get
 			{
-				if (!valueCached)
+				if (!isValueCached)
 				{
-					valueCached = Application.isPlaying;
+					isValueCached = Application.isPlaying;
 					value = getValue();
 				}
 
@@ -28,7 +29,7 @@ namespace Pseudo
 			set
 			{
 				this.value = value;
-				valueCached = true;
+				isValueCached = true;
 			}
 		}
 
@@ -39,14 +40,15 @@ namespace Pseudo
 
 		public void Reset()
 		{
-			valueCached = false;
+			isValueCached = false;
+			value = null;
 		}
 
 		public void Copy(CachedValue<T> reference)
 		{
 			getValue = reference.getValue;
-			valueCached = reference.valueCached;
 			value = reference.value;
+			isValueCached = reference.isValueCached;
 		}
 
 		public static implicit operator T(CachedValue<T> cachedValue)

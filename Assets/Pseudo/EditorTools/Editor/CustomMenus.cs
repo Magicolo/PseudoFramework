@@ -137,10 +137,10 @@ namespace Pseudo.Internal.Editor
 			{
 				Type type = TypeExtensions.AllTypes[i];
 
-				bool doNotCopyClass = type.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length > 0;
+				bool copyClass = type.HasAttribute(typeof(CopyAttribute));
 				bool isCopyable = Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>));
 
-				if (!type.IsInterface && !doNotCopyClass && isCopyable)
+				if (!type.IsInterface && copyClass && isCopyable)
 					refresh |= UpdateCopyMethod(type);
 			}
 
@@ -240,13 +240,10 @@ namespace Pseudo.Internal.Editor
 			{
 				FieldInfo field = fields[i];
 
-				if (field.IsInitOnly || field.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length > 0)
+				if (field.IsInitOnly || field.HasAttribute(typeof(DoNotCopyAttribute)))
 					continue;
 
-				if (field.GetCustomAttributes(true).Contains(typeof(CompilerGeneratedAttribute)) && field.Name.Contains("k__BackingField"))
-					body += GetFieldLine(field.FieldType, field.Name.GetRange(field.Name.IndexOf('<') + 1, '>'), indentString, membersToIgnore);
-				else
-					body += GetFieldLine(field.FieldType, field.Name, indentString, membersToIgnore);
+				body += GetFieldLine(field, indentString, membersToIgnore);
 
 			}
 
@@ -256,13 +253,22 @@ namespace Pseudo.Internal.Editor
 			return body;
 		}
 
-		static string GetFieldLine(Type fieldType, string fieldName, string indentString, params string[] membersToIgnore)
+		static string GetFieldLine(FieldInfo field, string indentString, params string[] membersToIgnore)
 		{
 			string line = "";
+			Type fieldType = field.FieldType;
+			string fieldName;
+
+			if (field.HasAttribute(typeof(CompilerGeneratedAttribute)) && field.Name.Contains("k__BackingField"))
+				fieldName = field.Name.GetRange(field.Name.IndexOf('<') + 1, '>');
+			else
+				fieldName = field.Name;
 
 			if (!membersToIgnore.Contains(fieldName))
 			{
-				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)))
+				bool copyTo = fieldType.IsClass && fieldType.Is(typeof(ICopyable<>), fieldType) && field.HasAttribute(typeof(CopyToAttribute));
+
+				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)) || copyTo)
 					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
 				else
 					line += indentString + fieldName + " = reference." + fieldName + ";\n";

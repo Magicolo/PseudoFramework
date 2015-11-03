@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[Copy]
 	public class AudioValue<T> : IPoolable, ICopyable<AudioValue<T>>
 	{
 		public static readonly Pool<AudioValue<T>> Pool = new Pool<AudioValue<T>>(() => new AudioValue<T>());

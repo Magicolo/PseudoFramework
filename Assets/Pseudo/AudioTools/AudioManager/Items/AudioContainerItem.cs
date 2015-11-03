@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public abstract class AudioContainerItem : AudioItem, ICopyable<AudioContainerItem>
 	{
 		protected readonly List<AudioItem> sources = new List<AudioItem>();

@@ -10,16 +10,16 @@ namespace Pseudo
 {
 	public class PoolManager<T> : TypePoolManager<T, Pool<T>> where T : class, IPoolable
 	{
-		protected readonly Func<Type, Pool<T>> getNewPool;
+		protected readonly Func<Type, Pool<T>> createPool;
 
-		public PoolManager(Func<Type, Pool<T>> getNewPool)
+		public PoolManager(Func<Type, Pool<T>> createPool)
 		{
-			this.getNewPool = getNewPool;
+			this.createPool = createPool;
 		}
 
 		protected override Pool<T> CreatePool(Type identifier)
 		{
-			return getNewPool(identifier);
+			return createPool(identifier);
 		}
 	}
 }

@@ -9,8 +9,6 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioItemManager
 	{
-		public static readonly ComponentPoolManager<AudioSource> AudioSourcePool = new ComponentPoolManager<AudioSource>();
-
 		Dictionary<int, List<AudioItem>> idActiveItems = new Dictionary<int, List<AudioItem>>();
 		List<AudioItem> toUpdate = new List<AudioItem>();
 
@@ -88,45 +86,35 @@ namespace Pseudo.Internal.Audio
 			if (settings == null)
 				return null;
 
-			AudioItem item;
-
 			switch (settings.Type)
 			{
 				default:
 					AudioSourceItem sourceItem = AudioItem.Pool.CreateCopy(AudioSourceItem.Default);
-					AudioSource source = AudioSourcePool.Create(AudioManager.Instance.Reference);
+					AudioSource source = AudioManager.Instance.AudioSourcePool.Create();
 					source.Copy(AudioManager.Instance.Reference, AudioManager.Instance.UseCustomCurves);
 					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
-					item = sourceItem;
-					break;
+					return sourceItem;
 				case AudioItem.AudioTypes.MixContainer:
 					AudioMixContainerItem mixContainerItem = AudioItem.Pool.CreateCopy(AudioMixContainerItem.Default);
 					mixContainerItem.Initialize((AudioMixContainerSettings)settings, spatializer, parent);
-					item = mixContainerItem;
-					break;
+					return mixContainerItem;
 				case AudioItem.AudioTypes.RandomContainer:
 					AudioRandomContainerItem randomContainerItem = AudioItem.Pool.CreateCopy(AudioRandomContainerItem.Default);
 					randomContainerItem.Initialize((AudioRandomContainerSettings)settings, spatializer, parent);
-					item = randomContainerItem;
-					break;
+					return randomContainerItem;
 				case AudioItem.AudioTypes.EnumeratorContainer:
 					AudioEnumeratorContainerItem enumeratorContainerItem = AudioItem.Pool.CreateCopy(AudioEnumeratorContainerItem.Default);
 					enumeratorContainerItem.Initialize((AudioEnumeratorContainerSettings)settings, spatializer, parent);
-					item = enumeratorContainerItem;
-					break;
+					return enumeratorContainerItem;
 				case AudioItem.AudioTypes.SwitchContainer:
 					AudioSwitchContainerItem switchContainerItem = AudioItem.Pool.CreateCopy(AudioSwitchContainerItem.Default);
 					switchContainerItem.Initialize((AudioSwitchContainerSettings)settings, spatializer, parent);
-					item = switchContainerItem;
-					break;
+					return switchContainerItem;
 				case AudioItem.AudioTypes.SequenceContainer:
 					AudioSequenceContainerItem sequenceContainerItem = AudioItem.Pool.CreateCopy(AudioSequenceContainerItem.Default);
 					sequenceContainerItem.Initialize((AudioSequenceContainerSettings)settings, spatializer, parent);
-					item = sequenceContainerItem;
-					break;
+					return sequenceContainerItem;
 			}
-
-			return item;
 		}
 
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)

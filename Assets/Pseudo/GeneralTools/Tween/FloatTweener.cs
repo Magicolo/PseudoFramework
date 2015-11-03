@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[Copy]
 	public class FloatTweener : IPoolable, ICopyable<FloatTweener>
 	{
 		public enum TweenStates

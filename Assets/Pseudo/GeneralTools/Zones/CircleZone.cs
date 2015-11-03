@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Zones/Circle Zone")]
-	public class CircleZone : Zone2DBase
+	[AddComponentMenu("Pseudo/General/Zones/Circle Zone"),Copy]
+	public class CircleZone : Zone2DBase, ICopyable<CircleZone>
 	{
 		[SerializeField]
 		Circle circle = new Circle(0f, 0f, 1f);
@@ -40,6 +40,12 @@ namespace Pseudo
 		public override Vector2 GetRandomWorldPoint()
 		{
 			return WorldCircle.GetRandomPoint();
+		}
+
+		public void Copy(CircleZone reference)
+		{
+			circle = reference.circle;
+			draw = reference.draw;
 		}
 	}
 }

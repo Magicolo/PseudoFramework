@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSequenceContainerItem : AudioContainerItem, ICopyable<AudioSequenceContainerItem>
 	{
 		public static readonly AudioSequenceContainerItem Default = new AudioSequenceContainerItem();

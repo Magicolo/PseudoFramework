@@ -9,6 +9,7 @@ namespace Pseudo.Internal.Audio
 	/// <summary>
 	/// Container that will play all its sources after their delay.
 	/// </summary>
+	[Copy]
 	public class AudioMixContainerSettings : AudioContainerSettings, ICopyable<AudioMixContainerSettings>
 	{
 		[Min]

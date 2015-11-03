@@ -10,6 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
+	[Copy]
 	public class AudioDynamicData : IPoolable, ICopyable<AudioDynamicData>
 	{
 		public enum PlayModes

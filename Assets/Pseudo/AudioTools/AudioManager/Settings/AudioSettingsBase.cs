@@ -7,6 +7,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
+	[Copy]
 	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, ICopyable<AudioSettingsBase>
 	{
 		public enum PitchScaleModes

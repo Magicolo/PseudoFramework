@@ -8,7 +8,7 @@ using UnityEngine.Audio;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable, Copy]
 	public class AudioOption : IPoolable, ICopyable<AudioOption>
 	{
 		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(() => new AudioOption());

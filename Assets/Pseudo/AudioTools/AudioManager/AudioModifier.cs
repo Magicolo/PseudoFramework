@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
 	{
 		public static readonly Pool<AudioModifier> Pool = new Pool<AudioModifier>(() => new AudioModifier());

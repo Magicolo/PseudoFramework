@@ -9,19 +9,19 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	// TODO Show container type in container inspectors
+	// TODO Show container types better in container inspectors
 	// TODO Uniformize RTPCValues and SwitchValues
 	// TODO Find a clean way to limit instances of multiple Settings together
 	// TODO AudioSettings editors should all have unique colors/icons
 	// TODO Add random selection types in AudioRandomContainerSettings
 	// TODO Documentation for everything
-	// TODO Drop zone on ContainerSettingsBase Sources that adds all selected settings
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
 	public class AudioManager : Singleton<AudioManager>
 	{
 		[SerializeField]
 		AudioSource reference;
+		ComponentPool<AudioSource> audioSourcePool;
 		AudioItemManager itemManager = new AudioItemManager();
 
 		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
@@ -39,11 +39,26 @@ namespace Pseudo
 			get
 			{
 				if (reference == null)
-					InitializeReference();
+					Initialize();
 
 				return reference;
 			}
 		}
+
+		/// <summary>
+		/// Used internally to pool AudioSources
+		/// </summary>
+		public ComponentPool<AudioSource> AudioSourcePool
+		{
+			get
+			{
+				if (audioSourcePool == null)
+					Initialize();
+
+				return audioSourcePool;
+			}
+		}
+
 		/// <summary>
 		/// Used internaly to manager AudioItems
 		/// </summary>
@@ -53,12 +68,12 @@ namespace Pseudo
 		{
 			base.Awake();
 
-			InitializeReference();
+			Initialize();
 		}
 
 		void Reset()
 		{
-			InitializeReference();
+			Initialize();
 		}
 
 		void Update()
@@ -66,12 +81,19 @@ namespace Pseudo
 			itemManager.Update();
 		}
 
-		void InitializeReference()
+		void Initialize()
 		{
 			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
+			audioSourcePool = new ComponentPool<AudioSource>(reference, 0);
+
+			if (Application.isPlaying)
+			{
+				audioSourcePool.GameObject.name = "Sources";
+				audioSourcePool.Transform.parent = CachedTransform;
+			}
 		}
 
 		/// <summary>

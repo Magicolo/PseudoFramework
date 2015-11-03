@@ -33,7 +33,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnPlaymodeStateChanged()
 		{
-			if (AudioManager.Find() == null)
+			if (AudioManager.Instance == null)
 				return;
 
 			StopPreview();
@@ -41,7 +41,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnProjectWindowItemGUI(string guid, Rect selectionRect)
 		{
-			if (AudioManager.Find() == null)
+			if (AudioManager.Instance == null)
 				return;
 
 			AudioSettingsBase settings = AssetDatabase.LoadAssetAtPath<AudioSettingsBase>(AssetDatabase.GUIDToAssetPath(guid));
@@ -63,7 +63,7 @@ namespace Pseudo.Internal.Editor
 
 		static void StopPreview()
 		{
-			if (AudioManager.Find() == null)
+			if (AudioManager.Instance == null)
 				return;
 
 			if (previewItem != null)
@@ -76,7 +76,7 @@ namespace Pseudo.Internal.Editor
 
 		public static void ShowPreviewButton(Rect rect, AudioSettingsBase settings)
 		{
-			if (AudioManager.Find() == null)
+			if (AudioManager.Instance == null)
 				return;
 
 			// Check if scrollbar is visible
