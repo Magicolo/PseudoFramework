@@ -14,7 +14,6 @@ namespace Pseudo
 	// TODO Find a clean way to limit instances of multiple Settings together
 	// TODO AudioSettings editors should all have unique colors/icons
 	// TODO Add random selection types in AudioRandomContainerSettings
-	// TODO Documentation for everything
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
 	public class AudioManager : Singleton<AudioManager>
