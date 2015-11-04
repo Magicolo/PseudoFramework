@@ -44,6 +44,45 @@ namespace Pseudo.Internal
 			return pool;
 		}
 
+		public bool ContainsPool(TI identifier)
+		{
+			return pools.ContainsKey(GetPoolKey(identifier));
+		}
+
+		public bool ContainsItem(T item)
+		{
+			foreach (TP pool in pools.Values)
+			{
+				if (pool.Contains(item))
+					return true;
+			}
+
+			return false;
+		}
+
+		public int PoolCount()
+		{
+			return pools.Count;
+		}
+
+		public int ItemCount()
+		{
+			int itemCount = 0;
+
+			foreach (TP pool in pools.Values)
+				itemCount += pool.Count();
+
+			return itemCount;
+		}
+
+		public void Clear()
+		{
+			foreach (TP pool in pools.Values)
+				pool.Clear();
+
+			pools.Clear();
+		}
+
 		protected abstract TK GetPoolKey(TI identifier);
 
 		protected abstract TP CreatePool(TI identifier);

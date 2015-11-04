@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Copy]
-	public class CachedValue<T> : ICopyable<CachedValue<T>> where T : class
+	public class CachedValue<T> : ICopyable<CachedValue<T>>
 	{
 		Func<T> getValue;
 		T value;
@@ -41,7 +41,7 @@ namespace Pseudo
 		public void Reset()
 		{
 			isValueCached = false;
-			value = null;
+			value = default(T);
 		}
 
 		public void Copy(CachedValue<T> reference)

@@ -40,9 +40,18 @@ namespace Pseudo
 			}
 		}
 
-		public virtual void OnCreate() { }
+		bool isInPool;
+		public bool IsInPool { get { return isInPool; } }
 
-		public virtual void OnRecycle() { }
+		public virtual void OnCreate()
+		{
+			isInPool = false;
+		}
+
+		public virtual void OnRecycle()
+		{
+			isInPool = true;
+		}
 	}
 }
 
