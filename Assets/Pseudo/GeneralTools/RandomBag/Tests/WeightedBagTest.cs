@@ -18,7 +18,7 @@ public class WeightedBagTest : MonoBehaviour
 
 	void testBase()
 	{
-		WeightedBag<int> bag = new WeightedBag<int>(new System.Random());
+		SimpleWeightedBag<int> bag = new SimpleWeightedBag<int>(new System.Random());
 		bag.Add(25, 1);
 		bag.Add(25, 2);
 		bag.Add(50, 3);
