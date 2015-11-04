@@ -6,10 +6,14 @@ using UnityEngine;
 using Pseudo;
 using UnityEngine.Audio;
 
-namespace Pseudo
+namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
 	{
+		public static readonly Pool<AudioDelayedOption> Pool = new Pool<AudioDelayedOption>(() => new AudioDelayedOption());
+		public static readonly AudioDelayedOption Default = new AudioDelayedOption();
+
 		AudioOption option;
 		bool recycle;
 		Func<float> getDeltaTime;
@@ -17,8 +21,6 @@ namespace Pseudo
 
 		public AudioOption Option { get { return option; } }
 		public bool Recycle { get { return recycle; } }
-
-		public static AudioDelayedOption Default = new AudioDelayedOption();
 
 		public void Initialize(AudioOption option, bool recycle, Func<float> getDeltaTime)
 		{
@@ -40,6 +42,8 @@ namespace Pseudo
 
 		public void OnRecycle()
 		{
+			if (recycle)
+				AudioOption.Pool.Recycle(ref option);
 		}
 
 		public void Copy(AudioDelayedOption reference)

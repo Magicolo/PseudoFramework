@@ -12,23 +12,23 @@ namespace Pseudo.Internal.Audio
 	[CustomPropertyDrawer(typeof(AudioOption))]
 	public class AudioOptionDrawer : CustomPropertyDrawerBase
 	{
-		AudioOptionDrawerDummy _dummy;
-		SerializedObject _dummySerialized;
+		AudioOptionDrawerDummy dummy;
+		SerializedObject dummySerialized;
 
-		AudioOption _audioOption;
-		PDynamicValue _dynamicValue;
-		SerializedProperty _typeProperty;
-		SerializedProperty _valueProperty;
-		SerializedProperty _timeProperty;
-		SerializedProperty _easeProperty;
-		SerializedProperty _delayProperty;
-		bool _hasCurve;
+		AudioOption audioOption;
+		DynamicValue dynamicValue;
+		SerializedProperty typeProperty;
+		SerializedProperty valueProperty;
+		SerializedProperty timeProperty;
+		SerializedProperty easeProperty;
+		SerializedProperty delayProperty;
+		bool hasCurve;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Begin(position, property, label);
 
-			PropertyField(property, string.Format("{0} : {1}", _typeProperty.GetValue<AudioOption.Types>(), _valueProperty.GetValue() ?? "null").ToGUIContent(), false);
+			PropertyField(property, string.Format("{0} : {1}", typeProperty.GetValue<AudioOption.Types>(), valueProperty.GetValue() ?? "null").ToGUIContent(), false);
 
 			if (property.isExpanded)
 			{
@@ -36,31 +36,31 @@ namespace Pseudo.Internal.Audio
 
 				EditorGUI.BeginChangeCheck();
 
-				PropertyField(_typeProperty, GUIContent.none);
+				PropertyField(typeProperty, GUIContent.none);
 
 				if (EditorGUI.EndChangeCheck())
 				{
 					serializedObject.ApplyModifiedProperties();
-					_hasCurve = false;
+					hasCurve = false;
 					UpdateProperties();
 
-					SetValue(_typeProperty.GetValue<AudioOption.Types>(), _hasCurve);
+					SetValue(typeProperty.GetValue<AudioOption.Types>(), hasCurve);
 				}
 
 				EditorGUI.BeginChangeCheck();
 
 				ShowValue();
 
-				if (_timeProperty != null)
-					PropertyField(_timeProperty, "Time".ToGUIContent());
+				if (timeProperty != null)
+					PropertyField(timeProperty, "Time".ToGUIContent());
 
-				if (_easeProperty != null)
-					PropertyField(_easeProperty, "Ease".ToGUIContent());
+				if (easeProperty != null)
+					PropertyField(easeProperty, "Ease".ToGUIContent());
 
-				PropertyField(_delayProperty);
+				PropertyField(delayProperty);
 
 				if (EditorGUI.EndChangeCheck())
-					SetValue(_typeProperty.GetValue<AudioOption.Types>(), _hasCurve);
+					SetValue(typeProperty.GetValue<AudioOption.Types>(), hasCurve);
 
 				EditorGUI.indentLevel--;
 			}
@@ -72,35 +72,35 @@ namespace Pseudo.Internal.Audio
 		{
 			base.Initialize(property, label);
 
-			_dummy = ScriptableObject.CreateInstance<AudioOptionDrawerDummy>();
-			_dummy.hideFlags = HideFlags.DontSave;
-			_dummySerialized = new SerializedObject(_dummy);
+			dummy = ScriptableObject.CreateInstance<AudioOptionDrawerDummy>();
+			dummy.hideFlags = HideFlags.DontSave;
+			dummySerialized = new SerializedObject(dummy);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
 
-			_audioOption = property.GetValue<AudioOption>();
-			_dynamicValue = _audioOption.Value;
-			_hasCurve = _audioOption.HasCurve();
-			_typeProperty = property.FindPropertyRelative("_type");
-			_delayProperty = property.FindPropertyRelative("_delay");
+			audioOption = property.GetValue<AudioOption>();
+			dynamicValue = audioOption.Value;
+			hasCurve = audioOption.HasCurve();
+			typeProperty = property.FindPropertyRelative("type");
+			delayProperty = property.FindPropertyRelative("delay");
 
 			UpdateProperties();
 
-			InitializeValue(_typeProperty.GetValue<AudioOption.Types>());
+			InitializeValue(typeProperty.GetValue<AudioOption.Types>());
 
 			float height = 16f;
 
 			if (property.isExpanded)
 			{
-				height += 38f + EditorGUI.GetPropertyHeight(_valueProperty, label, true);
+				height += 38f + EditorGUI.GetPropertyHeight(valueProperty, label, true);
 
-				if (_timeProperty != null)
-					height += EditorGUI.GetPropertyHeight(_timeProperty) + 2f;
-				if (_easeProperty != null)
-					height += EditorGUI.GetPropertyHeight(_easeProperty) + 2f;
+				if (timeProperty != null)
+					height += EditorGUI.GetPropertyHeight(timeProperty) + 2f;
+				if (easeProperty != null)
+					height += EditorGUI.GetPropertyHeight(easeProperty) + 2f;
 			}
 
 			return height;
@@ -108,28 +108,28 @@ namespace Pseudo.Internal.Audio
 
 		void UpdateProperties()
 		{
-			_valueProperty = GetValueProperty(_typeProperty.GetValue<AudioOption.Types>(), _hasCurve, _dummySerialized);
-			_timeProperty = GetTimeProperty(_typeProperty.GetValue<AudioOption.Types>(), _dummySerialized);
-			_easeProperty = GetEaseProperty(_typeProperty.GetValue<AudioOption.Types>(), _dummySerialized);
+			valueProperty = GetValueProperty(typeProperty.GetValue<AudioOption.Types>(), hasCurve, dummySerialized);
+			timeProperty = GetTimeProperty(typeProperty.GetValue<AudioOption.Types>(), dummySerialized);
+			easeProperty = GetEaseProperty(typeProperty.GetValue<AudioOption.Types>(), dummySerialized);
 		}
 
 		void ShowValue()
 		{
-			if (CanHaveCurve(_typeProperty.GetValue<AudioOption.Types>()))
+			if (CanHaveCurve(typeProperty.GetValue<AudioOption.Types>()))
 			{
 				EditorGUI.BeginChangeCheck();
 
-				_hasCurve = ToggleButton(new Rect(currentPosition.x + currentPosition.width - 16f, currentPosition.y + 1f, 16f, 14f), _hasCurve, "C".ToGUIContent(), "C".ToGUIContent());
+				hasCurve = ToggleButton(new Rect(currentPosition.x + currentPosition.width - 16f, currentPosition.y + 1f, 16f, 14f), hasCurve, "C".ToGUIContent(), "C".ToGUIContent());
 
 				if (EditorGUI.EndChangeCheck())
 					UpdateProperties();
 
-				EditorGUI.PropertyField(new Rect(currentPosition.x, currentPosition.y, currentPosition.width - 20f, currentPosition.height), _valueProperty, "Value".ToGUIContent());
+				EditorGUI.PropertyField(new Rect(currentPosition.x, currentPosition.y, currentPosition.width - 20f, currentPosition.height), valueProperty, "Value".ToGUIContent());
 			}
 			else
-				EditorGUI.PropertyField(currentPosition, _valueProperty, "Value".ToGUIContent());
+				EditorGUI.PropertyField(currentPosition, valueProperty, "Value".ToGUIContent());
 
-			currentPosition.y += EditorGUI.GetPropertyHeight(_valueProperty) + 2f;
+			currentPosition.y += EditorGUI.GetPropertyHeight(valueProperty) + 2f;
 		}
 
 		SerializedProperty GetValueProperty(AudioOption.Types type, bool hasCurve, SerializedObject dummy)
@@ -166,7 +166,7 @@ namespace Pseudo.Internal.Audio
 			SerializedProperty curveProperty = null;
 
 			if (type == AudioOption.Types.SpatialBlend || type == AudioOption.Types.ReverbZoneMix || type == AudioOption.Types.Spread || (type == AudioOption.Types.RolloffMode && (AudioRolloffMode)value == AudioRolloffMode.Custom))
-				curveProperty = property.FindPropertyRelative("_curve");
+				curveProperty = property.FindPropertyRelative("curve");
 
 			return curveProperty;
 		}
@@ -178,46 +178,46 @@ namespace Pseudo.Internal.Audio
 
 		void InitializeValue(AudioOption.Types type)
 		{
-			if (_dynamicValue.GetValueType() == PDynamicValue.ValueTypes.Null && _dynamicValue.GetValue() == null)
-				_dynamicValue.SetValue(AudioOption.GetDefaultValue(type));
+			if (dynamicValue.GetValueType() == DynamicValue.ValueTypes.Null && dynamicValue.GetValue() == null)
+				dynamicValue.SetValue(AudioOption.GetDefaultValue(type));
 
 			if (type == AudioOption.Types.VolumeScale || type == AudioOption.Types.PitchScale)
 			{
-				float[] data = _audioOption.GetValue<float[]>();
+				float[] data = audioOption.GetValue<float[]>();
 				data = data == null || data.Length != 3 ? AudioOption.GetDefaultValue(type) as float[] : data;
 
-				_valueProperty.SetValue(data[0]);
-				_timeProperty.SetValue(data[1]);
-				_easeProperty.SetValue((Tweening.Ease)data[2]);
+				valueProperty.SetValue(data[0]);
+				timeProperty.SetValue(data[1]);
+				easeProperty.SetValue((Tweening.Ease)data[2]);
 			}
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
 			{
-				float[] data = _audioOption.GetValue<float[]>();
+				float[] data = audioOption.GetValue<float[]>();
 				data = data == null || data.Length != 2 ? AudioOption.GetDefaultValue(type) as float[] : data;
 
-				_valueProperty.SetValue(data[0]);
-				_easeProperty.SetValue((Tweening.Ease)data[1]);
+				valueProperty.SetValue(data[0]);
+				easeProperty.SetValue((Tweening.Ease)data[1]);
 			}
 			else
-				_valueProperty.SetValue(_dynamicValue.GetValue());
+				valueProperty.SetValue(dynamicValue.GetValue());
 		}
 
 		void SetValue(AudioOption.Types type, bool hasCurve)
 		{
 			serializedObject.ApplyModifiedProperties();
 
-			PDynamicValue.ValueTypes valueType;
+			DynamicValue.ValueTypes valueType;
 			bool isArray;
 
 			AudioOption.ToValueType(type, hasCurve, out valueType, out isArray);
-			_dynamicValue.SetValueType(valueType, isArray);
+			dynamicValue.SetValueType(valueType, isArray);
 
 			if (type == AudioOption.Types.VolumeScale || type == AudioOption.Types.PitchScale)
-				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), _timeProperty.GetValue<float>(), (float)_easeProperty.GetValue<Tweening.Ease>() });
+				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), timeProperty.GetValue<float>(), (float)easeProperty.GetValue<Tweening.Ease>() });
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
-				_dynamicValue.SetValue(new float[] { _valueProperty.GetValue<float>(), (float)_easeProperty.GetValue<Tweening.Ease>() });
+				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), (float)easeProperty.GetValue<Tweening.Ease>() });
 			else
-				_dynamicValue.SetValue(_valueProperty.GetValue());
+				dynamicValue.SetValue(valueProperty.GetValue());
 
 			serializedObject.Update();
 		}

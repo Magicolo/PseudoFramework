@@ -13,24 +13,24 @@ namespace Pseudo.Internal.Audio
 	[CustomEditor(typeof(AudioSourceSettings)), CanEditMultipleObjects]
 	public class AudioSourceSettingsEditor : AudioSettingsBaseEditor
 	{
-		AudioSourceSettings _sourceSettings;
-		SerializedProperty _clipProperty;
-		Texture _textureLeft;
-		Texture _textureRight;
+		AudioSourceSettings sourceSettings;
+		SerializedProperty clipProperty;
+		Texture textureLeft;
+		Texture textureRight;
 
 		public override void OnEnable()
 		{
 			base.OnEnable();
 
-			_sourceSettings = target as AudioSourceSettings;
-			_clipProperty = serializedObject.FindProperty("Clip");
+			sourceSettings = target as AudioSourceSettings;
+			clipProperty = serializedObject.FindProperty("Clip");
 
 			InitializeTextures();
 		}
 
 		public override void OnInspectorGUI()
 		{
-			_clipProperty = serializedObject.FindProperty("Clip");
+			clipProperty = serializedObject.FindProperty("Clip");
 
 			Begin(false);
 
@@ -38,7 +38,7 @@ namespace Pseudo.Internal.Audio
 
 			EditorGUI.BeginChangeCheck();
 
-			EditorGUILayout.PropertyField(_clipProperty);
+			EditorGUILayout.PropertyField(clipProperty);
 
 			if (EditorGUI.EndChangeCheck())
 				InitializeTextures();
@@ -56,26 +56,26 @@ namespace Pseudo.Internal.Audio
 
 		void ShowWaves()
 		{
-			AudioClip clip = _clipProperty.GetValue<AudioClip>();
-			string playRangeStartSeconds = clip == null ? "" : "(" + (_sourceSettings.PlayRangeStart * clip.length).Round(0.01f) + "s)";
-			string playRangeEndSeconds = clip == null ? "" : "(" + (_sourceSettings.PlayRangeEnd * clip.length).Round(0.01f) + "s)";
-			string curvesLabel = string.Format("Start: {0} {2} | End: {1} {3}", _sourceSettings.PlayRangeStart.Round(0.01f), _sourceSettings.PlayRangeEnd.Round(0.01f), playRangeStartSeconds, playRangeEndSeconds);
+			AudioClip clip = clipProperty.GetValue<AudioClip>();
+			string playRangeStartSeconds = clip == null ? "" : "(" + (sourceSettings.PlayRangeStart * clip.length).Round(0.01f) + "s)";
+			string playRangeEndSeconds = clip == null ? "" : "(" + (sourceSettings.PlayRangeEnd * clip.length).Round(0.01f) + "s)";
+			string curvesLabel = string.Format("Start: {0} {2} | End: {1} {3}", sourceSettings.PlayRangeStart.Round(0.01f), sourceSettings.PlayRangeEnd.Round(0.01f), playRangeStartSeconds, playRangeEndSeconds);
 
 			EditorGUILayout.LabelField(curvesLabel, GUILayout.Height(22f));
-			AudioManagerEditor.ShowPreviewButton(EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect()), _sourceSettings);
+			AudioManagerEditor.ShowPreviewButton(EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect()), sourceSettings);
 
 			EditorGUI.BeginChangeCheck();
 
 			Rect rect = EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect());
-			EditorGUI.MinMaxSlider(new Rect(rect.x - 9f, rect.y + 12f, rect.width + 10f, rect.height), ref _sourceSettings.PlayRangeStart, ref _sourceSettings.PlayRangeEnd, 0f, 1f);
+			EditorGUI.MinMaxSlider(new Rect(rect.x - 9f, rect.y + 12f, rect.width + 10f, rect.height), ref sourceSettings.PlayRangeStart, ref sourceSettings.PlayRangeEnd, 0f, 1f);
 
 			if (EditorGUI.EndChangeCheck())
 			{
 				for (int i = 0; i < targets.Length; i++)
 				{
 					AudioSourceSettings settings = (AudioSourceSettings)targets[i];
-					settings.PlayRangeStart = float.IsNaN(_sourceSettings.PlayRangeStart) ? 0f : Mathf.Clamp(_sourceSettings.PlayRangeStart, 0f, settings.PlayRangeEnd);
-					settings.PlayRangeEnd = float.IsNaN(_sourceSettings.PlayRangeEnd) ? 1f : Mathf.Clamp(_sourceSettings.PlayRangeEnd, settings.PlayRangeStart, 1f);
+					settings.PlayRangeStart = float.IsNaN(sourceSettings.PlayRangeStart) ? 0f : Mathf.Clamp(sourceSettings.PlayRangeStart, 0f, settings.PlayRangeEnd);
+					settings.PlayRangeEnd = float.IsNaN(sourceSettings.PlayRangeEnd) ? 1f : Mathf.Clamp(sourceSettings.PlayRangeEnd, settings.PlayRangeStart, 1f);
 				}
 
 				serializedObject.Update();
@@ -84,11 +84,11 @@ namespace Pseudo.Internal.Audio
 
 
 			if (clip == null || clip.channels == 1)
-				ShowWave(_textureLeft, 40f);
+				ShowWave(textureLeft, 40f);
 			else
 			{
-				ShowWave(_textureLeft, 20f);
-				ShowWave(_textureRight, 20f);
+				ShowWave(textureLeft, 20f);
+				ShowWave(textureRight, 20f);
 			}
 		}
 
@@ -107,26 +107,26 @@ namespace Pseudo.Internal.Audio
 			GUIStyle style = new GUIStyle("LODBlackBox");
 			float indentation = EditorGUI.indentLevel * 16f;
 
-			GUI.Box(new Rect(rect.x + indentation + 1f, rect.y, (rect.width - indentation) * _sourceSettings.PlayRangeStart, rect.height), "", style);
-			GUI.Box(new Rect(rect.x + indentation + (rect.width - indentation) * _sourceSettings.PlayRangeEnd - 1f, rect.y, (rect.width - indentation) * (1f - _sourceSettings.PlayRangeEnd), rect.height), "", style);
+			GUI.Box(new Rect(rect.x + indentation + 1f, rect.y, (rect.width - indentation) * sourceSettings.PlayRangeStart, rect.height), "", style);
+			GUI.Box(new Rect(rect.x + indentation + (rect.width - indentation) * sourceSettings.PlayRangeEnd - 1f, rect.y, (rect.width - indentation) * (1f - sourceSettings.PlayRangeEnd), rect.height), "", style);
 		}
 
 		void InitializeTextures()
 		{
 			float[] dataLeft;
 			float[] dataRight;
-			AudioClip clip = _clipProperty.GetValue<AudioClip>();
+			AudioClip clip = clipProperty.GetValue<AudioClip>();
 
 			if (clip == null)
-				_textureLeft = GetWaveTexture(null, 1024, 256, 2);
+				textureLeft = GetWaveTexture(null, 1024, 256, 2);
 			else
 			{
 				clip.GetUntangledData(out dataLeft, out dataRight);
 
-				_textureLeft = GetWaveTexture(dataLeft, 1024, 256 / clip.channels, 2);
+				textureLeft = GetWaveTexture(dataLeft, 1024, 256 / clip.channels, 2);
 
 				if (clip.channels > 1)
-					_textureRight = GetWaveTexture(dataRight, 1024, 256 / clip.channels, 2);
+					textureRight = GetWaveTexture(dataRight, 1024, 256 / clip.channels, 2);
 			}
 		}
 

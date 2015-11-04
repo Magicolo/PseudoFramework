@@ -36,6 +36,10 @@ public class zTestEditor : CustomEditorBase
 		parser.CompilationUnit.AcceptVisitor(replacer, null);
 		PDebug.Log(script.Concat('\n'));
 	}
+
+	void Test()
+	{
+	}
 }
 
 public class CopyMethodReplacerVisitor : AbstractAstVisitor

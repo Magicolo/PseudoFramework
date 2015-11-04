@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[Copy]
 	public class RoutineHolder : IPoolable, ICopyable<RoutineHolder>
 	{
 		readonly List<IEnumerator> routines = new List<IEnumerator>();

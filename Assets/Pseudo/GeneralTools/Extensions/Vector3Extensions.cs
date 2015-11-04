@@ -272,6 +272,18 @@ namespace Pseudo
 			return vector;
 		}
 
+		public static Vector3 ToPolar(this Vector3 vector)
+		{
+			Vector2 polar = vector.ToVector2().ToPolar();
+			return new Vector3(polar.x, polar.y, vector.z);
+		}
+
+		public static Vector3 ToCartesian(this Vector3 vector)
+		{
+			Vector2 cartesian = vector.ToVector2().ToCartesian();
+			return new Vector3(cartesian.x, cartesian.y, vector.z);
+		}
+
 		public static Vector2 ToVector2(this Vector3 vector)
 		{
 			return vector;

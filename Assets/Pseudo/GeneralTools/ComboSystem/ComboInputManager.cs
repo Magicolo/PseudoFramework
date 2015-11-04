@@ -9,7 +9,6 @@ namespace Pseudo.Internal
 	[System.Serializable]
 	public class ComboInputManager
 	{
-
 		public List<ComboSequence> validCombos = new List<ComboSequence>();
 		public List<int> currentInput = new List<int>();
 		public ComboSequence lastSuccessfulCombo;
@@ -58,7 +57,7 @@ namespace Pseudo.Internal
 				if (sequenceItem.timeConstraints && inputCounter > sequenceItem.maxDelay)
 				{
 					validCombos.RemoveAt(i);
-					comboSystem.messenger.SendOnComboFail(sequence);
+					comboSystem.Messenger.SendOnComboFail(sequence);
 				}
 			}
 
@@ -68,7 +67,7 @@ namespace Pseudo.Internal
 			}
 			else
 			{
-				comboSystem.messenger.SendOnComboStay();
+				comboSystem.Messenger.SendOnComboStay();
 			}
 		}
 
@@ -98,13 +97,13 @@ namespace Pseudo.Internal
 					if (currentInputIndex == sequence.items.Length - 1)
 					{
 						lastSuccessfulCombo = validCombos.Pop(i);
-						comboSystem.messenger.SendOnComboSuccess(sequence);
+						comboSystem.Messenger.SendOnComboSuccess(sequence);
 					}
 				}
 				else if (currentInputIndex > 0)
 				{
 					validCombos.RemoveAt(i);
-					comboSystem.messenger.SendOnComboFail(sequence);
+					comboSystem.Messenger.SendOnComboFail(sequence);
 				}
 				else
 				{
@@ -140,9 +139,9 @@ namespace Pseudo.Internal
 
 		public T[] GetCurrentInput<T>()
 		{
-			if (typeof(T) != comboSystem.comboManager.inputEnumType)
+			if (typeof(T) != comboSystem.ComboManager.inputEnumType)
 			{
-				Debug.LogError(string.Format("Type of 'T' must be {0}.", comboSystem.comboManager.inputEnumType.Name));
+				Debug.LogError(string.Format("Type of 'T' must be {0}.", comboSystem.ComboManager.inputEnumType.Name));
 				return null;
 			}
 
@@ -150,7 +149,7 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < input.Length; i++)
 			{
-				input[i] = (T)comboSystem.comboManager.inputEnumValues.GetValue(currentInput[i]);
+				input[i] = (T)comboSystem.ComboManager.inputEnumValues.GetValue(currentInput[i]);
 			}
 
 			return input;
@@ -175,9 +174,9 @@ namespace Pseudo.Internal
 
 		public T[] GetValidInput<T>()
 		{
-			if (typeof(T) != comboSystem.comboManager.inputEnumType)
+			if (typeof(T) != comboSystem.ComboManager.inputEnumType)
 			{
-				Debug.LogError(string.Format("Type of 'T' must be {0}.", comboSystem.comboManager.inputEnumType.Name));
+				Debug.LogError(string.Format("Type of 'T' must be {0}.", comboSystem.ComboManager.inputEnumType.Name));
 				return null;
 			}
 
@@ -185,7 +184,7 @@ namespace Pseudo.Internal
 
 			for (int i = validCombos.Count - 1; i >= 0; i--)
 			{
-				T value = (T)comboSystem.comboManager.inputEnumValues.GetValue(validCombos[i].items[currentInputIndex].inputIndex);
+				T value = (T)comboSystem.ComboManager.inputEnumValues.GetValue(validCombos[i].items[currentInputIndex].inputIndex);
 
 				if (!input.Contains(value))
 				{
@@ -208,7 +207,7 @@ namespace Pseudo.Internal
 			if (!comboStarted)
 			{
 				comboStarted = true;
-				comboSystem.messenger.SendOnComboEnter();
+				comboSystem.Messenger.SendOnComboEnter();
 			}
 
 		}
@@ -218,7 +217,7 @@ namespace Pseudo.Internal
 			if (comboStarted)
 			{
 				comboStarted = false;
-				comboSystem.messenger.SendOnComboExit();
+				comboSystem.Messenger.SendOnComboExit();
 			}
 
 			ResetCombo();
@@ -226,7 +225,7 @@ namespace Pseudo.Internal
 
 		public void ResetCombo()
 		{
-			validCombos = new List<ComboSequence>(comboSystem.comboManager.GetUnlockedCombos());
+			validCombos = new List<ComboSequence>(comboSystem.ComboManager.GetUnlockedCombos());
 			currentInput.Clear();
 			//			lastSuccessfulCombo = null;
 			currentInputIndex = 0;

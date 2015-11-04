@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Serializable]
+	[Serializable,Copy]
 	public class AudioRTPC : IPoolable, ICopyable<AudioRTPC>
 	{
 		public enum RTPCTypes
@@ -22,9 +22,12 @@ namespace Pseudo
 			Global
 		}
 
-		AudioValue<float> _value;
-		float _lastValue;
-		float _lastRatio;
+		public static readonly Pool<AudioRTPC> Pool = new Pool<AudioRTPC>(() => new AudioRTPC());
+		static readonly Dictionary<string, AudioValue<float>> rtpcValues = new Dictionary<string, AudioValue<float>>();
+
+		AudioValue<float> value;
+		float lastValue;
+		float lastRatio;
 
 		public string Name;
 		public RTPCTypes Type;
@@ -34,57 +37,55 @@ namespace Pseudo
 		[Clamp]
 		public AnimationCurve Curve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
-		public AudioValue<float> Value { get { return _value; } }
-
-		static Dictionary<string, AudioValue<float>> _rtpcValues = new Dictionary<string, AudioValue<float>>();
+		public AudioValue<float> Value { get { return value; } }
 
 		public float GetAdjustedValue()
 		{
 			float ratio = GetRatio();
 			float value;
 
-			if (ratio == _lastRatio)
-				value = _lastValue;
+			if (ratio == lastRatio)
+				value = lastValue;
 			else
 				value = Curve.Evaluate(ratio);
 
-			_lastRatio = ratio;
-			_lastValue = value;
+			lastRatio = ratio;
+			lastValue = value;
 
 			return value;
 		}
 
 		public void SetValue(float value)
 		{
-			_value.Value = value;
+			this.value.Value = value;
 		}
 
 		float GetRatio()
 		{
-			return Mathf.Clamp01((_value.Value - MinValue) / (MaxValue - MinValue));
+			return Mathf.Clamp01((value.Value - MinValue) / (MaxValue - MinValue));
 		}
 
 		public virtual void OnCreate()
 		{
 			if (Scope == RTPCScope.Local)
-				_value = Pool<AudioValue<float>>.Create();
+				value = AudioValue<float>.Pool.Create();
 			else
-				_value = GetGlobalRTPCValue(Name);
+				value = GetGlobalRTPCValue(Name);
 
-			_lastValue = Curve.Evaluate(GetRatio());
+			lastValue = Curve.Evaluate(GetRatio());
 		}
 
 		public virtual void OnRecycle()
 		{
 			if (Scope == RTPCScope.Local)
-				Pool<AudioValue<float>>.Recycle(ref _value);
+				AudioValue<float>.Pool.Recycle(ref value);
 		}
 
 		public void Copy(AudioRTPC reference)
 		{
-			_value = reference._value;
-			_lastValue = reference._lastValue;
-			_lastRatio = reference._lastRatio;
+			value = reference.value;
+			lastValue = reference.lastValue;
+			lastRatio = reference.lastRatio;
 			Name = reference.Name;
 			Type = reference.Type;
 			Scope = reference.Scope;
@@ -97,13 +98,11 @@ namespace Pseudo
 		{
 			AudioValue<float> value;
 
-			if (!_rtpcValues.ContainsKey(name))
+			if (!rtpcValues.TryGetValue(name, out value))
 			{
-				value = Pool<AudioValue<float>>.Create();
-				_rtpcValues[name] = value;
+				value = AudioValue<float>.Pool.Create();
+				rtpcValues[name] = value;
 			}
-			else
-				value = _rtpcValues[name];
 
 			return value;
 		}

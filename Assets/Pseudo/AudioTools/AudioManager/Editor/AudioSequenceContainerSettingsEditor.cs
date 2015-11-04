@@ -12,13 +12,13 @@ namespace Pseudo.Internal.Audio
 	[CustomEditor(typeof(AudioSequenceContainerSettings)), CanEditMultipleObjects]
 	public class AudioSequenceContainerSettingsEditor : AudioContainerSettingsEditor
 	{
-		SerializedProperty _delaysProperty;
+		SerializedProperty delaysProperty;
 
 		public override void OnInspectorGUI()
 		{
 			Begin(false);
 
-			_delaysProperty = serializedObject.FindProperty("Delays");
+			delaysProperty = serializedObject.FindProperty("Delays");
 
 			base.OnInspectorGUI();
 
@@ -29,13 +29,13 @@ namespace Pseudo.Internal.Audio
 		{
 			base.ShowSource(arrayProperty, index, sourceProperty);
 
-			_delaysProperty.arraySize = arrayProperty.arraySize - 1;
+			delaysProperty.arraySize = arrayProperty.arraySize - 1;
 
 			if (sourceProperty.isExpanded)
 			{
 				EditorGUI.indentLevel++;
 
-				EditorGUILayout.PropertyField(_sourceSettingsProperty);
+				EditorGUILayout.PropertyField(sourceSettingsProperty);
 
 				ArrayFoldout(sourceProperty.FindPropertyRelative("Options"), disableOnPlay: false);
 
@@ -43,7 +43,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (index < arrayProperty.arraySize - 1)
-				EditorGUILayout.PropertyField(_delaysProperty.GetArrayElementAtIndex(index), "Delay".ToGUIContent());
+				EditorGUILayout.PropertyField(delaysProperty.GetArrayElementAtIndex(index), "Delay".ToGUIContent());
 		}
 	}
 }

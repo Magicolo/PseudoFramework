@@ -7,21 +7,12 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioDynamicSettings : AudioContainerSettings, ICopyable<AudioDynamicSettings>
 	{
+		public static readonly AudioDynamicSettings Default = CreateInstance<AudioDynamicSettings>();
+
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Dynamic; } }
-
-		public static AudioDynamicSettings Default = CreateInstance<AudioDynamicSettings>();
-
-		public override void Recycle()
-		{
-			Pool<AudioDynamicSettings>.Recycle(this);
-		}
-
-		public override AudioSettingsBase Clone()
-		{
-			return Pool<AudioDynamicSettings>.Create(this);
-		}
 
 		public void Copy(AudioDynamicSettings reference)
 		{

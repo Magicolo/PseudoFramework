@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal {
-	public class StateMachineTriggerEnter2DCaller : StateMachineCaller {
+namespace Pseudo.Internal
+{
+	public class StateMachineTriggerEnter2DCaller : StateMachineCaller
+	{
 
-		void OnTriggerEnter2D(Collider2D collision) {
-			if (machine.IsActive) {
+		void OnTriggerEnter2D(Collider2D collision)
+		{
+			if (machine.IsActive)
+			{
 				machine.TriggerEnter2D(collision);
 			}
 		}

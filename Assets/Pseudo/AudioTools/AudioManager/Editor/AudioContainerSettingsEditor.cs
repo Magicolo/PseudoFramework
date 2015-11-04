@@ -11,7 +11,8 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioContainerSettingsEditor : AudioSettingsBaseEditor
 	{
-		protected SerializedProperty _sourceSettingsProperty;
+		protected SerializedProperty sourcesProperty;
+		protected SerializedProperty sourceSettingsProperty;
 
 		public override void OnInspectorGUI()
 		{
@@ -27,13 +28,19 @@ namespace Pseudo.Internal.Audio
 
 		public void ShowSources()
 		{
-			ArrayFoldout(serializedObject.FindProperty("Sources"), disableOnPlay: false, drawer: ShowSource, addCallback: OnSourceAdded, deleteCallback: OnSourceDeleted, reorderCallback: OnSourceReordered);
+			sourcesProperty = serializedObject.FindProperty("Sources");
+			ArrayFoldout(sourcesProperty, disableOnPlay: false, foldoutDrawer: ShowSourcesFoldout, elementDrawer: ShowSource, addCallback: OnSourceAdded, deleteCallback: OnSourceDeleted, reorderCallback: OnSourceReordered);
+		}
+
+		public void ShowSourcesFoldout(SerializedProperty arrayProperty)
+		{
+			AddFoldOut<AudioSettingsBase>(arrayProperty, OnSourceDropped);
 		}
 
 		public virtual void ShowSource(SerializedProperty arrayProperty, int index, SerializedProperty sourceProperty)
 		{
-			_sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
-			AudioSettingsBase settings = _sourceSettingsProperty.GetValue<AudioSettingsBase>();
+			sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
+			AudioSettingsBase settings = sourceSettingsProperty.GetValue<AudioSettingsBase>();
 
 			Foldout(sourceProperty, string.Format("{0}", settings == null ? "null" : settings.Name).ToGUIContent(), CustomEditorStyles.BoldFoldout);
 
@@ -98,9 +105,17 @@ namespace Pseudo.Internal.Audio
 			ReorderArray(arrayProperty, sourceIndex, targetIndex);
 		}
 
+		public virtual void OnSourceDropped(AudioSettingsBase settings)
+		{
+			AddToArray(sourcesProperty);
+			SerializedProperty sourceProperty = sourcesProperty.Last();
+			sourceProperty.SetValue("Settings", settings);
+			sourceProperty.FindPropertyRelative("Options").Clear();
+		}
+
 		public virtual void OnSettingsDropped(AudioSettingsBase settings)
 		{
-			_sourceSettingsProperty.SetValue(settings);
+			sourceSettingsProperty.SetValue(settings);
 		}
 
 		public override float GetSettingsLength(AudioSettingsBase settings)

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public abstract class AudioContainerSettings : AudioSettingsBase, ICopyable<AudioContainerSettings>
 	{
 		public List<AudioContainerSourceData> Sources = new List<AudioContainerSourceData>();
@@ -15,14 +16,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnCreate();
 
-			Pool<AudioContainerSourceData>.CreateElements(Sources);
+			AudioContainerSourceData.Pool.CreateElements(Sources);
 		}
 
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
 
-			Pool<AudioContainerSourceData>.RecycleElements(Sources);
+			AudioContainerSourceData.Pool.RecycleElements(Sources);
 		}
 
 		public void Copy(AudioContainerSettings reference)

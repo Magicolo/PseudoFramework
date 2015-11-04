@@ -19,7 +19,7 @@ namespace Pseudo.Internal.Editor
 				string buttonPressedMethodName = string.IsNullOrEmpty(((ButtonAttribute)attribute).methodName) ? label.text.Replace(" ", "").Replace("_", "").Capitalized() : ((ButtonAttribute)attribute).methodName;
 				string buttonIndexVariableName = ((ButtonAttribute)attribute).indexVariableName;
 				GUIStyle buttonStyle = ((ButtonAttribute)attribute).style;
-				currentPosition = AttributeUtility.BeginIndentation(currentPosition);
+				currentPosition = EditorGUI.IndentedRect(currentPosition);
 
 				if (noFieldLabel) buttonLabel = "";
 
@@ -28,8 +28,6 @@ namespace Pseudo.Internal.Editor
 					pressed = GUI.Button(currentPosition, buttonLabel, buttonStyle);
 				else
 					pressed = GUI.Button(currentPosition, buttonLabel);
-
-				AttributeUtility.EndIndentation();
 
 				if (pressed)
 				{

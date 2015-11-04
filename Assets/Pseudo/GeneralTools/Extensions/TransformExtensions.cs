@@ -311,6 +311,11 @@ namespace Pseudo
 		}
 		#endregion
 
+		public static void SortByPosition(this Transform[] transforms)
+		{
+			Array.Sort(transforms, (a, b) => a.position.x.CompareTo(b.position.x));
+		}
+
 		public static Transform[] GetParents(this Transform child)
 		{
 			List<Transform> parents = new List<Transform>();

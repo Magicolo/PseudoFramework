@@ -12,13 +12,13 @@ namespace Pseudo.Internal.Audio
 	[CustomEditor(typeof(AudioMixContainerSettings)), CanEditMultipleObjects]
 	public class AudioMixContainerSettingsEditor : AudioContainerSettingsEditor
 	{
-		SerializedProperty _delaysProperty;
+		SerializedProperty delaysProperty;
 
 		public override void OnInspectorGUI()
 		{
 			Begin(false);
 
-			_delaysProperty = serializedObject.FindProperty("Delays");
+			delaysProperty = serializedObject.FindProperty("Delays");
 
 			base.OnInspectorGUI();
 
@@ -29,14 +29,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.ShowSource(arrayProperty, index, sourceProperty);
 
-			_delaysProperty.arraySize = arrayProperty.arraySize;
+			delaysProperty.arraySize = arrayProperty.arraySize;
 
 			if (sourceProperty.isExpanded)
 			{
 				EditorGUI.indentLevel++;
 
-				EditorGUILayout.PropertyField(_sourceSettingsProperty);
-				EditorGUILayout.PropertyField(_delaysProperty.GetArrayElementAtIndex(index), "Delay".ToGUIContent());
+				EditorGUILayout.PropertyField(sourceSettingsProperty);
+				EditorGUILayout.PropertyField(delaysProperty.GetArrayElementAtIndex(index), "Delay".ToGUIContent());
 				ArrayFoldout(sourceProperty.FindPropertyRelative("Options"), disableOnPlay: false);
 
 				EditorGUI.indentLevel--;
@@ -47,14 +47,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnSourceDeleted(arrayProperty, index);
 
-			DeleteFromArray(_delaysProperty, index);
+			DeleteFromArray(delaysProperty, index);
 		}
 
 		public override void OnSourceReordered(SerializedProperty arrayProperty, int sourceIndex, int targetIndex)
 		{
 			base.OnSourceReordered(arrayProperty, sourceIndex, targetIndex);
 
-			ReorderArray(_delaysProperty, sourceIndex, targetIndex);
+			ReorderArray(delaysProperty, sourceIndex, targetIndex);
 		}
 	}
 }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Pseudo
 {
-	public abstract class PMonoBehaviour : MonoBehaviour
+	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
 	{
 		bool isGameObjectCached;
 		GameObject gameObjectCached;
@@ -38,6 +38,19 @@ namespace Pseudo
 
 				return transformCached;
 			}
+		}
+
+		bool isInPool;
+		public bool IsInPool { get { return isInPool; } }
+
+		public virtual void OnCreate()
+		{
+			isInPool = false;
+		}
+
+		public virtual void OnRecycle()
+		{
+			isInPool = true;
 		}
 	}
 }

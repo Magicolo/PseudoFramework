@@ -168,6 +168,11 @@ namespace Pseudo.Internal
 			member.SetMemberValue(container, value);
 		}
 
+		public static bool HasAttribute(this MemberInfo memberInfo, Type attributeType)
+		{
+			return memberInfo.GetCustomAttributes(attributeType, true).Length > 0;
+		}
+
 		public static object InvokeMethod(this object obj, string methodName, params object[] arguments)
 		{
 			MethodInfo[] methods = obj.GetType().GetMethods(AllFlags);

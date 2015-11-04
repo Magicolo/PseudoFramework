@@ -219,7 +219,61 @@ namespace Pseudo
 
 		public static float Angle(this Vector2 vector)
 		{
-			return (Vector2.Angle(Vector2.right, vector) * -vector.y.Sign()).Wrap(0f, 360f);
+			if (vector.x == 0f)
+				return vector.y >= 0f ? 90f : 270f;
+			else if (vector.y == 0f)
+				return vector.x >= 0f ? 0f : 180f;
+
+			float angle = Mathf.Rad2Deg * Mathf.Atan(vector.y / vector.x);
+
+			switch (vector.GetQuadrant())
+			{
+				case 2:
+					angle += 180f;
+					break;
+				case 3:
+					angle += 180f;
+					break;
+				case 4:
+					angle += 360f;
+					break;
+			}
+
+			return angle;
+		}
+
+		public static int GetQuadrant(this Vector2 vector)
+		{
+			if (vector.x >= 0f)
+				return vector.y >= 0f ? 1 : 4;
+			else
+				return vector.y >= 0f ? 2 : 3;
+		}
+
+		public static Vector2 ToPolar(this Vector2 vector)
+		{
+			float sqrMagnitude = vector.sqrMagnitude;
+
+			if (sqrMagnitude <= 0f)
+				return Vector2.zero;
+			else
+				return new Vector2(Mathf.Sqrt(sqrMagnitude), vector.Angle());
+		}
+
+		public static Vector2 ToCartesian(this Vector2 vector)
+		{
+			if (vector.x <= 0f)
+				return Vector2.zero;
+			else if (vector.y == 0f)
+				return new Vector2(vector.x, 0f);
+			else if (vector.y == 90f)
+				return new Vector2(0f, vector.x);
+			else if (vector.y == 180f)
+				return new Vector2(-vector.x, 0f);
+			else if (vector.y == 270f)
+				return new Vector2(0f, -vector.x);
+			else
+				return new Vector2(vector.x * Mathf.Cos(vector.y * Mathf.Deg2Rad), vector.x * Mathf.Sin(vector.y * Mathf.Deg2Rad));
 		}
 
 		public static Vector3 ToVector3(this Vector2 vector)

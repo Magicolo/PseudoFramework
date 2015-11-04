@@ -9,23 +9,21 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	// TODO Show container type in container inspectors
+	// TODO Show container types better in container inspectors
 	// TODO Uniformize RTPCValues and SwitchValues
 	// TODO Find a clean way to limit instances of multiple Settings together
 	// TODO AudioSettings editors should all have unique colors/icons
 	// TODO Add random selection types in AudioRandomContainerSettings
-	// TODO Documentation for everything
-	// TODO Drop zone on ContainerSettingsBase Sources that adds all selected settings
-	// TODO Remove memory allocation when doing WeightedRandom()
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
-	public class PAudio : Singleton<PAudio>
+	public class AudioManager : Singleton<AudioManager>
 	{
 		[SerializeField]
-		AudioSource _reference;
-		AudioItemManager _itemManager = new AudioItemManager();
+		AudioSource reference;
+		ComponentPool<AudioSource> audioSourcePool;
+		AudioItemManager itemManager = new AudioItemManager();
 
-		Dictionary<string, AudioValue<int>> _switchValues = new Dictionary<string, AudioValue<int>>();
+		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
 
 		/// <summary>
 		/// If you use custom curves in the Reference AudioSource, set this to true.
@@ -39,40 +37,62 @@ namespace Pseudo
 		{
 			get
 			{
-				if (_reference == null)
-					InitializeReference();
+				if (reference == null)
+					Initialize();
 
-				return _reference;
+				return reference;
 			}
 		}
+
+		/// <summary>
+		/// Used internally to pool AudioSources
+		/// </summary>
+		public ComponentPool<AudioSource> AudioSourcePool
+		{
+			get
+			{
+				if (audioSourcePool == null)
+					Initialize();
+
+				return audioSourcePool;
+			}
+		}
+
 		/// <summary>
 		/// Used internaly to manager AudioItems
 		/// </summary>
-		public AudioItemManager ItemManager { get { return _itemManager; } }
+		public AudioItemManager ItemManager { get { return itemManager; } }
 
 		protected override void Awake()
 		{
 			base.Awake();
 
-			InitializeReference();
+			Initialize();
 		}
 
 		void Reset()
 		{
-			InitializeReference();
+			Initialize();
 		}
 
 		void Update()
 		{
-			_itemManager.Update();
+			itemManager.Update();
 		}
 
-		void InitializeReference()
+		void Initialize()
 		{
-			_reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
-			_reference.gameObject.SetActive(false);
-			_reference.playOnAwake = false;
-			_reference.spatialBlend = 1f;
+			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			reference.gameObject.SetActive(false);
+			reference.playOnAwake = false;
+			reference.spatialBlend = 1f;
+			audioSourcePool = new ComponentPool<AudioSource>(reference, 0);
+
+			if (Application.isPlaying)
+			{
+				audioSourcePool.GameObject.name = "Sources";
+				audioSourcePool.Transform.parent = CachedTransform;
+			}
 		}
 
 		/// <summary>
@@ -82,7 +102,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings)
 		{
-			return _itemManager.CreateItem(settings);
+			return itemManager.CreateItem(settings);
 		}
 
 		/// <summary>
@@ -92,7 +112,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
-			return _itemManager.CreateItem(settings, position);
+			return itemManager.CreateItem(settings, position);
 		}
 
 		/// <summary>
@@ -103,7 +123,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
-			return _itemManager.CreateItem(settings, follow);
+			return itemManager.CreateItem(settings, follow);
 		}
 
 		/// <summary>
@@ -113,7 +133,7 @@ namespace Pseudo
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
-			return _itemManager.CreateItem(settings, getPosition);
+			return itemManager.CreateItem(settings, getPosition);
 		}
 
 		/// <summary>
@@ -182,13 +202,11 @@ namespace Pseudo
 		{
 			AudioValue<int> value;
 
-			if (!_switchValues.ContainsKey(name))
+			if (!switchValues.TryGetValue(name, out value))
 			{
-				value = Pool<AudioValue<int>>.Create();
-				_switchValues[name] = value;
+				value = AudioValue<int>.Pool.Create();
+				switchValues[name] = value;
 			}
-			else
-				value = _switchValues[name];
 
 			return value;
 		}

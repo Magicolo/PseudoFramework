@@ -8,6 +8,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSourceSettings : AudioSettingsBase, ICopyable<AudioSourceSettings>
 	{
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Source; } }
@@ -27,16 +28,6 @@ namespace Pseudo.Internal.Audio
 				return 0f;
 			else
 				return Clip.length * (PlayRangeEnd - PlayRangeStart);
-		}
-
-		public override void Recycle()
-		{
-			Pool<AudioSourceSettings>.Recycle(this);
-		}
-
-		public override AudioSettingsBase Clone()
-		{
-			return Pool<AudioSourceSettings>.Create(this);
 		}
 
 		public void Copy(AudioSourceSettings reference)

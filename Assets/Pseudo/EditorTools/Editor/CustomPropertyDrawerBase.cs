@@ -11,6 +11,18 @@ namespace Pseudo.Internal.Editor
 {
 	public class CustomPropertyDrawerBase : PropertyDrawer
 	{
+		static MethodInfo getPropertyDrawerMethod;
+		public static MethodInfo GetPropertyDrawerMethod
+		{
+			get
+			{
+				if (getPropertyDrawerMethod == null)
+					getPropertyDrawerMethod = AssetDatabaseUtility.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
+
+				return getPropertyDrawerMethod;
+			}
+		}
+
 		protected UnityEngine.Object target;
 		protected UnityEngine.Object[] targets;
 		protected SerializedProperty currentProperty;
@@ -24,29 +36,20 @@ namespace Pseudo.Internal.Editor
 		protected Rect initPosition;
 		protected SerializedProperty arrayProperty;
 
-		static MethodInfo _getPropertyDrawerMethod;
-		public static MethodInfo GetPropertyDrawerMethod
-		{
-			get
-			{
-				if (_getPropertyDrawerMethod == null)
-					_getPropertyDrawerMethod = AssetDatabaseUtility.FindType("ScriptAttributeUtility").GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
-
-				return _getPropertyDrawerMethod;
-			}
-		}
-
-		bool _initialized;
+		bool initialized;
+		Stack<int> indentStack = new Stack<int>();
+		Stack<float> labelWidthStack = new Stack<float>();
+		Stack<float> fieldWidthStack = new Stack<float>();
 
 		public virtual void Initialize(SerializedProperty property, GUIContent label)
 		{
-			_initialized = true;
+			initialized = true;
 			isArray = typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
 			lineHeight = EditorGUIUtility.singleLineHeight;
 
 			if (isArray)
 			{
-				index = AttributeUtility.GetIndexFromLabel(label);
+				index = GetIndexFromLabel(label);
 				arrayProperty = property.GetParent();
 			}
 		}
@@ -71,11 +74,53 @@ namespace Pseudo.Internal.Editor
 
 			if (EditorGUI.EndChangeCheck())
 				EditorUtility.SetDirty(serializedObject.targetObject);
+
+			if (indentStack.Count > 0)
+				Debug.LogWarning("BeginIndent groups do not match EndIndent goups.");
+
+			if (labelWidthStack.Count > 0)
+				Debug.LogWarning("BeginLabelWidth groups do not match EndLabelWidth goups.");
+
+			if (fieldWidthStack.Count > 0)
+				Debug.LogWarning("BeginFieldWidth groups do not match EndFieldWidth goups.");
+		}
+
+		public void BeginIndent(int indent)
+		{
+			indentStack.Push(EditorGUI.indentLevel);
+			EditorGUI.indentLevel = indent;
+		}
+
+		public void EndIndent()
+		{
+			EditorGUI.indentLevel = indentStack.Pop();
+		}
+
+		public void BeginLabelWidth(float labelWidth)
+		{
+			labelWidthStack.Push(labelWidth);
+			EditorGUIUtility.labelWidth = labelWidth;
+		}
+
+		public void EndLabelWidth()
+		{
+			EditorGUIUtility.labelWidth = labelWidthStack.Pop();
+		}
+
+		public void BeginFieldWidth(float fieldWidth)
+		{
+			fieldWidthStack.Push(fieldWidth);
+			EditorGUIUtility.fieldWidth = fieldWidth;
+		}
+
+		public void EndFieldWidth()
+		{
+			EditorGUIUtility.fieldWidth = fieldWidthStack.Pop();
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			if (!_initialized)
+			if (!initialized)
 				Initialize(property, label);
 
 			return EditorGUI.GetPropertyHeight(property, label, true);
@@ -114,10 +159,11 @@ namespace Pseudo.Internal.Editor
 
 			if (propertyDrawerType != null)
 			{
-				PropertyAttribute propertyAttribute = Activator.CreateInstance(propertyAttributeType, arguments) as PropertyAttribute;
-				PropertyDrawer propertyDrawer = Activator.CreateInstance(propertyDrawerType) as PropertyDrawer;
+				PropertyAttribute propertyAttribute = (PropertyAttribute)Activator.CreateInstance(propertyAttributeType, arguments);
+				PropertyDrawer propertyDrawer = (PropertyDrawer)Activator.CreateInstance(propertyDrawerType);
 				propertyDrawer.SetValueToMember("m_Attribute", propertyAttribute);
 				propertyDrawer.SetValueToMember("m_FieldInfo", fieldInfo);
+
 				return propertyDrawer;
 			}
 
@@ -146,6 +192,26 @@ namespace Pseudo.Internal.Editor
 				EditorGUI.LabelField(labelPosition, falseLabel, style);
 
 			return value;
+		}
+
+		public static int GetIndexFromLabel(GUIContent label)
+		{
+			string strIndex = "";
+
+			for (int i = label.text.Length; i-- > 0;)
+			{
+				if (label.text[i] == 't')
+					break;
+				else
+					strIndex += label.text[i];
+			}
+
+			strIndex = strIndex.Reverse();
+
+			int index;
+			int.TryParse(strIndex, out index);
+
+			return index;
 		}
 	}
 }

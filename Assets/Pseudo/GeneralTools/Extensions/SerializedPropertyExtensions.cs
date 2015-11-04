@@ -191,12 +191,12 @@ namespace Pseudo.Internal.Editor
 			property.serializedObject.ApplyModifiedProperties();
 		}
 
-		public static void SetValue(this SerializedProperty property, object value, string path)
+		public static void SetValue(this SerializedProperty property, string path, object value)
 		{
 			property.FindPropertyRelative(path).SetValue(value);
 		}
 
-		public static void SetValue(this SerializedProperty arrayProperty, object value, int index)
+		public static void SetValue(this SerializedProperty arrayProperty, int index, object value)
 		{
 			arrayProperty.GetArrayElementAtIndex(index).SetValue(value);
 		}
@@ -559,7 +559,7 @@ namespace Pseudo.Internal.Editor
 
 		public static void RemoveAt(this SerializedProperty arrayProperty, int index)
 		{
-			arrayProperty.SetValue(null, index);
+			arrayProperty.SetValue(index, null);
 			arrayProperty.DeleteArrayElementAtIndex(index);
 			arrayProperty.serializedObject.ApplyModifiedProperties();
 			EditorUtility.SetDirty(arrayProperty.serializedObject.targetObject);

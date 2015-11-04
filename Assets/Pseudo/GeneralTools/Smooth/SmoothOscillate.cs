@@ -5,14 +5,14 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Oscillate")]
+	[AddComponentMenu("Pseudo/General/Smooth/Oscillate"),Copy]
 	public class SmoothOscillate : PMonoBehaviour, ICopyable<SmoothOscillate>
 	{
 		[Mask]
 		public TransformModes Mode = TransformModes.Position;
 		[Mask(Axes.XYZ)]
 		public Axes Axes = Axes.XYZ;
-		public PTime.TimeChannels TimeChannel;
+		public TimeManager.TimeChannels TimeChannel;
 		public bool Culling = true;
 
 		[Slider(BeforeSeparator = true)]
@@ -27,18 +27,12 @@ namespace Pseudo
 		public float CenterRandomness;
 		public Vector3 Center;
 
-		[DoNotCopy]
-		bool _rendererCached;
-		[DoNotCopy]
-		Renderer _renderer;
-		public Renderer Renderer
+		readonly CachedValue<Renderer> cachedRenderer;
+		public Renderer Renderer { get { return cachedRenderer; } }
+
+		public SmoothOscillate()
 		{
-			get
-			{
-				_renderer = _rendererCached ? _renderer : GetComponent<Renderer>();
-				_rendererCached = true;
-				return _renderer;
-			}
+			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
 		}
 
 		void Awake()
@@ -54,13 +48,13 @@ namespace Pseudo
 			if (!Culling || Renderer.isVisible)
 			{
 				if ((Mode & TransformModes.Position) != 0)
-					CachedTransform.OscillateLocalPosition(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalPosition(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 
 				if ((Mode & TransformModes.Rotation) != 0)
-					CachedTransform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalEulerAngles(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 
 				if ((Mode & TransformModes.Scale) != 0)
-					CachedTransform.OscillateLocalScale(Frequency, Amplitude, Center, PTime.GetTime(TimeChannel), Axes);
+					CachedTransform.OscillateLocalScale(Frequency, Amplitude, Center, TimeManager.GetTime(TimeChannel), Axes);
 			}
 		}
 

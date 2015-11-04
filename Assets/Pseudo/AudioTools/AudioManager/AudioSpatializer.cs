@@ -7,8 +7,12 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
+	[Copy]
 	public class AudioSpatializer : IPoolable, ICopyable<AudioSpatializer>
 	{
+		public static readonly Pool<AudioSpatializer> Pool = new Pool<AudioSpatializer>(() => new AudioSpatializer());
+		public static readonly AudioSpatializer Default = new AudioSpatializer();
+
 		public enum SpatializeModes
 		{
 			None,
@@ -16,7 +20,6 @@ namespace Pseudo.Internal.Audio
 			Dynamic
 		}
 
-		public readonly static AudioSpatializer Default = new AudioSpatializer();
 
 		Vector3 position;
 		Transform follow;

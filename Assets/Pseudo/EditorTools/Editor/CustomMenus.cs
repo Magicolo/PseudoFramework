@@ -8,6 +8,7 @@ using System.Reflection;
 using System;
 using System.Runtime.CompilerServices;
 using Pseudo.Internal.Audio;
+using Pseudo.Internal.Input;
 
 namespace Pseudo.Internal.Editor
 {
@@ -121,23 +122,26 @@ namespace Pseudo.Internal.Editor
 			Selection.objects = selected.ToArray();
 		}
 
-		[MenuItem("Pseudo/Misc/Update Copy Methods", false, -5)]
+		[MenuItem("Pseudo/Utility/Setup Input Manager", false, -6)]
+		static void SetupInputManager()
+		{
+			InputUtility.SetupInputManager();
+		}
+
+		[MenuItem("Pseudo/Utility/Update Copy Methods", false, -5)]
 		static void UpdateCopyMethods()
 		{
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			bool refresh = false;
 
-			for (int i = 0; i < assemblies.Length; i++)
+			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
 			{
-				Type[] types = assemblies[i].GetTypes();
+				Type type = TypeExtensions.AllTypes[i];
 
-				for (int j = 0; j < types.Length; j++)
-				{
-					Type type = types[j];
+				bool copyClass = type.HasAttribute(typeof(CopyAttribute));
+				bool isCopyable = Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>));
 
-					if (!type.IsInterface && type.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length == 0 && Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>)))
-						refresh |= UpdateCopyMethod(type);
-				}
+				if (!type.IsInterface && copyClass && isCopyable)
+					refresh |= UpdateCopyMethod(type);
 			}
 
 			if (refresh)
@@ -224,12 +228,10 @@ namespace Pseudo.Internal.Editor
 			string body = "public void Copy(" + typeName + " reference)\n";
 
 			indentString += '	';
-
 			body += indentString + "{\n";
-
 			indentString += '	';
 
-			if (type.BaseType != null && typeof(ICopyable<>).MakeGenericType(type.BaseType).IsAssignableFrom(type.BaseType))
+			if (type.BaseType != null && type.BaseType.Is(typeof(ICopyable<>), type.BaseType))
 				body += indentString + "base.Copy(reference);\n\n";
 
 			FieldInfo[] fields = type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
@@ -238,13 +240,10 @@ namespace Pseudo.Internal.Editor
 			{
 				FieldInfo field = fields[i];
 
-				if (field.IsInitOnly || field.GetCustomAttributes(typeof(DoNotCopyAttribute), false).Length > 0)
+				if (field.IsInitOnly || field.HasAttribute(typeof(DoNotCopyAttribute)))
 					continue;
 
-				if (field.GetCustomAttributes(true).Contains(typeof(CompilerGeneratedAttribute)) && field.Name.Contains("k__BackingField"))
-					body += GetFieldLine(field.FieldType, field.Name.GetRange(field.Name.IndexOf('<') + 1, '>'), indentString, membersToIgnore);
-				else
-					body += GetFieldLine(field.FieldType, field.Name, indentString, membersToIgnore);
+				body += GetFieldLine(field, indentString, membersToIgnore);
 
 			}
 
@@ -254,13 +253,22 @@ namespace Pseudo.Internal.Editor
 			return body;
 		}
 
-		static string GetFieldLine(Type fieldType, string fieldName, string indentString, params string[] membersToIgnore)
+		static string GetFieldLine(FieldInfo field, string indentString, params string[] membersToIgnore)
 		{
 			string line = "";
+			Type fieldType = field.FieldType;
+			string fieldName;
+
+			if (field.HasAttribute(typeof(CompilerGeneratedAttribute)) && field.Name.Contains("k__BackingField"))
+				fieldName = field.Name.GetRange(field.Name.IndexOf('<') + 1, '>');
+			else
+				fieldName = field.Name;
 
 			if (!membersToIgnore.Contains(fieldName))
 			{
-				if (fieldType.IsArray || typeof(ICollection).IsAssignableFrom(fieldType))
+				bool copyTo = fieldType.IsClass && fieldType.Is(typeof(ICopyable<>), fieldType) && field.HasAttribute(typeof(CopyToAttribute));
+
+				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)) || copyTo)
 					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
 				else
 					line += indentString + fieldName + " = reference." + fieldName + ";\n";

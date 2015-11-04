@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal {
-	public class StateMachineFixedUpdateCaller : StateMachineCaller {
+namespace Pseudo.Internal
+{
+	public class StateMachineFixedUpdateCaller : StateMachineCaller
+	{
 
-		void FixedUpdate() {
-			if (machine.IsActive) {
+		void FixedUpdate()
+		{
+			if (machine.IsActive)
+			{
 				machine.OnFixedUpdate();
 			}
 		}

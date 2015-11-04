@@ -3,10 +3,12 @@ using System.Collections;
 using Pseudo;
 using System;
 using System.Collections.Generic;
+using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, IClonable<AudioSettingsBase>, ICopyable<AudioSettingsBase>
+	[Copy]
+	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, ICopyable<AudioSettingsBase>
 	{
 		public enum PitchScaleModes
 		{
@@ -14,12 +16,14 @@ namespace Pseudo
 			Semitone
 		}
 
-		string _name;
+		public static readonly ScriptablePoolManager<AudioSettingsBase> Pool = new ScriptablePoolManager<AudioSettingsBase>();
+
+		string cachedName;
 
 		/// <summary>
 		/// The name of the AudioSettingsBase.
 		/// </summary>
-		public string Name { get { return string.IsNullOrEmpty(_name) ? (_name = name) : _name; } set { _name = value; } }
+		public string Name { get { return string.IsNullOrEmpty(cachedName) ? (cachedName = name) : cachedName; } set { cachedName = value; } }
 		/// <summary>
 		/// The type of the AudioSettingsBase.
 		/// </summary>
@@ -102,21 +106,12 @@ namespace Pseudo
 		}
 
 		/// <summary>
-		/// Used internaly to recycle the AudioSettingsBase.
-		/// </summary>
-		public abstract void Recycle();
-		/// <summary>
-		/// Used internaly to clone the AudioSettingsBase.
-		/// </summary>
-		public abstract AudioSettingsBase Clone();
-
-		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
 		public virtual void OnCreate()
 		{
-			Pool<AudioRTPC>.CreateElements(RTPCs);
-			Pool<AudioOption>.CreateElements(Options);
+			AudioRTPC.Pool.CreateElements(RTPCs);
+			AudioOption.Pool.CreateElements(Options);
 		}
 
 		/// <summary>
@@ -124,8 +119,8 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			Pool<AudioRTPC>.RecycleElements(RTPCs);
-			Pool<AudioOption>.RecycleElements(Options);
+			AudioRTPC.Pool.RecycleElements(RTPCs);
+			AudioOption.Pool.RecycleElements(Options);
 		}
 
 		/// <summary>
@@ -134,7 +129,7 @@ namespace Pseudo
 		/// <param name="reference"> The AudioSettingsBase to copy. </param>
 		public void Copy(AudioSettingsBase reference)
 		{
-			_name = reference._name;
+			cachedName = reference.cachedName;
 			Loop = reference.Loop;
 			FadeIn = reference.FadeIn;
 			FadeInEase = reference.FadeInEase;

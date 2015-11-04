@@ -12,13 +12,13 @@ namespace Pseudo.Internal.Audio
 	[CustomEditor(typeof(AudioSwitchContainerSettings)), CanEditMultipleObjects]
 	public class AudioSwitchContainerSettingsEditor : AudioContainerSettingsEditor
 	{
-		SerializedProperty _switchValues;
+		SerializedProperty switchValues;
 
 		public override void OnInspectorGUI()
 		{
 			Begin(false);
 
-			_switchValues = serializedObject.FindProperty("SwitchValues");
+			switchValues = serializedObject.FindProperty("SwitchValues");
 
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("SwitchName"));
 
@@ -31,14 +31,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.ShowSource(arrayProperty, index, sourceProperty);
 
-			_switchValues.arraySize = arrayProperty.arraySize;
+			switchValues.arraySize = arrayProperty.arraySize;
 
 			if (sourceProperty.isExpanded)
 			{
 				EditorGUI.indentLevel++;
 
-				EditorGUILayout.PropertyField(_sourceSettingsProperty);
-				EditorGUILayout.PropertyField(_switchValues.GetArrayElementAtIndex(index), "Switch Value".ToGUIContent());
+				EditorGUILayout.PropertyField(sourceSettingsProperty);
+				EditorGUILayout.PropertyField(switchValues.GetArrayElementAtIndex(index), "Switch Value".ToGUIContent());
 				ArrayFoldout(sourceProperty.FindPropertyRelative("Options"), disableOnPlay: false);
 
 				EditorGUI.indentLevel--;
@@ -49,14 +49,14 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnSourceDeleted(arrayProperty, index);
 
-			DeleteFromArray(_switchValues, index);
+			DeleteFromArray(switchValues, index);
 		}
 
 		public override void OnSourceReordered(SerializedProperty arrayProperty, int sourceIndex, int targetIndex)
 		{
 			base.OnSourceReordered(arrayProperty, sourceIndex, targetIndex);
 
-			ReorderArray(_switchValues, sourceIndex, targetIndex);
+			ReorderArray(switchValues, sourceIndex, targetIndex);
 		}
 	}
 }
