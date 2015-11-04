@@ -104,7 +104,7 @@ namespace Pseudo
 		/// </summary>
 		public static void Shuffle<T>(this IList<T> list)
 		{
-			//list.Shuffle();
+			list.Shuffle(PRandom.RandomGenerator);
 		}
 	}
 }
