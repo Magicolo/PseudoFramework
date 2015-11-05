@@ -23,13 +23,20 @@ namespace Pseudo.Internal
 
 			timeStamps = new Queue<int>(startCount);
 			cachedGameObject = new CachedValue<GameObject>(() => new GameObject(prefab.name));
-			cachedTransform = new CachedValue<Transform>(() => { return Application.isPlaying ? cachedGameObject.Value.transform : null; });
+			cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
+
+			if (!Application.isPlaying)
+			{
+				cachedGameObject.Value = null;
+				cachedTransform.Value = null;
+			}
+
 			Initialize();
 		}
 
 		public virtual T Create(Vector3 position, Transform parent = null)
 		{
-			T item = base.Create();
+			T item = Create();
 			Transform itemTransform = GetTransform(item);
 
 			if (parent != null)
@@ -46,6 +53,7 @@ namespace Pseudo.Internal
 				pool.Dequeue().Destroy();
 
 			timeStamps.Clear();
+			base.Create();
 		}
 
 		protected abstract GameObject GetGameObject(T item);
@@ -64,7 +72,7 @@ namespace Pseudo.Internal
 
 		protected override bool CanDequeue()
 		{
-			return base.CanDequeue() && Time.frameCount - timeStamps.Peek() > 1;
+			return base.CanDequeue() && Time.frameCount > timeStamps.Peek() + 1;
 		}
 
 		protected override void Enqueue(T item)

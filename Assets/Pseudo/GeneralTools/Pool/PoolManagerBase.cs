@@ -7,19 +7,19 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class PoolManagerBase<T, TI, TK, TP> where T : class where TI : class where TP : PoolBase<T>
+	public abstract class PoolManagerBase<TItem, TId, TKey, TPool> where TItem : class where TId : class where TPool : PoolBase<TItem>
 	{
-		protected readonly Dictionary<TK, TP> pools = new Dictionary<TK, TP>();
+		protected readonly Dictionary<TKey, TPool> pools = new Dictionary<TKey, TPool>();
 
-		public abstract void Recycle(T item);
+		public abstract void Recycle(TItem item);
 
-		public virtual void Recycle<TD>(ref TD item) where TD : class, T
+		public virtual void Recycle<TD>(ref TD item) where TD : class, TItem
 		{
 			Recycle(item);
 			item = null;
 		}
 
-		public virtual void RecycleElements(IList<T> array)
+		public virtual void RecycleElements(IList<TItem> array)
 		{
 			if (array == null)
 				return;
@@ -30,10 +30,10 @@ namespace Pseudo.Internal
 			array.Clear();
 		}
 
-		public virtual TP GetPool(TI identifier)
+		public virtual TPool GetPool(TId identifier)
 		{
-			TP pool;
-			TK key = GetPoolKey(identifier);
+			TPool pool;
+			TKey key = GetPoolKey(identifier);
 
 			if (!pools.TryGetValue(key, out pool))
 			{
@@ -44,14 +44,14 @@ namespace Pseudo.Internal
 			return pool;
 		}
 
-		public bool ContainsPool(TI identifier)
+		public bool ContainsPool(TId identifier)
 		{
 			return pools.ContainsKey(GetPoolKey(identifier));
 		}
 
-		public bool ContainsItem(T item)
+		public bool ContainsItem(TItem item)
 		{
-			foreach (TP pool in pools.Values)
+			foreach (TPool pool in pools.Values)
 			{
 				if (pool.Contains(item))
 					return true;
@@ -69,7 +69,7 @@ namespace Pseudo.Internal
 		{
 			int itemCount = 0;
 
-			foreach (TP pool in pools.Values)
+			foreach (TPool pool in pools.Values)
 				itemCount += pool.Count();
 
 			return itemCount;
@@ -77,14 +77,14 @@ namespace Pseudo.Internal
 
 		public void Clear()
 		{
-			foreach (TP pool in pools.Values)
+			foreach (TPool pool in pools.Values)
 				pool.Clear();
 
 			pools.Clear();
 		}
 
-		protected abstract TK GetPoolKey(TI identifier);
+		protected abstract TKey GetPoolKey(TId identifier);
 
-		protected abstract TP CreatePool(TI identifier);
+		protected abstract TPool CreatePool(TId identifier);
 	}
 }

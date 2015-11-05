@@ -21,9 +21,7 @@ namespace Pseudo.Internal
 
 		public virtual T Create()
 		{
-			T item = GetItem();
-
-			return item;
+			return GetItem();
 		}
 
 		public virtual TC CreateCopy<TC>(TC reference) where TC : class, T, ICopyable<TC>
@@ -85,7 +83,7 @@ namespace Pseudo.Internal
 			pool.Clear();
 		}
 
-		protected void Initialize()
+		protected virtual void Initialize()
 		{
 			for (int i = 0; i < startCount; i++)
 				Enqueue(CreateItem());

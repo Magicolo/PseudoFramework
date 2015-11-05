@@ -7,11 +7,11 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TypePoolManager<T, TP> : PoolManagerBase<T, Type, Type, TP> where T : class where TP : PoolBase<T>
+	public abstract class TypePoolManager<T, TPool> : PoolManagerBase<T, Type, Type, TPool> where T : class where TPool : PoolBase<T>
 	{
 		public virtual TD Create<TD>() where TD : class, T
 		{
-			TP pool = GetPool(typeof(TD));
+			TPool pool = GetPool(typeof(TD));
 			TD item = (TD)pool.Create();
 
 			return item;
@@ -19,7 +19,7 @@ namespace Pseudo.Internal
 
 		public virtual TC CreateCopy<TC>(TC reference) where TC : class, T, ICopyable<TC>
 		{
-			TP pool = GetPool(reference.GetType());
+			TPool pool = GetPool(reference.GetType());
 			TC item = pool.CreateCopy(reference);
 
 			return item;
@@ -39,7 +39,7 @@ namespace Pseudo.Internal
 			if (item == null)
 				return;
 
-			TP pool = GetPool(item.GetType());
+			TPool pool = GetPool(item.GetType());
 			pool.Recycle(item);
 		}
 
