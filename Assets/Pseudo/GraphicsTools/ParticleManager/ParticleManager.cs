@@ -37,6 +37,8 @@ public class ParticleManager : Singleton<ParticleManager>
 			Debug.LogError(string.Format("ParticleEffect named {0} was not found.", name));
 			return null;
 		}
+		else
+			particleEffect.CachedParticleSystem.Play(true);
 
 		return Create(particleEffect, position);
 	}

@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Particle Effect")]
-	[RequireComponent(typeof(ParticleSystem)),Copy]
+	[RequireComponent(typeof(ParticleSystem)), Copy]
 	public class ParticleEffect : PMonoBehaviour, IPoolable, ICopyable<ParticleEffect>
 	{
 		public static readonly BehaviourPoolManager<ParticleEffect> Pool = new BehaviourPoolManager<ParticleEffect>();
@@ -43,7 +43,6 @@ namespace Pseudo
 		{
 			base.OnCreate();
 
-			CachedParticleSystem.Play(true);
 		}
 
 		public void Copy(ParticleEffect reference)
