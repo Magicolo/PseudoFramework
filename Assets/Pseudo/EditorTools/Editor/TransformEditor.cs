@@ -248,7 +248,6 @@ namespace Pseudo.Internal.Editor
 			localEulerAngles.x = EditorGUILayout.FloatField("X", localEulerAngles.x % 360) % 360;
 			if (EditorGUI.EndChangeCheck())
 			{
-				Undo.RegisterCompleteObjectUndo(targets, "Transform Rotate X");
 				if (snap && !deleteBreak && !Application.isPlaying)
 				{
 					if (Mathf.Abs(Event.current.delta.x) > 0)
@@ -260,8 +259,7 @@ namespace Pseudo.Internal.Editor
 				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
 					Transform t = Selection.transforms[i];
-					t.SetLocalEulerAngles(transform.localEulerAngles, Axes.X);
-					EditorUtility.SetDirty(t);
+					t.SetLocalEulerAngles(localEulerAngles, Axes.X);
 				}
 			}
 
@@ -269,7 +267,6 @@ namespace Pseudo.Internal.Editor
 			localEulerAngles.y = EditorGUILayout.FloatField("Y", localEulerAngles.y % 360) % 360;
 			if (EditorGUI.EndChangeCheck())
 			{
-				Undo.RegisterCompleteObjectUndo(targets, "Transform Rotate Y");
 				if (snap && !deleteBreak && !Application.isPlaying)
 				{
 					if (Mathf.Abs(Event.current.delta.x) > 0)
@@ -281,8 +278,7 @@ namespace Pseudo.Internal.Editor
 				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
 					Transform selectedTransform = Selection.transforms[i];
-					selectedTransform.SetLocalEulerAngles(transform.localEulerAngles, Axes.Y);
-					EditorUtility.SetDirty(selectedTransform);
+					selectedTransform.SetLocalEulerAngles(localEulerAngles, Axes.Y);
 				}
 			}
 
@@ -290,7 +286,6 @@ namespace Pseudo.Internal.Editor
 			localEulerAngles.z = EditorGUILayout.FloatField("Z", localEulerAngles.z % 360) % 360;
 			if (EditorGUI.EndChangeCheck())
 			{
-				Undo.RegisterCompleteObjectUndo(targets, "Transform Rotate Z");
 				if (snap && !deleteBreak && !Application.isPlaying)
 				{
 					if (Mathf.Abs(Event.current.delta.x) > 0)
@@ -302,8 +297,7 @@ namespace Pseudo.Internal.Editor
 				for (int i = 0; i < Selection.transforms.Length; i++)
 				{
 					Transform selectedTransform = Selection.transforms[i];
-					selectedTransform.SetLocalEulerAngles(transform.localEulerAngles, Axes.Z);
-					EditorUtility.SetDirty(selectedTransform);
+					selectedTransform.SetLocalEulerAngles(localEulerAngles, Axes.Z);
 				}
 			}
 

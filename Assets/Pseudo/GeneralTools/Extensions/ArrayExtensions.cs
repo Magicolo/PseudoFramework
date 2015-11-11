@@ -8,6 +8,21 @@ namespace Pseudo
 {
 	public static class ArrayExtensions
 	{
+		public static T Get<T>(this T[,] array, Point2 point)
+		{
+			return array[point.X, point.Y];
+		}
+
+		public static void Set<T>(this T[,] array, Point2 point, T value)
+		{
+			array[point.X, point.Y] = value;
+		}
+
+		public static bool ContainsPoint<T>(this T[,] array, Point2 point)
+		{
+			return point.X >= array.GetLowerBound(0) && point.X < array.GetUpperBound(0) && point.Y >= array.GetLowerBound(1) && point.Y < array.GetUpperBound(1);
+		}
+
 		public static void Add<T>(this T[] array, T value)
 		{
 			Array.Resize(ref array, array.Length + 1);
@@ -51,7 +66,7 @@ namespace Pseudo
 
 		public static T PopRandom<T>(this T[] array, out T[] remaining)
 		{
-			return array.Pop(UnityEngine.Random.Range(0, array.Length), out remaining);
+			return array.Pop(PRandom.Range(0, array.Length - 1), out remaining);
 		}
 
 		public static T[] PopRange<T>(this T[] array, int startIndex, int count, out T[] remaining)
@@ -59,6 +74,7 @@ namespace Pseudo
 			List<T> list = new List<T>(array);
 			T[] popped = list.PopRange(startIndex, count).ToArray();
 			remaining = list.ToArray();
+
 			return popped;
 		}
 
@@ -120,7 +136,7 @@ namespace Pseudo
 		{
 			T[] reversedArray = new T[array.Length];
 
-			for (int i = 0; i < array.Length / 2; i++)
+			for (int i = 0; i < array.Length; i++)
 				reversedArray[i] = array[array.Length - i - 1];
 
 			return reversedArray;
@@ -129,11 +145,7 @@ namespace Pseudo
 		public static void Reverse<T>(this IList<T> array)
 		{
 			for (int i = 0; i < array.Count / 2; i++)
-			{
-				T temp = array[i];
-				array[i] = array[array.Count - i - 1];
-				array[array.Count - i - 1] = temp;
-			}
+				array.Switch(i, array.Count - i - 1);
 		}
 
 		public static T First<T>(this IList<T> array)
@@ -182,26 +194,13 @@ namespace Pseudo
 			if (array == null || array.Count == 0)
 				return default(T);
 
-			return array[UnityEngine.Random.Range(0, array.Count)];
+			return array[PRandom.Range(0, array.Count - 1)];
 		}
 
 		public static void Move<T>(this IList<T> array, int sourceIndex, int targetIndex)
 		{
-			int delta = Mathf.Abs(targetIndex - sourceIndex);
-
-			if (delta == 0)
-				return;
-
-			int direction = (targetIndex - sourceIndex) / delta;
-
-			for (int i = 0; i < delta; i++)
-			{
-				T sourceObject = array[sourceIndex];
-				T targetObject = array[sourceIndex + direction];
-				array[sourceIndex + direction] = sourceObject;
-				array[sourceIndex] = targetObject;
-				sourceIndex += direction;
-			}
+			while (sourceIndex != targetIndex)
+				array.Switch(sourceIndex, sourceIndex += (targetIndex - sourceIndex).Sign());
 		}
 
 		public static void Switch<T>(this IList<T> array, int sourceIndex, int targetIndex)
@@ -221,6 +220,7 @@ namespace Pseudo
 				if (!Equals(array[i], otherArray[i]))
 					return false;
 			}
+
 			return true;
 		}
 

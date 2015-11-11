@@ -15,7 +15,6 @@ namespace Pseudo.Internal.Editor
 		{
 			Begin(position, property, label);
 
-			//PropertyField(property, label, false);
 			currentPosition = EditorGUI.PrefixLabel(currentPosition, label);
 			currentPosition.x -= 1f;
 
