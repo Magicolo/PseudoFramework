@@ -25,6 +25,6 @@ public class zTest : PMonoBehaviour
 	public bool test;
 	void Test()
 	{
-		AudioItem itmerait;
+
 	}
 }

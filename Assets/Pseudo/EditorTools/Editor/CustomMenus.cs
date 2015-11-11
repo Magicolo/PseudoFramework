@@ -171,7 +171,7 @@ namespace Pseudo.Internal.Editor
 					{
 						File.WriteAllText(assetPath, script.Replace(currentCopyMethod, newCopyMethod));
 						refresh = true;
-						Debug.Log(string.Format("Updated copy method in class {0}.\nOld method:\n{1}\nNew method:\n{2}", type.Name, currentCopyMethod, newCopyMethod));
+						Debug.Log(string.Format("Updated copy method in class {0}.\r\nOld method:\r\n{1}\nNew method:\r\n{2}", type.Name, currentCopyMethod, newCopyMethod));
 					}
 				}
 			}
@@ -225,14 +225,14 @@ namespace Pseudo.Internal.Editor
 			for (int i = 0; i < indent - 1; i++)
 				indentString += "	";
 
-			string body = "public void Copy(" + typeName + " reference)\n";
+			string body = "public void Copy(" + typeName + " reference)\r\n";
 
 			indentString += '	';
-			body += indentString + "{\n";
+			body += indentString + "{\r\n";
 			indentString += '	';
 
 			if (type.BaseType != null && type.BaseType.Is(typeof(ICopyable<>), type.BaseType))
-				body += indentString + "base.Copy(reference);\n\n";
+				body += indentString + "base.Copy(reference);\r\n\r\n";
 
 			FieldInfo[] fields = type.GetFields(BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 
@@ -269,9 +269,9 @@ namespace Pseudo.Internal.Editor
 				bool copyTo = fieldType.IsClass && fieldType.Is(typeof(ICopyable<>), fieldType) && field.HasAttribute(typeof(CopyToAttribute));
 
 				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)) || copyTo)
-					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\n";
+					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\r\n";
 				else
-					line += indentString + fieldName + " = reference." + fieldName + ";\n";
+					line += indentString + fieldName + " = reference." + fieldName + ";\r\n";
 			}
 
 			return line;

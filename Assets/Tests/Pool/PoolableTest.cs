@@ -18,9 +18,7 @@ namespace Pseudo.Internal.Tests
 		{
 			base.OnCreate();
 
-			PDebug.LogMethod(this, GetHashCode(), Float, Zone.LocalCircle);
 			Float = PRandom.Range(1f, 100f);
-			Zone.LocalCircle = new Circle(0f, 0f, PRandom.Range(1f, 100f));
 		}
 
 		public override void OnRecycle()
