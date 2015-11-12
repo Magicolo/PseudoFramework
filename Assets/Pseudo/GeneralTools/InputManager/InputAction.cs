@@ -9,38 +9,43 @@ using Pseudo.Internal.Input;
 namespace Pseudo
 {
 	[Serializable]
-	public class InputAction : INamable
+	public class InputAction
 	{
 		[SerializeField]
 		string name;
-		public string Name { get { return name; } set { name = value; } }
+		public string Name { get { return name; } }
 
-		public KeyboardButton[] KeyboardButtons;
-		public KeyboardAxis[] KeyboardAxes;
-		public JoystickButton[] JoystickButtons;
-		public JoystickAxis[] JoystickAxes;
+		public List<KeyboardButton> KeyboardButtons = new List<KeyboardButton>();
+		public List<KeyboardAxis> KeyboardAxes = new List<KeyboardAxis>();
+		public List<JoystickButton> JoystickButtons = new List<JoystickButton>();
+		public List<JoystickAxis> JoystickAxes = new List<JoystickAxis>();
+
+		public InputAction(string name)
+		{
+			this.name = name;
+		}
 
 		public bool GetKeyDown()
 		{
-			for (int i = 0; i < KeyboardButtons.Length; i++)
+			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyDown())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickButtons.Length; i++)
+			for (int i = 0; i < JoystickButtons.Count; i++)
 			{
 				if (JoystickButtons[i].GetKeyDown())
 					return true;
 			}
 
-			for (int i = 0; i < KeyboardAxes.Length; i++)
+			for (int i = 0; i < KeyboardAxes.Count; i++)
 			{
 				if (KeyboardAxes[i].GetAxisDown())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickAxes.Length; i++)
+			for (int i = 0; i < JoystickAxes.Count; i++)
 			{
 				if (JoystickAxes[i].GetAxisDown())
 					return true;
@@ -51,25 +56,25 @@ namespace Pseudo
 
 		public bool GetKeyUp()
 		{
-			for (int i = 0; i < KeyboardButtons.Length; i++)
+			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyUp())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickButtons.Length; i++)
+			for (int i = 0; i < JoystickButtons.Count; i++)
 			{
 				if (JoystickButtons[i].GetKeyUp())
 					return true;
 			}
 
-			for (int i = 0; i < KeyboardAxes.Length; i++)
+			for (int i = 0; i < KeyboardAxes.Count; i++)
 			{
 				if (KeyboardAxes[i].GetAxisUp())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickAxes.Length; i++)
+			for (int i = 0; i < JoystickAxes.Count; i++)
 			{
 				if (JoystickAxes[i].GetAxisUp())
 					return true;
@@ -80,25 +85,25 @@ namespace Pseudo
 
 		public bool GetKey()
 		{
-			for (int i = 0; i < KeyboardButtons.Length; i++)
+			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKey())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickButtons.Length; i++)
+			for (int i = 0; i < JoystickButtons.Count; i++)
 			{
 				if (JoystickButtons[i].GetKey())
 					return true;
 			}
 
-			for (int i = 0; i < KeyboardAxes.Length; i++)
+			for (int i = 0; i < KeyboardAxes.Count; i++)
 			{
 				if (KeyboardAxes[i].GetAxis())
 					return true;
 			}
 
-			for (int i = 0; i < JoystickAxes.Length; i++)
+			for (int i = 0; i < JoystickAxes.Count; i++)
 			{
 				if (JoystickAxes[i].GetAxis())
 					return true;
@@ -111,10 +116,10 @@ namespace Pseudo
 		{
 			float value = 0f;
 
-			for (int i = 0; i < KeyboardAxes.Length; i++)
+			for (int i = 0; i < KeyboardAxes.Count; i++)
 				value += KeyboardAxes[i].GetValue();
 
-			for (int i = 0; i < JoystickAxes.Length; i++)
+			for (int i = 0; i < JoystickAxes.Count; i++)
 				value += JoystickAxes[i].GetValue();
 
 			return value;

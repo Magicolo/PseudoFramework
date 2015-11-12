@@ -40,7 +40,7 @@ public class ParticleManager : Singleton<ParticleManager>
 		else
 			particleEffect.CachedParticleSystem.Play(true);
 
-		return Create(particleEffect, position);
+		return Create(particleEffect, position, parent);
 	}
 
 	/// <summary>

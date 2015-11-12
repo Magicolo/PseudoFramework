@@ -51,14 +51,14 @@ namespace Pseudo.Internal.Input
 			}
 		}
 
-		public JoystickButton(string name, InputManager.Joysticks joystick, InputManager.JoystickButtons button)
+		public JoystickButton(InputManager.Joysticks joystick, InputManager.JoystickButtons button)
 		{
 			this.joystick = joystick;
 			this.button = button;
 			this.key = InputUtility.JoystickInputToKey(joystick, button);
 		}
 
-		public JoystickButton(string name, KeyCode key)
+		public JoystickButton(KeyCode key)
 		{
 			this.key = key;
 			this.joystick = InputUtility.KeyToJoystick(key);

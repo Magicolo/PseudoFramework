@@ -1,43 +1,40 @@
 ﻿using UnityEngine;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Pseudo;
-using System;
 using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
-	// TODO Add ability to rotate with transform angles (including X and Y rotation)
-	// TODO Cache direction vectors and update them when Amount, Angle or Spread is changed
-	[Serializable]
-	public class MultipleRaycast2DSettings : RaycastSettings2DBase
+	[AddComponentMenu("Pseudo/Physics/Multiple Raycaster 2D")]
+	public class MultipleRaycaster2D : Raycaster2DBase
 	{
-		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
-
 		[Min(2, BeforeSeparator = true)]
 		public int Amount = 2;
-		[Range(0f, 360f)]
-		public float Angle;
 		[Range(0f, 360f)]
 		public float Spread = 30f;
 		[Min]
 		public float Distance = 1f;
 
-		public void Cast(Vector2 origin, float angleOffset = 0f)
+		public override bool Cast()
 		{
 			Hits.Clear();
-			Vector3 position = origin + Offset;
-			bool draw = Draw && Application.isEditor;
-			float startAngle = Angle - Spread / 2f + angleOffset;
+			Vector3 position = CachedTransform.position;
+			Vector3 rotation = CachedTransform.eulerAngles;
+			Vector3 scale = CachedTransform.lossyScale;
 			float angleIncrement = Spread / (Amount - 1);
-			float angle = startAngle;
+			rotation.z -= Spread / 2f;
 
 			for (int i = 0; i < Amount; i++)
 			{
-				Vector2 direction = Quaternion.AngleAxis(angle, Vector3.forward) * Vector2.right;
+				Vector2 direction = Quaternion.Euler(rotation) * Vector2.right;
+				direction.Scale(scale);
+
 				RaycastHit2D hit;
 
-				if (draw)
+				if (Draw && Application.isEditor)
 					Debug.DrawRay(position, direction * Distance, Color.green);
 
 				switch (HitMode)
@@ -48,7 +45,7 @@ namespace Pseudo
 						if (hit.collider != null)
 						{
 							Hits.Add(hit);
-							return;
+							return true;
 						}
 						break;
 					case RaycastHitModes.FirstOfEach:
@@ -62,13 +59,10 @@ namespace Pseudo
 						break;
 				}
 
-				angle += angleIncrement;
+				rotation.z += angleIncrement;
 			}
-		}
 
-		public void Cast(Transform origin)
-		{
-			Cast(origin.position, origin.eulerAngles.z);
+			return Hits.Count > 0;
 		}
 	}
 }

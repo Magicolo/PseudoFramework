@@ -220,7 +220,7 @@ namespace Pseudo.Internal.Editor
 
 		static string GetNewCopyMethod(Type type, string typeName, int indent, params string[] membersToIgnore)
 		{
-			string indentString = "";
+			string indentString = string.Empty;
 
 			for (int i = 0; i < indent - 1; i++)
 				indentString += "	";

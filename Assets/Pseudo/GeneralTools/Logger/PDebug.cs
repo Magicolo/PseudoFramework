@@ -87,28 +87,28 @@ namespace Pseudo
 			System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
 			System.Action empty = () => { };
 
-			long overhead = 0L;
+			long overheadTicks = 0L;
 			for (int i = 0; i < iterations; i++)
 			{
 				timer.Start();
 				empty();
 				timer.Stop();
-				overhead += timer.ElapsedTicks;
+				overheadTicks += timer.ElapsedTicks;
 				timer.Reset();
 			}
 
-			long elapsed = 0L;
+			long elapsedTicks = -overheadTicks;
 
 			for (int i = 0; i < iterations; i++)
 			{
 				timer.Start();
 				test();
 				timer.Stop();
-				elapsed += timer.ElapsedTicks;
+				elapsedTicks += timer.ElapsedTicks;
 				timer.Reset();
 			}
 
-			Log(string.Format("{0}: Ticks = {1}", testName, FormatTicks(elapsed - overhead)));
+			Log(string.Format("{0}\nTicks Per Iteration = {1} | Total Ticks = {2}", testName, elapsedTicks / (double)iterations, FormatNumber(elapsedTicks)));
 		}
 
 		static string LogToString(object[] toLog)
@@ -135,9 +135,9 @@ namespace Pseudo
 			return log;
 		}
 
-		static string FormatTicks(long ticks)
+		static string FormatNumber(long number)
 		{
-			string formattedTicks = ticks.ToString();
+			string formattedTicks = number.ToString();
 
 			for (int i = formattedTicks.Length - 3; i > 0; i -= 3)
 				formattedTicks = formattedTicks.Insert(i, " ");
@@ -147,7 +147,9 @@ namespace Pseudo
 
 		static string FormatMemory(long memory)
 		{
-			if (memory > 100000000)
+			if (memory > 100000000000)
+				return memory / 1000000000000d + " TB";
+			else if (memory > 100000000)
 				return memory / 1000000000d + " GB";
 			else if (memory > 100000)
 				return memory / 1000000d + " MB";

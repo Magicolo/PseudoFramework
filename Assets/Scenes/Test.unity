@@ -112,23 +112,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77e55c372547dee48baf530fce464554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Vectore: {x: 0, y: 0}
-  Pointk:
-    X: 1
-    Y: 1
-  Points:
-  - X: 0
-    Y: 0
-  - X: 0
-    Y: 0
-  - X: 0
-    Y: 0
-  - X: 0
-    Y: 0
-  - X: 0
-    Y: 0
-  Baby: 2.48000002
-  Testy: {fileID: 973815250}
   test: 0
 --- !u!4 &973815251
 Transform:
