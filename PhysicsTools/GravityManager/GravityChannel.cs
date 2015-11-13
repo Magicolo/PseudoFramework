@@ -10,8 +10,10 @@ namespace Pseudo
 {
 	public class GravityChannel : GravityComponentBase
 	{
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			channel = (GravityManager.GravityChannels)Enum.Parse(typeof(GravityManager.GravityChannels), name);
 		}
 

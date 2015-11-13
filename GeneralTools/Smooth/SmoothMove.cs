@@ -6,7 +6,7 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Move"),Copy]
+	[AddComponentMenu("Pseudo/General/Smooth/Move"), Copy]
 	public class SmoothMove : PMonoBehaviour, ICopyable<SmoothMove>
 	{
 		[Mask]
@@ -28,8 +28,10 @@ namespace Pseudo
 			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			ApplyRandomness();
 		}
 

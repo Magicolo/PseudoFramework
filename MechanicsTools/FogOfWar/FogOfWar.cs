@@ -192,8 +192,10 @@ namespace Pseudo
 			cachedRenderer = new CachedValue<SpriteRenderer>(GetComponent<SpriteRenderer>);
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			CachedRenderer.material.renderQueue = renderQueue;
 			UpdateArea();
 			CreateTexture();

@@ -5,7 +5,7 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Oscillate"),Copy]
+	[AddComponentMenu("Pseudo/General/Smooth/Oscillate"), Copy]
 	public class SmoothOscillate : PMonoBehaviour, ICopyable<SmoothOscillate>
 	{
 		[Mask]
@@ -35,8 +35,10 @@ namespace Pseudo
 			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			ApplyRandomness();
 		}
 

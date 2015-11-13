@@ -8,6 +8,11 @@ namespace Pseudo
 {
 	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
 	{
+		public bool IsInPool { get { return isInPool; } }
+
+		bool isInPool;
+		bool initialized;
+
 		bool isGameObjectCached;
 		GameObject gameObjectCached;
 		public GameObject CachedGameObject
@@ -40,12 +45,16 @@ namespace Pseudo
 			}
 		}
 
-		bool isInPool;
-		public bool IsInPool { get { return isInPool; } }
+		protected virtual void Awake()
+		{
+			if (!initialized)
+				OnCreate();
+		}
 
 		public virtual void OnCreate()
 		{
 			isInPool = false;
+			initialized = true;
 		}
 
 		public virtual void OnRecycle()

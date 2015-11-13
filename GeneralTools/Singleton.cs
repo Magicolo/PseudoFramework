@@ -19,8 +19,10 @@ namespace Pseudo
 			return instance;
 		}
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			if (instance == null)
 				instance = this as T;
 		}

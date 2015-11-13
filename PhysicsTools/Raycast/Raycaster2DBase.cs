@@ -7,7 +7,6 @@ using Pseudo;
 
 namespace Pseudo.Internal.Physics
 {
-	[ExecuteInEditMode]
 	public abstract class Raycaster2DBase : PMonoBehaviour
 	{
 		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
@@ -21,9 +20,10 @@ namespace Pseudo.Internal.Physics
 		/// <returns>If the raycaster has hit.</returns>
 		public abstract bool Cast();
 
-		void Update()
+		void OnDrawGizmos()
 		{
-			Cast();
+			if (!Application.isPlaying)
+				Cast();
 		}
 	}
 }

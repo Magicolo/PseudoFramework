@@ -27,6 +27,7 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// </summary>
 	/// <param name="name">The name of the ParticleEffect.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
+	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
 	public virtual ParticleEffect Create(string name, Vector3 position, Transform parent = null)
 	{
@@ -37,8 +38,6 @@ public class ParticleManager : Singleton<ParticleManager>
 			Debug.LogError(string.Format("ParticleEffect named {0} was not found.", name));
 			return null;
 		}
-		else
-			particleEffect.CachedParticleSystem.Play(true);
 
 		return Create(particleEffect, position, parent);
 	}
@@ -48,9 +47,13 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// </summary>
 	/// <param name="effect">The ParticleEffect to instantiate.</param>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
+	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
 	public virtual ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
 	{
-		return ParticleEffect.Pool.Create(effect, position, parent);
+		ParticleEffect particleEffect = ParticleEffect.Pool.CreateCopy(effect, position, parent);
+		particleEffect.CachedParticleSystem.Play(true);
+
+		return particleEffect;
 	}
 }

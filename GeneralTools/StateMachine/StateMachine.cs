@@ -60,8 +60,10 @@ namespace Pseudo
 			OnExit();
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			if (!initialized)
 			{
 				BuildLayerDict();

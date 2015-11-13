@@ -23,8 +23,10 @@ namespace Pseudo
 			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
 		}
 
-		protected virtual void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			CachedGameObject.SetActive(false);
 		}
 
