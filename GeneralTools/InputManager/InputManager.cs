@@ -141,11 +141,9 @@ namespace Pseudo
 			return assignedInputs.ContainsKey(player);
 		}
 
-		public virtual void AddInput(PlayerInput inputPrefab)
+		public virtual void AddInput(PlayerInput input)
 		{
-			PlayerInput input = Instantiate(inputPrefab);
-			input.CachedTransform.parent = CachedTransform;
-			unassignedInputs[inputPrefab.name] = inputPrefab;
+			unassignedInputs[input.name] = input;
 		}
 
 		public virtual bool GetKeyDown(Players player, string actionName)

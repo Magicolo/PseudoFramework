@@ -13,7 +13,6 @@ namespace Pseudo.Internal.Physics
 		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
 
 		public LayerMask Mask = Physics2D.DefaultRaycastLayers;
-		public RaycastHitModes HitMode = RaycastHitModes.FirstOfEach;
 		public bool Draw = true;
 
 		/// <summary>

@@ -11,8 +11,9 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Multiple Raycaster 2D")]
 	public class MultipleRaycaster2D : Raycaster2DBase
 	{
-		[Min(2, BeforeSeparator = true)]
-		public int Amount = 2;
+		[Min(1, BeforeSeparator = true)]
+		public RaycastHitModes HitMode = RaycastHitModes.FirstOfEach;
+		public int Amount = 1;
 		[Range(0f, 360f)]
 		public float Spread = 30f;
 		[Min]
@@ -24,8 +25,13 @@ namespace Pseudo
 			Vector3 position = CachedTransform.position;
 			Vector3 rotation = CachedTransform.eulerAngles;
 			Vector3 scale = CachedTransform.lossyScale;
-			float angleIncrement = Spread / (Amount - 1);
-			rotation.z -= Spread / 2f;
+			float angleIncrement = 0f;
+
+			if (Amount > 1)
+			{
+				angleIncrement = Spread / (Amount - 1);
+				rotation.z -= Spread / 2f;
+			}
 
 			for (int i = 0; i < Amount; i++)
 			{

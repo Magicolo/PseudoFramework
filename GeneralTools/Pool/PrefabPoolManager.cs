@@ -48,6 +48,18 @@ namespace Pseudo.Internal
 			return item;
 		}
 
+		public virtual TC CreateCopy<TC>(TC prefab, Vector3 position, Transform parent = null) where TC : class, T, ICopyable<TC>
+		{
+			if (prefab == null)
+				return null;
+
+			PrefabPool<T> pool = GetPool(prefab);
+			TC item = pool.CreateCopy(prefab, position, parent);
+			instancePool[GetPoolKey(item)] = pool;
+
+			return item;
+		}
+
 		public override void Recycle(T item)
 		{
 			if (item == null)

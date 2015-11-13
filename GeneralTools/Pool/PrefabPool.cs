@@ -38,11 +38,30 @@ namespace Pseudo.Internal
 		{
 			T item = Create();
 			Transform itemTransform = GetTransform(item);
+			Transform prefabTransform = GetTransform(prefab);
 
 			if (parent != null)
 				itemTransform.parent = parent;
 
 			itemTransform.position = position;
+			itemTransform.localRotation = prefabTransform.localRotation;
+			itemTransform.localScale = prefabTransform.localScale;
+
+			return item;
+		}
+
+		public virtual TC CreateCopy<TC>(TC reference, Vector3 position, Transform parent = null) where TC : class, T, ICopyable<TC>
+		{
+			TC item = CreateCopy(reference);
+			Transform itemTransform = GetTransform(item);
+			Transform prefabTransform = GetTransform(prefab);
+
+			if (parent != null)
+				itemTransform.parent = parent;
+
+			itemTransform.position = position;
+			itemTransform.localRotation = prefabTransform.localRotation;
+			itemTransform.localScale = prefabTransform.localScale;
 
 			return item;
 		}

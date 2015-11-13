@@ -536,5 +536,12 @@ namespace Pseudo
 			transform.localRotation = Quaternion.identity;
 			transform.localScale = Vector3.one;
 		}
+
+		public static void Copy(this Transform target, Transform source)
+		{
+			target.localPosition = source.localPosition;
+			target.localRotation = source.localRotation;
+			target.localScale = source.localScale;
+		}
 	}
 }
