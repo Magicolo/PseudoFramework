@@ -95,6 +95,12 @@ namespace Pseudo.Internal.Editor
 			SelectGameObjectsOfType<AudioSource>();
 		}
 
+		[MenuItem("Pseudo/Select/Sprite Renderers", false, -8)]
+		static void SelectAllSpriteRenderers()
+		{
+			SelectGameObjectsOfType<SpriteRenderer>();
+		}
+
 		static void SelectGameObjectsOfType<T>() where T : Component
 		{
 			List<GameObject> selected = new List<GameObject>();

@@ -8,7 +8,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Zones/Rect Zone"),Copy]
+	[AddComponentMenu("Pseudo/General/Zones/Rect Zone"), Copy]
 	public class RectZone : Zone2DBase, ICopyable<RectZone>
 	{
 		[SerializeField]

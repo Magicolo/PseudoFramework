@@ -28,7 +28,7 @@ namespace Pseudo.Internal
 			EditorGUI.indentLevel++;
 
 			// X
-			SerializedProperty xProperty = property.FindPropertyRelative("x");
+			SerializedProperty xProperty = property.FindPropertyRelative("X");
 			Rect rect = EditorGUI.IndentedRect(currentPosition);
 			int indent = EditorGUI.indentLevel;
 			EditorGUI.indentLevel = 0;
@@ -46,7 +46,7 @@ namespace Pseudo.Internal
 			EditorGUI.EndProperty();
 
 			// Y
-			SerializedProperty yProperty = property.FindPropertyRelative("y");
+			SerializedProperty yProperty = property.FindPropertyRelative("Y");
 			rect.x += rect.width + 2f;
 			rect.height = EditorGUI.GetPropertyHeight(yProperty, yProperty.ToGUIContent());
 			EditorGUI.BeginProperty(rect, label, yProperty);
@@ -64,7 +64,7 @@ namespace Pseudo.Internal
 			EditorGUI.indentLevel = indent;
 
 			// Radius
-			PropertyField(property.FindPropertyRelative("radius"));
+			PropertyField(property.FindPropertyRelative("Radius"));
 
 			EditorGUI.indentLevel--;
 			EditorGUI.EndProperty();

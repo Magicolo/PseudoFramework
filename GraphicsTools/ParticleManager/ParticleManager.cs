@@ -29,7 +29,7 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
 	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
-	public virtual ParticleEffect Create(string name, Vector3 position, Transform parent = null)
+	public virtual ParticleEffect Create(string name, Vector3 position, Transform parent)
 	{
 		ParticleEffect particleEffect;
 
@@ -49,9 +49,9 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
 	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
-	public virtual ParticleEffect Create(ParticleEffect effect, Vector3 position, Transform parent = null)
+	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect, ICopyable<T>
 	{
-		ParticleEffect particleEffect = ParticleEffect.Pool.CreateCopy(effect, position, parent);
+		T particleEffect = Pools.BehaviourPool.CreateCopy(effect, position, parent);
 		particleEffect.CachedParticleSystem.Play(true);
 
 		return particleEffect;

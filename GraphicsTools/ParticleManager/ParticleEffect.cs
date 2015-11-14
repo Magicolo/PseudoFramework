@@ -11,8 +11,6 @@ namespace Pseudo
 	[RequireComponent(typeof(ParticleSystem)), Copy]
 	public class ParticleEffect : PMonoBehaviour, IPoolable, ICopyable<ParticleEffect>
 	{
-		public static readonly BehaviourPoolManager<ParticleEffect> Pool = new BehaviourPoolManager<ParticleEffect>();
-
 		protected readonly CachedValue<ParticleSystem> cachedParticleSystem;
 
 		public ParticleSystem CachedParticleSystem { get { return cachedParticleSystem; } }
@@ -23,17 +21,10 @@ namespace Pseudo
 			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
 		}
 
-		protected override void Awake()
-		{
-			base.Awake();
-
-			CachedGameObject.SetActive(false);
-		}
-
 		protected virtual void Update()
 		{
 			if (!IsPlaying)
-				Pool.Recycle(this);
+				Pools.BehaviourPool.Recycle(this);
 		}
 
 		public virtual void Stop()

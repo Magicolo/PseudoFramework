@@ -40,9 +40,7 @@ namespace Pseudo.Internal
 			Transform itemTransform = GetTransform(item);
 			Transform prefabTransform = GetTransform(prefab);
 
-			if (parent != null)
-				itemTransform.parent = parent;
-
+			itemTransform.parent = parent;
 			itemTransform.position = position;
 			itemTransform.localRotation = prefabTransform.localRotation;
 			itemTransform.localScale = prefabTransform.localScale;
@@ -56,9 +54,7 @@ namespace Pseudo.Internal
 			Transform itemTransform = GetTransform(item);
 			Transform prefabTransform = GetTransform(prefab);
 
-			if (parent != null)
-				itemTransform.parent = parent;
-
+			itemTransform.parent = parent;
 			itemTransform.position = position;
 			itemTransform.localRotation = prefabTransform.localRotation;
 			itemTransform.localScale = prefabTransform.localScale;

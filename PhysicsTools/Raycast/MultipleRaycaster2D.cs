@@ -11,15 +11,15 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Multiple Raycaster 2D")]
 	public class MultipleRaycaster2D : Raycaster2DBase
 	{
-		[Min(1, BeforeSeparator = true)]
 		public RaycastHitModes HitMode = RaycastHitModes.FirstOfEach;
+		[Min(1)]
 		public int Amount = 1;
 		[Range(0f, 360f)]
 		public float Spread = 30f;
 		[Min]
 		public float Distance = 1f;
 
-		public override bool Cast()
+		protected override void UpdateCast()
 		{
 			Hits.Clear();
 			Vector3 position = CachedTransform.position;
@@ -51,7 +51,7 @@ namespace Pseudo
 						if (hit.collider != null)
 						{
 							Hits.Add(hit);
-							return true;
+							return;
 						}
 						break;
 					case RaycastHitModes.FirstOfEach:
@@ -67,8 +67,6 @@ namespace Pseudo
 
 				rotation.z += angleIncrement;
 			}
-
-			return Hits.Count > 0;
 		}
 	}
 }

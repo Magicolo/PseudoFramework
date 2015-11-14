@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Zones/Circle Zone"),Copy]
+	[AddComponentMenu("Pseudo/General/Zones/Circle Zone"), Copy]
 	public class CircleZone : Zone2DBase, ICopyable<CircleZone>
 	{
 		[SerializeField]
@@ -16,10 +16,9 @@ namespace Pseudo
 		bool draw = true;
 
 		public Circle LocalCircle { get { return circle; } set { circle = value; } }
-		public Circle WorldCircle { get { return new Circle(circle.Position + CachedTransform.position.ToVector2(), circle.Radius); ; } }
+		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
 
 		void OnDrawGizmos()
-#if UNITY_EDITOR
 		{
 			if (!draw)
 				return;
@@ -29,7 +28,6 @@ namespace Pseudo
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);
 			UnityEditor.Handles.DrawSolidDisc(position, Vector3.back, circle.Radius);
-#endif
 		}
 
 		public override Vector2 GetRandomLocalPoint()
