@@ -30,7 +30,7 @@ namespace Pseudo
 
 		public static void Log(params object[] toLog)
 		{
-			if (LogToScreen)
+			if (logToScreen)
 				ScreenLogger.Log(LogToString(toLog));
 
 			if (logToConsole)

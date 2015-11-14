@@ -65,10 +65,16 @@ namespace Pseudo.Internal
 		public override void Clear()
 		{
 			while (pool.Count > 0)
-				pool.Dequeue().Destroy();
+				GetGameObject(pool.Dequeue()).Destroy();
 
 			timeStamps.Clear();
-			base.Create();
+			base.Clear();
+		}
+
+		public virtual void Destroy()
+		{
+			Clear();
+			Pseudo.ObjectExtensions.Destroy(GameObject);
 		}
 
 		protected abstract GameObject GetGameObject(T item);
