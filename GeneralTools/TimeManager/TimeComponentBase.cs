@@ -49,6 +49,20 @@ namespace Pseudo.Internal
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
 
+		public virtual void Reset()
+		{
+			UpdateTime();
+			timeScale = 1f;
+			time = 0f;
+		}
+
+		public override void OnCreate()
+		{
+			base.OnCreate();
+
+			Reset();
+		}
+
 		public void Copy(TimeComponentBase reference)
 		{
 			channel = reference.channel;
