@@ -22,13 +22,6 @@ public class ParticleManager : Singleton<ParticleManager>
 		}
 	}
 
-	/// <summary>
-	/// Creates a ParticleEffect corresponding to the <paramref name="name"/> from the list of registered ParticleEffects.
-	/// </summary>
-	/// <param name="name">The name of the ParticleEffect.</param>
-	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
-	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
-	/// <returns>The instantiated ParticleEffect.</returns>
 	public virtual ParticleEffect Create(string name, Vector3 position, Transform parent)
 	{
 		ParticleEffect particleEffect;
@@ -42,13 +35,11 @@ public class ParticleManager : Singleton<ParticleManager>
 		return Create(particleEffect, position, parent);
 	}
 
-	/// <summary>
-	/// Creates an instance of the provided ParticleEffect.
-	/// </summary>
-	/// <param name="effect">The ParticleEffect to instantiate.</param>
-	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
-	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
-	/// <returns>The instantiated ParticleEffect.</returns>
+	public virtual ParticleEffect Create(string name, Vector3 position)
+	{
+		return Create(name, position, CachedTransform);
+	}
+
 	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect
 	{
 		T particleEffect = PoolManager.Create(effect);
@@ -57,5 +48,10 @@ public class ParticleManager : Singleton<ParticleManager>
 		particleEffect.CachedParticleSystem.Play(true);
 
 		return particleEffect;
+	}
+
+	public virtual T Create<T>(T effect, Vector3 position) where T : ParticleEffect
+	{
+		return Create(effect, position, CachedTransform);
 	}
 }

@@ -12,7 +12,7 @@ namespace Pseudo
 {
 	public class BehaviourPool
 	{
-		static readonly List<BehaviourPool> toUpdate = new List<BehaviourPool>();
+		static readonly List<BehaviourPool> toUpdate = new List<BehaviourPool>(16);
 		static Thread updadeThread;
 
 		public PMonoBehaviour Prefab { get; private set; }
@@ -20,8 +20,8 @@ namespace Pseudo
 		public GameObject GameObject { get { return cachedGameObject; } }
 		public Transform Transform { get { return cachedTransform; } }
 
-		protected readonly Queue<PMonoBehaviour> instances = new Queue<PMonoBehaviour>();
-		protected readonly Queue<PMonoBehaviour> toInitialize = new Queue<PMonoBehaviour>();
+		protected readonly Queue<PMonoBehaviour> instances;
+		protected readonly Queue<PMonoBehaviour> toInitialize;
 		protected readonly CachedValue<GameObject> cachedGameObject;
 		protected readonly CachedValue<Transform> cachedTransform;
 
@@ -169,10 +169,7 @@ namespace Pseudo
 			if (!pool.updating)
 				return;
 
-			lock (toUpdate)
-			{
-				pool.updating = false;
-			}
+			pool.updating = false;
 		}
 
 		static void UpdateAsync()
@@ -188,15 +185,20 @@ namespace Pseudo
 						lock (toUpdate)
 						{
 							if (toUpdate.Count > i)
+							{
 								pool = toUpdate[i];
+
+								if (!pool.updating)
+								{
+									toUpdate.RemoveAt(i);
+									continue;
+								}
+							}
 							else
 								return;
 						}
 
-						if (pool.updating)
-							UpdatePoolAsync(pool);
-						else
-							toUpdate.RemoveAt(i);
+						UpdatePoolAsync(pool);
 					}
 
 					Thread.Sleep(100);
