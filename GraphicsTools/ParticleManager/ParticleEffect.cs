@@ -8,8 +8,8 @@ using Pseudo;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Particle Effect")]
-	[RequireComponent(typeof(ParticleSystem)), Copy]
-	public class ParticleEffect : PMonoBehaviour, IPoolable, ICopyable<ParticleEffect>
+	[RequireComponent(typeof(ParticleSystem))]
+	public class ParticleEffect : PMonoBehaviour
 	{
 		protected readonly CachedValue<ParticleSystem> cachedParticleSystem;
 
@@ -24,22 +24,12 @@ namespace Pseudo
 		protected virtual void Update()
 		{
 			if (!IsPlaying)
-				Pools.BehaviourPool.Recycle(this);
+				PoolManager.Recycle(this);
 		}
 
 		public virtual void Stop()
 		{
 			cachedParticleSystem.Value.Stop(true);
-		}
-
-		public override void OnCreate()
-		{
-			base.OnCreate();
-
-		}
-
-		public void Copy(ParticleEffect reference)
-		{
 		}
 	}
 }

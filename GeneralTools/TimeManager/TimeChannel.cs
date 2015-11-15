@@ -9,10 +9,8 @@ namespace Pseudo.Internal
 {
 	public class TimeChannel : TimeComponentBase
 	{
-		protected override void Awake()
+		protected virtual void Awake()
 		{
-			base.Awake();
-
 			channel = (TimeManager.TimeChannels)Enum.Parse(typeof(TimeManager.TimeChannels), name);
 		}
 

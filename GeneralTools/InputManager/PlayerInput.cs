@@ -16,10 +16,8 @@ namespace Pseudo
 
 		protected readonly Dictionary<string, InputAction> actions = new Dictionary<string, InputAction>();
 
-		protected override void Awake()
+		protected virtual void Awake()
 		{
-			base.Awake();
-
 			for (int i = 0; i < Actions.Length; i++)
 			{
 				InputAction action = Actions[i];

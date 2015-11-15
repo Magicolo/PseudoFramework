@@ -70,7 +70,7 @@ namespace Pseudo
 			Initialize();
 		}
 
-		void Reset()
+		protected virtual void Reset()
 		{
 			Initialize();
 		}

@@ -51,7 +51,7 @@ namespace Pseudo
 				manager.Destroy();
 		}
 
-		void Reset()
+		protected virtual void Reset()
 		{
 			this.SetExecutionOrder(-3117);
 		}

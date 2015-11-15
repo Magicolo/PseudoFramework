@@ -8,59 +8,22 @@ namespace Pseudo
 {
 	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
 	{
-		public bool IsInPool { get { return isInPool; } }
+		public PMonoBehaviour Prefab { get; set; }
 
-		bool isInPool;
-		bool initialized;
+		readonly CachedValue<GameObject> cachedGameObject;
+		public GameObject CachedGameObject { get { return cachedGameObject; } }
 
-		bool isGameObjectCached;
-		GameObject gameObjectCached;
-		public GameObject CachedGameObject
+		readonly CachedValue<Transform> cachedTransform;
+		public Transform CachedTransform { get { return cachedTransform; } }
+
+		protected PMonoBehaviour()
 		{
-			get
-			{
-				if (!isGameObjectCached)
-				{
-					isGameObjectCached = true;
-					gameObjectCached = gameObject;
-				}
-
-				return gameObjectCached;
-			}
+			cachedGameObject = new CachedValue<GameObject>(() => gameObject);
+			cachedTransform = new CachedValue<Transform>(() => transform);
 		}
 
-		bool isTransformCached;
-		Transform transformCached;
-		public Transform CachedTransform
-		{
-			get
-			{
-				if (!isTransformCached)
-				{
-					isTransformCached = true;
-					transformCached = transform;
-				}
-
-				return transformCached;
-			}
-		}
-
-		protected virtual void Awake()
-		{
-			if (!initialized)
-				OnCreate();
-		}
-
-		public virtual void OnCreate()
-		{
-			isInPool = false;
-			initialized = true;
-		}
-
-		public virtual void OnRecycle()
-		{
-			isInPool = true;
-		}
+		public virtual void OnCreate() { }
+		public virtual void OnRecycle() { }
 	}
 }
 

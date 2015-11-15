@@ -192,10 +192,8 @@ namespace Pseudo
 			cachedRenderer = new CachedValue<SpriteRenderer>(GetComponent<SpriteRenderer>);
 		}
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			CachedRenderer.material.renderQueue = renderQueue;
 			UpdateArea();
 			CreateTexture();
@@ -607,7 +605,7 @@ namespace Pseudo
 			return currentAlphaMap[(int)pixel.x.Round(), (int)pixel.y.Round()] <= alphaThreshold;
 		}
 
-		void Reset()
+		protected virtual void Reset()
 		{
 			CachedRenderer.sprite = AssetDatabaseUtility.LoadAssetInFolder<Sprite>("SquareSprite.png", "GraphicsTools");
 			CachedRenderer.sharedMaterial = AssetDatabaseUtility.LoadAssetInFolder<Material>("FogOfWar.mat", "FogOfWar");

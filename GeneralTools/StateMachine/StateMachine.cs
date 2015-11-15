@@ -60,10 +60,8 @@ namespace Pseudo
 			OnExit();
 		}
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			if (!initialized)
 			{
 				BuildLayerDict();
@@ -321,7 +319,7 @@ namespace Pseudo
 			}
 		}
 
-		void Reset()
+		protected virtual void Reset()
 		{
 			StateMachineUtility.CleanUp(null, CachedGameObject);
 		}

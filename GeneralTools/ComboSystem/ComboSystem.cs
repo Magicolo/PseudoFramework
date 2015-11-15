@@ -88,10 +88,8 @@ namespace Pseudo
 			Messenger.Start();
 		}
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			Initialize();
 		}
 

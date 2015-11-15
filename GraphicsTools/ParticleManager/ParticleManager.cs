@@ -49,9 +49,11 @@ public class ParticleManager : Singleton<ParticleManager>
 	/// <param name="position">The position at which the ParticleEffect should be placed.</param>
 	/// <param name="parent">The parent under which the ParicleEffect will be placed.</param>
 	/// <returns>The instantiated ParticleEffect.</returns>
-	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect, ICopyable<T>
+	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect
 	{
-		T particleEffect = Pools.BehaviourPool.CreateCopy(effect, position, parent);
+		T particleEffect = PoolManager.Create(effect);
+		particleEffect.CachedTransform.position = position;
+		particleEffect.CachedTransform.parent = parent;
 		particleEffect.CachedParticleSystem.Play(true);
 
 		return particleEffect;

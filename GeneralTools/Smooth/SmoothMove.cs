@@ -28,10 +28,8 @@ namespace Pseudo
 			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
 		}
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			ApplyRandomness();
 		}
 

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Pseudo.Internal
 {
@@ -168,11 +169,6 @@ namespace Pseudo.Internal
 			member.SetMemberValue(container, value);
 		}
 
-		public static bool HasAttribute(this MemberInfo memberInfo, Type attributeType)
-		{
-			return memberInfo.GetCustomAttributes(attributeType, true).Length > 0;
-		}
-
 		public static object InvokeMethod(this object obj, string methodName, params object[] arguments)
 		{
 			MethodInfo[] methods = obj.GetType().GetMethods(AllFlags);
@@ -232,6 +228,21 @@ namespace Pseudo.Internal
 		public static string[] GetFieldsAndPropertiesNames(this Type type, params Type[] filter)
 		{
 			return GetFieldsAndPropertiesNames(type, AllFlags, filter);
+		}
+
+		public static bool IsBackingField(this FieldInfo field)
+		{
+			return field.IsDefined(typeof(CompilerGeneratedAttribute), true) && field.Name.Contains(">k__BackingField");
+		}
+
+		public static PropertyInfo GetAutoProperty(this FieldInfo field)
+		{
+			return field.DeclaringType.GetProperty(field.Name.GetRange(1, '>'), AllFlags);
+		}
+
+		public static bool IsAutoProperty(this PropertyInfo property)
+		{
+			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", AllFlags) != null;
 		}
 	}
 }
