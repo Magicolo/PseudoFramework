@@ -22,7 +22,7 @@ namespace Pseudo
 			get
 			{
 				Rect rect = LocalRect;
-				rect.position += CachedTransform.position.ToVector2();
+				rect.position += Transform.position.ToVector2();
 				return rect;
 			}
 		}
@@ -32,7 +32,7 @@ namespace Pseudo
 			if (!draw)
 				return;
 
-			Vector3 position = CachedTransform.position + rect.position.ToVector3();
+			Vector3 position = Transform.position + rect.position.ToVector3();
 			Vector3 size = rect.size;
 			Gizmos.color = new Color(1f, 0f, 0f, 0.6f);
 			Gizmos.DrawWireCube(position, size);

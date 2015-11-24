@@ -194,7 +194,7 @@ namespace Pseudo
 		{
 			CleanUp();
 
-			position = CachedTransform.position + offset;
+			position = Transform.position + offset;
 			rect = new Rect(position.x - MaxRadius, position.y - MaxRadius, MaxRadius * 2, MaxRadius * 2);
 			IsInView = Camera.main.WorldRectInView(rect);
 
@@ -216,7 +216,7 @@ namespace Pseudo
 				{
 					FogOfWar fogOfWar = fogsOfWar[i];
 					Vector3 lastRelativePosition = relativePositionsDict[fogOfWar];
-					Vector3 currentRelativePosition = fogOfWar.CachedTransform.position - position;
+					Vector3 currentRelativePosition = fogOfWar.Transform.position - position;
 					relativePositionsDict[fogOfWar] = currentRelativePosition;
 
 					if (HasChanged || (lastRelativePosition != currentRelativePosition && rect.Intersects(fogOfWar.Area)))

@@ -9,4 +9,9 @@ namespace Pseudo
 	{
 		void Copy(T reference);
 	}
+
+	public interface ICopyable
+	{
+		void Copy(object reference);
+	}
 }

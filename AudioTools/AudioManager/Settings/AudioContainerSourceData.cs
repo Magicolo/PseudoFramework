@@ -7,10 +7,10 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	[Serializable,Copy]
+	[Serializable, Copy]
 	public class AudioContainerSourceData : IPoolable, ICopyable<AudioContainerSourceData>
 	{
-		public static readonly Pool<AudioContainerSourceData> Pool = new Pool<AudioContainerSourceData>(() => new AudioContainerSourceData());
+		public static readonly Poolz<AudioContainerSourceData> Pool = new Poolz<AudioContainerSourceData>(() => new AudioContainerSourceData());
 
 		public AudioSettingsBase Settings;
 		public List<AudioOption> Options = new List<AudioOption>();
@@ -18,7 +18,6 @@ namespace Pseudo.Internal.Audio
 		public void OnCreate()
 		{
 			Settings = AudioSettingsBase.Pool.CreateCopy(Settings);
-			AudioOption.Pool.CreateElements(Options);
 		}
 
 		public void OnRecycle()

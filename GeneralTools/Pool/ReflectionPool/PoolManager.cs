@@ -10,12 +10,14 @@ namespace Pseudo
 {
 	public static class PoolManager
 	{
-		static readonly Dictionary<PMonoBehaviour, BehaviourPool> pools = new Dictionary<PMonoBehaviour, BehaviourPool>(16);
+		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(16);
+		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(256);
 		static readonly CachedValue<GameObject> cachedGameObject;
 		static readonly CachedValue<Transform> cachedTransform;
 
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
+		public static int StartSize = 8;
 
 		static PoolManager()
 		{
@@ -23,46 +25,56 @@ namespace Pseudo
 			cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
 		}
 
-		public static T Create<T>(T prefab) where T : PMonoBehaviour
+		public static T Create<T>(T reference) where T : class
 		{
-			return (T)Create((PMonoBehaviour)prefab);
+			return (T)Create((object)reference);
 		}
 
-		public static PMonoBehaviour Create(PMonoBehaviour prefab)
+		public static object Create(object reference)
 		{
-			BehaviourPool pool = GetPool(prefab);
-			PMonoBehaviour instance = pool.Create();
+			var pool = GetPool(reference);
+			var instance = pool.Create();
+			instancePool[instance] = pool;
 
 			return instance;
 		}
 
-		public static void Recycle(PMonoBehaviour instance)
+		public static void Recycle(object instance)
 		{
 			if (instance == null)
 				return;
 
-			if (instance.Prefab == null)
-				instance.CachedGameObject.Destroy();
-			else
-				GetPool(instance.Prefab).Recycle(instance);
+			Pool pool;
+
+			if (instancePool.TryGetValue(instance, out pool))
+				pool.Recycle(instance);
+			else if (instance is Component)
+				((Component)instance).gameObject.Destroy();
+			else if (instance is Object)
+				((Object)instance).Destroy();
+
+			//if (instance.Prefab == null)
+			//	instance.CachedGameObject.Destroy();
+			//else
+			//	GetPool(instance.Prefab).Recycle(instance);
 		}
 
-		public static BehaviourPool GetPool(PMonoBehaviour prefab)
+		public static Pool GetPool(object reference)
 		{
-			BehaviourPool pool;
+			Pool pool;
 
-			if (!pools.TryGetValue(prefab, out pool))
-				pool = CreatePool(prefab);
+			if (!pools.TryGetValue(reference, out pool))
+				pool = CreatePool(reference);
 
 			return pool;
 		}
 
-		public static bool Contains(PMonoBehaviour prefab)
+		public static bool Contains(object reference)
 		{
-			return pools.ContainsKey(prefab);
+			return pools.ContainsKey(reference);
 		}
 
-		public static int Count()
+		public static int PoolCount()
 		{
 			return pools.Count;
 		}
@@ -75,11 +87,28 @@ namespace Pseudo
 			pools.Clear();
 		}
 
-		static BehaviourPool CreatePool(PMonoBehaviour prefab)
+		static Pool CreatePool(object reference)
 		{
-			BehaviourPool pool = new BehaviourPool(prefab);
-			pool.Transform.parent = Transform;
-			pools[prefab] = pool;
+			Pool pool;
+
+			if (reference is Component)
+			{
+				var behaviourPool = new ComponentPool((Component)reference, StartSize);
+				behaviourPool.Transform.parent = Transform;
+				pool = behaviourPool;
+			}
+			else if (reference is GameObject)
+			{
+				var gameObjectPool = new GameObjectPool((GameObject)reference, StartSize);
+				gameObjectPool.Transform.parent = Transform;
+				pool = gameObjectPool;
+			}
+			else if (reference is ScriptableObject)
+				pool = new ScriptablePool((ScriptableObject)reference, StartSize);
+			else
+				pool = new Pool(reference, StartSize);
+
+			pools[reference] = pool;
 
 			return pool;
 		}

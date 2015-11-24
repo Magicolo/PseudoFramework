@@ -8,11 +8,11 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class ScriptablePoolManager<T> : TypePoolManager<T, ScriptablePool<T>> where T : ScriptableObject, IPoolable
+	public class ScriptablePoolManager<T> : TypePoolManager<T, ScriptablePoolz<T>> where T : ScriptableObject, IPoolable
 	{
-		protected override ScriptablePool<T> CreatePool(Type identifier)
+		protected override ScriptablePoolz<T> CreatePool(Type identifier)
 		{
-			return new ScriptablePool<T>(identifier);
+			return new ScriptablePoolz<T>(identifier);
 		}
 	}
 }

@@ -589,7 +589,7 @@ namespace Pseudo.Internal
 				{
 					StateLayer layer = layers[i];
 
-					if (machine == null || layer.Machine == null || !object.ReferenceEquals(layer.Machine, machine) || layer.CachedGameObject != gameObject)
+					if (machine == null || layer.Machine == null || !object.ReferenceEquals(layer.Machine, machine) || layer.GameObject != gameObject)
 						layer.Destroy();
 				}
 
@@ -597,7 +597,7 @@ namespace Pseudo.Internal
 				{
 					State state = states[i];
 
-					if (machine == null || state.Machine == null || !object.ReferenceEquals(state.Machine, machine) || state.CachedGameObject != gameObject || state.Layer == null)
+					if (machine == null || state.Machine == null || !object.ReferenceEquals(state.Machine, machine) || state.GameObject != gameObject || state.Layer == null)
 						state.Destroy();
 				}
 
@@ -626,7 +626,7 @@ namespace Pseudo.Internal
 					if (layer.Machine == null)
 					{
 						Type layerType = layer.GetType();
-						StateMachine machine = layer.CachedGameObject.GetOrAddComponent<StateMachine>();
+						StateMachine machine = layer.GameObject.GetOrAddComponent<StateMachine>();
 
 						layer.Destroy();
 						AddLayer(machine, layerType, machine);
@@ -640,7 +640,7 @@ namespace Pseudo.Internal
 					if (state.Machine == null || state.Layer == null)
 					{
 						Type stateType = state.GetType();
-						StateMachine machine = state.CachedGameObject.GetOrAddComponent<StateMachine>();
+						StateMachine machine = state.GameObject.GetOrAddComponent<StateMachine>();
 
 						state.Destroy();
 						AddLayer(machine, GetLayerTypeFromState(stateType), machine);

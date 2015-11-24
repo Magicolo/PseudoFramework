@@ -52,14 +52,14 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateItem(AudioSettingsBase settings)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 
 			return CreateItem(settings, spatializer, null);
 		}
 
 		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(position);
 
 			return CreateItem(settings, spatializer, null);
@@ -67,7 +67,7 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(follow);
 
 			return CreateItem(settings, spatializer, null);
@@ -75,7 +75,7 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(getPosition);
 
 			return CreateItem(settings, spatializer, null);
@@ -89,29 +89,29 @@ namespace Pseudo.Internal.Audio
 			switch (settings.Type)
 			{
 				default:
-					AudioSourceItem sourceItem = AudioItem.Pool.CreateCopy(AudioSourceItem.Default);
-					AudioSource source = AudioManager.Instance.AudioSourcePool.Create();
+					var sourceItem = PoolManager.Create(AudioSourceItem.Default);
+					var source = AudioManager.Instance.AudioSourcePool.Create();
 					source.Copy(AudioManager.Instance.Reference, AudioManager.Instance.UseCustomCurves);
 					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
 					return sourceItem;
 				case AudioItem.AudioTypes.MixContainer:
-					AudioMixContainerItem mixContainerItem = AudioItem.Pool.CreateCopy(AudioMixContainerItem.Default);
+					var mixContainerItem = PoolManager.Create(AudioMixContainerItem.Default);
 					mixContainerItem.Initialize((AudioMixContainerSettings)settings, spatializer, parent);
 					return mixContainerItem;
 				case AudioItem.AudioTypes.RandomContainer:
-					AudioRandomContainerItem randomContainerItem = AudioItem.Pool.CreateCopy(AudioRandomContainerItem.Default);
+					var randomContainerItem = PoolManager.Create(AudioRandomContainerItem.Default);
 					randomContainerItem.Initialize((AudioRandomContainerSettings)settings, spatializer, parent);
 					return randomContainerItem;
 				case AudioItem.AudioTypes.EnumeratorContainer:
-					AudioEnumeratorContainerItem enumeratorContainerItem = AudioItem.Pool.CreateCopy(AudioEnumeratorContainerItem.Default);
+					var enumeratorContainerItem = PoolManager.Create(AudioEnumeratorContainerItem.Default);
 					enumeratorContainerItem.Initialize((AudioEnumeratorContainerSettings)settings, spatializer, parent);
 					return enumeratorContainerItem;
 				case AudioItem.AudioTypes.SwitchContainer:
-					AudioSwitchContainerItem switchContainerItem = AudioItem.Pool.CreateCopy(AudioSwitchContainerItem.Default);
+					var switchContainerItem = PoolManager.Create(AudioSwitchContainerItem.Default);
 					switchContainerItem.Initialize((AudioSwitchContainerSettings)settings, spatializer, parent);
 					return switchContainerItem;
 				case AudioItem.AudioTypes.SequenceContainer:
-					AudioSequenceContainerItem sequenceContainerItem = AudioItem.Pool.CreateCopy(AudioSequenceContainerItem.Default);
+					var sequenceContainerItem = PoolManager.Create(AudioSequenceContainerItem.Default);
 					sequenceContainerItem.Initialize((AudioSequenceContainerSettings)settings, spatializer, parent);
 					return sequenceContainerItem;
 			}
@@ -119,14 +119,14 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 
 			return CreateDynamicItem(getNextSettings, spatializer, null);
 		}
 
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(position);
 
 			return CreateDynamicItem(getNextSettings, spatializer, null);
@@ -134,7 +134,7 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(follow);
 
 			return CreateDynamicItem(getNextSettings, spatializer, null);
@@ -142,7 +142,7 @@ namespace Pseudo.Internal.Audio
 
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
 		{
-			AudioSpatializer spatializer = AudioSpatializer.Pool.CreateCopy(AudioSpatializer.Default);
+			var spatializer = AudioSpatializer.Pool.Create();
 			spatializer.Initialize(getPosition);
 
 			return CreateDynamicItem(getNextSettings, spatializer, null);
@@ -150,7 +150,7 @@ namespace Pseudo.Internal.Audio
 
 		public AudioDynamicItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, AudioItem parent)
 		{
-			AudioDynamicItem item = AudioDynamicItem.Pool.CreateCopy(AudioDynamicItem.Default);
+			var item = PoolManager.Create(AudioDynamicItem.Default);
 			item.Initialize(getNextSettings, spatializer, parent);
 
 			return item;

@@ -8,11 +8,11 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class Pool<T> : PoolBase<T> where T : class, IPoolable
+	public class Poolz<T> : PoolBase<T> where T : class, IPoolable
 	{
 		protected readonly Func<T> createItem;
 
-		public Pool(Func<T> createItem, int startCount = 4) : base(startCount)
+		public Poolz(Func<T> createItem, int startCount = 4) : base(startCount)
 		{
 			this.createItem = createItem;
 

@@ -163,7 +163,7 @@ namespace Pseudo.Internal.Audio
 			if (parent == null)
 				AudioManager.Instance.ItemManager.Deactivate(this);
 
-			Pool.Recycle(this);
+			PoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)

@@ -321,7 +321,7 @@ namespace Pseudo
 
 		protected virtual void Reset()
 		{
-			StateMachineUtility.CleanUp(null, CachedGameObject);
+			StateMachineUtility.CleanUp(null, GameObject);
 		}
 	}
 }

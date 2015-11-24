@@ -8,16 +8,16 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class PoolManager<T> : TypePoolManager<T, Pool<T>> where T : class, IPoolable
+	public class PoolManager<T> : TypePoolManager<T, Poolz<T>> where T : class, IPoolable
 	{
-		protected readonly Func<Type, Pool<T>> createPool;
+		protected readonly Func<Type, Poolz<T>> createPool;
 
-		public PoolManager(Func<Type, Pool<T>> createPool)
+		public PoolManager(Func<Type, Poolz<T>> createPool)
 		{
 			this.createPool = createPool;
 		}
 
-		protected override Pool<T> CreatePool(Type identifier)
+		protected override Poolz<T> CreatePool(Type identifier)
 		{
 			return createPool(identifier);
 		}

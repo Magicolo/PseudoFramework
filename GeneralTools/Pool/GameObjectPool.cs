@@ -8,9 +8,9 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class GameObjectPool : PrefabPool<GameObject>
+	public class GameObjectPoolz : PrefabPoolz<GameObject>
 	{
-		public GameObjectPool(GameObject prefab, int startCount = 4) : base(prefab, startCount) { }
+		public GameObjectPoolz(GameObject prefab, int startCount = 4) : base(prefab, startCount) { }
 
 		protected override GameObject GetGameObject(GameObject item)
 		{

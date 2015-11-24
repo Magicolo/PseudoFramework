@@ -90,7 +90,7 @@ namespace Pseudo
 
 		static GravityChannel CreateChannel(GravityChannels channel)
 		{
-			return instance.CachedGameObject.AddChild(channel.ToString()).AddComponent<GravityChannel>();
+			return instance.GameObject.AddChild(channel.ToString()).AddComponent<GravityChannel>();
 		}
 	}
 }

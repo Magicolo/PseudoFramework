@@ -80,7 +80,7 @@ namespace Pseudo
 		public PlayerInput[] Inputs = new PlayerInput[0];
 
 		protected readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
-		protected readonly Dictionary<Players, PlayerInput> assignedInputs = new Dictionary<Players, PlayerInput>();
+		protected readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
 
 		protected override void Awake()
 		{
@@ -89,7 +89,7 @@ namespace Pseudo
 			for (int i = 0; i < Inputs.Length; i++)
 			{
 				PlayerInput playerInput = Instantiate(Inputs[i]);
-				playerInput.CachedTransform.parent = CachedTransform;
+				playerInput.Transform.parent = Transform;
 				AddInput(playerInput);
 
 				if (playerInput.Player != Players.None)
@@ -111,7 +111,7 @@ namespace Pseudo
 		{
 			PlayerInput playerInput;
 
-			if (!assignedInputs.TryGetValue(player, out playerInput))
+			if (!assignedInputs.TryGetValue((int)player, out playerInput))
 				Debug.LogError(string.Format("No PlayerInput has been assigned to {0}.", player));
 
 			return playerInput;
@@ -125,20 +125,20 @@ namespace Pseudo
 		public virtual void AssignInput(Players player, PlayerInput input)
 		{
 			input.Player = player;
-			assignedInputs[player] = input;
+			assignedInputs[(int)player] = input;
 		}
 
 		public virtual void UnassignInput(Players player)
 		{
 			PlayerInput playerInput;
 
-			if (assignedInputs.Pop(player, out playerInput))
+			if (assignedInputs.Pop((int)player, out playerInput))
 				playerInput.Player = Players.None;
 		}
 
 		public virtual bool IsAssigned(Players player)
 		{
-			return assignedInputs.ContainsKey(player);
+			return assignedInputs.ContainsKey((int)player);
 		}
 
 		public virtual void AddInput(PlayerInput input)

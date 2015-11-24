@@ -10,8 +10,7 @@ namespace Pseudo.Internal.Audio
 	[Copy]
 	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
 	{
-		public static readonly Pool<AudioModifier> Pool = new Pool<AudioModifier>(() => new AudioModifier());
-		public static readonly AudioModifier Default = new AudioModifier();
+		public static readonly Pool<AudioModifier> Pool = new Pool<AudioModifier>(new AudioModifier(), 16);
 
 		float initialValue = 1f;
 		float fadeModifier = 1f;

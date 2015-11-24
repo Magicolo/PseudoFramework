@@ -8,13 +8,11 @@ namespace Pseudo
 {
 	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
 	{
-		public PMonoBehaviour Prefab { get; set; }
-
 		readonly CachedValue<GameObject> cachedGameObject;
-		public GameObject CachedGameObject { get { return cachedGameObject; } }
+		public GameObject GameObject { get { return cachedGameObject; } }
 
 		readonly CachedValue<Transform> cachedTransform;
-		public Transform CachedTransform { get { return cachedTransform; } }
+		public Transform Transform { get { return cachedTransform; } }
 
 		protected PMonoBehaviour()
 		{

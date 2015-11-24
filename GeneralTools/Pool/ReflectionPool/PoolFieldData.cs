@@ -12,16 +12,19 @@ namespace Pseudo.Internal
 	{
 		FieldInfo field;
 		object value;
+		bool isDefault;
 
-		public PoolFieldData(FieldInfo field, object value)
+		public PoolFieldData(FieldInfo field, object value, bool isDefault)
 		{
 			this.field = field;
 			this.value = value;
+			this.isDefault = isDefault;
 		}
 
-		public void SetValue(object instance)
+		public void SetValue(object instance, bool initializeDefault)
 		{
-			field.SetValue(instance, value);
+			if (!isDefault || initializeDefault)
+				field.SetValue(instance, value);
 		}
 	}
 }

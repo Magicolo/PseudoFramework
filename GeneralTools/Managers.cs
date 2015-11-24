@@ -24,7 +24,7 @@ namespace Pseudo
 			CreateManager(InputManager);
 			CreateManager(ParticleManager);
 			CreateManager(TimeManager);
-			DontDestroyOnLoad(CachedGameObject);
+			DontDestroyOnLoad(GameObject);
 		}
 
 		public Singleton<T> CreateManager<T>(Singleton<T> managerPrefab) where T : Singleton<T>
@@ -37,7 +37,7 @@ namespace Pseudo
 			if (manager == null)
 			{
 				manager = Instantiate(managerPrefab);
-				manager.CachedTransform.parent = CachedTransform;
+				manager.Transform.parent = Transform;
 			}
 
 			return manager;

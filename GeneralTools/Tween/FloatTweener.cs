@@ -17,8 +17,7 @@ namespace Pseudo
 			Stopped
 		}
 
-		public static readonly Pool<FloatTweener> Pool = new Pool<FloatTweener>(() => new FloatTweener());
-		public static readonly FloatTweener Default = new FloatTweener();
+		public static readonly Pool<FloatTweener> Pool = new Pool<FloatTweener>(new FloatTweener(), 32);
 
 		float start;
 		float end;

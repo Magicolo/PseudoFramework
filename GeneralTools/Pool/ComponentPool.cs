@@ -8,9 +8,9 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class ComponentPool<T> : PrefabPool<T> where T : Component
+	public class ComponentPoolz<T> : PrefabPoolz<T> where T : Component
 	{
-		public ComponentPool(T prefab, int startCount = 4) : base(prefab, startCount) { }
+		public ComponentPoolz(T prefab, int startCount = 4) : base(prefab, startCount) { }
 
 		protected override GameObject GetGameObject(T item)
 		{

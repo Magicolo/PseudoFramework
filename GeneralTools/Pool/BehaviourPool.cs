@@ -7,9 +7,9 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class BehaviourPool<T> : ComponentPool<T> where T : MonoBehaviour, IPoolable
+	public class BehaviourPoolz<T> : ComponentPoolz<T> where T : MonoBehaviour, IPoolable
 	{
-		public BehaviourPool(T prefab, int startCount = 4) : base(prefab, startCount) { }
+		public BehaviourPoolz(T prefab, int startCount = 4) : base(prefab, startCount) { }
 
 		public override T Create()
 		{

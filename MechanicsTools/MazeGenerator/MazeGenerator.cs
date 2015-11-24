@@ -52,7 +52,7 @@ public class MazeGenerator : PMonoBehaviour
 
 	IEnumerator GenerateRoutine()
 	{
-		maze = gameObject.AddChild(string.Format("Maze {0}", CachedTransform.childCount));
+		maze = gameObject.AddChild(string.Format("Maze {0}", Transform.childCount));
 		MazeChunk[,] map = new MazeChunk[Size.X, Size.Y];
 		List<MazeChunk> chunks = new List<MazeChunk>(Size.X * Size.Y);
 		Point2 initialPosition = GetInitialPosition(map);
@@ -94,8 +94,8 @@ public class MazeGenerator : PMonoBehaviour
 		chunk.name = string.Format("{0}_{1}", position.X, position.Y);
 		chunk.Position = position;
 		chunk.Orientation = orientation;
-		chunk.CachedTransform.parent = maze.transform;
-		chunk.CachedTransform.localPosition = position;
+		chunk.Transform.parent = maze.transform;
+		chunk.Transform.localPosition = position;
 		map[position.X, position.Y] = chunk;
 
 		CreateWalls(chunk, map);
@@ -121,7 +121,7 @@ public class MazeGenerator : PMonoBehaviour
 	public GameObject CreateWall(MazeChunk chunk, Orientations orientation)
 	{
 		GameObject wall = Instantiate(Wall);
-		wall.transform.parent = chunk.CachedTransform;
+		wall.transform.parent = chunk.Transform;
 		wall.transform.localPosition = Vector3.zero;
 		wall.transform.localRotation = ToRotation(orientation);
 

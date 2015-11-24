@@ -4,6 +4,6 @@ namespace Pseudo.Internal
 {
 	public interface IPoolFieldData
 	{
-		void SetValue(object instance);
+		void SetValue(object instance, bool initializeDefault);
 	}
 }

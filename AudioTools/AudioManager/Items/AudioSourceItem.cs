@@ -42,7 +42,7 @@ namespace Pseudo.Internal.Audio
 			originalSettings = settings;
 			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
 			source = audioSource;
-			source.transform.parent = AudioManager.Instance.CachedTransform;
+			source.transform.parent = AudioManager.Instance.Transform;
 			base.spatializer.AddSource(source.transform);
 
 			// Setup the AudioSource
@@ -206,7 +206,7 @@ namespace Pseudo.Internal.Audio
 
 			spatializer.RemoveSource(source.transform);
 
-			Pool.Recycle(this);
+			PoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)

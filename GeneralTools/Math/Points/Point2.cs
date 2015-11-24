@@ -113,6 +113,11 @@ public struct Point2
 		return new Point2(-a.X, -a.Y);
 	}
 
+	public static Point2 operator *(Point2 a, Point2 b)
+	{
+		return new Point2(a.X * b.X, a.Y * b.Y);
+	}
+
 	public static Point2 operator *(Point2 a, float d)
 	{
 		return new Point2(Mathf.RoundToInt(a.X * d), Mathf.RoundToInt(a.Y * d));
@@ -123,9 +128,29 @@ public struct Point2
 		return new Point2(Mathf.RoundToInt(a.X * d), Mathf.RoundToInt(a.Y * d));
 	}
 
+	public static Point2 operator *(Point2 a, int d)
+	{
+		return new Point2(a.X * d, a.Y * d);
+	}
+
+	public static Point2 operator *(int d, Point2 a)
+	{
+		return new Point2(a.X * d, a.Y * d);
+	}
+
+	public static Point2 operator /(Point2 a, Point2 b)
+	{
+		return new Point2(a.X / b.X, a.Y / b.Y);
+	}
+
 	public static Point2 operator /(Point2 a, float d)
 	{
 		return new Point2(Mathf.RoundToInt(a.X / d), Mathf.RoundToInt(a.Y / d));
+	}
+
+	public static Point2 operator /(Point2 a, int d)
+	{
+		return new Point2(a.X / d, a.Y / d);
 	}
 
 	public static bool operator ==(Point2 lhs, Point2 rhs)
@@ -146,5 +171,15 @@ public struct Point2
 	public static implicit operator Vector3(Point2 p)
 	{
 		return new Vector3(p.X, p.Y, 0f);
+	}
+
+	public static implicit operator Point2(Vector2 v)
+	{
+		return new Point2(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y));
+	}
+
+	public static implicit operator Point2(Vector3 v)
+	{
+		return new Point2(Mathf.RoundToInt(v.x), Mathf.RoundToInt(v.y));
 	}
 }

@@ -15,9 +15,9 @@ namespace Pseudo
 			return identifier.gameObject;
 		}
 
-		protected override PrefabPool<T> CreatePool(T identifier)
+		protected override PrefabPoolz<T> CreatePool(T identifier)
 		{
-			ComponentPool<T> pool = new ComponentPool<T>(identifier);
+			ComponentPoolz<T> pool = new ComponentPoolz<T>(identifier);
 			pool.Transform.parent = cachedTransform.Value;
 
 			return pool;

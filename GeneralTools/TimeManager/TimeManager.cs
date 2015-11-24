@@ -78,7 +78,7 @@ namespace Pseudo
 
 		static TimeChannel CreateChannel(TimeChannels channel)
 		{
-			return instance.CachedGameObject.AddChild(channel.ToString()).AddComponent<TimeChannel>();
+			return instance.GameObject.AddChild(channel.ToString()).AddComponent<TimeChannel>();
 		}
 	}
 }

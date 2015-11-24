@@ -31,8 +31,6 @@ namespace Pseudo
 			SequenceContainer,
 		}
 
-		public static readonly PoolManager<AudioItem> Pool = new PoolManager<AudioItem>(GetNewPool);
-
 		protected int id;
 		protected string name;
 		protected AudioStates state;
@@ -134,29 +132,6 @@ namespace Pseudo
 			setPitchRampModifier = value => pitchModifier.RampModifier = value;
 			setPitchParentModifier = value => pitchModifier.ParentModifier = value;
 			setVolumeFadeModifier = value => volumeModifier.FadeModifier = value;
-		}
-
-		static Pool<AudioItem> GetNewPool(Type type)
-		{
-			if (type == typeof(AudioSourceItem))
-				return new Pool<AudioItem>(() => new AudioSourceItem());
-			else if (type == typeof(AudioMixContainerItem))
-				return new Pool<AudioItem>(() => new AudioMixContainerItem());
-			else if (type == typeof(AudioRandomContainerItem))
-				return new Pool<AudioItem>(() => new AudioRandomContainerItem());
-			else if (type == typeof(AudioSwitchContainerItem))
-				return new Pool<AudioItem>(() => new AudioSwitchContainerItem());
-			else if (type == typeof(AudioEnumeratorContainerItem))
-				return new Pool<AudioItem>(() => new AudioEnumeratorContainerItem());
-			else if (type == typeof(AudioSequenceContainerItem))
-				return new Pool<AudioItem>(() => new AudioSequenceContainerItem());
-			else if (type == typeof(AudioDynamicItem))
-				return new Pool<AudioItem>(() => new AudioDynamicItem());
-			else
-			{
-				Debug.LogError(string.Format("Pool creation for type {0} is not implemented.", type.Name));
-				return null;
-			}
 		}
 
 		protected virtual void Initialize(int id, string name, AudioSpatializer spatializer, AudioItem parent)
@@ -359,7 +334,7 @@ namespace Pseudo
 		}
 		protected virtual void ApplyOptionDelayed(AudioOption option, bool recycle)
 		{
-			AudioDelayedOption delayedOption = AudioDelayedOption.Pool.CreateCopy(AudioDelayedOption.Default);
+			var delayedOption = AudioDelayedOption.Pool.Create();
 			delayedOption.Initialize(option, recycle, getDeltaTime);
 			delayedOptions.Add(delayedOption);
 		}
@@ -516,14 +491,13 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnCreate()
 		{
-			volumeModifier = AudioModifier.Pool.CreateCopy(AudioModifier.Default);
-			pitchModifier = AudioModifier.Pool.CreateCopy(AudioModifier.Default);
-			fadeTweener = FloatTweener.Pool.CreateCopy(FloatTweener.Default);
-			rampVolumeTweener = FloatTweener.Pool.CreateCopy(FloatTweener.Default);
-			rampParentVolumeTweener = FloatTweener.Pool.CreateCopy(FloatTweener.Default);
-			rampPitchTweener = FloatTweener.Pool.CreateCopy(FloatTweener.Default);
-			rampParentPitchTweener = FloatTweener.Pool.CreateCopy(FloatTweener.Default);
-			AudioDelayedOption.Pool.CreateElements(delayedOptions);
+			volumeModifier = AudioModifier.Pool.Create();
+			pitchModifier = AudioModifier.Pool.Create();
+			fadeTweener = FloatTweener.Pool.Create();
+			rampVolumeTweener = FloatTweener.Pool.Create();
+			rampParentVolumeTweener = FloatTweener.Pool.Create();
+			rampPitchTweener = FloatTweener.Pool.Create();
+			rampParentPitchTweener = FloatTweener.Pool.Create();
 		}
 
 		/// <summary>
@@ -543,16 +517,8 @@ namespace Pseudo
 			if (parent == null)
 				AudioSpatializer.Pool.Recycle(ref spatializer);
 
-			RecycleDelayedOptions();
+			AudioDelayedOption.Pool.RecycleElements(delayedOptions);
 			ClearEvents();
-		}
-
-		void RecycleDelayedOptions()
-		{
-			for (int i = 0; i < delayedOptions.Count; i++)
-				AudioDelayedOption.Pool.Recycle(delayedOptions[i]);
-
-			delayedOptions.Clear();
 		}
 
 		/// <summary>

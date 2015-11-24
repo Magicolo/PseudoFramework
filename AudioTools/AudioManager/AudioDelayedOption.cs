@@ -11,8 +11,7 @@ namespace Pseudo.Internal.Audio
 	[Copy]
 	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
 	{
-		public static readonly Pool<AudioDelayedOption> Pool = new Pool<AudioDelayedOption>(() => new AudioDelayedOption());
-		public static readonly AudioDelayedOption Default = new AudioDelayedOption();
+		public static readonly Pool<AudioDelayedOption> Pool = new Pool<AudioDelayedOption>(new AudioDelayedOption());
 
 		AudioOption option;
 		bool recycle;

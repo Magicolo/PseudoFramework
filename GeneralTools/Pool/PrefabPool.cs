@@ -7,7 +7,7 @@ using Pseudo.Internal;
 
 namespace Pseudo.Internal
 {
-	public abstract class PrefabPool<T> : PoolBase<T> where T : Object
+	public abstract class PrefabPoolz<T> : PoolBase<T> where T : Object
 	{
 		protected T prefab;
 		protected readonly Queue<int> timeStamps;
@@ -17,7 +17,7 @@ namespace Pseudo.Internal
 		public GameObject GameObject { get { return cachedGameObject; } }
 		public Transform Transform { get { return cachedTransform; } }
 
-		protected PrefabPool(T prefab, int startCount = 4) : base(startCount)
+		protected PrefabPoolz(T prefab, int startCount = 4) : base(startCount)
 		{
 			this.prefab = prefab;
 

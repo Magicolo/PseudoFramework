@@ -82,16 +82,16 @@ namespace Pseudo
 
 		void Initialize()
 		{
-			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			reference = GameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
-			audioSourcePool = new ComponentPool<AudioSource>(reference, 0);
+			audioSourcePool = new ComponentPool<AudioSource>(reference);
 
 			if (Application.isPlaying)
 			{
 				audioSourcePool.GameObject.name = "Sources";
-				audioSourcePool.Transform.parent = CachedTransform;
+				audioSourcePool.Transform.parent = Transform;
 			}
 		}
 

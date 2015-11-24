@@ -19,8 +19,7 @@ namespace Pseudo
 			After
 		}
 
-		public static readonly Pool<AudioDynamicData> Pool = new Pool<AudioDynamicData>(() => new AudioDynamicData());
-		public static readonly AudioDynamicData Default = new AudioDynamicData();
+		public static readonly Pool<AudioDynamicData> Pool = new Pool<AudioDynamicData>(new AudioDynamicData());
 
 		public PlayModes PlayMode = PlayModes.After;
 		public double Delay;

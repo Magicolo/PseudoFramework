@@ -60,8 +60,8 @@ namespace Pseudo
 			if (breakSequence || (sources.Count > 0 && !requestNextSettings))
 				return;
 
-			AudioDynamicData data = AudioDynamicData.Pool.CreateCopy(AudioDynamicData.Default);
-			AudioSettingsBase settings = getNextSettings(this, data);
+			var data = AudioDynamicData.Pool.Create();
+			var settings = getNextSettings(this, data);
 
 			currentStep++;
 
@@ -187,7 +187,7 @@ namespace Pseudo
 			AudioDynamicData.Pool.Recycle(dynamicData.Pop(index));
 			UpdateSequence();
 		}
-		
+
 		public override void OnRecycle()
 		{
 			base.OnRecycle();

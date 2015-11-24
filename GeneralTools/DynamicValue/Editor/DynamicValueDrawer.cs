@@ -5,6 +5,7 @@ using Pseudo.Internal.Editor;
 using Pseudo.Internal;
 using Pseudo;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Pseudo.Internal
 {
@@ -13,6 +14,7 @@ namespace Pseudo.Internal
 	{
 		DynamicValueDrawerDummy dummy;
 		SerializedObject dummySerialized;
+		TypeConverter converter = new TypeConverter();
 
 		DynamicValue dynamicValue;
 		SerializedProperty typeProperty;
@@ -42,8 +44,10 @@ namespace Pseudo.Internal
 
 				if (EditorGUI.EndChangeCheck())
 				{
-					valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+					var valueType = GetValueType(typeProperty);
+					valueProperty = GetValueProperty(valueType, isArrayProperty.GetValue<bool>());
 					dynamicValue.SetValue(valueProperty == null ? null : valueProperty.GetValue());
+					dynamicValue.OnBeforeSerialize();
 				}
 
 				if (valueProperty != null)
@@ -55,7 +59,8 @@ namespace Pseudo.Internal
 					if (EditorGUI.EndChangeCheck())
 					{
 						dummySerialized.ApplyModifiedProperties();
-						valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+						var valueType = GetValueType(typeProperty);
+						valueProperty = GetValueProperty(valueType, isArrayProperty.GetValue<bool>());
 						dynamicValue.SetValue(valueProperty.GetValue());
 					}
 				}
@@ -82,7 +87,7 @@ namespace Pseudo.Internal
 			dynamicValue = property.GetValue<DynamicValue>();
 			typeProperty = property.FindPropertyRelative("type");
 			isArrayProperty = property.FindPropertyRelative("isArray");
-			valueProperty = GetValueProperty(typeProperty.GetValue<DynamicValue.ValueTypes>(), isArrayProperty.GetValue<bool>());
+			valueProperty = GetValueProperty(GetValueType(typeProperty), isArrayProperty.GetValue<bool>());
 
 			if (property.isExpanded)
 				if (valueProperty == null)
@@ -91,6 +96,11 @@ namespace Pseudo.Internal
 					return EditorGUI.GetPropertyHeight(valueProperty, label, true) + 32f;
 			else
 				return 16f;
+		}
+
+		DynamicValue.ValueTypes GetValueType(SerializedProperty typeProperty)
+		{
+			return (DynamicValue.ValueTypes)System.Enum.GetValues(typeof(DynamicValue.ValueTypes)).GetValue(typeProperty.GetValue<int>());
 		}
 
 		SerializedProperty GetValueProperty(DynamicValue.ValueTypes type, bool isArray)

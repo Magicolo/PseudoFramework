@@ -10,8 +10,7 @@ namespace Pseudo.Internal.Audio
 	[Copy]
 	public class AudioSpatializer : IPoolable, ICopyable<AudioSpatializer>
 	{
-		public static readonly Pool<AudioSpatializer> Pool = new Pool<AudioSpatializer>(() => new AudioSpatializer());
-		public static readonly AudioSpatializer Default = new AudioSpatializer();
+		public static readonly Pool<AudioSpatializer> Pool = new Pool<AudioSpatializer>(new AudioSpatializer());
 
 		public enum SpatializeModes
 		{

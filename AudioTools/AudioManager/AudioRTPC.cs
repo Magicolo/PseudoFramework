@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Serializable,Copy]
+	[Serializable, Copy]
 	public class AudioRTPC : IPoolable, ICopyable<AudioRTPC>
 	{
 		public enum RTPCTypes
@@ -22,8 +22,8 @@ namespace Pseudo
 			Global
 		}
 
-		public static readonly Pool<AudioRTPC> Pool = new Pool<AudioRTPC>(() => new AudioRTPC());
 		static readonly Dictionary<string, AudioValue<float>> rtpcValues = new Dictionary<string, AudioValue<float>>();
+		public static readonly Pool Pool = new Pool(new AudioRTPC(), 16);
 
 		AudioValue<float> value;
 		float lastValue;

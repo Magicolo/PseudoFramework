@@ -11,8 +11,7 @@ namespace Pseudo
 	[Serializable, Copy]
 	public class AudioOption : IPoolable, ICopyable<AudioOption>
 	{
-		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(() => new AudioOption());
-		public static readonly AudioOption Default = new AudioOption();
+		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(new AudioOption(), 16);
 
 		public enum Types
 		{
@@ -225,8 +224,7 @@ namespace Pseudo
 
 		static AudioOption Create(Types type, object value, float delay = 0f)
 		{
-			AudioOption option = AudioOption.Pool.CreateCopy(Default);
-
+			var option = Pool.Create();
 			option.Initialize(type, value, delay);
 
 			return option;

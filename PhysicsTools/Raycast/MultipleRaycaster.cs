@@ -21,9 +21,9 @@ namespace Pseudo
 		public override bool Cast()
 		{
 			Hits.Clear();
-			Vector3 position = CachedTransform.position;
-			Vector3 rotation = CachedTransform.eulerAngles;
-			Vector3 scale = CachedTransform.lossyScale;
+			Vector3 position = Transform.position;
+			Vector3 rotation = Transform.eulerAngles;
+			Vector3 scale = Transform.lossyScale;
 			float angleIncrement = Spread / (Amount - 1);
 			rotation.z -= Spread / 2f;
 

@@ -12,7 +12,7 @@ namespace Pseudo
 	{
 		public TC CreateCopy<TC>(TC reference) where TC : class, T, ICopyable<TC>
 		{
-			PrefabPool<T> pool = GetPool(reference);
+			PrefabPoolz<T> pool = GetPool(reference);
 			TC item = pool.CreateCopy(reference);
 
 			return item;
@@ -27,9 +27,9 @@ namespace Pseudo
 				array[i] = CreateCopy(array[i]);
 		}
 
-		protected override PrefabPool<T> CreatePool(T identifier)
+		protected override PrefabPoolz<T> CreatePool(T identifier)
 		{
-			BehaviourPool<T> pool = new BehaviourPool<T>(identifier);
+			BehaviourPoolz<T> pool = new BehaviourPoolz<T>(identifier);
 			pool.Transform.parent = cachedTransform.Value;
 
 			return pool;

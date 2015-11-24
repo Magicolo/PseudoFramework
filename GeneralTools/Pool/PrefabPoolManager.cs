@@ -7,11 +7,11 @@ using Pseudo.Internal;
 
 namespace Pseudo.Internal
 {
-	public abstract class PrefabPoolManager<T> : PoolManagerBase<T, T, Object, PrefabPool<T>> where T : Object
+	public abstract class PrefabPoolManager<T> : PoolManagerBase<T, T, Object, PrefabPoolz<T>> where T : Object
 	{
 		protected static readonly CachedValue<GameObject> poolHolder = new CachedValue<GameObject>(() => new GameObject("Pools"));
 
-		protected readonly Dictionary<Object, PrefabPool<T>> instancePool = new Dictionary<Object, PrefabPool<T>>();
+		protected readonly Dictionary<Object, PrefabPoolz<T>> instancePool = new Dictionary<Object, PrefabPoolz<T>>();
 		protected readonly CachedValue<GameObject> cachedGameObject;
 		protected readonly CachedValue<Transform> cachedTransform;
 
@@ -29,7 +29,7 @@ namespace Pseudo.Internal
 			if (prefab == null)
 				return null;
 
-			PrefabPool<T> pool = GetPool(prefab);
+			PrefabPoolz<T> pool = GetPool(prefab);
 			TD item = (TD)pool.Create();
 			instancePool[GetPoolKey(item)] = pool;
 
@@ -41,7 +41,7 @@ namespace Pseudo.Internal
 			if (prefab == null)
 				return null;
 
-			PrefabPool<T> pool = GetPool(prefab);
+			PrefabPoolz<T> pool = GetPool(prefab);
 			TD item = (TD)pool.Create(position, parent);
 			instancePool[GetPoolKey(item)] = pool;
 
@@ -53,7 +53,7 @@ namespace Pseudo.Internal
 			if (prefab == null)
 				return null;
 
-			PrefabPool<T> pool = GetPool(prefab);
+			PrefabPoolz<T> pool = GetPool(prefab);
 			TC item = pool.CreateCopy(prefab, position, parent);
 			instancePool[GetPoolKey(item)] = pool;
 
@@ -65,7 +65,7 @@ namespace Pseudo.Internal
 			if (item == null)
 				return;
 
-			PrefabPool<T> pool;
+			PrefabPoolz<T> pool;
 
 			if (instancePool.TryGetValue(GetPoolKey(item), out pool))
 				pool.Recycle(item);

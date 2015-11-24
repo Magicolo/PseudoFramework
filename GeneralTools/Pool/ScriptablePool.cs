@@ -8,11 +8,11 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class ScriptablePool<T> : PoolBase<T> where T : ScriptableObject, IPoolable
+	public class ScriptablePoolz<T> : PoolBase<T> where T : ScriptableObject, IPoolable
 	{
 		protected Type type;
 
-		public ScriptablePool(Type type, int startCount = 0) : base(startCount)
+		public ScriptablePoolz(Type type, int startCount = 0) : base(startCount)
 		{
 			this.type = type;
 

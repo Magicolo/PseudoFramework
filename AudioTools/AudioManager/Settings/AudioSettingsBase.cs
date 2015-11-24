@@ -108,11 +108,7 @@ namespace Pseudo
 		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
-		public virtual void OnCreate()
-		{
-			AudioRTPC.Pool.CreateElements(RTPCs);
-			AudioOption.Pool.CreateElements(Options);
-		}
+		public virtual void OnCreate() { }
 
 		/// <summary>
 		/// Internaly used by the pooling system.
