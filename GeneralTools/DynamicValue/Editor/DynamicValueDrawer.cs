@@ -14,7 +14,6 @@ namespace Pseudo.Internal
 	{
 		DynamicValueDrawerDummy dummy;
 		SerializedObject dummySerialized;
-		TypeConverter converter = new TypeConverter();
 
 		DynamicValue dynamicValue;
 		SerializedProperty typeProperty;

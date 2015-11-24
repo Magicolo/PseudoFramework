@@ -19,11 +19,6 @@ namespace Pseudo
 		{
 			return (T)base.Create();
 		}
-
-		new public virtual T CreateCopy(ICopyable reference)
-		{
-			return (T)base.CreateCopy(reference);
-		}
 	}
 
 	public class Pool
@@ -73,21 +68,6 @@ namespace Pseudo
 				((IPoolable)instance).OnCreate();
 
 			Subscribe(this);
-
-			return instance;
-		}
-
-		public virtual object CreateCopy(ICopyable reference)
-		{
-			var instance = Create();
-
-			if (reference != null)
-			{
-				if (reference.GetType() != Type)
-					throw new TypeMismatchException(string.Format("The type of the reference ({0}) doesn't match the pool type ({1}).", reference.GetType().Name, Type.Name));
-
-				reference.Copy(instance);
-			}
 
 			return instance;
 		}

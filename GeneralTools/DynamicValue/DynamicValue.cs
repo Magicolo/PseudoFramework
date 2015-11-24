@@ -109,7 +109,7 @@ namespace Pseudo
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}{2}, {3})", GetType().Name, type, isArray ? "[]" : "", GetValue());
+			return string.Format("{0}({1}{2}, {3})", GetType().Name, type, isArray ? "[]" : "", PDebug.ToString(GetValue()));
 		}
 
 		public static object GetDefaultValue(ValueTypes type, bool isArray)

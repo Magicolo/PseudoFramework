@@ -8,8 +8,8 @@ using UnityEngine.Audio;
 
 namespace Pseudo
 {
-	[Serializable, Copy]
-	public class AudioOption : IPoolable, ICopyable<AudioOption>
+	[Serializable]
+	public class AudioOption : IPoolable, ICopyable
 	{
 		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(new AudioOption(), 16);
 
@@ -259,14 +259,13 @@ namespace Pseudo
 		public void Initialize(Types type, object value, float delay = 0f)
 		{
 			this.type = type;
-			this.value = DynamicValue.Pool.CreateCopy(this.value);
 			this.value.SetValue(value);
 			this.delay = delay;
 		}
 
 		public void OnCreate()
 		{
-			value = DynamicValue.Pool.CreateCopy(value);
+			value = DynamicValue.Pool.Create();
 		}
 
 		public void OnRecycle()
@@ -274,11 +273,12 @@ namespace Pseudo
 			DynamicValue.Pool.Recycle(ref value);
 		}
 
-		public void Copy(AudioOption reference)
+		public virtual void Copy(object reference)
 		{
-			type = reference.type;
-			value = reference.value;
-			delay = reference.delay;
+			var castedReference = (AudioOption)reference;
+			type = castedReference.type;
+			value.Copy(castedReference.value);
+			delay = castedReference.delay;
 		}
 
 		public override string ToString()

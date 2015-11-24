@@ -10,7 +10,7 @@ namespace Pseudo
 {
 	public static class CopyUtility
 	{
-		public static void CopyTo<T>(T source, ref T target) where T : class, ICopyable<T>
+		public static void CopyTo<T>(T source, ref T target) where T : class, ICopyable
 		{
 			if (source == null)
 				target = null;
