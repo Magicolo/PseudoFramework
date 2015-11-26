@@ -24,7 +24,7 @@ namespace Pseudo
 		protected virtual void Update()
 		{
 			if (!IsPlaying)
-				PoolManager.Recycle(this);
+				PrefabPoolManager.Recycle(this);
 		}
 
 		public virtual void Stop()

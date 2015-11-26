@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Zones/Circle Zone"), Copy]
-	public class CircleZone : Zone2DBase, ICopyable<CircleZone>
+	[AddComponentMenu("Pseudo/General/Zones/Circle Zone")]
+	public class CircleZone : Zone2DBase
 	{
 		[SerializeField]
 		Circle circle = new Circle(0f, 0f, 1f);
@@ -40,12 +40,6 @@ namespace Pseudo
 		public override Vector2 GetRandomWorldPoint()
 		{
 			return WorldCircle.GetRandomPoint();
-		}
-
-		public void Copy(CircleZone reference)
-		{
-			circle = reference.circle;
-			draw = reference.draw;
 		}
 	}
 }

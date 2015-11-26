@@ -8,11 +8,8 @@ using UnityEngine.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>
+	public class AudioDelayedOption : IPoolable, ICopyable
 	{
-		public static readonly Pool<AudioDelayedOption> Pool = new Pool<AudioDelayedOption>(new AudioDelayedOption());
-
 		AudioOption option;
 		bool recycle;
 		Func<float> getDeltaTime;
@@ -35,22 +32,21 @@ namespace Pseudo.Internal.Audio
 			return delayCounter >= option.Delay;
 		}
 
-		public void OnCreate()
-		{
-		}
+		public void OnCreate() { }
 
 		public void OnRecycle()
 		{
 			if (recycle)
-				AudioOption.Pool.Recycle(ref option);
+				TypePoolManager.Recycle(option);
 		}
 
-		public void Copy(AudioDelayedOption reference)
+		public void Copy(object reference)
 		{
-			option = reference.option;
-			recycle = reference.recycle;
-			getDeltaTime = reference.getDeltaTime;
-			delayCounter = reference.delayCounter;
+			var castedReference = (AudioDelayedOption)reference;
+			option = castedReference.option;
+			recycle = castedReference.recycle;
+			getDeltaTime = castedReference.getDeltaTime;
+			delayCounter = castedReference.delayCounter;
 		}
 	}
 }

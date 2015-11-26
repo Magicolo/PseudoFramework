@@ -7,17 +7,8 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioDynamicSettings : AudioContainerSettings, ICopyable<AudioDynamicSettings>
+	public class AudioDynamicSettings : AudioContainerSettings
 	{
-		public static readonly AudioDynamicSettings Default = CreateInstance<AudioDynamicSettings>();
-
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Dynamic; } }
-
-		public void Copy(AudioDynamicSettings reference)
-		{
-			base.Copy(reference);
-
-		}
 	}
 }

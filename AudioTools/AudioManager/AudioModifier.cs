@@ -7,11 +7,8 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
+	public class AudioModifier : IPoolable, ICopyable
 	{
-		public static readonly Pool<AudioModifier> Pool = new Pool<AudioModifier>(new AudioModifier(), 16);
-
 		float initialValue = 1f;
 		float fadeModifier = 1f;
 		float rampModifier = 1f;
@@ -40,24 +37,23 @@ namespace Pseudo.Internal.Audio
 				OnValueChanged(this);
 		}
 
-		public virtual void OnCreate()
-		{
-		}
+		public virtual void OnCreate() { }
 
 		public virtual void OnRecycle()
 		{
 			OnValueChanged = null;
 		}
 
-		public void Copy(AudioModifier reference)
+		public void Copy(object reference)
 		{
-			initialValue = reference.initialValue;
-			fadeModifier = reference.fadeModifier;
-			rampModifier = reference.rampModifier;
-			parentModifier = reference.parentModifier;
-			randomModifier = reference.randomModifier;
-			rtpcModifier = reference.rtpcModifier;
-			OnValueChanged = reference.OnValueChanged;
+			var castedReference = (AudioModifier)reference;
+			initialValue = castedReference.initialValue;
+			fadeModifier = castedReference.fadeModifier;
+			rampModifier = castedReference.rampModifier;
+			parentModifier = castedReference.parentModifier;
+			randomModifier = castedReference.randomModifier;
+			rtpcModifier = castedReference.rtpcModifier;
+			OnValueChanged = castedReference.OnValueChanged;
 		}
 	}
 }

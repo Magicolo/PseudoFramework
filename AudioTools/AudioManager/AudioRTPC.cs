@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Serializable, Copy]
-	public class AudioRTPC : IPoolable, ICopyable<AudioRTPC>
+	[Serializable]
+	public class AudioRTPC : IPoolable, ICopyable
 	{
 		public enum RTPCTypes
 		{
@@ -23,7 +23,6 @@ namespace Pseudo
 		}
 
 		static readonly Dictionary<string, AudioValue<float>> rtpcValues = new Dictionary<string, AudioValue<float>>();
-		public static readonly Pool Pool = new Pool(new AudioRTPC(), 16);
 
 		AudioValue<float> value;
 		float lastValue;
@@ -68,7 +67,7 @@ namespace Pseudo
 		public virtual void OnCreate()
 		{
 			if (Scope == RTPCScope.Local)
-				value = AudioValue<float>.Pool.Create();
+				value = TypePoolManager.Create<AudioValue<float>>();
 			else
 				value = GetGlobalRTPCValue(Name);
 
@@ -78,20 +77,21 @@ namespace Pseudo
 		public virtual void OnRecycle()
 		{
 			if (Scope == RTPCScope.Local)
-				AudioValue<float>.Pool.Recycle(ref value);
+				TypePoolManager.Recycle(value);
 		}
 
-		public void Copy(AudioRTPC reference)
+		public void Copy(object reference)
 		{
-			value = reference.value;
-			lastValue = reference.lastValue;
-			lastRatio = reference.lastRatio;
-			Name = reference.Name;
-			Type = reference.Type;
-			Scope = reference.Scope;
-			MinValue = reference.MinValue;
-			MaxValue = reference.MaxValue;
-			Curve = reference.Curve;
+			var castedReference = (AudioRTPC)reference;
+			value = castedReference.value;
+			lastValue = castedReference.lastValue;
+			lastRatio = castedReference.lastRatio;
+			Name = castedReference.Name;
+			Type = castedReference.Type;
+			Scope = castedReference.Scope;
+			MinValue = castedReference.MinValue;
+			MaxValue = castedReference.MaxValue;
+			Curve = castedReference.Curve;
 		}
 
 		public static AudioValue<float> GetGlobalRTPCValue(string name)
@@ -100,7 +100,7 @@ namespace Pseudo
 
 			if (!rtpcValues.TryGetValue(name, out value))
 			{
-				value = AudioValue<float>.Pool.Create();
+				value = TypePoolManager.Create<AudioValue<float>>();
 				rtpcValues[name] = value;
 			}
 

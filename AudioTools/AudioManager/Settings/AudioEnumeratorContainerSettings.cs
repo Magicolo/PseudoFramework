@@ -12,8 +12,7 @@ namespace Pseudo.Internal.Audio
 	/// The number of time each source should be repeated is defined by the Repeats array.
 	/// The CurrentIndex value and the CurrentRepeat value can be set manually (note that these values will be resetted on each play session).
 	/// </summary>
-	[Copy]
-	public class AudioEnumeratorContainerSettings : AudioContainerSettings, ICopyable<AudioEnumeratorContainerSettings>
+	public class AudioEnumeratorContainerSettings : AudioContainerSettings
 	{
 		[Min(1)]
 		public List<int> Repeats = new List<int>();
@@ -22,19 +21,17 @@ namespace Pseudo.Internal.Audio
 
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.EnumeratorContainer; } }
 
-		public void Copy(AudioEnumeratorContainerSettings reference)
-		{
-			base.Copy(reference);
-
-			CopyUtility.CopyTo(reference.Repeats, ref Repeats);
-			CurrentIndex = reference.CurrentIndex;
-			CurrentRepeat = reference.CurrentRepeat;
-		}
-
 		void OnEnable()
 		{
 			CurrentIndex = 0;
 			CurrentRepeat = 0;
+		}
+
+		public override void OnCreate()
+		{
+			base.OnCreate();
+
+			OnEnable();
 		}
 	}
 }

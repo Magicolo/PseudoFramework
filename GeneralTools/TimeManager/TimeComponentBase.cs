@@ -7,8 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	[Copy]
-	public abstract class TimeComponentBase : PMonoBehaviour, ICopyable<TimeComponentBase>
+	public abstract class TimeComponentBase : PMonoBehaviour
 	{
 		public TimeManager.TimeChannels Channel { get { return channel; } }
 		public float TimeScale
@@ -61,14 +60,6 @@ namespace Pseudo.Internal
 			base.OnCreate();
 
 			Reset();
-		}
-
-		public void Copy(TimeComponentBase reference)
-		{
-			channel = reference.channel;
-			timeScale = reference.timeScale;
-			time = reference.time;
-			lastTime = reference.lastTime;
 		}
 	}
 }

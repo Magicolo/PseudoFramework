@@ -7,11 +7,8 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioSpatializer : IPoolable, ICopyable<AudioSpatializer>
+	public class AudioSpatializer : IPoolable, ICopyable
 	{
-		public static readonly Pool<AudioSpatializer> Pool = new Pool<AudioSpatializer>(new AudioSpatializer());
-
 		public enum SpatializeModes
 		{
 			None,
@@ -126,12 +123,13 @@ namespace Pseudo.Internal.Audio
 		/// Copies another AudioSpatializer.
 		/// </summary>
 		/// <param name="reference"> The AudioSpatializer to copy. </param>
-		public void Copy(AudioSpatializer reference)
+		public void Copy(object reference)
 		{
-			position = reference.position;
-			follow = reference.follow;
-			getPosition = reference.getPosition;
-			spatializeMode = reference.spatializeMode;
+			var castedReference = (AudioSpatializer)reference;
+			position = castedReference.position;
+			follow = castedReference.follow;
+			getPosition = castedReference.getPosition;
+			spatializeMode = castedReference.spatializeMode;
 		}
 	}
 }

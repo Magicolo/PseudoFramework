@@ -7,8 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Copy]
-	public class FloatTweener : IPoolable, ICopyable<FloatTweener>
+	public class FloatTweener : IPoolable, ICopyable
 	{
 		public enum TweenStates
 		{
@@ -16,8 +15,6 @@ namespace Pseudo
 			Playing,
 			Stopped
 		}
-
-		public static readonly Pool<FloatTweener> Pool = new Pool<FloatTweener>(new FloatTweener(), 32);
 
 		float start;
 		float end;
@@ -117,21 +114,22 @@ namespace Pseudo
 		{
 		}
 
-		public void Copy(FloatTweener reference)
+		public void Copy(object reference)
 		{
-			start = reference.start;
-			end = reference.end;
-			time = reference.time;
-			setValue = reference.setValue;
-			easeFunction = reference.easeFunction;
-			getDeltaTime = reference.getDeltaTime;
-			delay = reference.delay;
-			startCallback = reference.startCallback;
-			endCallback = reference.endCallback;
-			state = reference.state;
-			value = reference.value;
-			completion = reference.completion;
-			counter = reference.counter;
+			var castedReference = (FloatTweener)reference;
+			start = castedReference.start;
+			end = castedReference.end;
+			time = castedReference.time;
+			setValue = castedReference.setValue;
+			easeFunction = castedReference.easeFunction;
+			getDeltaTime = castedReference.getDeltaTime;
+			delay = castedReference.delay;
+			startCallback = castedReference.startCallback;
+			endCallback = castedReference.endCallback;
+			state = castedReference.state;
+			value = castedReference.value;
+			completion = castedReference.completion;
+			counter = castedReference.counter;
 		}
 	}
 }

@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[RequireComponent(typeof(TimeComponent)),Copy]
-	public class CharacterEntity : EntityBase, ICopyable<CharacterEntity>
+	[RequireComponent(typeof(TimeComponent))]
+	public class CharacterEntity : EntityBase
 	{
 		public TimeComponent Time;
 		readonly CachedValue<TimeComponent> cachedTimeComponent;
@@ -17,11 +17,6 @@ namespace Pseudo
 		public CharacterEntity()
 		{
 			cachedTimeComponent = new CachedValue<TimeComponent>(GetComponent<TimeComponent>);
-		}
-
-		public void Copy(CharacterEntity reference)
-		{
-			Time = reference.Time;
 		}
 	}
 }

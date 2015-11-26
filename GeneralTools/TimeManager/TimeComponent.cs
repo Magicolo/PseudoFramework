@@ -8,8 +8,8 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Time"), Copy]
-	public class TimeComponent : TimeComponentBase, ICopyable<TimeComponent>
+	[AddComponentMenu("Pseudo/General/Time")]
+	public class TimeComponent : TimeComponentBase
 	{
 		protected override float GetTime()
 		{
@@ -24,12 +24,6 @@ namespace Pseudo
 		protected override float GetFixedDeltaTime()
 		{
 			return TimeManager.GetFixedDeltaTime(channel);
-		}
-
-		public void Copy(TimeComponent reference)
-		{
-			base.Copy(reference);
-
 		}
 	}
 }

@@ -10,11 +10,8 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	[Copy]
-	public class AudioDynamicItem : AudioContainerItem, ICopyable<AudioDynamicItem>
+	public class AudioDynamicItem : AudioContainerItem
 	{
-		public static readonly AudioDynamicItem Default = new AudioDynamicItem();
-
 		Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings;
 		AudioDynamicSettings settings;
 		int currentStep;
@@ -34,7 +31,7 @@ namespace Pseudo
 			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, spatializer, parent);
 
 			this.getNextSettings = getNextSettings;
-			settings = AudioSettingsBase.Pool.CreateCopy(AudioDynamicSettings.Default);
+			settings = TypePoolManager.Create<AudioDynamicSettings>();
 
 			InitializeModifiers(settings);
 			InitializeSources();
@@ -60,7 +57,7 @@ namespace Pseudo
 			if (breakSequence || (sources.Count > 0 && !requestNextSettings))
 				return;
 
-			var data = AudioDynamicData.Pool.Create();
+			var data = TypePoolManager.Create<AudioDynamicData>();
 			var settings = getNextSettings(this, data);
 
 			currentStep++;
@@ -184,7 +181,7 @@ namespace Pseudo
 		{
 			base.RemoveSource(index);
 
-			AudioDynamicData.Pool.Recycle(dynamicData.Pop(index));
+			TypePoolManager.Recycle(dynamicData.Pop(index));
 			UpdateSequence();
 		}
 
@@ -192,22 +189,8 @@ namespace Pseudo
 		{
 			base.OnRecycle();
 
-			AudioSettingsBase.Pool.Recycle(settings);
-			AudioDynamicData.Pool.RecycleElements(dynamicData);
-			dynamicData.Clear();
-		}
-
-		public void Copy(AudioDynamicItem reference)
-		{
-			base.Copy(reference);
-
-			getNextSettings = reference.getNextSettings;
-			settings = reference.settings;
-			currentStep = reference.currentStep;
-			requestNextSettings = reference.requestNextSettings;
-			breakSequence = reference.breakSequence;
-			deltaTime = reference.deltaTime;
-			lastTime = reference.lastTime;
+			PrefabPoolManager.Recycle(settings);
+			TypePoolManager.RecycleElements(dynamicData);
 		}
 	}
 }

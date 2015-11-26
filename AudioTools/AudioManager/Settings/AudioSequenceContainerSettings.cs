@@ -11,18 +11,10 @@ namespace Pseudo.Internal.Audio
 	/// Container that plays its sources one after the other with delays between each of them.
 	/// Note that AudioItem.RemainingTime() will not return the correct value.
 	/// </summary>
-	[Copy]
-	public class AudioSequenceContainerSettings : AudioContainerSettings, ICopyable<AudioSequenceContainerSettings>
+	public class AudioSequenceContainerSettings : AudioContainerSettings
 	{
 		public List<double> Delays = new List<double>();
 
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.SequenceContainer; } }
-
-		public void Copy(AudioSequenceContainerSettings reference)
-		{
-			base.Copy(reference);
-
-			CopyUtility.CopyTo(reference.Delays, ref Delays);
-		}
 	}
 }

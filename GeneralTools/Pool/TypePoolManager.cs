@@ -1,51 +1,132 @@
 ﻿using UnityEngine;
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using System.Reflection;
+using System.Threading;
+using System;
+using Pseudo.Internal;
 
-namespace Pseudo.Internal
+namespace Pseudo
 {
-	public abstract class TypePoolManager<T, TPool> : PoolManagerBase<T, Type, Type, TPool> where T : class where TPool : PoolBase<T>
+	public static class TypePoolManager
 	{
-		public virtual TD Create<TD>() where TD : class, T
-		{
-			TPool pool = GetPool(typeof(TD));
-			TD item = (TD)pool.Create();
+		static readonly Dictionary<Type, Pool> pools = new Dictionary<Type, Pool>(16);
 
-			return item;
+		public static int StartSize = 8;
+
+		public static T Create<T>() where T : class
+		{
+			var pool = GetPool<T>();
+			var instance = pool.Create();
+
+			return (T)instance;
 		}
 
-		public virtual TC CreateCopy<TC>(TC reference) where TC : class, T, ICopyable<TC>
+		public static object Create(Type type)
 		{
-			TPool pool = GetPool(reference.GetType());
-			TC item = pool.CreateCopy(reference);
+			var pool = GetPool(type);
+			var instance = pool.Create();
 
-			return item;
+			return instance;
 		}
 
-		public virtual void CreateElements<TC>(IList<TC> array) where TC : class, T, ICopyable<TC>
+		public static ICopyable CreateCopy(ICopyable reference)
 		{
-			if (array == null)
+			if (reference == null)
+				return null;
+
+			var pool = GetPool(reference.GetType());
+			var instance = pool.CreateCopy(reference);
+
+			return instance;
+		}
+
+		public static void CreateCopies<T>(ref T[] targets, T[] sources) where T : class, ICopyable
+		{
+			if (sources == null)
 				return;
 
-			for (int i = 0; i < array.Count; i++)
-				array[i] = CreateCopy(array[i]);
+			if (targets == null)
+				targets = new T[sources.Length];
+			else if (targets.Length != sources.Length)
+				Array.Resize(ref targets, sources.Length);
+
+			for (int i = 0; i < targets.Length; i++)
+				targets[i] = (T)CreateCopy(sources[i]);
 		}
 
-		public override void Recycle(T item)
+		public static void CreateCopies<T>(List<T> targets, IList<T> sources) where T : class, ICopyable
 		{
-			if (item == null)
+			if (sources == null)
 				return;
 
-			TPool pool = GetPool(item.GetType());
-			pool.Recycle(item);
+			if (targets == null)
+				targets = new List<T>(sources.Count);
+			else
+				targets.Clear();
+
+			for (int i = 0; i < targets.Count; i++)
+				targets.Add((T)CreateCopy(sources[i]));
 		}
 
-		protected override Type GetPoolKey(Type identifier)
+		public static void CreateElements<T>(IList<T> elements) where T : class, ICopyable
 		{
-			return identifier;
+			if (elements == null)
+				return;
+
+			for (int i = 0; i < elements.Count; i++)
+				elements[i] = (T)CreateCopy(elements[i]);
+		}
+
+		public static void Recycle(object instance)
+		{
+			if (instance == null)
+				return;
+
+			var pool = GetPool(instance.GetType());
+			pool.Recycle(instance);
+		}
+
+		public static void RecycleElements(IList elements)
+		{
+			if (elements == null)
+				return;
+
+			for (int i = 0; i < elements.Count; i++)
+				Recycle(elements[i]);
+
+			elements.Clear();
+		}
+
+		public static Pool GetPool<T>() where T : class
+		{
+			return PoolHolder<T>.Pool;
+		}
+
+		public static Pool GetPool(Type type)
+		{
+			Pool pool;
+
+			if (!pools.TryGetValue(type, out pool))
+			{
+				pool = PoolUtility.CreatePool(Activator.CreateInstance(type), StartSize);
+				pools[type] = pool;
+			}
+
+			return pool;
+		}
+
+		public static int PoolCount()
+		{
+			return pools.Count;
+		}
+
+		public static void ClearPools()
+		{
+			foreach (var pool in pools)
+				pool.Value.Clear();
 		}
 	}
 }

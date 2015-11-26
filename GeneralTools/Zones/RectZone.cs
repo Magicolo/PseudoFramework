@@ -8,8 +8,8 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Zones/Rect Zone"), Copy]
-	public class RectZone : Zone2DBase, ICopyable<RectZone>
+	[AddComponentMenu("Pseudo/General/Zones/Rect Zone")]
+	public class RectZone : Zone2DBase
 	{
 		[SerializeField]
 		Rect rect = new Rect(0f, 0f, 1f, 1f);
@@ -48,12 +48,6 @@ namespace Pseudo
 		public override Vector2 GetRandomWorldPoint()
 		{
 			return WorldRect.GetRandomPoint();
-		}
-
-		public void Copy(RectZone reference)
-		{
-			rect = reference.rect;
-			draw = reference.draw;
 		}
 	}
 }

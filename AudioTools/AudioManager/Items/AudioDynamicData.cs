@@ -10,8 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	[Copy]
-	public class AudioDynamicData : IPoolable, ICopyable<AudioDynamicData>
+	public class AudioDynamicData : ICopyable
 	{
 		public enum PlayModes
 		{
@@ -19,25 +18,16 @@ namespace Pseudo
 			After
 		}
 
-		public static readonly Pool<AudioDynamicData> Pool = new Pool<AudioDynamicData>(new AudioDynamicData());
-
 		public PlayModes PlayMode = PlayModes.After;
 		public double Delay;
 		public Action<AudioItem> OnInitialize;
 
-		public void OnCreate()
+		public void Copy(object reference)
 		{
-		}
-
-		public void OnRecycle()
-		{
-		}
-
-		public void Copy(AudioDynamicData reference)
-		{
-			PlayMode = reference.PlayMode;
-			Delay = reference.Delay;
-			OnInitialize = reference.OnInitialize;
+			var castedReference = (AudioDynamicData)reference;
+			PlayMode = castedReference.PlayMode;
+			Delay = castedReference.Delay;
+			OnInitialize = castedReference.OnInitialize;
 		}
 	}
 }

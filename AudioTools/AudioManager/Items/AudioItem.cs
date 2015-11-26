@@ -8,8 +8,8 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	[Serializable, Copy]
-	public abstract class AudioItem : IPoolable, ICopyable<AudioItem>
+	[Serializable]
+	public abstract class AudioItem : IPoolable, ICopyable
 	{
 		public enum AudioStates
 		{
@@ -231,7 +231,7 @@ namespace Pseudo
 				{
 					ApplyOptionNow(delayedOption.Option, false);
 					delayedOptions.RemoveAt(i--);
-					AudioDelayedOption.Pool.Recycle(delayedOption);
+					TypePoolManager.Recycle(delayedOption);
 				}
 			}
 		}
@@ -334,7 +334,7 @@ namespace Pseudo
 		}
 		protected virtual void ApplyOptionDelayed(AudioOption option, bool recycle)
 		{
-			var delayedOption = AudioDelayedOption.Pool.Create();
+			var delayedOption = TypePoolManager.Create<AudioDelayedOption>();
 			delayedOption.Initialize(option, recycle, getDeltaTime);
 			delayedOptions.Add(delayedOption);
 		}
@@ -491,13 +491,13 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnCreate()
 		{
-			volumeModifier = AudioModifier.Pool.Create();
-			pitchModifier = AudioModifier.Pool.Create();
-			fadeTweener = FloatTweener.Pool.Create();
-			rampVolumeTweener = FloatTweener.Pool.Create();
-			rampParentVolumeTweener = FloatTweener.Pool.Create();
-			rampPitchTweener = FloatTweener.Pool.Create();
-			rampParentPitchTweener = FloatTweener.Pool.Create();
+			volumeModifier = TypePoolManager.Create<AudioModifier>();
+			pitchModifier = TypePoolManager.Create<AudioModifier>();
+			fadeTweener = TypePoolManager.Create<FloatTweener>();
+			rampVolumeTweener = TypePoolManager.Create<FloatTweener>();
+			rampParentVolumeTweener = TypePoolManager.Create<FloatTweener>();
+			rampPitchTweener = TypePoolManager.Create<FloatTweener>();
+			rampParentPitchTweener = TypePoolManager.Create<FloatTweener>();
 		}
 
 		/// <summary>
@@ -505,53 +505,54 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			AudioModifier.Pool.Recycle(ref volumeModifier);
-			AudioModifier.Pool.Recycle(ref pitchModifier);
-			FloatTweener.Pool.Recycle(ref fadeTweener);
-			FloatTweener.Pool.Recycle(ref rampVolumeTweener);
-			FloatTweener.Pool.Recycle(ref rampParentVolumeTweener);
-			FloatTweener.Pool.Recycle(ref rampPitchTweener);
-			FloatTweener.Pool.Recycle(ref rampParentPitchTweener);
+			TypePoolManager.Recycle(volumeModifier);
+			TypePoolManager.Recycle(pitchModifier);
+			TypePoolManager.Recycle(fadeTweener);
+			TypePoolManager.Recycle(rampVolumeTweener);
+			TypePoolManager.Recycle(rampParentVolumeTweener);
+			TypePoolManager.Recycle(rampPitchTweener);
+			TypePoolManager.Recycle(rampParentPitchTweener);
 
 			// Only the AudioItem root should recycle the spatializer as it is shared with it's children
 			if (parent == null)
-				AudioSpatializer.Pool.Recycle(ref spatializer);
+				TypePoolManager.Recycle(spatializer);
 
-			AudioDelayedOption.Pool.RecycleElements(delayedOptions);
+			TypePoolManager.RecycleElements(delayedOptions);
 			ClearEvents();
 		}
 
 		/// <summary>
 		/// Copies another AudioItem.
 		/// </summary>
-		/// <param name="reference"> The AudioItem to copy. </param>
-		public void Copy(AudioItem reference)
+		/// <param name="castedReference"> The AudioItem to copy. </param>
+		public virtual void Copy(object reference)
 		{
-			id = reference.id;
-			name = reference.name;
-			state = reference.state;
-			spatializer = reference.spatializer;
-			parent = reference.parent;
-			scheduledTime = reference.scheduledTime;
-			scheduleStarted = reference.scheduleStarted;
-			volumeModifier = reference.volumeModifier;
-			pitchModifier = reference.pitchModifier;
-			rampVolumeTweener = reference.rampVolumeTweener;
-			rampParentVolumeTweener = reference.rampParentVolumeTweener;
-			rampPitchTweener = reference.rampPitchTweener;
-			rampParentPitchTweener = reference.rampParentPitchTweener;
-			fadeTweener = reference.fadeTweener;
-			pausedState = reference.pausedState;
-			hasFaded = reference.hasFaded;
-			hasBreak = reference.hasBreak;
-			CopyUtility.CopyTo(reference.delayedOptions, ref delayedOptions);
-			OnPlay = reference.OnPlay;
-			OnPause = reference.OnPause;
-			OnResume = reference.OnResume;
-			OnStopping = reference.OnStopping;
-			OnStop = reference.OnStop;
-			OnUpdate = reference.OnUpdate;
-			OnStateChanged = reference.OnStateChanged;
+			var castedReference = (AudioItem)reference;
+			id = castedReference.id;
+			name = castedReference.name;
+			state = castedReference.state;
+			spatializer = castedReference.spatializer;
+			parent = castedReference.parent;
+			scheduledTime = castedReference.scheduledTime;
+			scheduleStarted = castedReference.scheduleStarted;
+			volumeModifier.Copy(castedReference.volumeModifier);
+			pitchModifier.Copy(castedReference.pitchModifier);
+			rampVolumeTweener.Copy(castedReference.rampVolumeTweener);
+			rampParentVolumeTweener.Copy(castedReference.rampParentVolumeTweener);
+			rampPitchTweener.Copy(castedReference.rampPitchTweener);
+			rampParentPitchTweener.Copy(castedReference.rampParentPitchTweener);
+			fadeTweener.Copy(castedReference.fadeTweener);
+			pausedState = castedReference.pausedState;
+			hasFaded = castedReference.hasFaded;
+			hasBreak = castedReference.hasBreak;
+			TypePoolManager.CreateCopies(delayedOptions, castedReference.delayedOptions);
+			OnPlay = castedReference.OnPlay;
+			OnPause = castedReference.OnPause;
+			OnResume = castedReference.OnResume;
+			OnStopping = castedReference.OnStopping;
+			OnStop = castedReference.OnStop;
+			OnUpdate = castedReference.OnUpdate;
+			OnStateChanged = castedReference.OnStateChanged;
 		}
 
 		public override string ToString()

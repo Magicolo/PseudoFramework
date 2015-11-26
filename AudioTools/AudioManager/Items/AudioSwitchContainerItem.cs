@@ -5,11 +5,8 @@ using System;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioSwitchContainerItem : AudioContainerItem, ICopyable<AudioSwitchContainerItem>
+	public class AudioSwitchContainerItem : AudioContainerItem
 	{
-		public static readonly AudioSwitchContainerItem Default = new AudioSwitchContainerItem();
-
 		AudioSwitchContainerSettings originalSettings;
 		AudioSwitchContainerSettings settings;
 		AudioValue<int> switchValue;
@@ -22,7 +19,7 @@ namespace Pseudo.Internal.Audio
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -47,16 +44,17 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			AudioSettingsBase.Pool.Recycle(settings);
+			PrefabPoolManager.Recycle(settings);
 		}
 
-		public void Copy(AudioSwitchContainerItem reference)
+		public override void Copy(object reference)
 		{
 			base.Copy(reference);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			switchValue = reference.switchValue;
+			var castedReference = (AudioSwitchContainerItem)reference;
+			originalSettings = castedReference.originalSettings;
+			settings = castedReference.settings;
+			switchValue = castedReference.switchValue;
 		}
 	}
 }

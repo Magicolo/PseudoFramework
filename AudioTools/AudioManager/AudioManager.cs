@@ -204,7 +204,7 @@ namespace Pseudo
 
 			if (!switchValues.TryGetValue(name, out value))
 			{
-				value = AudioValue<int>.Pool.Create();
+				value = TypePoolManager.Create<AudioValue<int>>();
 				switchValues[name] = value;
 			}
 

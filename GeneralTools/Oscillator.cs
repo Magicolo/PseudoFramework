@@ -6,8 +6,8 @@ using System;
 
 namespace Pseudo
 {
-	[Serializable,Copy]
-	public class Oscillator : IPoolable, ICopyable<Oscillator>
+	[Serializable]
+	public class Oscillator : IPoolable, ICopyable
 	{
 		public float Frequency = 1;
 		public float Amplitude = 1;
@@ -28,13 +28,14 @@ namespace Pseudo
 		{
 		}
 
-		public void Copy(Oscillator reference)
+		public void Copy(object reference)
 		{
-			Frequency = reference.Frequency;
-			Amplitude = reference.Amplitude;
-			Center = reference.Center;
-			Offset = reference.Offset;
-			TimeChannel = reference.TimeChannel;
+			var castedReference = (Oscillator)reference;
+			Frequency = castedReference.Frequency;
+			Amplitude = castedReference.Amplitude;
+			Center = castedReference.Center;
+			Offset = castedReference.Offset;
+			TimeChannel = castedReference.TimeChannel;
 		}
 	}
 }

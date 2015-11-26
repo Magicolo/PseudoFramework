@@ -5,11 +5,8 @@ using System;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioEnumeratorContainerItem : AudioContainerItem, ICopyable<AudioEnumeratorContainerItem>
+	public class AudioEnumeratorContainerItem : AudioContainerItem
 	{
-		public static readonly AudioEnumeratorContainerItem Default = new AudioEnumeratorContainerItem();
-
 		AudioEnumeratorContainerSettings originalSettings;
 		AudioEnumeratorContainerSettings settings;
 
@@ -21,7 +18,7 @@ namespace Pseudo.Internal.Audio
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -46,15 +43,16 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			AudioSettingsBase.Pool.Recycle(settings);
+			PrefabPoolManager.Recycle(settings);
 		}
 
-		public void Copy(AudioEnumeratorContainerItem reference)
+		public override void Copy(object reference)
 		{
 			base.Copy(reference);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
+			var castedReference = (AudioEnumeratorContainerItem)reference;
+			originalSettings = castedReference.originalSettings;
+			settings = castedReference.settings;
 		}
 	}
 }

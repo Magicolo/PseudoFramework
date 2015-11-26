@@ -10,11 +10,8 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioSourceItem : AudioItem, ICopyable<AudioSourceItem>
+	public class AudioSourceItem : AudioItem
 	{
-		public static readonly AudioSourceItem Default = new AudioSourceItem();
-
 		AudioSourceSettings originalSettings;
 		AudioSourceSettings settings;
 		AudioSource source;
@@ -40,7 +37,7 @@ namespace Pseudo.Internal.Audio
 
 			// General Setup
 			originalSettings = settings;
-			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 			source = audioSource;
 			source.transform.parent = AudioManager.Instance.Transform;
 			base.spatializer.AddSource(source.transform);
@@ -206,7 +203,7 @@ namespace Pseudo.Internal.Audio
 
 			spatializer.RemoveSource(source.transform);
 
-			PoolManager.Recycle(this);
+			PrefabPoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -342,7 +339,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				AudioOption.Pool.Recycle(option);
+				TypePoolManager.Recycle(option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -397,19 +394,20 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			AudioManager.Instance.AudioSourcePool.Recycle(ref source);
-			AudioSettingsBase.Pool.Recycle(settings);
+			AudioManager.Instance.AudioSourcePool.Recycle(source);
+			PrefabPoolManager.Recycle(settings);
 		}
 
-		public void Copy(AudioSourceItem reference)
+		public override void Copy(object reference)
 		{
 			base.Copy(reference);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			source = reference.source;
-			deltaTime = reference.deltaTime;
-			lastTime = reference.lastTime;
+			var castedReference = (AudioSourceItem)reference;
+			originalSettings = castedReference.originalSettings;
+			settings = castedReference.settings;
+			source = castedReference.source;
+			deltaTime = castedReference.deltaTime;
+			lastTime = castedReference.lastTime;
 		}
 	}
 }

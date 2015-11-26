@@ -158,6 +158,17 @@ namespace Pseudo
 			return array != null && array.Count > 0 ? array[array.Count - 1] : default(T);
 		}
 
+		public static void Fill<T>(this IList<T> array, Func<int, T> getValue)
+		{
+			array.Fill(getValue, 0, array.Count);
+		}
+
+		public static void Fill<T>(this IList<T> array, Func<int, T> getValue, int startIndex, int count)
+		{
+			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Count); i++)
+				array[i] = getValue(i);
+		}
+
 		public static void Fill<T>(this IList<T> array, T value)
 		{
 			array.Fill(value, 0, array.Count);

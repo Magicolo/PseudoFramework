@@ -10,18 +10,10 @@ namespace Pseudo.Internal.Audio
 	/// <summary>
 	/// Container that will play a random source based on the Weights array.
 	/// </summary>
-	[Copy]
-	public class AudioRandomContainerSettings : AudioContainerSettings, ICopyable<AudioRandomContainerSettings>
+	public class AudioRandomContainerSettings : AudioContainerSettings
 	{
 		public List<float> Weights = new List<float>();
 
 		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.RandomContainer; } }
-
-		public void Copy(AudioRandomContainerSettings reference)
-		{
-			base.Copy(reference);
-
-			CopyUtility.CopyTo(reference.Weights, ref Weights);
-		}
 	}
 }

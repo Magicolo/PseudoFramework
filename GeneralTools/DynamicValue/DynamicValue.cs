@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	[Serializable, Copy]
+	[Serializable]
 	public class DynamicValue : ICopyable, ISerializationCallbackReceiver
 	{
 		public enum ValueTypes : byte
@@ -31,8 +31,6 @@ namespace Pseudo
 			AnimationCurve = 107,
 			Object = 150,
 		}
-
-		public static readonly Pool<DynamicValue> Pool = new Pool<DynamicValue>(new DynamicValue());
 
 		static readonly MemoryStream stream = new MemoryStream();
 		static readonly BinaryReader reader = new BinaryReader(stream);

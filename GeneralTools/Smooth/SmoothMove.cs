@@ -6,8 +6,8 @@ using System;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Move"), Copy]
-	public class SmoothMove : PMonoBehaviour, ICopyable<SmoothMove>
+	[AddComponentMenu("Pseudo/General/Smooth/Move")]
+	public class SmoothMove : PMonoBehaviour
 	{
 		[Mask]
 		public TransformModes Mode = TransformModes.Position;
@@ -56,16 +56,6 @@ namespace Pseudo
 		public void ApplyRandomness()
 		{
 			Speed += Speed.SetValues(new Vector3(UnityEngine.Random.Range(-Randomness * Speed.x, Randomness * Speed.x), UnityEngine.Random.Range(-Randomness * Speed.y, Randomness * Speed.y), UnityEngine.Random.Range(-Randomness * Speed.z, Randomness * Speed.z)), Axes);
-		}
-
-		public void Copy(SmoothMove reference)
-		{
-			Mode = reference.Mode;
-			Axes = reference.Axes;
-			TimeChannel = reference.TimeChannel;
-			Culling = reference.Culling;
-			Randomness = reference.Randomness;
-			Speed = reference.Speed;
 		}
 	}
 }

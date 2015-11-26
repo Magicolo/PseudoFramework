@@ -34,7 +34,7 @@ namespace Pseudo
 		protected readonly bool isPoolable;
 		protected readonly Queue instances;
 		protected readonly Queue toInitialize;
-		protected List<IPoolFieldData> fields;
+		protected List<IPoolSetter> setters;
 		protected bool updating;
 
 		static Pool()
@@ -55,7 +55,7 @@ namespace Pseudo
 			isPoolable = reference is IPoolable;
 			instances = new Queue(startSize);
 			toInitialize = new Queue(startSize);
-			fields = PoolUtility.GetFieldData(reference);
+			setters = PoolUtility.GetSetters(reference);
 
 			Initialize();
 		}
@@ -68,6 +68,14 @@ namespace Pseudo
 				((IPoolable)instance).OnCreate();
 
 			Subscribe(this);
+
+			return instance;
+		}
+
+		public virtual T CreateCopy<T>(T reference) where T : class, ICopyable
+		{
+			var instance = (T)Create();
+			instance.Copy(reference);
 
 			return instance;
 		}
@@ -87,21 +95,15 @@ namespace Pseudo
 			Subscribe(this);
 		}
 
-		public virtual void Recycle<T>(ref T instance) where T : class
+		public virtual void RecycleElements<T>(T elements) where T : class, IList
 		{
-			Recycle(instance);
-			instance = null;
-		}
-
-		public virtual void RecycleElements(IList collection)
-		{
-			if (collection == null)
+			if (elements == null)
 				return;
 
-			for (int i = 0; i < collection.Count; i++)
-				Recycle(collection[i]);
+			for (int i = 0; i < elements.Count; i++)
+				Recycle(elements[i]);
 
-			collection.Clear();
+			elements.Clear();
 		}
 
 		public virtual bool Contains(object instance)
@@ -152,15 +154,15 @@ namespace Pseudo
 
 		protected virtual object CreateInstance()
 		{
-			object instance = FormatterServices.GetUninitializedObject(Type);
-			PoolUtility.InitializeFields(instance, false, fields);
+			var instance = Activator.CreateInstance(Type);
+			PoolUtility.InitializeFields(instance, setters);
 
 			return instance;
 		}
 
 		protected virtual void Enqueue(object instance, bool initialize)
 		{
-			if (initialize && fields.Count > 0)
+			if (initialize && setters.Count > 0)
 				lock (toInitialize) { toInitialize.Enqueue(instance); }
 			else
 				lock (instances) { instances.Enqueue(instance); }
@@ -248,7 +250,7 @@ namespace Pseudo
 					}
 				}
 
-				PoolUtility.InitializeFields(instance, true, pool.fields);
+				PoolUtility.InitializeFields(instance, pool.setters);
 				lock (pool.instances) pool.instances.Enqueue(instance);
 			}
 		}

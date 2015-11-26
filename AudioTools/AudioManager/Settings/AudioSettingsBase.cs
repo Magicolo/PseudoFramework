@@ -7,16 +7,13 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	[Copy]
-	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable, ICopyable<AudioSettingsBase>
+	public abstract class AudioSettingsBase : ScriptableObject, INamable, IPoolable
 	{
 		public enum PitchScaleModes
 		{
 			Ratio,
 			Semitone
 		}
-
-		public static readonly ScriptablePoolManager<AudioSettingsBase> Pool = new ScriptablePoolManager<AudioSettingsBase>();
 
 		string cachedName;
 
@@ -108,36 +105,19 @@ namespace Pseudo
 		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
-		public virtual void OnCreate() { }
+		public virtual void OnCreate()
+		{
+			TypePoolManager.CreateElements(RTPCs);
+			TypePoolManager.CreateElements(Options);
+		}
 
 		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			AudioRTPC.Pool.RecycleElements(RTPCs);
-			AudioOption.Pool.RecycleElements(Options);
-		}
-
-		/// <summary>
-		/// Copies another AudioSettingsBase.
-		/// </summary>
-		/// <param name="reference"> The AudioSettingsBase to copy. </param>
-		public void Copy(AudioSettingsBase reference)
-		{
-			cachedName = reference.cachedName;
-			Loop = reference.Loop;
-			FadeIn = reference.FadeIn;
-			FadeInEase = reference.FadeInEase;
-			FadeOut = reference.FadeOut;
-			FadeOutEase = reference.FadeOutEase;
-			VolumeScale = reference.VolumeScale;
-			PitchScaleMode = reference.PitchScaleMode;
-			PitchScale = reference.PitchScale;
-			RandomVolume = reference.RandomVolume;
-			RandomPitch = reference.RandomPitch;
-			CopyUtility.CopyTo(reference.RTPCs, ref RTPCs);
-			CopyUtility.CopyTo(reference.Options, ref Options);
+			TypePoolManager.RecycleElements(RTPCs);
+			TypePoolManager.RecycleElements(Options);
 		}
 	}
 }

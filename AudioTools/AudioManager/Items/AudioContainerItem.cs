@@ -6,11 +6,9 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public abstract class AudioContainerItem : AudioItem, ICopyable<AudioContainerItem>
+	public abstract class AudioContainerItem : AudioItem
 	{
 		protected readonly List<AudioItem> sources = new List<AudioItem>();
-
 		protected readonly Action<AudioModifier> setVolumeScale;
 		protected readonly Action<AudioModifier> setPitchScale;
 
@@ -163,7 +161,7 @@ namespace Pseudo.Internal.Audio
 			if (parent == null)
 				AudioManager.Instance.ItemManager.Deactivate(this);
 
-			PoolManager.Recycle(this);
+			PrefabPoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -211,7 +209,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				AudioOption.Pool.Recycle(option);
+				TypePoolManager.Recycle(option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -322,12 +320,6 @@ namespace Pseudo.Internal.Audio
 			base.OnRecycle();
 
 			sources.Clear();
-		}
-
-		public void Copy(AudioContainerItem reference)
-		{
-			base.Copy(reference);
-
 		}
 	}
 }

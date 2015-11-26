@@ -42,7 +42,7 @@ public class ParticleManager : Singleton<ParticleManager>
 
 	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect
 	{
-		T particleEffect = PoolManager.Create(effect);
+		T particleEffect = PrefabPoolManager.Create(effect);
 		particleEffect.Transform.position = position;
 		particleEffect.Transform.parent = parent;
 		particleEffect.CachedParticleSystem.Play(true);

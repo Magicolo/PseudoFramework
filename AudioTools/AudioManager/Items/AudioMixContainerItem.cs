@@ -6,11 +6,8 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	[Copy]
-	public class AudioMixContainerItem : AudioContainerItem, ICopyable<AudioMixContainerItem>
+	public class AudioMixContainerItem : AudioContainerItem
 	{
-		public static readonly AudioMixContainerItem Default = new AudioMixContainerItem();
-
 		AudioMixContainerSettings originalSettings;
 		AudioMixContainerSettings settings;
 		double deltaTime;
@@ -26,7 +23,7 @@ namespace Pseudo.Internal.Audio
 			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = AudioSettingsBase.Pool.CreateCopy(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -116,17 +113,18 @@ namespace Pseudo.Internal.Audio
 			base.OnRecycle();
 
 			delays.Clear();
-			AudioSettingsBase.Pool.Recycle(settings);
+			PrefabPoolManager.Recycle(settings);
 		}
 
-		public void Copy(AudioMixContainerItem reference)
+		public override void Copy(object reference)
 		{
 			base.Copy(reference);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			deltaTime = reference.deltaTime;
-			lastTime = reference.lastTime;
+			var castedReference = (AudioMixContainerItem)reference;
+			originalSettings = castedReference.originalSettings;
+			settings = castedReference.settings;
+			deltaTime = castedReference.deltaTime;
+			lastTime = castedReference.lastTime;
 		}
 	}
 }

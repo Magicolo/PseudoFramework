@@ -7,12 +7,9 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Copy]
-	public class RoutineHolder : IPoolable, ICopyable<RoutineHolder>
+	public class RoutineHolder : IPoolable
 	{
 		readonly List<IEnumerator> routines = new List<IEnumerator>();
-
-		public static readonly RoutineHolder Default = new RoutineHolder();
 
 		public void Update()
 		{
@@ -45,10 +42,6 @@ namespace Pseudo
 		public void OnRecycle()
 		{
 			routines.Clear();
-		}
-
-		public void Copy(RoutineHolder reference)
-		{
 		}
 	}
 }

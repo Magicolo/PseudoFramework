@@ -3,8 +3,8 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/Smooth/Follow"),Copy]
-	public class SmoothFollow : PMonoBehaviour, ICopyable<SmoothFollow>
+	[AddComponentMenu("Pseudo/General/Smooth/Follow")]
+	public class SmoothFollow : PMonoBehaviour
 	{
 		[Mask]
 		public TransformModes Mode = TransformModes.Position;
@@ -54,16 +54,6 @@ namespace Pseudo
 
 				Transform.SetScale(scale);
 			}
-		}
-
-		public void Copy(SmoothFollow reference)
-		{
-			Mode = reference.Mode;
-			Axes = reference.Axes;
-			TimeChannel = reference.TimeChannel;
-			Target = reference.Target;
-			Offset = reference.Offset;
-			Damping = reference.Damping;
 		}
 	}
 }

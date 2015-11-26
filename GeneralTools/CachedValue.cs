@@ -7,8 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[Copy]
-	public class CachedValue<T> : ICopyable<CachedValue<T>>
+	public class CachedValue<T>
 	{
 		Func<T> getValue;
 		T value;
@@ -43,14 +42,7 @@ namespace Pseudo
 			isValueCached = false;
 			value = default(T);
 		}
-
-		public void Copy(CachedValue<T> reference)
-		{
-			getValue = reference.getValue;
-			value = reference.value;
-			isValueCached = reference.isValueCached;
-		}
-
+		
 		public static implicit operator T(CachedValue<T> cachedValue)
 		{
 			return cachedValue.Value;

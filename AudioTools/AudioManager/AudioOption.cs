@@ -11,8 +11,6 @@ namespace Pseudo
 	[Serializable]
 	public class AudioOption : IPoolable, ICopyable
 	{
-		public static readonly Pool<AudioOption> Pool = new Pool<AudioOption>(new AudioOption(), 16);
-
 		public enum Types
 		{
 			VolumeScale,
@@ -224,7 +222,7 @@ namespace Pseudo
 
 		static AudioOption Create(Types type, object value, float delay = 0f)
 		{
-			var option = Pool.Create();
+			var option = TypePoolManager.Create<AudioOption>();
 			option.Initialize(type, value, delay);
 
 			return option;
@@ -265,12 +263,12 @@ namespace Pseudo
 
 		public void OnCreate()
 		{
-			value = DynamicValue.Pool.Create();
+			value = TypePoolManager.Create<DynamicValue>();
 		}
 
 		public void OnRecycle()
 		{
-			DynamicValue.Pool.Recycle(ref value);
+			TypePoolManager.Recycle(value);
 		}
 
 		public virtual void Copy(object reference)
