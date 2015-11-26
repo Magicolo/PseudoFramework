@@ -24,9 +24,6 @@ namespace Pseudo.Internal
 			if (instance == null)
 				return;
 
-			if (instance.GetType() != field.DeclaringType)
-				throw new TypeMismatchException(string.Format("Instance type {0} doesn't match {1}.", instance.GetType().Name, field.DeclaringType.Name));
-
 			var array = (IList)field.GetValue(instance);
 
 			if (array == null)

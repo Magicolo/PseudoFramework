@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class EntityBase : PMonoBehaviour
+	public class PComponent : PMonoBehaviour
 	{
-		
+		public PEntity Entity { get; set; }
 	}
 }
