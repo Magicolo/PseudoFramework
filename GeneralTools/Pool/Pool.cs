@@ -55,8 +55,6 @@ namespace Pseudo
 			isPoolable = reference is IPoolable;
 			instances = new Queue(startSize);
 			toInitialize = new Queue(startSize);
-			setters = PoolUtility.GetSetters(reference);
-
 			Initialize();
 		}
 
@@ -132,6 +130,16 @@ namespace Pseudo
 
 		void Initialize()
 		{
+			bool isInitializable = reference is IPoolInitializable;
+
+			if (isInitializable)
+				((IPoolInitializable)reference).OnBeforePoolInitialize();
+
+			setters = PoolUtility.GetSetters(reference);
+
+			if (isInitializable)
+				((IPoolInitializable)reference).OnAfterPoolInitialize(setters);
+
 			while (Size < StartSize)
 				Enqueue(CreateInstance(), false);
 		}

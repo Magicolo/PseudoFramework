@@ -143,7 +143,7 @@ namespace Pseudo.Internal.Editor
 			{
 				Type type = TypeExtensions.AllTypes[i];
 
-				bool copyClass = type.IsDefined(typeof(CopyAttribute), true);
+				bool copyClass = false;
 				bool isCopyable = Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>));
 
 				if (!type.IsInterface && copyClass && isCopyable)
@@ -246,7 +246,7 @@ namespace Pseudo.Internal.Editor
 			{
 				FieldInfo field = fields[i];
 
-				if (field.IsInitOnly || field.IsDefined(typeof(DoNotCopyAttribute), true))
+				if (field.IsInitOnly || field.IsDefined(typeof(DoNotInitializeAttribute), true))
 					continue;
 
 				body += GetFieldLine(field, indentString, membersToIgnore);
@@ -272,7 +272,7 @@ namespace Pseudo.Internal.Editor
 
 			if (!membersToIgnore.Contains(fieldName))
 			{
-				bool copyTo = fieldType.IsClass && fieldType.Is(typeof(ICopyable<>), fieldType) && field.IsDefined(typeof(CopyToAttribute), true);
+				bool copyTo = fieldType.IsClass && fieldType.Is(typeof(ICopyable<>), fieldType) && field.IsDefined(typeof(InitializeContentAttribute), true);
 
 				if (fieldType.IsArray || fieldType.Is(typeof(ICollection)) || copyTo)
 					line += indentString + "CopyUtility.CopyTo(reference." + fieldName + ", ref " + fieldName + ");\r\n";

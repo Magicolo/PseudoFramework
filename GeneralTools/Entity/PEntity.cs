@@ -4,26 +4,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class PEntity : PMonoBehaviour
+	public class PEntity : PMonoBehaviour, IPoolInitializable
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		[DoNotInitialize]
-		Dictionary<Type, List<Component>> typeComponents;
-		Dictionary<Type, List<Component>> TypeComponents
-		{
-			get
-			{
-				if (typeComponents == null)
-					InitializeComponents();
-
-				return typeComponents;
-			}
-		}
+		[InitializeContent]
+		ComponentHolder[] allComponents = new ComponentHolder[EntityUtility.GetTotalComponentCount()];
 
 		public Component AddComponent(Type type)
 		{
@@ -108,7 +99,18 @@ namespace Pseudo
 
 		public bool TryGetComponents(Type type, out List<Component> components)
 		{
-			return TypeComponents.TryGetValue(type, out components) && components.Count > 0;
+			var componentHolder = allComponents[EntityUtility.GetComponentIndex(type)];
+
+			if (componentHolder == null)
+			{
+				components = null;
+				return false;
+			}
+			else
+			{
+				components = componentHolder.GetComponents();
+				return components.Count > 0;
+			}
 		}
 
 		//new public Component GetComponent(Type type)
@@ -169,6 +171,32 @@ namespace Pseudo
 			return HasComponent(typeof(T));
 		}
 
+		public override void OnCreate()
+		{
+			base.OnCreate();
+
+			for (int i = 0; i < allComponents.Length; i++)
+			{
+				var component = allComponents[i];
+
+				if (component is IPoolable)
+					((IPoolable)component).OnCreate();
+			}
+		}
+
+		public override void OnRecycle()
+		{
+			base.OnRecycle();
+
+			for (int i = 0; i < allComponents.Length; i++)
+			{
+				var component = allComponents[i];
+
+				if (component is IPoolable)
+					((IPoolable)component).OnRecycle();
+			}
+		}
+
 		protected virtual void RaiseOnComponentAddedEvent(Component component)
 		{
 			if (OnComponentAdded != null)
@@ -183,19 +211,19 @@ namespace Pseudo
 
 		void AddComponent(Component component, bool raiseEvent)
 		{
-			Type type = component.GetType();
-			List<Component> components;
-
 			if (component is PComponent)
 				((PComponent)component).Entity = this;
 
-			if (!TryGetComponents(type, out components))
+			var index = EntityUtility.GetComponentIndex(component.GetType());
+			var componentHolder = allComponents[index];
+
+			if (componentHolder == null)
 			{
-				components = new List<Component>();
-				TypeComponents[type] = components;
+				componentHolder = new ComponentHolder();
+				allComponents[index] = componentHolder;
 			}
 
-			components.Add(component);
+			componentHolder.AddComponent(component);
 
 			if (raiseEvent)
 				RaiseOnComponentAddedEvent(component);
@@ -231,11 +259,17 @@ namespace Pseudo
 
 		void InitializeComponents()
 		{
-			typeComponents = new Dictionary<Type, List<Component>>();
-			Component[] components = GetComponentsInChildren<Component>();
+			var components = GetComponentsInChildren<Component>();
 
 			for (int i = 0; i < components.Length; i++)
 				AddComponent(components[i], false);
 		}
+
+		void IPoolInitializable.OnBeforePoolInitialize()
+		{
+			InitializeComponents();
+		}
+
+		void IPoolInitializable.OnAfterPoolInitialize(List<IPoolSetter> setters) { }
 	}
 }
