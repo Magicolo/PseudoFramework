@@ -9,7 +9,7 @@ namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Particle Effect")]
 	[RequireComponent(typeof(ParticleSystem))]
-	public class ParticleEffect : PMonoBehaviour
+	public class ParticleEffect : PComponent
 	{
 		protected readonly CachedValue<ParticleSystem> cachedParticleSystem;
 

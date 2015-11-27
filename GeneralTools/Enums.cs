@@ -76,5 +76,12 @@ namespace Pseudo
 		FirstOfEach,
 		All
 	}
+
+	public enum QueryColliderInteration
+	{
+		UseGlobal,
+		Ignore,
+		Collide
+	}
 }
 

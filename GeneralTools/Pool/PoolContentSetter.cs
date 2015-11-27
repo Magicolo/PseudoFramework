@@ -6,17 +6,17 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public class PoolContentSetter : IPoolSetter
 	{
-		List<IPoolSetter> setters;
 		FieldInfo field;
+		List<IPoolSetter> setters;
 
-		public PoolContentSetter(List<IPoolSetter> setters, FieldInfo field)
+		public PoolContentSetter(FieldInfo field, List<IPoolSetter> setters)
 		{
-			this.setters = setters;
 			this.field = field;
+			this.setters = setters;
 		}
 
 		public void SetValue(object instance)
@@ -31,6 +31,11 @@ namespace Pseudo.Internal
 				for (int i = 0; i < setters.Count; i++)
 					setters[i].SetValue(value);
 			}
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1}, {2}, {3})", GetType().Name, field.Name, field.FieldType.Name, PDebug.ToString(setters));
 		}
 	}
 }

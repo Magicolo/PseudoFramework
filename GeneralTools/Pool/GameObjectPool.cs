@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
 
-namespace Pseudo
+namespace Pseudo.Internal.Pool
 {
 	public class GameObjectPool : PrefabPool
 	{

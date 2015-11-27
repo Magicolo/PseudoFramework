@@ -9,7 +9,7 @@ using Pseudo.Internal;
 using System;
 using System.Runtime.Serialization;
 
-namespace Pseudo
+namespace Pseudo.Internal.Pool
 {
 	public class Pool<T> : Pool where T : class
 	{
@@ -220,7 +220,7 @@ namespace Pseudo
 							{
 								pool = toUpdate[i];
 
-								if (!pool.updating)
+								if (pool == null || !pool.updating)
 								{
 									toUpdate.RemoveAt(i);
 									continue;

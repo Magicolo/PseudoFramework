@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public static class PoolHolder<T> where T : class
 	{

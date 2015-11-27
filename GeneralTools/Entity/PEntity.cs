@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {
@@ -15,6 +16,13 @@ namespace Pseudo
 
 		[InitializeContent]
 		ComponentHolder[] allComponents = new ComponentHolder[EntityUtility.GetTotalComponentCount()];
+		[DoNotInitialize]
+		bool initialized;
+
+		protected virtual void Awake()
+		{
+			InitializeComponents();
+		}
 
 		public Component AddComponent(Type type)
 		{
@@ -79,15 +87,6 @@ namespace Pseudo
 			return success;
 		}
 
-		public bool TryGetComponents<T>(out List<T> components) where T : Component
-		{
-			List<Component> tempComponents;
-			bool success = TryGetComponents(typeof(T), out tempComponents);
-			components = tempComponents as List<T>;
-
-			return success;
-		}
-
 		public bool TryGetComponent<T>(out T component) where T : Component
 		{
 			Component tempComponent;
@@ -112,32 +111,6 @@ namespace Pseudo
 				return components.Count > 0;
 			}
 		}
-
-		//new public Component GetComponent(Type type)
-		//{
-		//	Component component;
-		//	TryGetComponent(type, out component);
-
-		//	return component;
-		//}
-
-		//new public T GetComponent<T>() where T : Component
-		//{
-		//	return (T)GetComponent(typeof(T));
-		//}
-
-		//new public List<Component> GetComponents(Type type)
-		//{
-		//	List<Component> components;
-		//	TryGetComponents(type, out components);
-
-		//	return components;
-		//}
-
-		//new public List<T> GetComponents<T>() where T : Component
-		//{
-		//	return GetComponents(typeof(T)) as List<T>;
-		//}
 
 		public Component GetOrAddComponent(Type type)
 		{
@@ -177,10 +150,20 @@ namespace Pseudo
 
 			for (int i = 0; i < allComponents.Length; i++)
 			{
-				var component = allComponents[i];
+				var componentHolder = allComponents[i];
 
-				if (component is IPoolable)
-					((IPoolable)component).OnCreate();
+				if (componentHolder == null)
+					continue;
+
+				var components = componentHolder.GetComponents();
+
+				for (int j = 0; j < components.Count; j++)
+				{
+					var component = components[j];
+
+					if (component is IPoolable)
+						((IPoolable)component).OnCreate();
+				}
 			}
 		}
 
@@ -211,8 +194,11 @@ namespace Pseudo
 
 		void AddComponent(Component component, bool raiseEvent)
 		{
-			if (component is PComponent)
-				((PComponent)component).Entity = this;
+			if (component is PEntity)
+				return;
+
+			if (component is IComponent)
+				((IComponent)component).Entity = this;
 
 			var index = EntityUtility.GetComponentIndex(component.GetType());
 			var componentHolder = allComponents[index];
@@ -259,10 +245,20 @@ namespace Pseudo
 
 		void InitializeComponents()
 		{
-			var components = GetComponentsInChildren<Component>();
+			if (initialized)
+				return;
+
+			var components = GetComponents<Component>();
 
 			for (int i = 0; i < components.Length; i++)
 				AddComponent(components[i], false);
+
+			components = GetComponentsInChildren<Component>(true);
+
+			for (int i = 0; i < components.Length; i++)
+				AddComponent(components[i], false);
+
+			initialized = true;
 		}
 
 		void IPoolInitializable.OnBeforePoolInitialize()

@@ -6,6 +6,7 @@ using UnityEngine;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Audio;
+using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {

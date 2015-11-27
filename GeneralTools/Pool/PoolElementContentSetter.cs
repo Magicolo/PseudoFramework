@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public class PoolElementContentSetter : IPoolElementSetter
 	{
@@ -28,6 +28,11 @@ namespace Pseudo.Internal
 						setters[i].SetValue(value);
 				}
 			}
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1})", GetType().Name, PDebug.ToString(setters));
 		}
 	}
 }

@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Threading;
 using System;
 using Pseudo.Internal;
+using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {

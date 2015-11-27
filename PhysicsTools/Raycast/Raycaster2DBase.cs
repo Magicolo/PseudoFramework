@@ -7,15 +7,17 @@ using Pseudo;
 
 namespace Pseudo.Internal.Physics
 {
-	public abstract class Raycaster2DBase : PMonoBehaviour
+	public abstract class Raycaster2DBase : PComponent
 	{
 		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
 
 		public LayerMask Mask = Physics2D.DefaultRaycastLayers;
 		public QueryTriggerInteraction HitTrigger = QueryTriggerInteraction.UseGlobal;
+		public QueryColliderInteration HitStartCollider = QueryColliderInteration.UseGlobal;
 		public bool Draw = true;
 
 		bool hitTrigger;
+		bool hitStartCollider;
 
 		/// <summary>
 		/// Updates the Raycaster and stores the results in the Hits list.
@@ -45,11 +47,24 @@ namespace Pseudo.Internal.Physics
 					Physics2D.queriesHitTriggers = true;
 					break;
 			}
+
+			hitStartCollider = Physics2D.queriesStartInColliders;
+
+			switch (HitStartCollider)
+			{
+				case QueryColliderInteration.Ignore:
+					Physics2D.queriesStartInColliders = false;
+					break;
+				case QueryColliderInteration.Collide:
+					Physics2D.queriesStartInColliders = true;
+					break;
+			}
 		}
 
 		protected virtual void EndCast()
 		{
 			Physics2D.queriesHitTriggers = hitTrigger;
+			Physics2D.queriesStartInColliders = hitStartCollider;
 		}
 
 		void OnDrawGizmos()

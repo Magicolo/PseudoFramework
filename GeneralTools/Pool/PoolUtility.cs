@@ -8,7 +8,7 @@ using System.Reflection;
 using Pseudo.Internal;
 using System.Runtime.Serialization;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public static class PoolUtility
 	{
@@ -90,14 +90,14 @@ namespace Pseudo.Internal
 		static IPoolSetter GetSetter(object value, FieldInfo field)
 		{
 			if (value == null)
-				return new PoolSetter(value, field);
+				return new PoolSetter(field, value);
 
 			if (value is IList)
-				return new PoolArraySetter(GetElementSetters((IList)value, field), field);
+				return new PoolArraySetter(field, GetElementSetters((IList)value, field));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
-				return new PoolContentSetter(GetSetters(value), field);
+				return new PoolContentSetter(field, GetSetters(value));
 			else
-				return new PoolSetter(value, field);
+				return new PoolSetter(field, value);
 		}
 
 		static List<IPoolElementSetter> GetElementSetters(IList array, FieldInfo field)

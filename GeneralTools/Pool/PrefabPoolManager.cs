@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {
@@ -22,6 +23,9 @@ namespace Pseudo
 
 		public static object Create(object prefab)
 		{
+			if (prefab == null)
+				return null;
+
 			var pool = GetPool(prefab);
 			var instance = pool.Create();
 			instancePool[instance] = pool;

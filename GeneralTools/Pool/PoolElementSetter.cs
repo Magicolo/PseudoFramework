@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public class PoolElementSetter : IPoolElementSetter
 	{
@@ -20,6 +20,11 @@ namespace Pseudo.Internal
 		{
 			if (array.Count > index)
 				array[index] = value;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1})", GetType().Name, PDebug.ToString(value));
 		}
 	}
 }

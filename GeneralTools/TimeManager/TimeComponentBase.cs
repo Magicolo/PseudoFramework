@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TimeComponentBase : PMonoBehaviour
+	public abstract class TimeComponentBase : PComponent
 	{
 		public TimeManager.TimeChannels Channel { get { return channel; } }
 		public float TimeScale

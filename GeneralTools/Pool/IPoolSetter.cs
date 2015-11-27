@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public interface IPoolSetter
 	{
