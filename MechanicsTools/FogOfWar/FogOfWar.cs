@@ -206,8 +206,10 @@ namespace Pseudo
 			UpdateFogOfWar = true;
 		}
 
-		void Start()
+		protected override void Start()
 		{
+			base.Start();
+
 			UpdateFogOfWar = true;
 			StartCoroutine(UpdateRoutine());
 		}
@@ -226,8 +228,8 @@ namespace Pseudo
 		{
 			CleanUp();
 
-			currentScale = Transform.lossyScale;
-			currentPosition = Transform.position - currentScale / 2;
+			currentScale = CachedTransform.lossyScale;
+			currentPosition = CachedTransform.position - currentScale / 2;
 			area = new Rect(currentPosition.x, currentPosition.y, currentScale.x, currentScale.y);
 		}
 
@@ -239,7 +241,7 @@ namespace Pseudo
 
 				updateFogOfWar |= updateCount >= 0;
 
-				if (updateFogOfWar && CachedRenderer.isVisible && GameObject.activeInHierarchy)
+				if (updateFogOfWar && CachedRenderer.isVisible && CachedGameObject.activeInHierarchy)
 				{
 					deltaTime = Time.deltaTime;
 					flickerAmount = (Random.value * 2 - 1) * Flicker;
@@ -371,8 +373,8 @@ namespace Pseudo
 
 		void CreateTexture()
 		{
-			mapWidth = Mathf.Abs((int)(Transform.lossyScale.x * Definition).Round());
-			mapHeight = Mathf.Abs((int)(Transform.lossyScale.y * Definition).Round());
+			mapWidth = Mathf.Abs((int)(CachedTransform.lossyScale.x * Definition).Round());
+			mapHeight = Mathf.Abs((int)(CachedTransform.lossyScale.y * Definition).Round());
 			mapDiagonal = (int)Mathf.Ceil(Mathf.Sqrt(mapWidth * mapWidth + mapHeight * mapHeight)) * 2;
 			currentAlphaMap = new float[mapWidth, mapHeight];
 			texture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
@@ -401,7 +403,7 @@ namespace Pseudo
 				{
 					for (int x = 0; x < mapWidth; x++)
 					{
-						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, Transform.position.z);
+						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, CachedTransform.position.z);
 
 						if (Physics.Raycast(position - Vector3.forward * 100, Vector3.forward, Mathf.Infinity, LayerMask))
 							currentHeightMap[x, y] = 1;

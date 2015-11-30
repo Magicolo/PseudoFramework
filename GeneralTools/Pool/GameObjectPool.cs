@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Pool
 		protected GameObject gameObject;
 		protected Transform transform;
 
-		public GameObjectPool(GameObject reference, int startSize = 8) : base(reference, startSize) { }
+		public GameObjectPool(GameObject reference, int startSize = 4) : base(reference, startSize) { }
 
 		new public GameObject Create()
 		{

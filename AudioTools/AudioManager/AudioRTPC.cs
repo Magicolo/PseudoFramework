@@ -77,7 +77,7 @@ namespace Pseudo
 		public virtual void OnRecycle()
 		{
 			if (Scope == RTPCScope.Local)
-				TypePoolManager.Recycle(value);
+				TypePoolManager.Recycle(ref value);
 		}
 
 		public void Copy(object reference)

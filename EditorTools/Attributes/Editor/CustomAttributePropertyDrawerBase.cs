@@ -59,7 +59,6 @@ namespace Pseudo.Internal.Editor
 			base.Begin(position, property, label);
 
 			initPosition = position;
-			scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
 
 			if (beforeSeparator)
 			{

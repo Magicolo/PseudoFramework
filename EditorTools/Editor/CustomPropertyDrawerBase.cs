@@ -31,7 +31,6 @@ namespace Pseudo.Internal.Editor
 		protected float lineHeight;
 		protected bool isArray;
 		protected int index;
-		protected float scrollbarThreshold;
 		protected GUIContent currentLabel = GUIContent.none;
 		protected Rect initPosition;
 		protected SerializedProperty arrayProperty;
@@ -63,7 +62,6 @@ namespace Pseudo.Internal.Editor
 			serializedObject = property.serializedObject;
 			target = serializedObject.targetObject;
 			targets = serializedObject.targetObjects;
-			scrollbarThreshold = Screen.width - position.width > 19 ? 298 : 313;
 
 			EditorGUI.BeginChangeCheck();
 		}

@@ -22,7 +22,7 @@ namespace Pseudo.Internal
 			if (state.Machine == null)
 			{
 				Type layerType = StateMachineUtility.GetLayerTypeFromState(state);
-				StateMachine machine = state.GameObject.GetOrAddComponent<StateMachine>();
+				StateMachine machine = state.CachedGameObject.GetOrAddComponent<StateMachine>();
 				StateMachineUtility.AddLayer(machine, layerType, machine);
 			}
 		}

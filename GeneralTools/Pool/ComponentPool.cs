@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Pool
 {
 	public class ComponentPool<T> : ComponentPool where T : Component
 	{
-		public ComponentPool(T reference, int startSize = 8) : base(reference, startSize) { }
+		public ComponentPool(T reference, int startSize = 4) : base(reference, startSize) { }
 
 		new public T Create()
 		{
@@ -26,7 +26,7 @@ namespace Pseudo.Internal.Pool
 		protected GameObject gameObject;
 		protected Transform transform;
 
-		public ComponentPool(Component reference, int startSize = 8) : base(reference, startSize) { }
+		public ComponentPool(Component reference, int startSize = 4) : base(reference, startSize) { }
 
 		public override object Create()
 		{
@@ -41,14 +41,32 @@ namespace Pseudo.Internal.Pool
 			lock (instances)
 			{
 				while (instances.Count > 0)
-					((Component)instances.Dequeue()).gameObject.Destroy();
+				{
+					var instance = (Component)instances.Dequeue();
+
+					if (instance != null)
+						instance.gameObject.Destroy();
+				}
 			}
 
 			lock (toInitialize)
 			{
 				while (toInitialize.Count > 0)
-					((Component)toInitialize.Dequeue()).gameObject.Destroy();
+				{
+					var instance = (Component)toInitialize.Dequeue();
+
+					if (instance != null)
+						instance.gameObject.Destroy();
+				}
 			}
+		}
+
+		protected override object GetInstance()
+		{
+			var instance = (Component)base.GetInstance();
+			instance.gameObject.SetActive(true);
+
+			return instance;
 		}
 
 		protected override void Enqueue(object instance, bool initialize)

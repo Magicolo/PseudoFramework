@@ -209,7 +209,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				TypePoolManager.Recycle(option);
+				TypePoolManager.Recycle(ref option);
 		}
 
 		public override void SetScheduledTime(double time)

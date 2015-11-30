@@ -9,20 +9,30 @@ namespace Pseudo.Internal.Pool
 {
 	public abstract class PrefabPool : Pool
 	{
-		protected PrefabPool(UnityEngine.Object reference, int startSize = 8) : base(reference, reference.GetType(), startSize) { }
+		protected PrefabPool(UnityEngine.Object reference, int startSize = 4) : base(reference, reference.GetType(), startSize) { }
 
 		public override void Clear()
 		{
 			lock (instances)
 			{
 				while (instances.Count > 0)
-					((UnityEngine.Object)instances.Dequeue()).Destroy();
+				{
+					var instance = (UnityEngine.Object)instances.Dequeue();
+
+					if (instance != null)
+						instance.Destroy();
+				}
 			}
 
 			lock (toInitialize)
 			{
 				while (toInitialize.Count > 0)
-					((UnityEngine.Object)toInitialize.Dequeue()).Destroy();
+				{
+					var instance = (UnityEngine.Object)toInitialize.Dequeue();
+
+					if (instance != null)
+						instance.Destroy();
+				}
 			}
 		}
 

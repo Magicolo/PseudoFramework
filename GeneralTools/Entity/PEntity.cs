@@ -6,27 +6,40 @@ using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Pool;
+using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
+	[DisallowMultipleComponent]
+	[AddComponentMenu("Pseudo/General/Entity")]
 	public class PEntity : PMonoBehaviour, IPoolInitializable
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		[InitializeContent]
-		ComponentHolder[] allComponents = new ComponentHolder[EntityUtility.GetTotalComponentCount()];
-		[DoNotInitialize]
-		bool initialized;
-
-		protected virtual void Awake()
+		[SerializeField, PropertyField(typeof(FlagAttribute), typeof(EntityMatch.Groups))]
+		ulong group;
+		public EntityMatch.Groups Group
 		{
-			InitializeComponents();
+			get { return (EntityMatch.Groups)group; }
+			set
+			{
+				group = (ulong)value;
+				EntityManager.UpdateEntity(this);
+			}
 		}
+
+		readonly Dictionary<Type, ComponentGroup> componentGroups = new Dictionary<Type, ComponentGroup>();
+
+		[InitializeContent, NonSerialized]
+		List<Component> allComponents = new List<Component>();
+
+		[DoNotInitialize, NonSerialized]
+		bool initialized;
 
 		public Component AddComponent(Type type)
 		{
-			return AddComponent(GameObject, type);
+			return AddComponent(CachedGameObject, type);
 		}
 
 		public Component AddComponent(GameObject child, Type type)
@@ -39,7 +52,7 @@ namespace Pseudo
 
 		public T AddComponent<T>() where T : Component
 		{
-			return AddComponent<T>(GameObject);
+			return AddComponent<T>(CachedGameObject);
 		}
 
 		public T AddComponent<T>(GameObject child) where T : Component
@@ -47,30 +60,9 @@ namespace Pseudo
 			return (T)AddComponent(child, typeof(T));
 		}
 
-		public bool RemoveComponent(Component component)
-		{
-			List<Component> components;
-			return TryGetComponents(component.GetType(), out components) && RemoveComponent(component, components, true);
-		}
-
 		public bool RemoveComponents(Type type)
 		{
-			List<Component> components;
-			if (TryGetComponents(type, out components))
-			{
-				for (int i = 0; i < components.Count; i++)
-				{
-					Component component = components[i];
-					RaiseOnComponentRemovedEvent(component);
-					component.Destroy();
-				}
-
-				components.Clear();
-
-				return true;
-			}
-
-			return false;
+			return RemoveComponents(GetComponents(type), true);
 		}
 
 		public bool RemoveComponents<T>()
@@ -78,37 +70,62 @@ namespace Pseudo
 			return RemoveComponents(typeof(T));
 		}
 
+		public List<Component> GetAllComponents()
+		{
+			InitializeComponents();
+
+			return allComponents;
+		}
+
+		new public List<T> GetComponents<T>()
+		{
+			return GetComponentGroup(typeof(T)).GetComponents<T>();
+		}
+
+		new public List<Component> GetComponents(Type type)
+		{
+			return GetComponentGroup(type).GetComponents();
+		}
+
+		new public Component GetComponent(Type type)
+		{
+			return GetComponentGroup(type).GetComponents().FirstOrDefault();
+		}
+
+		new public T GetComponent<T>()
+		{
+			return GetComponentGroup(typeof(T)).GetComponents<T>().FirstOrDefault();
+		}
+
 		public bool TryGetComponent(Type type, out Component component)
 		{
-			List<Component> components;
-			bool success = TryGetComponents(type, out components);
-			component = success ? components[0] : null;
+			var components = GetComponents(type);
 
-			return success;
-		}
-
-		public bool TryGetComponent<T>(out T component) where T : Component
-		{
-			Component tempComponent;
-			bool success = TryGetComponent(typeof(T), out tempComponent);
-			component = (T)tempComponent;
-
-			return success;
-		}
-
-		public bool TryGetComponents(Type type, out List<Component> components)
-		{
-			var componentHolder = allComponents[EntityUtility.GetComponentIndex(type)];
-
-			if (componentHolder == null)
+			if (components.Count > 0)
 			{
-				components = null;
-				return false;
+				component = components[0];
+				return true;
 			}
 			else
 			{
-				components = componentHolder.GetComponents();
-				return components.Count > 0;
+				component = null;
+				return false;
+			}
+		}
+
+		public bool TryGetComponent<T>(out T component)
+		{
+			var components = GetComponents<T>();
+
+			if (components.Count > 0)
+			{
+				component = components[0];
+				return true;
+			}
+			else
+			{
+				component = default(T);
+				return false;
 			}
 		}
 
@@ -129,14 +146,12 @@ namespace Pseudo
 
 		public bool HasComponent(Component component)
 		{
-			List<Component> components;
-			return TryGetComponents(component.GetType(), out components) && components.Contains(component);
+			return GetComponentGroup(component.GetType()).GetComponents().Contains(component);
 		}
 
 		public bool HasComponent(Type type)
 		{
-			List<Component> components;
-			return TryGetComponents(type, out components);
+			return GetComponentGroup(type).GetComponents().Count > 0;
 		}
 
 		public bool HasComponent<T>() where T : Component
@@ -144,26 +159,38 @@ namespace Pseudo
 			return HasComponent(typeof(T));
 		}
 
+		public ComponentGroup GetComponentGroup(Type type)
+		{
+			InitializeComponents();
+			ComponentGroup group;
+
+			if (!componentGroups.TryGetValue(type, out group))
+			{
+				group = CreateComponentGroup(type);
+				componentGroups[type] = group;
+			}
+
+			return group;
+		}
+
+		public ComponentGroup GetComponentGroup<T>()
+		{
+			return GetComponentGroup(typeof(T));
+		}
+
 		public override void OnCreate()
 		{
 			base.OnCreate();
 
-			for (int i = 0; i < allComponents.Length; i++)
+			InitializeComponents();
+			EntityManager.RegisterEntity(this);
+
+			for (int i = 0; i < allComponents.Count; i++)
 			{
-				var componentHolder = allComponents[i];
+				var component = allComponents[i];
 
-				if (componentHolder == null)
-					continue;
-
-				var components = componentHolder.GetComponents();
-
-				for (int j = 0; j < components.Count; j++)
-				{
-					var component = components[j];
-
-					if (component is IPoolable)
-						((IPoolable)component).OnCreate();
-				}
+				if (component is IPoolable)
+					((IPoolable)component).OnCreate();
 			}
 		}
 
@@ -171,13 +198,20 @@ namespace Pseudo
 		{
 			base.OnRecycle();
 
-			for (int i = 0; i < allComponents.Length; i++)
+			EntityManager.UnregisterEntity(this);
+
+			for (int i = 0; i < allComponents.Count; i++)
 			{
 				var component = allComponents[i];
 
 				if (component is IPoolable)
 					((IPoolable)component).OnRecycle();
 			}
+		}
+
+		protected virtual void OnDestroy()
+		{
+			EntityManager.UnregisterEntity(this);
 		}
 
 		protected virtual void RaiseOnComponentAddedEvent(Component component)
@@ -192,38 +226,61 @@ namespace Pseudo
 				OnComponentRemoved(component);
 		}
 
+		ComponentGroup CreateComponentGroup(Type type)
+		{
+			var group = new ComponentGroup(type);
+
+			for (int i = 0; i < allComponents.Count; i++)
+			{
+				var component = allComponents[i];
+
+				if (type.IsAssignableFrom(component.GetType()))
+					group.AddComponent(component);
+			}
+
+			return group;
+		}
+
 		void AddComponent(Component component, bool raiseEvent)
 		{
 			if (component is PEntity)
 				return;
 
-			if (component is IComponent)
-				((IComponent)component).Entity = this;
+			if (component is PComponent)
+				((PComponent)component).Entity = this;
 
-			var index = EntityUtility.GetComponentIndex(component.GetType());
-			var componentHolder = allComponents[index];
+			allComponents.Add(component);
 
-			if (componentHolder == null)
+			var type = component.GetType();
+			var enumerator = componentGroups.GetEnumerator();
+
+			while (enumerator.MoveNext())
 			{
-				componentHolder = new ComponentHolder();
-				allComponents[index] = componentHolder;
+				var group = enumerator.Current;
+
+				if (group.Key.IsAssignableFrom(type))
+					group.Value.AddComponent(component);
 			}
 
-			componentHolder.AddComponent(component);
+			enumerator.Dispose();
 
 			if (raiseEvent)
 				RaiseOnComponentAddedEvent(component);
 		}
 
-		bool RemoveComponent(Component component, List<Component> components, bool raiseEvent, bool removeFromList = true)
+		bool RemoveComponent(Component component, bool raiseEvent)
 		{
-			bool success = false;
+			bool success = allComponents.Remove(component);
 
-			if (removeFromList)
-				success = components.Remove(component);
-
-			if (success || !removeFromList)
+			if (success)
 			{
+				var enumerator = componentGroups.GetEnumerator();
+
+				while (enumerator.MoveNext())
+					enumerator.Current.Value.RemoveComponent(component);
+
+				enumerator.Dispose();
+
 				if (raiseEvent)
 					RaiseOnComponentRemovedEvent(component);
 
@@ -235,12 +292,14 @@ namespace Pseudo
 			return success;
 		}
 
-		void RemoveComponents(List<Component> components, bool raiseEvent)
+		bool RemoveComponents(List<Component> components, bool raiseEvent)
 		{
-			for (int i = 0; i < components.Count; i++)
-				RemoveComponent(components[i], components, raiseEvent, false);
+			bool success = false;
 
-			components.Clear();
+			for (int i = 0; i < components.Count; i++)
+				success |= RemoveComponent(components[i], raiseEvent);
+
+			return success;
 		}
 
 		void InitializeComponents()
@@ -248,12 +307,7 @@ namespace Pseudo
 			if (initialized)
 				return;
 
-			var components = GetComponents<Component>();
-
-			for (int i = 0; i < components.Length; i++)
-				AddComponent(components[i], false);
-
-			components = GetComponentsInChildren<Component>(true);
+			var components = GetComponentsInChildren<Component>(true);
 
 			for (int i = 0; i < components.Length; i++)
 				AddComponent(components[i], false);
@@ -261,11 +315,11 @@ namespace Pseudo
 			initialized = true;
 		}
 
-		void IPoolInitializable.OnBeforePoolInitialize()
+		void IPoolInitializable.OnPrePoolInitialize()
 		{
 			InitializeComponents();
 		}
 
-		void IPoolInitializable.OnAfterPoolInitialize(List<IPoolSetter> setters) { }
+		void IPoolInitializable.OnPostPoolInitialize(List<IPoolSetter> setters) { }
 	}
 }

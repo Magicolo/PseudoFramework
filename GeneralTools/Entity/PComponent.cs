@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class PComponent : PMonoBehaviour, IComponent
+	public class PComponent : PMonoBehaviour
 	{
 		public PEntity Entity { get; set; }
 	}

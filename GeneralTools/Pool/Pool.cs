@@ -13,7 +13,7 @@ namespace Pseudo.Internal.Pool
 {
 	public class Pool<T> : Pool where T : class
 	{
-		public Pool(T reference, int startSize = 8) : base(reference, reference.GetType(), startSize) { }
+		public Pool(T reference, int startSize = 4) : base(reference, reference.GetType(), startSize) { }
 
 		new public virtual T Create()
 		{
@@ -43,9 +43,9 @@ namespace Pseudo.Internal.Pool
 			updadeThread.Start();
 		}
 
-		public Pool(Type type, int startSize = 8) : this(Activator.CreateInstance(type), type, startSize) { }
+		public Pool(Type type, int startSize = 4) : this(Activator.CreateInstance(type), type, startSize) { }
 
-		public Pool(object reference, int startSize = 8) : this(reference, reference.GetType(), startSize) { }
+		public Pool(object reference, int startSize = 4) : this(reference, reference.GetType(), startSize) { }
 
 		protected Pool(object reference, Type type, int startSize)
 		{
@@ -133,12 +133,12 @@ namespace Pseudo.Internal.Pool
 			bool isInitializable = reference is IPoolInitializable;
 
 			if (isInitializable)
-				((IPoolInitializable)reference).OnBeforePoolInitialize();
+				((IPoolInitializable)reference).OnPrePoolInitialize();
 
 			setters = PoolUtility.GetSetters(reference);
 
 			if (isInitializable)
-				((IPoolInitializable)reference).OnAfterPoolInitialize(setters);
+				((IPoolInitializable)reference).OnPostPoolInitialize(setters);
 
 			while (Size < StartSize)
 				Enqueue(CreateInstance(), false);
@@ -182,6 +182,7 @@ namespace Pseudo.Internal.Pool
 		{
 			object instance;
 			lock (instances) { instance = instances.Dequeue(); }
+
 			Size--;
 
 			return instance;

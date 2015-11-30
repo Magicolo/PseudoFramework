@@ -155,7 +155,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			PrefabPoolManager.Recycle(settings);
+			PrefabPoolManager.Recycle(ref settings);
 		}
 
 		public override void Copy(object reference)

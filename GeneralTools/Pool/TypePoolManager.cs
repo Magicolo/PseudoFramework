@@ -90,6 +90,12 @@ namespace Pseudo
 			pool.Recycle(instance);
 		}
 
+		public static void Recycle<T>(ref T instance) where T : class
+		{
+			Recycle(instance);
+			instance = null;
+		}
+
 		public static void RecycleElements(IList elements)
 		{
 			if (elements == null)
@@ -128,6 +134,8 @@ namespace Pseudo
 		{
 			foreach (var pool in pools)
 				pool.Value.Clear();
+
+			pools.Clear();
 		}
 	}
 }

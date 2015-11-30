@@ -268,7 +268,7 @@ namespace Pseudo
 
 		public void OnRecycle()
 		{
-			TypePoolManager.Recycle(value);
+			TypePoolManager.Recycle(ref value);
 		}
 
 		public virtual void Copy(object reference)

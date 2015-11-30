@@ -11,23 +11,18 @@ namespace Pseudo
 {
 	public static class PrefabPoolManager
 	{
-		public static int StartSize = 8;
+		public static int StartSize = 4;
 
 		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(16);
 		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(256);
 
 		public static T Create<T>(T prefab) where T : class
 		{
-			return (T)Create((object)prefab);
-		}
-
-		public static object Create(object prefab)
-		{
 			if (prefab == null)
 				return null;
 
 			var pool = GetPool(prefab);
-			var instance = pool.Create();
+			var instance = (T)pool.Create();
 			instancePool[instance] = pool;
 
 			return instance;
@@ -46,6 +41,12 @@ namespace Pseudo
 				((Component)instance).gameObject.Destroy();
 			else if (instance is UnityEngine.Object)
 				((UnityEngine.Object)instance).Destroy();
+		}
+
+		public static void Recycle<T>(ref T instance) where T : class
+		{
+			Recycle(instance);
+			instance = null;
 		}
 
 		public static Pool GetPool(object prefab)
@@ -70,6 +71,9 @@ namespace Pseudo
 		{
 			foreach (var pool in pools)
 				pool.Value.Clear();
+
+			pools.Clear();
+			instancePool.Clear();
 		}
 	}
 }

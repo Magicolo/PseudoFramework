@@ -19,7 +19,12 @@ namespace Pseudo.Internal.Pool
 			List
 		}
 
-		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() => new GameObject("Pool Manager"));
+		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() =>
+		{
+			var poolManager = new GameObject("Pool Manager");
+			poolManager.AddComponent<PoolJanitor>();
+			return poolManager;
+		});
 		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
 
 		public static GameObject GameObject { get { return cachedGameObject; } }
@@ -85,6 +90,15 @@ namespace Pseudo.Internal.Pool
 			}
 
 			return fields;
+		}
+
+		public static void ClearAllPools()
+		{
+			TypePoolManager.ClearPools();
+			PrefabPoolManager.ClearPools();
+			cachedGameObject.Reset();
+			cachedTransform.Reset();
+			GC.Collect();
 		}
 
 		static IPoolSetter GetSetter(object value, FieldInfo field)
