@@ -9,6 +9,21 @@ namespace Pseudo
 {
 	public class EntityGroup
 	{
+		[Flags]
+		public enum Groups : ulong
+		{
+			Player = 1 << 0,
+			Enemy = 1 << 1,
+		}
+
+		public enum Matches
+		{
+			All,
+			Any,
+			None,
+			Exact
+		}
+
 		public event Action<PEntity> OnEntityAdded;
 		public event Action<PEntity> OnEntityRemoved;
 
@@ -19,7 +34,7 @@ namespace Pseudo
 			return entities;
 		}
 
-		public void AddEntity(PEntity entity)
+		public void Add(PEntity entity)
 		{
 			if (!entities.Contains(entity))
 			{
@@ -28,10 +43,15 @@ namespace Pseudo
 			}
 		}
 
-		public void RemoveEntity(PEntity entity)
+		public void Remove(PEntity entity)
 		{
 			if (entities.Remove(entity))
 				RaiseOnEntityRemoved(entity);
+		}
+
+		public void Clear()
+		{
+			entities.Clear();
 		}
 
 		protected virtual void RaiseOnEntityAdded(PEntity entity)

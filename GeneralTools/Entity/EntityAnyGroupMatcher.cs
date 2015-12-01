@@ -9,7 +9,7 @@ namespace Pseudo.Internal.Entity
 {
 	public class EntityAnyGroupMatcher : IEntityGroupMatcher
 	{
-		public bool Matches(EntityMatch.Groups group1, EntityMatch.Groups group2)
+		public bool Matches(EntityGroup.Groups group1, EntityGroup.Groups group2)
 		{
 			return (group1 & ~group2) != group1;
 		}

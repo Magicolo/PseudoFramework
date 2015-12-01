@@ -5,7 +5,6 @@ namespace Pseudo
 {
 	public static class BoxCollider2DExtentions
 	{
-
 		public static Vector3[] GetCornersWorldPositions(this BoxCollider2D box)
 		{
 			Vector3[] corners = new Vector3[4];

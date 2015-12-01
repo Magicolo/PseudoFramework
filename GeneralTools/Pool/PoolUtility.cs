@@ -19,6 +19,9 @@ namespace Pseudo.Internal.Pool
 			List
 		}
 
+		public static GameObject GameObject { get { return cachedGameObject; } }
+		public static Transform Transform { get { return cachedTransform; } }
+
 		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() =>
 		{
 			var poolManager = new GameObject("Pool Manager");
@@ -26,9 +29,6 @@ namespace Pseudo.Internal.Pool
 			return poolManager;
 		});
 		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
-
-		public static GameObject GameObject { get { return cachedGameObject; } }
-		public static Transform Transform { get { return cachedTransform; } }
 
 		public static Pool CreatePool(Type type, int startSize, Transform parent = null)
 		{
@@ -134,7 +134,16 @@ namespace Pseudo.Internal.Pool
 
 		static bool ShouldInitialize(FieldInfo field)
 		{
-			return !field.IsInitOnly && !field.IsDefined(typeof(DoNotInitializeAttribute), true) && !field.IsBackingField();
+			if (field.IsDefined(typeof(InitializeValueAttribute), true))
+				return true;
+			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
+				return false;
+			else if (field.IsInitOnly || field.IsBackingField())
+				return false;
+			else if (typeof(UnityEngine.Object).IsAssignableFrom(field.FieldType) && field.IsPublic && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
+				return false;
+			else
+				return true;
 		}
 	}
 }

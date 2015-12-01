@@ -15,24 +15,14 @@ namespace Pseudo
 
 		static EntityManager()
 		{
-			var matchValues = (EntityMatch.Matches[])Enum.GetValues(typeof(EntityMatch.Matches));
+			var matchValues = (EntityGroup.Matches[])Enum.GetValues(typeof(EntityGroup.Matches));
 			matchGroups = new EntityMatchGroup[matchValues.Length];
 
 			for (int i = 0; i < matchValues.Length; i++)
 				matchGroups[i] = new EntityMatchGroup(matchValues[i]);
 		}
 
-		public static List<PEntity> GetEntities(EntityMatch.Groups group, EntityMatch.Matches match = EntityMatch.Matches.All)
-		{
-			return GetEntityGroup(group, match).GetEntities();
-		}
-
-		public static List<PEntity> GetEntities(EntityMatch match)
-		{
-			return GetEntityGroup(match).GetEntities();
-		}
-
-		public static EntityGroup GetEntityGroup(EntityMatch.Groups group, EntityMatch.Matches match = EntityMatch.Matches.All)
+		public static EntityGroup GetEntityGroup(EntityGroup.Groups group, EntityGroup.Matches match = EntityGroup.Matches.All)
 		{
 			return GetEntityMatchGroup(match).GetEntityGroup(group);
 		}
@@ -45,6 +35,12 @@ namespace Pseudo
 		public static List<PEntity> GetAllEntities()
 		{
 			return allEntities;
+		}
+
+		public static void ClearAllEntityGroups()
+		{
+			for (int i = 0; i < matchGroups.Length; i++)
+				matchGroups[i].Clear();
 		}
 
 		public static void UpdateEntity(PEntity entity)
@@ -69,7 +65,7 @@ namespace Pseudo
 				matchGroups[i].UnregisterEntity(entity);
 		}
 
-		static EntityMatchGroup GetEntityMatchGroup(EntityMatch.Matches match)
+		static EntityMatchGroup GetEntityMatchGroup(EntityGroup.Matches match)
 		{
 			return matchGroups[(int)match];
 		}

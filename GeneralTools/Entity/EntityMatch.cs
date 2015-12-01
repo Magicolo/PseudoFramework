@@ -4,42 +4,56 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
 	[Serializable]
 	public struct EntityMatch
 	{
-		[Flags]
-		public enum Groups : ulong
-		{
-			Player = 1 << 0,
-			Enemy = 1 << 1,
-		}
+		static readonly EntityAllGroupMatcher allMatcher = new EntityAllGroupMatcher();
+		static readonly EntityAnyGroupMatcher anyMatcher = new EntityAnyGroupMatcher();
+		static readonly EntityNoneGroupMatcher noneMatcher = new EntityNoneGroupMatcher();
+		static readonly EntityExactGroupMatcher exactMatcher = new EntityExactGroupMatcher();
 
-		public enum Matches
+		public EntityGroup.Groups Group
 		{
-			All,
-			Any,
-			None,
-			Exact
+			get { return (EntityGroup.Groups)group; }
 		}
-
-		public Groups Group
-		{
-			get { return (Groups)group; }
-		}
-		public Matches Match
+		public EntityGroup.Matches Match
 		{
 			get { return match; }
 		}
 
-		[SerializeField, Flag(typeof(Groups))]
+		[SerializeField, Flag(typeof(EntityGroup.Groups))]
 		ulong group;
 		[SerializeField]
-		Matches match;
+		EntityGroup.Matches match;
 
-		public EntityMatch(Groups group, Matches match = Matches.All)
+		public static IEntityGroupMatcher GetMatcher(EntityGroup.Matches match)
+		{
+			IEntityGroupMatcher matcher = null;
+
+			switch (match)
+			{
+				case EntityGroup.Matches.All:
+					matcher = allMatcher;
+					break;
+				case EntityGroup.Matches.Any:
+					matcher = anyMatcher;
+					break;
+				case EntityGroup.Matches.None:
+					matcher = noneMatcher;
+					break;
+				case EntityGroup.Matches.Exact:
+					matcher = exactMatcher;
+					break;
+			}
+
+			return matcher;
+		}
+
+		public EntityMatch(EntityGroup.Groups group, EntityGroup.Matches match = EntityGroup.Matches.All)
 		{
 			this.group = (ulong)group;
 			this.match = match;

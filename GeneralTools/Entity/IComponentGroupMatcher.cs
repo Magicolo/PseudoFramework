@@ -7,8 +7,8 @@ using Pseudo;
 
 namespace Pseudo.Internal.Entity
 {
-	public interface IEntityGroupMatcher
+	public interface IComponentGroupMatcher
 	{
-		bool Matches(EntityGroup.Groups group1, EntityGroup.Groups group2);
+		bool Matches(PEntity entity, BitArray componentBits);
 	}
 }

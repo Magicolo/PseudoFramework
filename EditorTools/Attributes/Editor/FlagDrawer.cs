@@ -19,6 +19,7 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.BeginChangeCheck();
 
 			int value = property.GetValue<int>();
+
 			value = EditorGUI.MaskField(currentPosition, label, value, Enum.GetNames(type));
 
 			if (EditorGUI.EndChangeCheck())

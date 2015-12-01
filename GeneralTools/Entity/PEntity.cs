@@ -17,11 +17,11 @@ namespace Pseudo
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		[SerializeField, PropertyField(typeof(FlagAttribute), typeof(EntityMatch.Groups))]
+		[SerializeField, PropertyField(typeof(FlagAttribute), typeof(EntityGroup.Groups))]
 		ulong group;
-		public EntityMatch.Groups Group
+		public EntityGroup.Groups Group
 		{
-			get { return (EntityMatch.Groups)group; }
+			get { return (EntityGroup.Groups)group; }
 			set
 			{
 				group = (ulong)value;
