@@ -74,19 +74,8 @@ namespace Pseudo.Internal.Editor
 
 		static T CreateAudioContainerSettings<T>(string name, string settingsPath = "") where T : AudioSettingsBase
 		{
-			string assetDirectory;
-
-			if (!string.IsNullOrEmpty(settingsPath))
-				assetDirectory = Path.GetDirectoryName(settingsPath);
-			if (Selection.activeObject == null)
-				assetDirectory = "Assets";
-			else if (Selection.activeObject is DefaultAsset)
-				assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
-			else
-				assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
-
 			T settings = ScriptableObject.CreateInstance<T>();
-			string path = AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+            string path = AssetDatabaseUtility.GenerateUniqueAssetPath(name, settingsPath);
 			AssetDatabase.CreateAsset(settings, path);
 
 			return settings;
