@@ -17,7 +17,7 @@ namespace Pseudo
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		[SerializeField, PropertyField(typeof(FlagAttribute), typeof(EntityGroup.Groups))]
+		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroup.Groups))]
 		ulong group;
 		public EntityGroup.Groups Group
 		{

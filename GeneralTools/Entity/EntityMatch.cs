@@ -25,7 +25,7 @@ namespace Pseudo
 			get { return match; }
 		}
 
-		[SerializeField, Flag(typeof(EntityGroup.Groups))]
+		[SerializeField, EnumFlags(typeof(EntityGroup.Groups))]
 		ulong group;
 		[SerializeField]
 		EntityGroup.Matches match;
