@@ -26,7 +26,7 @@ namespace Pseudo.Internal
 			base.OnEnable();
 
 			machine = (StateMachine)target;
-			machineObject = machine.GameObject;
+			machineObject = machine.CachedGameObject;
 			machine.SetScriptIcon(AssetDatabaseUtility.LoadAssetInFolder<Texture2D>("statemachine.png", "StateMachine"));
 
 			HideMachineComponents();
@@ -494,7 +494,7 @@ namespace Pseudo.Internal
 				StateMachine selectedMachine = targets[i] as StateMachine;
 
 				if (selectedMachine != null)
-					StateMachineUtility.CleanUp(selectedMachine, selectedMachine.GameObject);
+					StateMachineUtility.CleanUp(selectedMachine, selectedMachine.CachedGameObject);
 			}
 		}
 

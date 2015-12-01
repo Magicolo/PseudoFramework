@@ -89,7 +89,7 @@ namespace Pseudo
 			for (int i = 0; i < Inputs.Length; i++)
 			{
 				PlayerInput playerInput = Instantiate(Inputs[i]);
-				playerInput.Transform.parent = Transform;
+				playerInput.CachedTransform.parent = CachedTransform;
 				AddInput(playerInput);
 
 				if (playerInput.Player != Players.None)

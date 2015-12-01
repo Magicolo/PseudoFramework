@@ -7,6 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[DisallowMultipleComponent]
 	public abstract class Singleton<T> : PMonoBehaviour where T : Singleton<T>
 	{
 		protected static T instance;

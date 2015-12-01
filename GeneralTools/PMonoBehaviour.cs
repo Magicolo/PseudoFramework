@@ -8,11 +8,14 @@ namespace Pseudo
 {
 	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
 	{
+		[DoNotInitialize]
+		bool created;
+
 		readonly CachedValue<GameObject> cachedGameObject;
-		public GameObject GameObject { get { return cachedGameObject; } }
+		public GameObject CachedGameObject { get { return cachedGameObject; } }
 
 		readonly CachedValue<Transform> cachedTransform;
-		public Transform Transform { get { return cachedTransform; } }
+		public Transform CachedTransform { get { return cachedTransform; } }
 
 		protected PMonoBehaviour()
 		{
@@ -20,7 +23,13 @@ namespace Pseudo
 			cachedTransform = new CachedValue<Transform>(() => transform);
 		}
 
-		public virtual void OnCreate() { }
+		protected virtual void Start()
+		{
+			if (!created)
+				OnCreate();
+		}
+
+		public virtual void OnCreate() { created = true; }
 		public virtual void OnRecycle() { }
 	}
 }

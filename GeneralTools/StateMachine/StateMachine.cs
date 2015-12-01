@@ -72,8 +72,10 @@ namespace Pseudo
 			}
 		}
 
-		void Start()
+		protected override void Start()
 		{
+			base.Start();
+
 			OnStart();
 		}
 
@@ -321,7 +323,7 @@ namespace Pseudo
 
 		protected virtual void Reset()
 		{
-			StateMachineUtility.CleanUp(null, GameObject);
+			StateMachineUtility.CleanUp(null, CachedGameObject);
 		}
 	}
 }

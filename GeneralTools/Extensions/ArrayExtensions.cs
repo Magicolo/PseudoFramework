@@ -249,5 +249,25 @@ namespace Pseudo
 
 			return stringArray;
 		}
+
+		public static T GetClosest<T>(this IList<T> array, Vector3 position) where T : PMonoBehaviour
+		{
+			T closest = null;
+			float closestDistance = float.MaxValue;
+
+			for (int i = 0; i < array.Count; i++)
+			{
+				var element = array[i];
+				float distance = (element.CachedTransform.position - position).sqrMagnitude;
+
+				if (distance < closestDistance)
+				{
+					closest = element;
+					closestDistance = distance;
+				}
+			}
+
+			return closest;
+		}
 	}
 }

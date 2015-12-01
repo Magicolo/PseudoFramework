@@ -8,7 +8,7 @@ using System.Reflection;
 using Pseudo.Internal;
 using System.Runtime.Serialization;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public static class PoolUtility
 	{
@@ -19,11 +19,16 @@ namespace Pseudo.Internal
 			List
 		}
 
-		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() => new GameObject("Pool Manager"));
-		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
-
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
+
+		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() =>
+		{
+			var poolManager = new GameObject("Pool Manager");
+			poolManager.AddComponent<PoolJanitor>();
+			return poolManager;
+		});
+		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
 
 		public static Pool CreatePool(Type type, int startSize, Transform parent = null)
 		{
@@ -87,17 +92,26 @@ namespace Pseudo.Internal
 			return fields;
 		}
 
+		public static void ClearAllPools()
+		{
+			TypePoolManager.ClearPools();
+			PrefabPoolManager.ClearPools();
+			cachedGameObject.Reset();
+			cachedTransform.Reset();
+			GC.Collect();
+		}
+
 		static IPoolSetter GetSetter(object value, FieldInfo field)
 		{
 			if (value == null)
-				return new PoolSetter(value, field);
+				return new PoolSetter(field, value);
 
 			if (value is IList)
-				return new PoolArraySetter(GetElementSetters((IList)value, field), field);
+				return new PoolArraySetter(field, GetElementSetters((IList)value, field));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
-				return new PoolContentSetter(GetSetters(value), field);
+				return new PoolContentSetter(field, GetSetters(value));
 			else
-				return new PoolSetter(value, field);
+				return new PoolSetter(field, value);
 		}
 
 		static List<IPoolElementSetter> GetElementSetters(IList array, FieldInfo field)
@@ -120,7 +134,16 @@ namespace Pseudo.Internal
 
 		static bool ShouldInitialize(FieldInfo field)
 		{
-			return !field.IsInitOnly && !field.IsDefined(typeof(DoNotInitializeAttribute), true) && !field.IsBackingField();
+			if (field.IsDefined(typeof(InitializeValueAttribute), true))
+				return true;
+			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
+				return false;
+			else if (field.IsInitOnly || field.IsBackingField())
+				return false;
+			else if (typeof(UnityEngine.Object).IsAssignableFrom(field.FieldType) && field.IsPublic && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
+				return false;
+			else
+				return true;
 		}
 	}
 }

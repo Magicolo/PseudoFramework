@@ -5,7 +5,6 @@ namespace Pseudo
 {
 	public static class IntExtensions
 	{
-
 		public static int Scale(this int i, int currentMin, int currentMax, int targetMin, int targetMax)
 		{
 			return (i - currentMin) / (currentMax - currentMin) * (targetMax - targetMin) + targetMin;

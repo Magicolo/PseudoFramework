@@ -6,6 +6,7 @@ using UnityEngine;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Audio;
+using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {
@@ -82,7 +83,7 @@ namespace Pseudo
 
 		void Initialize()
 		{
-			reference = GameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
@@ -91,7 +92,7 @@ namespace Pseudo
 			if (Application.isPlaying)
 			{
 				audioSourcePool.GameObject.name = "Sources";
-				audioSourcePool.Transform.parent = Transform;
+				audioSourcePool.Transform.parent = CachedTransform;
 			}
 		}
 

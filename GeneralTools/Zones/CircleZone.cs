@@ -16,7 +16,7 @@ namespace Pseudo
 		bool draw = true;
 
 		public Circle LocalCircle { get { return circle; } set { circle = value; } }
-		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + Transform.position, circle.Radius); ; } }
+		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
 
 #if UNITY_EDITOR
 		void OnDrawGizmos()
@@ -24,7 +24,7 @@ namespace Pseudo
 			if (!draw)
 				return;
 
-			Vector3 position = Transform.position + circle.Position.ToVector3();
+			Vector3 position = CachedTransform.position + circle.Position.ToVector3();
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.75f);
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);

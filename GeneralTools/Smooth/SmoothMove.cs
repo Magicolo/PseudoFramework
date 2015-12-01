@@ -43,13 +43,13 @@ namespace Pseudo
 				float deltaTime = TimeManager.GetDeltaTime(TimeChannel);
 
 				if ((Mode & TransformModes.Position) != 0)
-					Transform.TranslateLocal(Speed * deltaTime, Axes);
+					CachedTransform.TranslateLocal(Speed * deltaTime, Axes);
 
 				if ((Mode & TransformModes.Rotation) != 0)
-					Transform.RotateLocal(Speed * deltaTime, Axes);
+					CachedTransform.RotateLocal(Speed * deltaTime, Axes);
 
 				if ((Mode & TransformModes.Scale) != 0)
-					Transform.ScaleLocal(Speed * deltaTime, Axes);
+					CachedTransform.ScaleLocal(Speed * deltaTime, Axes);
 			}
 		}
 

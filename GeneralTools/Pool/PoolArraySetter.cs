@@ -6,26 +6,23 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public class PoolArraySetter : IPoolSetter
 	{
-		List<IPoolElementSetter> setters;
 		FieldInfo field;
+		List<IPoolElementSetter> setters;
 
-		public PoolArraySetter(List<IPoolElementSetter> setters, FieldInfo field)
+		public PoolArraySetter(FieldInfo field, List<IPoolElementSetter> setters)
 		{
-			this.setters = setters;
 			this.field = field;
+			this.setters = setters;
 		}
 
 		public void SetValue(object instance)
 		{
 			if (instance == null)
 				return;
-
-			if (instance.GetType() != field.DeclaringType)
-				throw new TypeMismatchException(string.Format("Instance type {0} doesn't match {1}.", instance.GetType().Name, field.DeclaringType.Name));
 
 			var array = (IList)field.GetValue(instance);
 
@@ -54,6 +51,11 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < setters.Count; i++)
 				setters[i].SetValue(array, i);
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1}, {2}, {3})", GetType().Name, field.Name, field.FieldType.Name, PDebug.ToString(setters));
 		}
 	}
 }

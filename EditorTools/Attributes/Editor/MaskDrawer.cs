@@ -14,7 +14,6 @@ namespace Pseudo.Internal.Editor
 
 			Begin(position, property, label);
 
-
 			EditorGUI.BeginChangeCheck();
 
 			Array enumValues = Enum.GetValues(fieldInfo.FieldType);
@@ -33,7 +32,7 @@ namespace Pseudo.Internal.Editor
 
 		string[] GetDisplayOptions()
 		{
-			int filter = ((MaskAttribute)attribute).filter;
+			int filter = ((MaskAttribute)attribute).Filter;
 			Array values = Enum.GetValues(fieldInfo.FieldType);
 			string[] names = Enum.GetNames(fieldInfo.FieldType);
 			List<string> options = new List<string>();

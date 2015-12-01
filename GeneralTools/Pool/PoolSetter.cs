@@ -6,17 +6,17 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public class PoolSetter : IPoolSetter
 	{
-		object value;
 		FieldInfo field;
+		object value;
 
-		public PoolSetter(object value, FieldInfo field)
+		public PoolSetter(FieldInfo field, object value)
 		{
-			this.value = value;
 			this.field = field;
+			this.value = value;
 		}
 
 		public void SetValue(object instance)
@@ -24,10 +24,12 @@ namespace Pseudo.Internal
 			if (instance == null)
 				return;
 
-			if (instance.GetType() != field.DeclaringType)
-				throw new TypeMismatchException(string.Format("Instance type {0} doesn't match {1}.", instance.GetType().Name, field.DeclaringType.Name));
-
 			field.SetValue(instance, value);
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1}, {2}, {3})", GetType().Name, field.Name, field.FieldType.Name, PDebug.ToString(value));
 		}
 	}
 }

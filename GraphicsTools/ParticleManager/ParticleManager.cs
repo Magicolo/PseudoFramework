@@ -37,14 +37,14 @@ public class ParticleManager : Singleton<ParticleManager>
 
 	public virtual ParticleEffect Create(string name, Vector3 position)
 	{
-		return Create(name, position, Transform);
+		return Create(name, position, CachedTransform);
 	}
 
 	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect
 	{
 		T particleEffect = PrefabPoolManager.Create(effect);
-		particleEffect.Transform.position = position;
-		particleEffect.Transform.parent = parent;
+		particleEffect.CachedTransform.position = position;
+		particleEffect.CachedTransform.parent = parent;
 		particleEffect.CachedParticleSystem.Play(true);
 
 		return particleEffect;
@@ -52,6 +52,6 @@ public class ParticleManager : Singleton<ParticleManager>
 
 	public virtual T Create<T>(T effect, Vector3 position) where T : ParticleEffect
 	{
-		return Create(effect, position, Transform);
+		return Create(effect, position, CachedTransform);
 	}
 }

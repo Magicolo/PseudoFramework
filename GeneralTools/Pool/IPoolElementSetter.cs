@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Pool
 {
 	public interface IPoolElementSetter
 	{

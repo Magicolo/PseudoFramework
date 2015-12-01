@@ -39,7 +39,7 @@ namespace Pseudo.Internal.Audio
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
 			source = audioSource;
-			source.transform.parent = AudioManager.Instance.Transform;
+			source.transform.parent = AudioManager.Instance.CachedTransform;
 			base.spatializer.AddSource(source.transform);
 
 			// Setup the AudioSource
@@ -339,7 +339,7 @@ namespace Pseudo.Internal.Audio
 			}
 
 			if (recycle)
-				TypePoolManager.Recycle(option);
+				TypePoolManager.Recycle(ref option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -395,7 +395,7 @@ namespace Pseudo.Internal.Audio
 			base.OnRecycle();
 
 			AudioManager.Instance.AudioSourcePool.Recycle(source);
-			PrefabPoolManager.Recycle(settings);
+			PrefabPoolManager.Recycle(ref settings);
 		}
 
 		public override void Copy(object reference)

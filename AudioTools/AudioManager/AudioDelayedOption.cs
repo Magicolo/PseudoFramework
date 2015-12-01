@@ -37,7 +37,7 @@ namespace Pseudo.Internal.Audio
 		public void OnRecycle()
 		{
 			if (recycle)
-				TypePoolManager.Recycle(option);
+				TypePoolManager.Recycle(ref option);
 		}
 
 		public void Copy(object reference)

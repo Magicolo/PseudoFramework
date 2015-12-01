@@ -231,7 +231,7 @@ namespace Pseudo
 				{
 					ApplyOptionNow(delayedOption.Option, false);
 					delayedOptions.RemoveAt(i--);
-					TypePoolManager.Recycle(delayedOption);
+					TypePoolManager.Recycle(ref delayedOption);
 				}
 			}
 		}
@@ -505,17 +505,17 @@ namespace Pseudo
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			TypePoolManager.Recycle(volumeModifier);
-			TypePoolManager.Recycle(pitchModifier);
-			TypePoolManager.Recycle(fadeTweener);
-			TypePoolManager.Recycle(rampVolumeTweener);
-			TypePoolManager.Recycle(rampParentVolumeTweener);
-			TypePoolManager.Recycle(rampPitchTweener);
-			TypePoolManager.Recycle(rampParentPitchTweener);
+			TypePoolManager.Recycle(ref volumeModifier);
+			TypePoolManager.Recycle(ref pitchModifier);
+			TypePoolManager.Recycle(ref fadeTweener);
+			TypePoolManager.Recycle(ref rampVolumeTweener);
+			TypePoolManager.Recycle(ref rampParentVolumeTweener);
+			TypePoolManager.Recycle(ref rampPitchTweener);
+			TypePoolManager.Recycle(ref rampParentPitchTweener);
 
 			// Only the AudioItem root should recycle the spatializer as it is shared with it's children
 			if (parent == null)
-				TypePoolManager.Recycle(spatializer);
+				TypePoolManager.Recycle(ref spatializer);
 
 			TypePoolManager.RecycleElements(delayedOptions);
 			ClearEvents();

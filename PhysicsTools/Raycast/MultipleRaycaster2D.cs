@@ -22,9 +22,9 @@ namespace Pseudo
 		protected override void UpdateCast()
 		{
 			Hits.Clear();
-			Vector3 position = Transform.position;
-			Vector3 rotation = Transform.eulerAngles;
-			Vector3 scale = Transform.lossyScale;
+			Vector3 position = CachedTransform.position;
+			Vector3 rotation = CachedTransform.eulerAngles;
+			Vector3 scale = CachedTransform.lossyScale;
 			float angleIncrement = 0f;
 
 			if (Amount > 1)

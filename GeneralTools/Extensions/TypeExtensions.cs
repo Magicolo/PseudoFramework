@@ -134,9 +134,20 @@ namespace Pseudo
 				return otherType.IsAssignableFrom(type);
 		}
 
-		public static bool IsNumerical(this Type type)
+		public static bool IsNumeric(this Type type)
 		{
-			return type == typeof(int) || type == typeof(float) || type == typeof(double) || type == typeof(short) || type == typeof(long) || type == typeof(byte);
+			return
+				type == typeof(sbyte) ||
+				type == typeof(byte) ||
+				type == typeof(short) ||
+				type == typeof(ushort) ||
+				type == typeof(int) ||
+				type == typeof(uint) ||
+				type == typeof(long) ||
+				type == typeof(ulong) ||
+				type == typeof(float) ||
+				type == typeof(double) ||
+				type == typeof(decimal);
 		}
 
 		public static bool IsVector(this Type type)

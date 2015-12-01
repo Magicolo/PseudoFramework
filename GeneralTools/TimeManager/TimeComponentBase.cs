@@ -7,9 +7,13 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TimeComponentBase : PMonoBehaviour
+	public abstract class TimeComponentBase : PComponent
 	{
-		public TimeManager.TimeChannels Channel { get { return channel; } }
+		public TimeManager.TimeChannels Channel
+		{
+			get { return channel; }
+			set { channel = value; ResetTime(); }
+		}
 		public float TimeScale
 		{
 			get { return timeScale; }
@@ -30,7 +34,7 @@ namespace Pseudo.Internal
 		public float DeltaTime { get { return GetDeltaTime() * timeScale; } }
 		public float FixedDeltaTime { get { return GetFixedDeltaTime() * timeScale; } }
 
-		[SerializeField, Empty(DisableOnPlay = true)]
+		[SerializeField, PropertyField]
 		protected TimeManager.TimeChannels channel;
 		[SerializeField, PropertyField]
 		protected float timeScale = 1f;
@@ -43,23 +47,14 @@ namespace Pseudo.Internal
 			time += (currentTime - lastTime) * timeScale;
 			lastTime = currentTime;
 		}
-
 		protected abstract float GetTime();
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
 
-		public virtual void Reset()
+		public virtual void ResetTime()
 		{
-			UpdateTime();
-			timeScale = 1f;
 			time = 0f;
-		}
-
-		public override void OnCreate()
-		{
-			base.OnCreate();
-
-			Reset();
+			lastTime = 0f;
 		}
 	}
 }
