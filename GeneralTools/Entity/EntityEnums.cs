@@ -5,10 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal.Entity
+namespace Pseudo
 {
-	public interface IComponentGroupMatcher
+	public enum EntityGroups : byte
 	{
-		bool Matches(PEntity entity, BitArray componentBits);
+		Player,
+		Enemy,
+	}
+
+	public enum EntityMatches
+	{
+		All,
+		Any,
+		None,
+		Exact
 	}
 }

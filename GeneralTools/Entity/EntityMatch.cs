@@ -11,52 +11,114 @@ namespace Pseudo
 	[Serializable]
 	public struct EntityMatch
 	{
-		static readonly EntityAllGroupMatcher allMatcher = new EntityAllGroupMatcher();
-		static readonly EntityAnyGroupMatcher anyMatcher = new EntityAnyGroupMatcher();
-		static readonly EntityNoneGroupMatcher noneMatcher = new EntityNoneGroupMatcher();
-		static readonly EntityExactGroupMatcher exactMatcher = new EntityExactGroupMatcher();
-
-		public EntityGroup.Groups Group
+		public ByteFlag<EntityGroups> Groups
 		{
-			get { return (EntityGroup.Groups)group; }
+			get { return groups; }
 		}
-		public EntityGroup.Matches Match
+		public EntityMatches Match
 		{
 			get { return match; }
 		}
 
-		[SerializeField, EnumFlags(typeof(EntityGroup.Groups))]
-		ulong group;
+		[SerializeField, EnumFlags(typeof(EntityGroups))]
+		ByteFlag groups;
 		[SerializeField]
-		EntityGroup.Matches match;
+		EntityMatches match;
 
-		public static IEntityGroupMatcher GetMatcher(EntityGroup.Matches match)
+		public EntityMatch(ByteFlag<EntityGroups> group, EntityMatches match = EntityMatches.All)
 		{
-			IEntityGroupMatcher matcher = null;
+			this.groups = group;
+			this.match = match;
+		}
+
+		public static bool Matches(ByteFlag groups1, ByteFlag groups2, EntityMatches match)
+		{
+			bool matches = false;
 
 			switch (match)
 			{
-				case EntityGroup.Matches.All:
-					matcher = allMatcher;
+				case EntityMatches.All:
+					matches = (~groups1 & groups2) == ByteFlag.Nothing;
 					break;
-				case EntityGroup.Matches.Any:
-					matcher = anyMatcher;
+				case EntityMatches.Any:
+					matches = (groups1 & ~groups2) != groups1;
 					break;
-				case EntityGroup.Matches.None:
-					matcher = noneMatcher;
+				case EntityMatches.None:
+					matches = (groups1 & ~groups2) == groups1;
 					break;
-				case EntityGroup.Matches.Exact:
-					matcher = exactMatcher;
+				case EntityMatches.Exact:
+					matches = groups1 == groups2;
 					break;
 			}
 
-			return matcher;
+			return matches;
 		}
 
-		public EntityMatch(EntityGroup.Groups group, EntityGroup.Matches match = EntityGroup.Matches.All)
+		public static bool Matches(PEntity entity, ByteFlag components, EntityMatches match)
 		{
-			this.group = (ulong)group;
-			this.match = match;
+			bool matches = false;
+
+			switch (match)
+			{
+				case EntityMatches.All:
+					matches = MatchesAll(entity, components);
+					break;
+				case EntityMatches.Any:
+					matches = MatchesAny(entity, components);
+					break;
+				case EntityMatches.None:
+					matches = MatchesNone(entity, components);
+					break;
+				case EntityMatches.Exact:
+					matches = MatchesExact(entity, components);
+					break;
+			}
+
+			return matches;
+		}
+
+		static bool MatchesAll(PEntity entity, ByteFlag components)
+		{
+			for (byte i = 0; i < EntityUtility.IdCount; i++)
+			{
+				if (components[i] && !entity.HasComponent(EntityUtility.GetComponentType(i)))
+					return false;
+			}
+
+			return true;
+		}
+
+		static bool MatchesAny(PEntity entity, ByteFlag components)
+		{
+			for (byte i = 0; i < EntityUtility.IdCount; i++)
+			{
+				if (components[i] && entity.HasComponent(EntityUtility.GetComponentType(i)))
+					return true;
+			}
+
+			return false;
+		}
+
+		static bool MatchesNone(PEntity entity, ByteFlag components)
+		{
+			for (byte i = 0; i < EntityUtility.IdCount; i++)
+			{
+				if (components[i] && entity.HasComponent(EntityUtility.GetComponentType(i)))
+					return false;
+			}
+
+			return true;
+		}
+
+		static bool MatchesExact(PEntity entity, ByteFlag components)
+		{
+			for (byte i = 0; i < EntityUtility.IdCount; i++)
+			{
+				if (components[i] != entity.HasComponent(EntityUtility.GetComponentType(i)))
+					return false;
+			}
+
+			return true;
 		}
 	}
 }

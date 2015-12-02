@@ -5,14 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo
+namespace Pseudo.Internal.Entity
 {
 	public class ComponentGroup
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		readonly List<Component> components = new List<Component>(2);
+		readonly List<Component> components = new List<Component>();
 		readonly IList genericComponents;
 
 		public ComponentGroup(Type type)

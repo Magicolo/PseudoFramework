@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public struct ByteFlag
+	public struct ByteFlag : IEquatable<ByteFlag>
 	{
 		[SerializeField]
 		ulong flag1;
@@ -59,24 +59,10 @@ namespace Pseudo
 			this.flag4 = flag4;
 		}
 
-		public bool Get(byte index)
+		public bool this[byte index]
 		{
-			if (index < 64)
-				return (flag1 & (1uL << index)) != 0;
-			else if (index < 128)
-				return (flag2 & (1uL << (index - 64))) != 0;
-			else if (index < 192)
-				return (flag3 & (1uL << (index - 128))) != 0;
-			else
-				return (flag4 & (1uL << (index - 192))) != 0;
-		}
-
-		public void Set(byte index, bool value)
-		{
-			if (value)
-				AddBit(index);
-			else
-				RemoveBit(index);
+			get { return Get(index); }
+			set { Set(index, value); }
 		}
 
 		public byte[] ToIndices()
@@ -100,6 +86,26 @@ namespace Pseudo
 				values[i] = Get(i);
 
 			return values;
+		}
+
+		bool Get(byte index)
+		{
+			if (index < 64)
+				return (flag1 & (1uL << index)) != 0;
+			else if (index < 128)
+				return (flag2 & (1uL << (index - 64))) != 0;
+			else if (index < 192)
+				return (flag3 & (1uL << (index - 128))) != 0;
+			else
+				return (flag4 & (1uL << (index - 192))) != 0;
+		}
+
+		void Set(byte index, bool value)
+		{
+			if (value)
+				AddBit(index);
+			else
+				RemoveBit(index);
 		}
 
 		void AddBit(byte index)
@@ -128,7 +134,7 @@ namespace Pseudo
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return flag1.GetHashCode() ^ flag2.GetHashCode() ^ flag3.GetHashCode() ^ flag4.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -136,9 +142,7 @@ namespace Pseudo
 			if (!(obj is ByteFlag))
 				return false;
 
-			ByteFlag flag = (ByteFlag)obj;
-
-			return flag1.Equals(flag.flag1) && flag2.Equals(flag.flag2) && flag3.Equals(flag.flag3) && flag4.Equals(flag.flag4);
+			return Equals(flag1, (ByteFlag)obj);
 		}
 
 		public override string ToString()
@@ -163,6 +167,11 @@ namespace Pseudo
 			log.Append(")");
 
 			return log.ToString();
+		}
+
+		public bool Equals(ByteFlag other)
+		{
+			return flag1.Equals(other.flag1) && flag2.Equals(other.flag2) && flag3.Equals(other.flag3) && flag4.Equals(other.flag4);
 		}
 
 		public static ByteFlag operator ~(ByteFlag a)
@@ -196,7 +205,7 @@ namespace Pseudo
 		}
 	}
 
-	public struct ByteFlag<T> where T : struct
+	public struct ByteFlag<T> : IEquatable<ByteFlag<T>> where T : struct
 	{
 		ByteFlag flags;
 
@@ -215,26 +224,20 @@ namespace Pseudo
 			this.flags = flags;
 		}
 
-		public ByteFlag<T> Add(T value)
+		public bool this[T index]
 		{
-			flags.Set(Convert.ToByte(value), true);
-			return this;
-		}
-
-		public ByteFlag<T> Remove(T value)
-		{
-			flags.Set(Convert.ToByte(value), false);
-			return this;
-		}
-
-		public bool Has(T value)
-		{
-			return flags.Get(Convert.ToByte(value));
+			get { return flags[Convert.ToByte(index)]; }
+			set { flags[Convert.ToByte(value)] = value; }
 		}
 
 		public override int GetHashCode()
 		{
-			return base.GetHashCode();
+			return flags.GetHashCode();
+		}
+
+		public bool Equals(ByteFlag<T> other)
+		{
+			return flags.Equals(other.flags);
 		}
 
 		public override bool Equals(object obj)
@@ -242,9 +245,7 @@ namespace Pseudo
 			if (!(obj is ByteFlag<T>))
 				return false;
 
-			ByteFlag<T> bigFlag = (ByteFlag<T>)obj;
-
-			return flags.Equals(bigFlag.flags);
+			return Equals((ByteFlag<T>)obj);
 		}
 
 		public override string ToString()
@@ -298,6 +299,16 @@ namespace Pseudo
 		public static bool operator !=(ByteFlag<T> a, ByteFlag<T> b)
 		{
 			return a.flags != b.flags;
+		}
+
+		public static implicit operator ByteFlag(ByteFlag<T> a)
+		{
+			return a.flags;
+		}
+
+		public static implicit operator ByteFlag<T>(ByteFlag a)
+		{
+			return new ByteFlag<T>(a);
 		}
 	}
 }

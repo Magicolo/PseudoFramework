@@ -53,27 +53,40 @@ namespace Pseudo
 
 		public static float GetTime(TimeChannels channel)
 		{
-			return GetChannel(channel).Time;
+			if (Application.isPlaying)
+				return GetChannel(channel).Time;
+			else
+				return 0f;
 		}
 
 		public static float GetTimeScale(TimeChannels channel)
 		{
-			return GetChannel(channel).TimeScale;
+			if (Application.isPlaying)
+				return GetChannel(channel).TimeScale;
+			else
+				return 0f;
 		}
 
 		public static float GetDeltaTime(TimeChannels channel)
 		{
-			return GetChannel(channel).DeltaTime;
+			if (Application.isPlaying)
+				return GetChannel(channel).DeltaTime;
+			else
+				return 0f;
 		}
 
 		public static float GetFixedDeltaTime(TimeChannels channel)
 		{
-			return GetChannel(channel).FixedDeltaTime;
+			if (Application.isPlaying)
+				return GetChannel(channel).FixedDeltaTime;
+			else
+				return 0f;
 		}
 
 		public static void SetTimeScale(TimeChannels channel, float timeScale)
 		{
-			GetChannel(channel).TimeScale = timeScale;
+			if (Application.isPlaying)
+				GetChannel(channel).TimeScale = timeScale;
 		}
 
 		static TimeChannel CreateChannel(TimeChannels channel)

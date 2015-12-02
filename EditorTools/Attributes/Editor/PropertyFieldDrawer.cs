@@ -10,6 +10,7 @@ namespace Pseudo.Internal.Editor
 	public class PropertyFieldDrawer : CustomAttributePropertyDrawerBase
 	{
 		PropertyDrawer drawerOverride;
+		object lastValue;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -30,7 +31,9 @@ namespace Pseudo.Internal.Editor
 			else
 				drawerOverride.OnGUI(currentPosition, property, label);
 
-			if (EditorGUI.EndChangeCheck())
+			object currentValue = property.GetValue();
+
+			if (!currentValue.Equals(lastValue))
 			{
 				string propertyPath = property.GetAdjustedPath();
 				string[] propertyPathSplit = propertyPath.Split('.');
@@ -40,6 +43,7 @@ namespace Pseudo.Internal.Editor
 				property.serializedObject.ApplyModifiedProperties();
 				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, t.GetValueFromMemberAtPath(propertyPath)));
 				property.serializedObject.Update();
+				lastValue = currentValue;
 			}
 
 			End();
