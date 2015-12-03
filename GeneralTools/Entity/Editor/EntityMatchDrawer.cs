@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Entity
 		{
 			Begin(position, property, label);
 
-			var groupProperty = property.FindPropertyRelative("group");
+			var groupProperty = property.FindPropertyRelative("groups");
 			var matchProperty = property.FindPropertyRelative("match");
 
 			currentPosition = EditorGUI.PrefixLabel(currentPosition, property.ToGUIContent());

@@ -10,6 +10,8 @@ namespace Pseudo.Internal.Editor
 	{
 		Type enumType;
 		ByteFlag flag;
+		Array enumValues;
+		string[] enumNames;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -33,6 +35,8 @@ namespace Pseudo.Internal.Editor
 		{
 			base.GetPropertyHeight(property, label);
 			enumType = ((EnumFlagsAttribute)attribute).EnumType;
+			enumValues = Enum.GetValues(enumType);
+			enumNames = Enum.GetNames(enumType);
 
 			return EditorGUI.GetPropertyHeight(property, label, false);
 		}
@@ -59,8 +63,6 @@ namespace Pseudo.Internal.Editor
 			}
 
 			flag = currentProperty.GetValue<ByteFlag>();
-			var enumValues = Enum.GetValues(enumType);
-			var enumNames = Enum.GetNames(enumType);
 			byte[] selected = flag.ToIndices();
 			bool nothing = selected.Length == 0;
 			bool everything = selected.Length == enumValues.Length;
@@ -89,7 +91,7 @@ namespace Pseudo.Internal.Editor
 				for (int i = 0; i < enumNames.Length; i++)
 				{
 					byte value = Convert.ToByte(enumValues.GetValue(i));
-					menu.AddItem(enumNames[i].Replace('_', '/').ToGUIContent(), flag.Get(value), OnEnumSelected, (int)value);
+					menu.AddItem(enumNames[i].Replace('_', '/').ToGUIContent(), flag[value], OnEnumSelected, (int)value);
 				}
 
 				menu.DropDown(currentPosition);
@@ -115,19 +117,48 @@ namespace Pseudo.Internal.Editor
 			return -1;
 		}
 
+		bool HasAllValues(byte[] values, Array enumValues)
+		{
+			if (values.Length == 0 && enumValues.Length > 0)
+				return false;
+
+			bool hasValues = true;
+
+			for (int i = 0; i < enumValues.Length; i++)
+				hasValues &= Array.Exists(values, value => Convert.ToByte(enumValues.GetValue(i)) == value);
+
+			return hasValues;
+		}
+
+		byte[] EnumValuesToBytes(Array enumValues)
+		{
+			byte[] bytes = new byte[enumValues.Length];
+
+			for (int i = 0; i < enumValues.Length; i++)
+				bytes[i] = Convert.ToByte(enumValues.GetValue(i));
+
+			return bytes;
+		}
+
 		void OnEnumSelected(object data)
 		{
 			int value = (int)data;
 
 			if (value == -1)
-				currentProperty.SetValue(ByteFlag.Nothing);
+				flag = ByteFlag.Nothing;
 			else if (value == -2)
-				currentProperty.SetValue(ByteFlag.Everything);
+				flag = new ByteFlag(EnumValuesToBytes(enumValues));
 			else
+				flag[(byte)value] = !flag[(byte)value];
+
+			for (int i = 1; i < 5; i++)
 			{
-				flag.Set((byte)value, !flag.Get((byte)value));
-				currentProperty.SetValue(flag);
+				string flagName = "flag" + i;
+				currentProperty.FindPropertyRelative(flagName).longValue = (long)flag.GetValueFromMember<ulong>(flagName);
 			}
+
+			currentProperty.serializedObject.ApplyModifiedProperties();
+			EditorUtility.SetDirty(target);
 		}
 	}
 }

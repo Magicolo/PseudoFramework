@@ -10,64 +10,47 @@ namespace Pseudo
 {
 	public static class EntityManager
 	{
-		static readonly EntityMatchGroup[] matchGroups;
-		static readonly List<PEntity> allEntities = new List<PEntity>(64);
-
-		static EntityManager()
+		public static IList<PEntity> AllEntities
 		{
-			var matchValues = (EntityGroup.Matches[])Enum.GetValues(typeof(EntityGroup.Matches));
-			matchGroups = new EntityMatchGroup[matchValues.Length];
-
-			for (int i = 0; i < matchValues.Length; i++)
-				matchGroups[i] = new EntityMatchGroup(matchValues[i]);
+			get { return masterGroup.Entities; }
 		}
 
-		public static EntityGroup GetEntityGroup(EntityGroup.Groups group, EntityGroup.Matches match = EntityGroup.Matches.All)
+		static readonly EntityGroup masterGroup = new EntityGroup();
+
+		public static IEntityGroup GetEntityGroup(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All)
 		{
-			return GetEntityMatchGroup(match).GetEntityGroup(group);
+			return masterGroup.Filter(groups, match);
 		}
 
-		public static EntityGroup GetEntityGroup(EntityMatch match)
+		public static IEntityGroup GetEntityGroup(EntityMatch match)
 		{
-			return GetEntityGroup(match.Group, match.Match);
+			return masterGroup.Filter(match);
 		}
 
-		public static List<PEntity> GetAllEntities()
+		public static IEntityGroup GetEntityGroup(Type[] componentTypes, EntityMatches match = EntityMatches.All)
 		{
-			return allEntities;
+			return masterGroup.Filter(componentTypes, match);
 		}
 
 		public static void ClearAllEntityGroups()
 		{
-			for (int i = 0; i < matchGroups.Length; i++)
-				matchGroups[i].Clear();
+			masterGroup.Clear();
 		}
 
 		public static void UpdateEntity(PEntity entity)
 		{
-			for (int i = 0; i < matchGroups.Length; i++)
-				matchGroups[i].UpdateEntity(entity);
+			masterGroup.UpdateEntity(entity);
 		}
 
 		public static void RegisterEntity(PEntity entity)
 		{
-			allEntities.Add(entity);
-
-			for (int i = 0; i < matchGroups.Length; i++)
-				matchGroups[i].RegisterEntity(entity);
+			EntityUtility.InitializeJanitor();
+			masterGroup.RegisterEntity(entity);
 		}
 
 		public static void UnregisterEntity(PEntity entity)
 		{
-			allEntities.Remove(entity);
-
-			for (int i = 0; i < matchGroups.Length; i++)
-				matchGroups[i].UnregisterEntity(entity);
-		}
-
-		static EntityMatchGroup GetEntityMatchGroup(EntityGroup.Matches match)
-		{
-			return matchGroups[(int)match];
+			masterGroup.UnregisterEntity(entity);
 		}
 	}
 }

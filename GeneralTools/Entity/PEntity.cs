@@ -12,19 +12,19 @@ namespace Pseudo
 {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class PEntity : PMonoBehaviour, IPoolInitializable
+	public class PEntity : PMonoBehaviour, IEntity, IPoolInitializable
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
 
-		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroup.Groups))]
-		ulong group;
-		public EntityGroup.Groups Group
+		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroups))]
+		ByteFlag group;
+		public ByteFlag<EntityGroups> Group
 		{
-			get { return (EntityGroup.Groups)group; }
+			get { return group; }
 			set
 			{
-				group = (ulong)value;
+				group = value;
 				EntityManager.UpdateEntity(this);
 			}
 		}
@@ -89,12 +89,12 @@ namespace Pseudo
 
 		new public Component GetComponent(Type type)
 		{
-			return GetComponentGroup(type).GetComponents().FirstOrDefault();
+			return GetComponentGroup(type).GetComponents().First();
 		}
 
 		new public T GetComponent<T>()
 		{
-			return GetComponentGroup(typeof(T)).GetComponents<T>().FirstOrDefault();
+			return GetComponentGroup(typeof(T)).GetComponents<T>().First();
 		}
 
 		public bool TryGetComponent(Type type, out Component component)
@@ -159,25 +159,6 @@ namespace Pseudo
 			return HasComponent(typeof(T));
 		}
 
-		public ComponentGroup GetComponentGroup(Type type)
-		{
-			InitializeComponents();
-			ComponentGroup group;
-
-			if (!componentGroups.TryGetValue(type, out group))
-			{
-				group = CreateComponentGroup(type);
-				componentGroups[type] = group;
-			}
-
-			return group;
-		}
-
-		public ComponentGroup GetComponentGroup<T>()
-		{
-			return GetComponentGroup(typeof(T));
-		}
-
 		public override void OnCreate()
 		{
 			base.OnCreate();
@@ -214,16 +195,44 @@ namespace Pseudo
 			EntityManager.UnregisterEntity(this);
 		}
 
+		protected virtual void Reset()
+		{
+			this.SetExecutionOrder(-3);
+		}
+
 		protected virtual void RaiseOnComponentAddedEvent(Component component)
 		{
 			if (OnComponentAdded != null)
 				OnComponentAdded(component);
+
+			EntityManager.UpdateEntity(this);
 		}
 
 		protected virtual void RaiseOnComponentRemovedEvent(Component component)
 		{
 			if (OnComponentRemoved != null)
 				OnComponentRemoved(component);
+
+			EntityManager.UpdateEntity(this);
+		}
+
+		ComponentGroup GetComponentGroup(Type type)
+		{
+			InitializeComponents();
+			ComponentGroup group;
+
+			if (!componentGroups.TryGetValue(type, out group))
+			{
+				group = CreateComponentGroup(type);
+				componentGroups[type] = group;
+			}
+
+			return group;
+		}
+
+		ComponentGroup GetComponentGroup<T>()
+		{
+			return GetComponentGroup(typeof(T));
 		}
 
 		ComponentGroup CreateComponentGroup(Type type)

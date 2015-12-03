@@ -9,74 +9,70 @@ namespace Pseudo.Internal.Entity
 {
 	public static class EntityUtility
 	{
-		static Dictionary<Type, int> typeIndices = new Dictionary<Type, int>(16);
-		static List<Type> types = new List<Type>(16);
+		public static byte IdCount { get { return (byte)types.Count; } }
+
+		static Dictionary<Component, IEntity> entities = new Dictionary<Component, IEntity>();
+		static Dictionary<Type, byte> typeIds = new Dictionary<Type, byte>();
+		static List<Type> types = new List<Type>();
 		static EntityJanitor janitor;
 
-		public static int GetComponentIndex(Type type)
+		public static IEntity GetEntity(Component component)
 		{
-			int id;
+			IEntity entity;
 
-			if (!typeIndices.TryGetValue(type, out id))
+			if (!entities.TryGetValue(component, out entity))
 			{
-				if (!typeof(Component).IsAssignableFrom(type))
-					throw new NotSupportedException(string.Format("Type {0} must inherit from {1}.", type.Name, typeof(Component).Name));
+				entity = component.GetComponentInParent<IEntity>();
+				entities[component] = entity;
+			}
 
-				id = types.Count;
-				types.Add(type);
-				typeIndices[type] = id;
+			return entity;
+		}
+
+		public static byte GetOrAddComponentId(Type componentType)
+		{
+			byte id;
+
+			if (!typeIds.TryGetValue(componentType, out id))
+			{
+				id = (byte)types.Count;
+				typeIds[componentType] = id;
+				types.Add(componentType);
+
+				if (types.Count >= byte.MaxValue)
+					Debug.LogWarning("Maximum component identifier count reached.");
 			}
 
 			return id;
 		}
 
-		public static Type GetComponentType(int index)
+		public static Type GetComponentType(byte id)
 		{
-			return types[index];
+			return types[id];
 		}
 
-		public static BitArray ToComponentBits(Type[] types)
+		public static ByteFlag GetComponentFlags(Type[] componentTypes)
 		{
-			var indices = new int[types.Length];
+			var flag = new ByteFlag();
 
-			for (int i = 0; i < types.Length; i++)
-				indices[i] = GetComponentIndex(types[i]);
+			for (int i = 0; i < componentTypes.Length; i++)
+				flag[GetOrAddComponentId(componentTypes[i])] = true;
 
-			var array = new BitArray(EntityUtility.types.Count);
-
-			for (int i = 0; i < indices.Length; i++)
-				array[indices[i]] = true;
-
-			return array;
-		}
-
-		public static EntityGroup CreateEntityGroup(EntityGroup.Groups group, IEntityGroupMatcher matcher)
-		{
-			InitializeJanitor();
-
-			var entityGroup = new EntityGroup();
-			var allEntities = EntityManager.GetAllEntities();
-
-			for (int i = 0; i < allEntities.Count; i++)
-			{
-				var entity = allEntities[i];
-
-				if (matcher.Matches(entity.Group, group))
-					entityGroup.Add(entity);
-			}
-
-			return entityGroup;
+			return flag;
 		}
 
 		public static void ClearAllEntityGroups()
 		{
+			entities.Clear();
+			typeIds.Clear();
+			types.Clear();
 			EntityManager.ClearAllEntityGroups();
 			GC.Collect();
 		}
 
-		static void InitializeJanitor()
+		public static void InitializeJanitor()
 		{
-			if (janitor == null)
+			if (Application.isPlaying && janitor == null)
 				janitor = new GameObject("Entity Manager").AddComponent<EntityJanitor>();
 		}
 	}
