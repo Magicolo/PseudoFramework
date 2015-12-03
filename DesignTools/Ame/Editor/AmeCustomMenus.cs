@@ -6,7 +6,7 @@ using Pseudo.Internal;
 namespace Pseudo
 { 
     public static class AmeCustomMenus
-    {
+   {
 
 
         [MenuItem("Pseudo/Create/Ame/Linker", priority = 9)]
@@ -17,5 +17,7 @@ namespace Pseudo
             string path = AssetDatabaseUtility.GenerateUniqueAssetPath("Linker");
             AssetDatabase.CreateAsset(linker, path);
         }
+
+
     }
 }
