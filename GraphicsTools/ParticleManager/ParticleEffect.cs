@@ -21,7 +21,7 @@ namespace Pseudo
 			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
 		}
 
-		protected virtual void Update()
+		protected virtual void LateUpdate()
 		{
 			if (!IsPlaying)
 				PrefabPoolManager.Recycle(this);
