@@ -11,8 +11,8 @@ namespace Pseudo.Internal.Entity
 	{
 		readonly IEntityGroup parent;
 		readonly EntityMatches match;
-		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>();
-		readonly Dictionary<ByteFlag, EntityGroup> componentGroups = new Dictionary<ByteFlag, EntityGroup>();
+		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>(2);
+		readonly Dictionary<ByteFlag, EntityGroup> componentGroups = new Dictionary<ByteFlag, EntityGroup>(2);
 
 		public EntityMatchGroup(IEntityGroup parent, EntityMatches match)
 		{

@@ -10,9 +10,9 @@ namespace Pseudo.Internal.Pool
 {
 	public class ScriptablePool<T> : ScriptablePool where T : ScriptableObject
 	{
-		public ScriptablePool(int startSize = 4) : base(typeof(T), startSize) { }
+		public ScriptablePool(int startSize) : base(typeof(T), startSize) { }
 
-		public ScriptablePool(T reference, int startSize = 4) : base(reference, startSize) { }
+		public ScriptablePool(T reference, int startSize) : base(reference, startSize) { }
 
 		new public T Create()
 		{
@@ -22,8 +22,8 @@ namespace Pseudo.Internal.Pool
 
 	public class ScriptablePool : PrefabPool
 	{
-		public ScriptablePool(Type type, int startSize = 4) : base(ScriptableObject.CreateInstance(type), startSize) { }
+		public ScriptablePool(Type type, int startSize) : base(ScriptableObject.CreateInstance(type), startSize) { }
 
-		public ScriptablePool(ScriptableObject reference, int startSize = 4) : base(reference, startSize) { }
+		public ScriptablePool(ScriptableObject reference, int startSize) : base(reference, startSize) { }
 	}
 }

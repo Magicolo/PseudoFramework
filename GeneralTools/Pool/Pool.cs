@@ -13,7 +13,7 @@ namespace Pseudo.Internal.Pool
 {
 	public class Pool<T> : Pool where T : class
 	{
-		public Pool(T reference, int startSize = 4) : base(reference, reference.GetType(), startSize) { }
+		public Pool(T reference, int startSize) : base(reference, reference.GetType(), startSize) { }
 
 		new public virtual T Create()
 		{
@@ -23,7 +23,7 @@ namespace Pseudo.Internal.Pool
 
 	public class Pool
 	{
-		static readonly List<Pool> toUpdate = new List<Pool>(16);
+		static readonly List<Pool> toUpdate = new List<Pool>(8);
 		static Thread updadeThread;
 
 		public Type Type { get; protected set; }
@@ -43,9 +43,9 @@ namespace Pseudo.Internal.Pool
 			updadeThread.Start();
 		}
 
-		public Pool(Type type, int startSize = 4) : this(Activator.CreateInstance(type), type, startSize) { }
+		public Pool(Type type, int startSize) : this(Activator.CreateInstance(type), type, startSize) { }
 
-		public Pool(object reference, int startSize = 4) : this(reference, reference.GetType(), startSize) { }
+		public Pool(object reference, int startSize) : this(reference, reference.GetType(), startSize) { }
 
 		protected Pool(object reference, Type type, int startSize)
 		{

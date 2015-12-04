@@ -10,8 +10,8 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolSetter : IPoolSetter
 	{
-		FieldInfo field;
-		object value;
+		readonly FieldInfo field;
+		readonly object value;
 
 		public PoolSetter(FieldInfo field, object value)
 		{

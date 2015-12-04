@@ -7,10 +7,10 @@ namespace Pseudo
 	public class SimpleWeightedBag<V> : Bag<V>
 	{
 
-		Random random;
+		readonly Random random;
 
 		float totalWeight;
-		List<WeightedBagWeightValue<V>> bag = new List<WeightedBagWeightValue<V>>();
+		readonly List<WeightedBagWeightValue<V>> bag = new List<WeightedBagWeightValue<V>>();
 
 		public SimpleWeightedBag(Random random)
 		{

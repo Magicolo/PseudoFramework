@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Pool
 {
 	public class ComponentPool<T> : ComponentPool where T : Component
 	{
-		public ComponentPool(T reference, int startSize = 4) : base(reference, startSize) { }
+		public ComponentPool(T reference, int startSize) : base(reference, startSize) { }
 
 		new public T Create()
 		{
@@ -26,7 +26,7 @@ namespace Pseudo.Internal.Pool
 		protected GameObject gameObject;
 		protected Transform transform;
 
-		public ComponentPool(Component reference, int startSize = 4) : base(reference, startSize) { }
+		public ComponentPool(Component reference, int startSize) : base(reference, startSize) { }
 
 		public override object Create()
 		{
@@ -61,10 +61,11 @@ namespace Pseudo.Internal.Pool
 			}
 		}
 
-		protected override object GetInstance()
+		protected override object CreateInstance()
 		{
-			var instance = (Component)base.GetInstance();
+			var instance = (Component)base.CreateInstance();
 			instance.gameObject.SetActive(true);
+			instance.transform.parent = Transform;
 
 			return instance;
 		}

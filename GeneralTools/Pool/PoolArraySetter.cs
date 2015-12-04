@@ -10,8 +10,8 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolArraySetter : IPoolSetter
 	{
-		FieldInfo field;
-		List<IPoolElementSetter> setters;
+		readonly FieldInfo field;
+		readonly List<IPoolElementSetter> setters;
 
 		public PoolArraySetter(FieldInfo field, List<IPoolElementSetter> setters)
 		{

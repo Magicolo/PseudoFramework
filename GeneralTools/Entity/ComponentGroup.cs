@@ -9,14 +9,14 @@ namespace Pseudo.Internal.Entity
 {
 	public class ComponentGroup
 	{
-		public event Action<Component> OnComponentAdded;
-		public event Action<Component> OnComponentRemoved;
-
+		readonly Type type;
 		readonly List<Component> components = new List<Component>();
 		readonly IList genericComponents;
 
 		public ComponentGroup(Type type)
 		{
+			this.type = type;
+
 			Type listType = typeof(List<>).MakeGenericType(type);
 			genericComponents = (IList)Activator.CreateInstance(listType);
 		}
@@ -31,35 +31,25 @@ namespace Pseudo.Internal.Entity
 			return (List<T>)genericComponents;
 		}
 
-		public void AddComponent(Component component)
+		public void TryAddComponent(Component component)
 		{
-			if (!components.Contains(component))
-			{
-				components.Add(component);
-				genericComponents.Add(component);
-				RaiseOnComponentAdded(component);
-			}
+			if (type.IsAssignableFrom(component.GetType()))
+				AddComponent(component);
 		}
 
 		public void RemoveComponent(Component component)
 		{
 			if (components.Remove(component))
-			{
 				genericComponents.Remove(component);
-				RaiseOnComponentRemoved(component);
+		}
+
+		void AddComponent(Component component)
+		{
+			if (!components.Contains(component))
+			{
+				components.Add(component);
+				genericComponents.Add(component);
 			}
-		}
-
-		protected virtual void RaiseOnComponentAdded(Component component)
-		{
-			if (OnComponentAdded != null)
-				OnComponentAdded(component);
-		}
-
-		protected virtual void RaiseOnComponentRemoved(Component component)
-		{
-			if (OnComponentRemoved != null)
-				OnComponentRemoved(component);
 		}
 	}
 }

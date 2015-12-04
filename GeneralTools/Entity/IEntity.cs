@@ -17,8 +17,8 @@ namespace Pseudo
 		Component AddComponent(GameObject child, Type type);
 		T AddComponent<T>() where T : Component;
 		T AddComponent<T>(GameObject child) where T : Component;
-		bool RemoveComponents(Type type);
-		bool RemoveComponents<T>();
+		void RemoveComponents(Type type);
+		void RemoveComponents<T>();
 		List<Component> GetAllComponents();
 		Component GetComponent(Type type);
 		T GetComponent<T>();
@@ -31,8 +31,8 @@ namespace Pseudo
 		bool HasComponent(Type type);
 		bool HasComponent(Component component);
 		bool HasComponent<T>() where T : Component;
-		void OnCreate();
-		void OnRecycle();
-
+		void SendMessage(string method);
+		void SendMessage(string method, object argument);
+		void SendMessage<T>(string method, T argument);
 	}
 }

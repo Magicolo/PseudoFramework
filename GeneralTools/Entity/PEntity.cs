@@ -16,9 +16,6 @@ namespace Pseudo
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
-
-		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroups))]
-		ByteFlag group;
 		public ByteFlag<EntityGroups> Group
 		{
 			get { return group; }
@@ -30,10 +27,12 @@ namespace Pseudo
 		}
 
 		readonly Dictionary<Type, ComponentGroup> componentGroups = new Dictionary<Type, ComponentGroup>();
+		readonly Dictionary<string, MessageGroup> messageGroups = new Dictionary<string, MessageGroup>();
 
 		[InitializeContent, NonSerialized]
-		List<Component> allComponents = new List<Component>();
-
+		List<Component> allComponents = new List<Component>(8);
+		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroups))]
+		ByteFlag group;
 		[DoNotInitialize, NonSerialized]
 		bool initialized;
 
@@ -46,6 +45,8 @@ namespace Pseudo
 		{
 			Component component = child.AddComponent(type);
 			AddComponent(component, true);
+
+			AddComponent(typeof(int));
 
 			return component;
 		}
@@ -60,14 +61,14 @@ namespace Pseudo
 			return (T)AddComponent(child, typeof(T));
 		}
 
-		public bool RemoveComponents(Type type)
+		public void RemoveComponents(Type type)
 		{
-			return RemoveComponents(GetComponents(type), true);
+			RemoveComponents(GetComponents(type), true);
 		}
 
-		public bool RemoveComponents<T>()
+		public void RemoveComponents<T>()
 		{
-			return RemoveComponents(typeof(T));
+			RemoveComponents(typeof(T));
 		}
 
 		public List<Component> GetAllComponents()
@@ -159,6 +160,47 @@ namespace Pseudo
 			return HasComponent(typeof(T));
 		}
 
+		new public void SendMessage(string method)
+		{
+			GetMessageGroup(method).SendMessage();
+		}
+
+		new public void SendMessage(string method, object argument)
+		{
+			GetMessageGroup(method).SendMessage(argument);
+		}
+
+		public void SendMessage<T>(string method, T argument)
+		{
+			GetMessageGroup(method).SendMessage(argument);
+		}
+
+		protected virtual void OnDestroy()
+		{
+			EntityManager.UnregisterEntity(this);
+		}
+
+		protected virtual void Reset()
+		{
+			this.SetExecutionOrder(-3);
+		}
+
+		protected virtual void RaiseOnComponentAddedEvent(Component component)
+		{
+			if (OnComponentAdded != null)
+				OnComponentAdded(component);
+
+			EntityManager.UpdateEntity(this);
+		}
+
+		protected virtual void RaiseOnComponentRemovedEvent(Component component)
+		{
+			if (OnComponentRemoved != null)
+				OnComponentRemoved(component);
+
+			EntityManager.UpdateEntity(this);
+		}
+
 		public override void OnCreate()
 		{
 			base.OnCreate();
@@ -190,32 +232,6 @@ namespace Pseudo
 			}
 		}
 
-		protected virtual void OnDestroy()
-		{
-			EntityManager.UnregisterEntity(this);
-		}
-
-		protected virtual void Reset()
-		{
-			this.SetExecutionOrder(-3);
-		}
-
-		protected virtual void RaiseOnComponentAddedEvent(Component component)
-		{
-			if (OnComponentAdded != null)
-				OnComponentAdded(component);
-
-			EntityManager.UpdateEntity(this);
-		}
-
-		protected virtual void RaiseOnComponentRemovedEvent(Component component)
-		{
-			if (OnComponentRemoved != null)
-				OnComponentRemoved(component);
-
-			EntityManager.UpdateEntity(this);
-		}
-
 		ComponentGroup GetComponentGroup(Type type)
 		{
 			InitializeComponents();
@@ -240,12 +256,30 @@ namespace Pseudo
 			var group = new ComponentGroup(type);
 
 			for (int i = 0; i < allComponents.Count; i++)
-			{
-				var component = allComponents[i];
+				group.TryAddComponent(allComponents[i]);
 
-				if (type.IsAssignableFrom(component.GetType()))
-					group.AddComponent(component);
+			return group;
+		}
+
+		MessageGroup GetMessageGroup(string method)
+		{
+			MessageGroup group;
+
+			if (!messageGroups.TryGetValue(method, out group))
+			{
+				group = CreateMessageGroup(method);
+				messageGroups[method] = group;
 			}
+
+			return group;
+		}
+
+		MessageGroup CreateMessageGroup(string method)
+		{
+			var group = new MessageGroup(method);
+
+			for (int i = 0; i < allComponents.Count; i++)
+				group.TryAddComponent(allComponents[i]);
 
 			return group;
 		}
@@ -260,55 +294,66 @@ namespace Pseudo
 
 			allComponents.Add(component);
 
-			var type = component.GetType();
-			var enumerator = componentGroups.GetEnumerator();
-
-			while (enumerator.MoveNext())
+			// Add component to component groups
+			if (componentGroups.Count > 0)
 			{
-				var group = enumerator.Current;
+				var enumerator = componentGroups.GetEnumerator();
 
-				if (group.Key.IsAssignableFrom(type))
-					group.Value.AddComponent(component);
+				while (enumerator.MoveNext())
+					enumerator.Current.Value.TryAddComponent(component);
+
+				enumerator.Dispose();
 			}
 
-			enumerator.Dispose();
+			// Add component to message groups
+			if (messageGroups.Count > 0)
+			{
+				var enumerator = messageGroups.GetEnumerator();
+
+				while (enumerator.MoveNext())
+					enumerator.Current.Value.TryAddComponent(component);
+
+				enumerator.Dispose();
+			}
 
 			if (raiseEvent)
 				RaiseOnComponentAddedEvent(component);
 		}
 
-		bool RemoveComponent(Component component, bool raiseEvent)
+		void RemoveComponent(Component component, bool raiseEvent)
 		{
-			bool success = allComponents.Remove(component);
-
-			if (success)
+			if (allComponents.Remove(component))
 			{
-				var enumerator = componentGroups.GetEnumerator();
+				// Remove component from component groups
+				if (componentGroups.Count > 0)
+				{
+					var enumerator = componentGroups.GetEnumerator();
 
-				while (enumerator.MoveNext())
-					enumerator.Current.Value.RemoveComponent(component);
+					while (enumerator.MoveNext())
+						enumerator.Current.Value.RemoveComponent(component);
 
-				enumerator.Dispose();
+					enumerator.Dispose();
+				}
+
+				// Remove component from message groups
+				var messageEnumerator = messageGroups.GetEnumerator();
+
+				while (messageEnumerator.MoveNext())
+					messageEnumerator.Current.Value.RemoveComponent(component);
+
+				messageEnumerator.Dispose();
 
 				if (raiseEvent)
 					RaiseOnComponentRemovedEvent(component);
 
 				component.Destroy();
 			}
-			else
-				Debug.LogError(string.Format("Component {0} is not owned by entity {1}.", component, this));
-
-			return success;
 		}
 
-		bool RemoveComponents(List<Component> components, bool raiseEvent)
+		void RemoveComponents(List<Component> components, bool raiseEvent)
 		{
-			bool success = false;
-
 			for (int i = 0; i < components.Count; i++)
-				success |= RemoveComponent(components[i], raiseEvent);
-
-			return success;
+				RemoveComponent(components[i], raiseEvent);
 		}
 
 		void InitializeComponents()

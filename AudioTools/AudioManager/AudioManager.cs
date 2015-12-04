@@ -87,7 +87,7 @@ namespace Pseudo
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
-			audioSourcePool = new ComponentPool<AudioSource>(reference);
+			audioSourcePool = new ComponentPool<AudioSource>(reference, 8);
 
 			if (Application.isPlaying)
 			{

@@ -19,7 +19,7 @@ namespace Pseudo.Internal.Entity
 			get { return readonlyEntities; }
 		}
 
-		readonly List<PEntity> entities = new List<PEntity>();
+		readonly List<PEntity> entities = new List<PEntity>(4);
 		readonly IList<PEntity> readonlyEntities;
 		EntityMatchGroup[] subGroups;
 

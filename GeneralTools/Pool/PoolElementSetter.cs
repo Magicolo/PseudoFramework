@@ -9,7 +9,7 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolElementSetter : IPoolElementSetter
 	{
-		object value;
+		readonly object value;
 
 		public PoolElementSetter(object value)
 		{

@@ -16,12 +16,21 @@ namespace Pseudo.Internal.Pool
 		protected GameObject gameObject;
 		protected Transform transform;
 
-		public GameObjectPool(GameObject reference, int startSize = 4) : base(reference, startSize) { }
+		public GameObjectPool(GameObject reference, int startSize) : base(reference, startSize) { }
 
 		new public GameObject Create()
 		{
 			var instance = (GameObject)base.Create();
 			instance.transform.Copy(((GameObject)reference).transform);
+
+			return instance;
+		}
+
+		protected override object CreateInstance()
+		{
+			var instance = (GameObject)base.CreateInstance();
+			instance.SetActive(true);
+			instance.transform.parent = Transform;
 
 			return instance;
 		}

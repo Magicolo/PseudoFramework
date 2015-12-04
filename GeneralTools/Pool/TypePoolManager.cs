@@ -15,7 +15,7 @@ namespace Pseudo
 	{
 		static readonly Dictionary<Type, Pool> pools = new Dictionary<Type, Pool>(16);
 
-		public static int StartSize = 8;
+		public static int StartSize = 2;
 
 		public static T Create<T>() where T : class
 		{

@@ -5,8 +5,8 @@ using UnityEngine;
 public class SerializableDictionary<K, V>
 {
 
-	public List<K> Keys = new List<K>();
-	public List<V> Values = new List<V>();
+	public readonly List<K> Keys = new List<K>();
+	public readonly List<V> Values = new List<V>();
 
 	public V this[K key]
 	{

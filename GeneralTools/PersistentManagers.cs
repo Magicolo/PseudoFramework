@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class Managers : Singleton<Managers>
+	public class PersistentManagers : Singleton<PersistentManagers>
 	{
 		public AudioManager AudioManager;
 		public GravityManager GravityManager;
