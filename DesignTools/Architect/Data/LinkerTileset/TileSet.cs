@@ -8,7 +8,7 @@ namespace Pseudo
     public class TileSet
     {
         public string Name;
-      
+
         public List<TileType> Tiles = new List<TileType>();
 
 
@@ -17,7 +17,11 @@ namespace Pseudo
             this.Name = name;
         }
 
-        
+        public TileType this[int i]
+        {
+            get { return Tiles[i]; }
+            set { Tiles[i] = value; }
+        }
+
     }
-    
 }

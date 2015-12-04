@@ -9,6 +9,7 @@ namespace Pseudo
     {
         public int Id;
         public GameObject Prefab;
+        public Sprite PreviewSprite;
 
         public TileType(int id, GameObject prefab = null)
         {
