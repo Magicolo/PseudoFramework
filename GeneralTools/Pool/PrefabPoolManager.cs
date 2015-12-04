@@ -13,8 +13,8 @@ namespace Pseudo
 	{
 		public static int StartSize = 2;
 
-		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(16);
-		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(256);
+		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(8);
+		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(64);
 
 		public static T Create<T>(T prefab) where T : class
 		{

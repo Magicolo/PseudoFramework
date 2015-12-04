@@ -14,7 +14,6 @@ namespace Pseudo.Internal.Entity
 		static Dictionary<Component, IEntity> entities = new Dictionary<Component, IEntity>();
 		static Dictionary<Type, byte> typeIds = new Dictionary<Type, byte>();
 		static List<Type> types = new List<Type>();
-		static EntityJanitor janitor;
 
 		public static IEntity GetEntity(Component component)
 		{
@@ -72,8 +71,8 @@ namespace Pseudo.Internal.Entity
 
 		public static void InitializeJanitor()
 		{
-			if (Application.isPlaying && janitor == null)
-				janitor = new GameObject("Entity Manager").AddComponent<EntityJanitor>();
+			if (Application.isPlaying && EntityJanitor.Instance == null)
+				new GameObject("Entity Manager").AddComponent<EntityJanitor>();
 		}
 	}
 }
