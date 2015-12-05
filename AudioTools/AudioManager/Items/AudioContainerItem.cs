@@ -161,7 +161,7 @@ namespace Pseudo.Internal.Audio
 			if (parent == null)
 				AudioManager.Instance.ItemManager.Deactivate(this);
 
-			PrefabPoolManager.Recycle(this);
+			TypePoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)

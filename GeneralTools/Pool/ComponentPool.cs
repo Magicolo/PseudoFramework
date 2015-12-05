@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal;
 
 namespace Pseudo.Internal.Pool
 {
@@ -59,6 +58,8 @@ namespace Pseudo.Internal.Pool
 						instance.gameObject.Destroy();
 				}
 			}
+
+			Pseudo.ObjectExtensions.Destroy(GameObject);
 		}
 
 		protected override object GetInstance()

@@ -20,6 +20,14 @@ namespace Pseudo.Internal.Audio
 			settings = (AudioSettingsBase)target;
 		}
 
+		public override void End(bool space = true)
+		{
+			base.End(space);
+
+			if (GUI.changed)
+				PrefabPoolManager.ResetPool(settings);
+		}
+
 		public void ShowType()
 		{
 			GUIStyle style = new GUIStyle("boldLabel");

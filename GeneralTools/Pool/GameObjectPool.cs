@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Pool
 		protected GameObject gameObject;
 		protected Transform transform;
 
-		public GameObjectPool(GameObject reference, int startSize = 4) : base(reference, startSize) { }
+		public GameObjectPool(GameObject reference, int startSize) : base(reference, startSize) { }
 
 		new public GameObject Create()
 		{
@@ -24,6 +24,13 @@ namespace Pseudo.Internal.Pool
 			instance.transform.Copy(((GameObject)reference).transform);
 
 			return instance;
+		}
+
+		public override void Clear()
+		{
+			base.Clear();
+
+			Pseudo.ObjectExtensions.Destroy(GameObject);
 		}
 
 		protected override void Enqueue(object instance, bool initialize)

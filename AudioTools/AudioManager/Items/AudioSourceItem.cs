@@ -203,7 +203,7 @@ namespace Pseudo.Internal.Audio
 
 			spatializer.RemoveSource(source.transform);
 
-			PrefabPoolManager.Recycle(this);
+			TypePoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -394,7 +394,7 @@ namespace Pseudo.Internal.Audio
 		{
 			base.OnRecycle();
 
-			AudioManager.Instance.AudioSourcePool.Recycle(source);
+			PrefabPoolManager.Recycle(source);
 			PrefabPoolManager.Recycle(ref settings);
 		}
 

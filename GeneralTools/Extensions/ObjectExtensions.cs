@@ -22,7 +22,7 @@ namespace Pseudo
 
 		public static void SendMessageToObjectsOfType<T>(this UnityEngine.Object obj, string methodName, object value, bool sendToSelf = false, SendMessageOptions options = SendMessageOptions.DontRequireReceiver) where T : Component
 		{
-			T[] objects = UnityEngine.Object.FindObjectsOfType<T>();
+			var objects = UnityEngine.Object.FindObjectsOfType<T>();
 
 			for (int i = 0; i < objects.Length; i++)
 			{
