@@ -122,6 +122,20 @@ namespace Pseudo.Internal.Pool
 			Unsubscribe(this);
 		}
 
+		public virtual void Reset()
+		{
+			Initialize();
+
+			lock (toInitialize)
+			{
+				lock (instances)
+				{
+					while (instances.Count > 0)
+						toInitialize.Enqueue(instances.Dequeue());
+				}
+			}
+		}
+
 		void Initialize()
 		{
 			bool isInitializable = reference is IPoolInitializable;
@@ -129,7 +143,10 @@ namespace Pseudo.Internal.Pool
 			if (isInitializable)
 				((IPoolInitializable)reference).OnPrePoolInitialize();
 
-			setters = PoolUtility.GetSetters(reference);
+			if (setters == null)
+				setters = PoolUtility.GetSetters(reference);
+			else
+				lock (setters) setters = PoolUtility.GetSetters(reference);
 
 			if (isInitializable)
 				((IPoolInitializable)reference).OnPostPoolInitialize(setters);
@@ -264,7 +281,7 @@ namespace Pseudo.Internal.Pool
 					}
 				}
 
-				PoolUtility.InitializeFields(instance, pool.setters);
+				lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 				lock (pool.instances) pool.instances.Enqueue(instance);
 			}
 		}

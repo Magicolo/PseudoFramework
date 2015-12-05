@@ -43,13 +43,19 @@ namespace Pseudo.Internal.Pool
 			if (reference is Component)
 			{
 				var behaviourPool = new ComponentPool((Component)reference, startSize);
-				behaviourPool.Transform.parent = parent == null ? Transform : parent;
+
+				if (Application.isPlaying)
+					behaviourPool.Transform.parent = parent == null ? Transform : parent;
+
 				pool = behaviourPool;
 			}
 			else if (reference is GameObject)
 			{
 				var gameObjectPool = new GameObjectPool((GameObject)reference, startSize);
-				gameObjectPool.Transform.parent = parent == null ? Transform : parent;
+
+				if (Application.isPlaying)
+					gameObjectPool.Transform.parent = parent == null ? Transform : parent;
+
 				pool = gameObjectPool;
 			}
 			else if (reference is ScriptableObject)

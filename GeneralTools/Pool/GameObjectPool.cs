@@ -26,6 +26,7 @@ namespace Pseudo.Internal.Pool
 			return instance;
 		}
 
+<<<<<<< HEAD
 		protected override object CreateInstance()
 		{
 			var instance = (GameObject)base.CreateInstance();
@@ -33,6 +34,13 @@ namespace Pseudo.Internal.Pool
 			instance.transform.parent = Transform;
 
 			return instance;
+=======
+		public override void Clear()
+		{
+			base.Clear();
+
+			Pseudo.ObjectExtensions.Destroy(GameObject);
+>>>>>>> temp
 		}
 
 		protected override void Enqueue(object instance, bool initialize)

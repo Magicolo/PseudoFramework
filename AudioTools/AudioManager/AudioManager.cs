@@ -21,7 +21,6 @@ namespace Pseudo
 	{
 		[SerializeField]
 		AudioSource reference;
-		ComponentPool<AudioSource> audioSourcePool;
 		AudioItemManager itemManager = new AudioItemManager();
 
 		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
@@ -42,20 +41,6 @@ namespace Pseudo
 					Initialize();
 
 				return reference;
-			}
-		}
-
-		/// <summary>
-		/// Used internally to pool AudioSources
-		/// </summary>
-		public ComponentPool<AudioSource> AudioSourcePool
-		{
-			get
-			{
-				if (audioSourcePool == null)
-					Initialize();
-
-				return audioSourcePool;
 			}
 		}
 
@@ -87,6 +72,7 @@ namespace Pseudo
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
+<<<<<<< HEAD
 			audioSourcePool = new ComponentPool<AudioSource>(reference, 8);
 
 			if (Application.isPlaying)
@@ -94,6 +80,8 @@ namespace Pseudo
 				audioSourcePool.GameObject.name = "Sources";
 				audioSourcePool.Transform.parent = CachedTransform;
 			}
+=======
+>>>>>>> temp
 		}
 
 		/// <summary>
@@ -109,7 +97,8 @@ namespace Pseudo
 		/// <summary>
 		/// Creates an AudioItem spatialized at the provided <paramref name="position"/> that corresponds to the type of the <paramref name="settings"/>.
 		/// </summary>
-		/// <param name="settings"> Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
@@ -120,7 +109,8 @@ namespace Pseudo
 		/// Creates an AudioItem dynamicaly spatialized around the provided Transform that corresponds to the type of the <paramref name="settings"/>.
 		/// If the Transform ever becomes <code>null</code>, the AudioItem will simply stop moving.
 		/// </summary>
-		/// <param name="settings"> Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
@@ -130,7 +120,8 @@ namespace Pseudo
 		/// <summary>
 		/// Creates an AudioItem dynamicaly spatialized using the <paramref name="getPosition"/> callback to set its position that corresponds to the type of the <paramref name="settings"/>.
 		/// </summary>
-		/// <param name="settings"> Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
+		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
 		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
@@ -155,6 +146,7 @@ namespace Pseudo
 		/// The play behaviour of the AudioSettingsBase can be defined via the provided AudioDynamicData object.
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
+		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
 		{
@@ -168,6 +160,7 @@ namespace Pseudo
 		/// The play behaviour of the AudioSettingsBase can be defined via the provided AudioDynamicData object.
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
+		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
 		{
@@ -180,6 +173,7 @@ namespace Pseudo
 		/// The play behaviour of the AudioSettingsBase can be defined via the provided AudioDynamicData object.
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
+		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
 		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
 		{

@@ -90,7 +90,7 @@ namespace Pseudo.Internal.Audio
 			{
 				default:
 					var sourceItem = TypePoolManager.Create<AudioSourceItem>();
-					var source = AudioManager.Instance.AudioSourcePool.Create();
+					var source = PrefabPoolManager.Create(AudioManager.Instance.Reference);
 					source.Copy(AudioManager.Instance.Reference, AudioManager.Instance.UseCustomCurves);
 					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
 					return sourceItem;
