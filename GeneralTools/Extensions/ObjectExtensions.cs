@@ -19,32 +19,6 @@ namespace Pseudo
 			else
 				UnityEngine.Object.DestroyImmediate(obj, allowDestroyingAssets);
 		}
-<<<<<<< HEAD
-=======
-
-		public static void SendMessageToObjectsOfType<T>(this UnityEngine.Object obj, string methodName, object value, bool sendToSelf = false, SendMessageOptions options = SendMessageOptions.DontRequireReceiver) where T : Component
-		{
-			var objects = UnityEngine.Object.FindObjectsOfType<T>();
-
-			for (int i = 0; i < objects.Length; i++)
-			{
-				T element = objects[i];
-
-				if (!sendToSelf && element == obj)
-					continue;
-
-				if (value == null)
-					element.SendMessage(methodName, options);
-				else
-					element.SendMessage(methodName, value, options);
-			}
-		}
-
-		public static void SendMessageToObjectsOfType<T>(this UnityEngine.Object obj, string methodName, bool sendToSelf = false, SendMessageOptions options = SendMessageOptions.DontRequireReceiver) where T : Component
-		{
-			obj.SendMessageToObjectsOfType<T>(methodName, sendToSelf, options);
-		}
->>>>>>> temp
 	}
 }
 
