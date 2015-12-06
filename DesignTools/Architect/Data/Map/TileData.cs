@@ -15,6 +15,8 @@ namespace Pseudo
             this.TileType = tileType;
             this.GameObject = gameObject;
         }
+
+        public static TileData Empty = new TileData(new TileType(0), null);
     }
 
 }

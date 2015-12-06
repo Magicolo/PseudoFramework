@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09980bc5cbd3e0e419b8c01b4df6baa1, type: 3}
+  m_Name: UIFactory
+  m_EditorClassIdentifier: 
+  Button: {fileID: 174950, guid: 6eb5057968b4bad4a98e595e30b3dd58, type: 2}
+  DropDown: {fileID: 123798, guid: 235fbe5d4964a144c88bf8b001310289, type: 2}
+  Image: {fileID: 117576, guid: 008940f1df2b63440b0939d8bc9bfe8d, type: 2}
+  ImageButton: {fileID: 123638, guid: 522711702cd3353448fb1abcc787ccaa, type: 2}
+  InputField: {fileID: 167348, guid: 5328a30b2206d294ea730a088042dc6e, type: 2}
+  Panel: {fileID: 156468, guid: 99cd54cb91f81c741bb2def6097cf34b, type: 2}
+  Slider: {fileID: 164414, guid: e3736074a57c8ab4d8545b03733a1b17, type: 2}
+  Text: {fileID: 110946, guid: 372d30f9ca3103f4388452d7ab4b47f1, type: 2}
+  Toggle: {fileID: 163094, guid: 9d159b129786fa340908afcfecdb5785, type: 2}
