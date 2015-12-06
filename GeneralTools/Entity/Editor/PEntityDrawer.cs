@@ -20,7 +20,10 @@ namespace Pseudo.Internal.Entity
 
 			currentPosition.height = EditorGUI.GetPropertyHeight(property, label);
 			currentPosition = EditorGUI.PrefixLabel(currentPosition, label);
+
+			BeginIndent(0);
 			EditorGUI.PropertyField(currentPosition, property, GUIContent.none);
+			EndIndent();
 
 			if (errors.Count > 0)
 			{
@@ -60,7 +63,7 @@ namespace Pseudo.Internal.Entity
 			var attribute = (RequiresAttribute)fieldInfo.GetCustomAttributes(typeof(RequiresAttribute), true)[0];
 
 			if (entity == null && !attribute.CanBeNull)
-				errors.Add(string.Format("Field must be assigned.").ToGUIContent());
+				errors.Add(string.Format("Field cannot be null.").ToGUIContent());
 
 			if (entity == null)
 				return;

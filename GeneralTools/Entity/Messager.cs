@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace Pseudo.Internal.Entity
 {
-	public class Messager<T> : IMessager
+	public class Messager<T> : MessagerBase
 	{
 		readonly Action<T> action;
 
@@ -17,19 +17,9 @@ namespace Pseudo.Internal.Entity
 			this.action = action;
 		}
 
-		public void SendMessage(T target)
+		public override void SendMessage(object target)
 		{
-			action(target);
-		}
-
-		void IMessager.SendMessage(object target)
-		{
-			SendMessage((T)target);
-		}
-
-		void IMessager.SendMessage(object target, object argument)
-		{
-			SendMessage((T)target);
+			action((T)target);
 		}
 	}
 
@@ -42,14 +32,24 @@ namespace Pseudo.Internal.Entity
 			this.action = action;
 		}
 
-		public void SendMessage(T target, A argument)
-		{
-			action(target, argument);
-		}
-
 		public override void SendMessage(object target, A argument)
 		{
-			SendMessage((T)target, argument);
+			action((T)target, argument);
+		}
+	}
+
+	public abstract class MessagerBase : IMessager
+	{
+		public abstract void SendMessage(object target);
+
+		void IMessager.SendMessage(object target)
+		{
+			SendMessage(target);
+		}
+
+		void IMessager.SendMessage(object target, object argument)
+		{
+			SendMessage(target);
 		}
 	}
 

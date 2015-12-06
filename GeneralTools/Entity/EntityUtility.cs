@@ -50,6 +50,14 @@ namespace Pseudo.Internal.Entity
 			return types[id];
 		}
 
+		public static ByteFlag GetComponentFlags(Type componentType)
+		{
+			var flag = new ByteFlag();
+			flag[GetOrAddComponentId(componentType)] = true;
+
+			return flag;
+		}
+
 		public static ByteFlag GetComponentFlags(Type[] componentTypes)
 		{
 			var flag = new ByteFlag();
