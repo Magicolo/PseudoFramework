@@ -8,6 +8,8 @@ namespace Pseudo
 	{
 		public Type EnumType;
 
+		public EnumFlagsAttribute() { }
+
 		public EnumFlagsAttribute(Type enumType)
 		{
 			EnumType = enumType;

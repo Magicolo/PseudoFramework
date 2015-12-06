@@ -27,7 +27,7 @@ namespace Pseudo
 		}
 
 		readonly Dictionary<Type, ComponentGroup> componentGroups = new Dictionary<Type, ComponentGroup>();
-		readonly Dictionary<string, MessageGroup> messageGroups = new Dictionary<string, MessageGroup>();
+		readonly Dictionary<byte, MessageGroup> messageGroups = new Dictionary<byte, MessageGroup>();
 
 		[InitializeContent, NonSerialized]
 		List<Component> allComponents = new List<Component>(8);
@@ -160,19 +160,19 @@ namespace Pseudo
 			return HasComponent(typeof(T));
 		}
 
-		new public void SendMessage(string method)
+		public void SendMessage(EntityMessages message)
 		{
-			GetMessageGroup(method).SendMessage();
+			GetMessageGroup(message).SendMessage();
 		}
 
-		new public void SendMessage(string method, object argument)
+		public void SendMessage(EntityMessages message, object argument)
 		{
-			GetMessageGroup(method).SendMessage(argument);
+			GetMessageGroup(message).SendMessage(argument);
 		}
 
-		public void SendMessage<T>(string method, T argument)
+		public void SendMessage<T>(EntityMessages message, T argument)
 		{
-			GetMessageGroup(method).SendMessage(argument);
+			GetMessageGroup(message).SendMessage(argument);
 		}
 
 		protected virtual void OnDestroy()
@@ -261,22 +261,22 @@ namespace Pseudo
 			return group;
 		}
 
-		MessageGroup GetMessageGroup(string method)
+		MessageGroup GetMessageGroup(EntityMessages message)
 		{
 			MessageGroup group;
 
-			if (!messageGroups.TryGetValue(method, out group))
+			if (!messageGroups.TryGetValue((byte)message, out group))
 			{
-				group = CreateMessageGroup(method);
-				messageGroups[method] = group;
+				group = CreateMessageGroup(message);
+				messageGroups[(byte)message] = group;
 			}
 
 			return group;
 		}
 
-		MessageGroup CreateMessageGroup(string method)
+		MessageGroup CreateMessageGroup(EntityMessages message)
 		{
-			var group = new MessageGroup(method);
+			var group = new MessageGroup(message.ToString());
 
 			for (int i = 0; i < allComponents.Count; i++)
 				group.TryAddComponent(allComponents[i]);

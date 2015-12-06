@@ -31,8 +31,8 @@ namespace Pseudo
 		bool HasComponent(Type type);
 		bool HasComponent(Component component);
 		bool HasComponent<T>() where T : Component;
-		void SendMessage(string method);
-		void SendMessage(string method, object argument);
-		void SendMessage<T>(string method, T argument);
+		void SendMessage(EntityMessages message);
+		void SendMessage(EntityMessages message, object argument);
+		void SendMessage<T>(EntityMessages message, T argument);
 	}
 }

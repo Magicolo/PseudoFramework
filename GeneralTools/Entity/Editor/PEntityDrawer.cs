@@ -57,10 +57,10 @@ namespace Pseudo.Internal.Entity
 		{
 			errors.Clear();
 
-			if (!fieldInfo.IsDefined(typeof(RequiresAttribute), true))
+			if (!fieldInfo.IsDefined(typeof(EntityRequiresAttribute), true))
 				return;
 
-			var attribute = (RequiresAttribute)fieldInfo.GetCustomAttributes(typeof(RequiresAttribute), true)[0];
+			var attribute = (EntityRequiresAttribute)fieldInfo.GetCustomAttributes(typeof(EntityRequiresAttribute), true)[0];
 
 			if (entity == null && !attribute.CanBeNull)
 				errors.Add(string.Format("Field cannot be null.").ToGUIContent());

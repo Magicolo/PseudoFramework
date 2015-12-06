@@ -5,17 +5,17 @@ using Pseudo.Internal.Editor;
 namespace Pseudo
 {
 	[AttributeUsage(AttributeTargets.Field)]
-	public sealed class RequiresAttribute : Attribute
+	public sealed class EntityRequiresAttribute : Attribute
 	{
 		public bool CanBeNull = true;
 		public Type[] Types;
 
-		public RequiresAttribute(bool canBeNull, params Type[] types) : this(types)
+		public EntityRequiresAttribute(bool canBeNull, params Type[] types) : this(types)
 		{
 			CanBeNull = canBeNull;
 		}
 
-		public RequiresAttribute(params Type[] types)
+		public EntityRequiresAttribute(params Type[] types)
 		{
 			Types = types;
 		}
