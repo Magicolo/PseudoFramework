@@ -47,22 +47,14 @@ namespace Pseudo
 			renderer.Fade(new Color(fade, fade, fade, fade), shared, channels);
 		}
 
-		public static void FadeTowards(this Renderer renderer, Color targetColor, float deltaTIme, bool shared = false, InterpolationModes interpolation = InterpolationModes.Quadratic, Channels channels = Channels.RGBA)
+		public static void FadeTowards(this Renderer renderer, Color targetColor, float deltaTIme, bool shared = false, Channels channels = Channels.RGBA)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					renderer.SetColor(renderer.GetColor().Lerp(targetColor, deltaTIme, channels), shared, channels);
-					break;
-				case InterpolationModes.Linear:
-					renderer.SetColor(renderer.GetColor().LerpLinear(targetColor, deltaTIme, channels), shared, channels);
-					break;
-			}
+			renderer.SetColor(renderer.GetColor().Lerp(targetColor, deltaTIme, channels), shared, channels);
 		}
 
-		public static void FadeTowards(this Renderer renderer, float targetColor, float deltaTime, bool shared = false, InterpolationModes interpolation = InterpolationModes.Quadratic, Channels channels = Channels.RGBA)
+		public static void FadeTowards(this Renderer renderer, float targetColor, float deltaTime, bool shared = false, Channels channels = Channels.RGBA)
 		{
-			renderer.FadeTowards(new Color(targetColor, targetColor, targetColor, targetColor), deltaTime, shared, interpolation, channels);
+			renderer.FadeTowards(new Color(targetColor, targetColor, targetColor, targetColor), deltaTime, shared, channels);
 		}
 
 		public static void OscillateColor(this Renderer renderer, Color frequency, Color amplitude, Color center, float time, bool shared = false, Channels channels = Channels.RGBA)

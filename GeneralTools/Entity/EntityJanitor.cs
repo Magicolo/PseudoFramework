@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Entity
 {
-	public class EntityJanitor : PMonoBehaviour
+	public class EntityJanitor : Singleton<EntityJanitor>
 	{
 		void OnDestroy()
 		{

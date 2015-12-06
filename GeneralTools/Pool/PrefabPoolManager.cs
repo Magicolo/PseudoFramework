@@ -13,8 +13,8 @@ namespace Pseudo
 	{
 		public static int StartSize = 2;
 
-		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(16);
-		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(256);
+		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(8);
+		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(64);
 
 		public static T Create<T>(T prefab) where T : class
 		{
@@ -55,7 +55,7 @@ namespace Pseudo
 
 			if (!pools.TryGetValue(prefab, out pool))
 			{
-				pool = PoolUtility.CreatePool(prefab, StartSize);
+				pool = PoolUtility.CreatePool(prefab, Application.isPlaying ? StartSize : 0);
 				pools[prefab] = pool;
 			}
 
@@ -67,6 +67,14 @@ namespace Pseudo
 			return pools.Count;
 		}
 
+		public static void ClearPool(object prefab)
+		{
+			Pool pool;
+
+			if (pools.Pop(prefab, out pool))
+				pool.Clear();
+		}
+
 		public static void ClearPools()
 		{
 			foreach (var pool in pools)
@@ -74,6 +82,20 @@ namespace Pseudo
 
 			pools.Clear();
 			instancePool.Clear();
+		}
+
+		public static void ResetPool(object prefab)
+		{
+			Pool pool;
+
+			if (pools.TryGetValue(prefab, out pool))
+				pool.Reset();
+		}
+
+		public static void ResetPools()
+		{
+			foreach (var pool in pools)
+				pool.Value.Reset();
 		}
 	}
 }

@@ -23,7 +23,7 @@ namespace Pseudo.Internal.Pool
 
 	public class Pool
 	{
-		static readonly List<Pool> toUpdate = new List<Pool>(8);
+		static readonly List<Pool> toUpdate = new List<Pool>(4);
 		static Thread updadeThread;
 
 		public Type Type { get; protected set; }
@@ -37,18 +37,12 @@ namespace Pseudo.Internal.Pool
 		protected List<IPoolSetter> setters;
 		protected bool updating;
 
-		static Pool()
-		{
-			updadeThread = new Thread(UpdateAsync);
-			updadeThread.Start();
-		}
-
-		public Pool(Type type, int startSize) : this(Activator.CreateInstance(type), type, startSize) { }
-
 		public Pool(object reference, int startSize) : this(reference, reference.GetType(), startSize) { }
 
 		protected Pool(object reference, Type type, int startSize)
 		{
+			PoolUtility.InitializeJanitor();
+
 			this.reference = reference;
 			Type = type;
 			StartSize = startSize;
@@ -128,6 +122,20 @@ namespace Pseudo.Internal.Pool
 			Unsubscribe(this);
 		}
 
+		public virtual void Reset()
+		{
+			Initialize();
+
+			lock (toInitialize)
+			{
+				lock (instances)
+				{
+					while (instances.Count > 0)
+						toInitialize.Enqueue(instances.Dequeue());
+				}
+			}
+		}
+
 		void Initialize()
 		{
 			bool isInitializable = reference is IPoolInitializable;
@@ -135,7 +143,10 @@ namespace Pseudo.Internal.Pool
 			if (isInitializable)
 				((IPoolInitializable)reference).OnPrePoolInitialize();
 
-			setters = PoolUtility.GetSetters(reference);
+			if (setters == null)
+				setters = PoolUtility.GetSetters(reference);
+			else
+				lock (setters) setters = PoolUtility.GetSetters(reference);
 
 			if (isInitializable)
 				((IPoolInitializable)reference).OnPostPoolInitialize(setters);
@@ -190,6 +201,8 @@ namespace Pseudo.Internal.Pool
 
 		protected static void Subscribe(Pool pool)
 		{
+			InitializeUpdateThread();
+
 			if (pool.updating)
 				return;
 
@@ -205,11 +218,20 @@ namespace Pseudo.Internal.Pool
 			pool.updating = false;
 		}
 
+		static void InitializeUpdateThread()
+		{
+			if (updadeThread == null)
+			{
+				updadeThread = new Thread(UpdateAsync);
+				updadeThread.Start();
+			}
+		}
+
 		static void UpdateAsync()
 		{
 			try
 			{
-				while (true)
+				while (PoolUtility.IsPlaying)
 				{
 					for (int i = toUpdate.Count - 1; i >= 0; i--)
 					{
@@ -259,14 +281,9 @@ namespace Pseudo.Internal.Pool
 					}
 				}
 
-				PoolUtility.InitializeFields(instance, pool.setters);
+				lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 				lock (pool.instances) pool.instances.Enqueue(instance);
 			}
 		}
-	}
-
-	public class TypeMismatchException : Exception
-	{
-		public TypeMismatchException(string message) : base(message) { }
 	}
 }

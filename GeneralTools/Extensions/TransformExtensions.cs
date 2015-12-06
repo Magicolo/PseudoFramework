@@ -28,22 +28,14 @@ namespace Pseudo
 			transform.Translate(new Vector3(translation, translation, translation), axes);
 		}
 
-		public static void TranslateTowards(this Transform transform, Vector3 targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Transform transform, Vector3 targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetPosition(transform.position.Lerp(targetPosition, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetPosition(transform.position.LerpLinear(targetPosition, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetPosition(transform.position.Lerp(targetPosition, deltaTime, axes), axes);
 		}
 
-		public static void TranslateTowards(this Transform transform, float targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateTowards(this Transform transform, float targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, interpolation, axes);
+			transform.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, axes);
 		}
 
 		public static void OscillatePosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -76,22 +68,14 @@ namespace Pseudo
 			transform.TranslateLocal(new Vector3(translation, translation, translation), axes);
 		}
 
-		public static void TranslateLocalTowards(this Transform transform, Vector3 targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateLocalTowards(this Transform transform, Vector3 targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetLocalPosition(transform.localPosition.Lerp(targetPosition, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetLocalPosition(transform.localPosition.LerpLinear(targetPosition, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetLocalPosition(transform.localPosition.Lerp(targetPosition, deltaTime, axes), axes);
 		}
 
-		public static void TranslateLocalTowards(this Transform transform, float targetPosition, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void TranslateLocalTowards(this Transform transform, float targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.TranslateLocalTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, interpolation, axes);
+			transform.TranslateLocalTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, axes);
 		}
 
 		public static void OscillateLocalPosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -126,22 +110,14 @@ namespace Pseudo
 			transform.Rotate(new Vector3(rotation, rotation, rotation), axes);
 		}
 
-		public static void RotateTowards(this Transform transform, Vector3 targetAngles, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void RotateTowards(this Transform transform, Vector3 targetAngles, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetEulerAngles(transform.eulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetEulerAngles(transform.eulerAngles.LerpAnglesLinear(targetAngles, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetEulerAngles(transform.eulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
 		}
 
-		public static void RotateTowards(this Transform transform, float targetAngle, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void RotateTowards(this Transform transform, float targetAngle, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, interpolation, axes);
+			transform.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, axes);
 		}
 
 		public static void OscillateEulerAngles(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -174,22 +150,14 @@ namespace Pseudo
 			transform.RotateLocal(new Vector3(rotation, rotation, rotation), axes);
 		}
 
-		public static void RotateLocalTowards(this Transform transform, Vector3 targetAngles, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void RotateLocalTowards(this Transform transform, Vector3 targetAngles, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetLocalEulerAngles(transform.localEulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetLocalEulerAngles(transform.localEulerAngles.LerpAnglesLinear(targetAngles, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetLocalEulerAngles(transform.localEulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
 		}
 
-		public static void RotateLocalTowards(this Transform transform, float targetAngle, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void RotateLocalTowards(this Transform transform, float targetAngle, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.RotateLocalTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, interpolation, axes);
+			transform.RotateLocalTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, axes);
 		}
 
 		public static void OscillateLocalEulerAngles(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -224,22 +192,14 @@ namespace Pseudo
 			transform.SetScale(new Vector3(scale, scale, scale), axes);
 		}
 
-		public static void ScaleTowards(this Transform transform, Vector3 targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleTowards(this Transform transform, Vector3 targetScale, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetScale(transform.lossyScale.Lerp(targetScale, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetScale(transform.lossyScale.LerpLinear(targetScale, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetScale(transform.lossyScale.Lerp(targetScale, deltaTime, axes), axes);
 		}
 
-		public static void ScaleTowards(this Transform transform, float targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleTowards(this Transform transform, float targetScale, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.ScaleTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, interpolation, axes);
+			transform.ScaleTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, axes);
 		}
 
 		public static void OscillateScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -277,22 +237,14 @@ namespace Pseudo
 			transform.ScaleLocal(new Vector3(scale, scale, scale), axes);
 		}
 
-		public static void ScaleLocalTowards(this Transform transform, Vector3 targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleLocalTowards(this Transform transform, Vector3 targetScale, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			switch (interpolation)
-			{
-				case InterpolationModes.Quadratic:
-					transform.SetLocalScale(transform.localScale.Lerp(targetScale, deltaTime, axes), axes);
-					break;
-				case InterpolationModes.Linear:
-					transform.SetLocalScale(transform.localScale.LerpLinear(targetScale, deltaTime, axes), axes);
-					break;
-			}
+			transform.SetLocalScale(transform.localScale.Lerp(targetScale, deltaTime, axes), axes);
 		}
 
-		public static void ScaleLocalTowards(this Transform transform, float targetScale, float deltaTime, InterpolationModes interpolation = InterpolationModes.Quadratic, Axes axes = Axes.XYZ)
+		public static void ScaleLocalTowards(this Transform transform, float targetScale, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			transform.ScaleLocalTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, interpolation, axes);
+			transform.ScaleLocalTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, axes);
 		}
 
 		public static void OscillateLocalScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
@@ -390,7 +342,7 @@ namespace Pseudo
 
 		public static Transform[] FindChildren(this Transform parent, string childName, bool recursive = false)
 		{
-			return parent.FindChildren(child => child.name == childName);
+			return parent.FindChildren(child => child.name == childName, recursive);
 		}
 
 		public static Transform[] FindChildren(this Transform parent, Predicate<Transform> predicate, bool recursive = false)

@@ -13,6 +13,7 @@ namespace Pseudo.Internal.Editor
 	{
 		static AudioItem previewItem;
 		static AudioSettingsBase previewSettings;
+		static bool stopPreview;
 
 		public override void OnInspectorGUI()
 		{
@@ -55,10 +56,20 @@ namespace Pseudo.Internal.Editor
 			if (AudioManager.Find() == null || Application.isPlaying)
 				return;
 
-			if (previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)
+			if (stopPreview || previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)
 				StopPreview();
 
 			AudioManager.Instance.ItemManager.Update();
+		}
+
+		static void PlayPreview(AudioSettingsBase settings)
+		{
+			StopPreview();
+			EditorUtility.SetDirty(settings);
+			previewSettings = settings;
+			previewItem = AudioManager.Instance.CreateItem(previewSettings);
+			previewItem.OnStop += item => { stopPreview = true; previewItem = null; };
+			previewItem.Play();
 		}
 
 		static void StopPreview()
@@ -70,8 +81,19 @@ namespace Pseudo.Internal.Editor
 			{
 				previewItem.StopImmediate();
 				previewItem = null;
+			}
+
+			if (previewSettings != null)
+			{
+				EditorUtility.SetDirty(previewSettings);
+				EditorApplication.RepaintProjectWindow();
 				previewSettings = null;
 			}
+
+			if (!Application.isPlaying)
+				PrefabPoolManager.ClearPool(AudioManager.Instance.Reference);
+
+			stopPreview = false;
 		}
 
 		public static void ShowPreviewButton(Rect rect, AudioSettingsBase settings)
@@ -96,15 +118,7 @@ namespace Pseudo.Internal.Editor
 				Selection.activeObject = settings;
 
 				if (previewSettings != settings || (previewItem != null && previewItem.State == AudioItem.AudioStates.Stopping))
-				{
-					StopPreview();
-
-					EditorUtility.SetDirty(settings);
-					previewSettings = settings;
-					previewItem = AudioManager.Instance.CreateItem(previewSettings);
-					previewItem.OnStop += item => { StopPreview(); EditorUtility.SetDirty(settings); EditorApplication.RepaintProjectWindow(); };
-					previewItem.Play();
-				}
+					PlayPreview(settings);
 				else if (previewItem != null)
 					previewItem.Stop();
 				else

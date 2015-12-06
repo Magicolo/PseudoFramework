@@ -7,11 +7,23 @@ using Pseudo;
 
 namespace Pseudo.Internal.Pool
 {
-	public class PoolJanitor : PMonoBehaviour
+	public class PoolJanitor : Singleton<PoolJanitor>
 	{
+		protected override void Awake()
+		{
+			base.Awake();
+
+			PoolUtility.IsPlaying = true;
+		}
+
 		void OnDestroy()
 		{
 			PoolUtility.ClearAllPools();
+		}
+
+		void OnApplicationQuit()
+		{
+			PoolUtility.IsPlaying = false;
 		}
 	}
 }

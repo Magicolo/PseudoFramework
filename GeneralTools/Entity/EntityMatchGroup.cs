@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Entity
 			this.match = match;
 		}
 
-		public EntityGroup GetEntityGroup(ByteFlag groups)
+		public EntityGroup GetEntityGroupByGroup(ByteFlag groups)
 		{
 			EntityGroup entityGroup;
 
@@ -33,10 +33,9 @@ namespace Pseudo.Internal.Entity
 			return entityGroup;
 		}
 
-		public EntityGroup GetEntityGroup(Type[] componentTypes)
+		public EntityGroup GetEntityGroupByComponent(ByteFlag components)
 		{
 			EntityGroup entityGroup;
-			var components = EntityUtility.GetComponentFlags(componentTypes);
 
 			if (!componentGroups.TryGetValue(components, out entityGroup))
 			{

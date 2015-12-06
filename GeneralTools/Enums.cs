@@ -57,12 +57,6 @@ namespace Pseudo
 		PositionRotationScale = 7
 	}
 
-	public enum InterpolationModes
-	{
-		Quadratic,
-		Linear
-	}
-
 	public enum ProbabilityDistributions
 	{
 		Uniform,

@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Entity
 {
 	public class EntityGroup : IEntityGroup
 	{
-		protected static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
+		static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
 
 		public event Action<PEntity> OnEntityAdded;
 		public event Action<PEntity> OnEntityRemoved;
@@ -19,7 +19,7 @@ namespace Pseudo.Internal.Entity
 			get { return readonlyEntities; }
 		}
 
-		readonly List<PEntity> entities = new List<PEntity>(4);
+		readonly List<PEntity> entities = new List<PEntity>(2);
 		readonly IList<PEntity> readonlyEntities;
 		EntityMatchGroup[] subGroups;
 
@@ -28,9 +28,32 @@ namespace Pseudo.Internal.Entity
 			readonlyEntities = entities.AsReadOnly();
 		}
 
-		public IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All)
+		public IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All)
 		{
-			return GetMatchGroup(match).GetEntityGroup(groups);
+			var flag = new ByteFlag();
+			flag[(byte)group] = true;
+
+			return Filter(flag, match);
+		}
+
+		public IEntityGroup Filter(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetEntityGroupByGroup(groups);
+		}
+
+		public IEntityGroup Filter(EntityMatch match)
+		{
+			return Filter(match.Groups, match.Match);
+		}
+
+		public IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetEntityGroupByComponent(EntityUtility.GetComponentFlags(componentType));
+		}
+
+		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetEntityGroupByComponent(EntityUtility.GetComponentFlags(componentTypes));
 		}
 
 		public void Clear()
@@ -49,16 +72,6 @@ namespace Pseudo.Internal.Entity
 			}
 
 			subGroups.Clear();
-		}
-
-		public IEntityGroup Filter(EntityMatch match)
-		{
-			return Filter(match.Groups, match.Match);
-		}
-
-		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
-		{
-			return GetMatchGroup(match).GetEntityGroup(componentTypes);
 		}
 
 		public void UpdateEntity(PEntity entity)

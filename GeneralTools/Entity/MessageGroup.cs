@@ -41,7 +41,12 @@ namespace Pseudo.Internal.Entity
 				var enumerator = messagers.GetEnumerator();
 
 				while (enumerator.MoveNext())
-					((MessagerBase<T>)enumerator.Current.Value).SendMessage(enumerator.Current.Key, argument);
+				{
+					if (enumerator.Current.Value is MessagerBase<T>)
+						((MessagerBase<T>)enumerator.Current.Value).SendMessage(enumerator.Current.Key, argument);
+					else
+						enumerator.Current.Value.SendMessage(enumerator.Current.Key);
+				}
 
 				enumerator.Dispose();
 			}

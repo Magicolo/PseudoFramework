@@ -29,13 +29,13 @@ namespace Pseudo
 		{
 			base.Awake();
 
-			TimeChannels[] channelValues = (TimeChannels[])Enum.GetValues(typeof(TimeChannels));
+			var channelValues = (TimeChannels[])Enum.GetValues(typeof(TimeChannels));
 			channels = new List<TimeChannel>(channelValues.Length);
 
 			for (int i = 0; i < channelValues.Length; i++)
 			{
-				TimeChannels channelValue = channelValues[i];
-				TimeChannel channel = CreateChannel(channelValue);
+				var channelValue = channelValues[i];
+				var channel = CreateChannel(channelValue);
 				channels.Add(channel);
 			}
 		}

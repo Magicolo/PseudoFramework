@@ -13,7 +13,7 @@ namespace Pseudo
 {
 	public static class TypePoolManager
 	{
-		static readonly Dictionary<Type, Pool> pools = new Dictionary<Type, Pool>(16);
+		static readonly Dictionary<Type, Pool> pools = new Dictionary<Type, Pool>(8);
 
 		public static int StartSize = 2;
 
@@ -31,6 +31,11 @@ namespace Pseudo
 			var instance = pool.Create();
 
 			return instance;
+		}
+
+		public static T CreateCopy<T>(T reference) where T : class, ICopyable
+		{
+			return (T)CreateCopy((ICopyable)reference);
 		}
 
 		public static ICopyable CreateCopy(ICopyable reference)
@@ -55,7 +60,7 @@ namespace Pseudo
 				Array.Resize(ref targets, sources.Length);
 
 			for (int i = 0; i < targets.Length; i++)
-				targets[i] = (T)CreateCopy(sources[i]);
+				targets[i] = CreateCopy(sources[i]);
 		}
 
 		public static void CreateCopies<T>(List<T> targets, IList<T> sources) where T : class, ICopyable
@@ -69,7 +74,7 @@ namespace Pseudo
 				targets.Clear();
 
 			for (int i = 0; i < targets.Count; i++)
-				targets.Add((T)CreateCopy(sources[i]));
+				targets.Add(CreateCopy(sources[i]));
 		}
 
 		public static void CreateElements<T>(IList<T> elements) where T : class, ICopyable
@@ -78,7 +83,7 @@ namespace Pseudo
 				return;
 
 			for (int i = 0; i < elements.Count; i++)
-				elements[i] = (T)CreateCopy(elements[i]);
+				elements[i] = CreateCopy(elements[i]);
 		}
 
 		public static void Recycle(object instance)

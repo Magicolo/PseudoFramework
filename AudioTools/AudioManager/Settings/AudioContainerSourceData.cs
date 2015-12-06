@@ -17,7 +17,6 @@ namespace Pseudo.Internal.Audio
 
 		public virtual void OnRecycle()
 		{
-			PrefabPoolManager.Recycle(ref Settings);
 			TypePoolManager.RecycleElements(Options);
 		}
 

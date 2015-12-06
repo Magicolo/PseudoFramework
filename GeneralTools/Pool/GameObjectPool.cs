@@ -35,6 +35,13 @@ namespace Pseudo.Internal.Pool
 			return instance;
 		}
 
+		public override void Clear()
+		{
+			base.Clear();
+
+			Pseudo.ObjectExtensions.Destroy(GameObject);
+		}
+
 		protected override void Enqueue(object instance, bool initialize)
 		{
 			base.Enqueue(instance, initialize);

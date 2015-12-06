@@ -230,6 +230,16 @@ namespace Pseudo
 			set { flags[Convert.ToByte(value)] = value; }
 		}
 
+		public void Add(T flag)
+		{
+			flags[Convert.ToByte(flag)] = true;
+		}
+
+		public void Remove(T flag)
+		{
+			flags[Convert.ToByte(flag)] = false;
+		}
+
 		public override int GetHashCode()
 		{
 			return flags.GetHashCode();
@@ -281,9 +291,29 @@ namespace Pseudo
 			return new ByteFlag<T>(a.flags | b.flags);
 		}
 
+		public static ByteFlag<T> operator |(ByteFlag a, ByteFlag<T> b)
+		{
+			return new ByteFlag<T>(a | b.flags);
+		}
+
+		public static ByteFlag<T> operator |(ByteFlag<T> a, ByteFlag b)
+		{
+			return new ByteFlag<T>(a.flags | b);
+		}
+
 		public static ByteFlag<T> operator &(ByteFlag<T> a, ByteFlag<T> b)
 		{
 			return new ByteFlag<T>(a.flags & b.flags);
+		}
+
+		public static ByteFlag<T> operator &(ByteFlag a, ByteFlag<T> b)
+		{
+			return new ByteFlag<T>(a & b.flags);
+		}
+
+		public static ByteFlag<T> operator &(ByteFlag<T> a, ByteFlag b)
+		{
+			return new ByteFlag<T>(a.flags & b);
 		}
 
 		public static ByteFlag<T> operator ^(ByteFlag<T> a, ByteFlag<T> b)
@@ -291,14 +321,44 @@ namespace Pseudo
 			return new ByteFlag<T>(a.flags ^ b.flags);
 		}
 
+		public static ByteFlag<T> operator ^(ByteFlag a, ByteFlag<T> b)
+		{
+			return new ByteFlag<T>(a ^ b.flags);
+		}
+
+		public static ByteFlag<T> operator ^(ByteFlag<T> a, ByteFlag b)
+		{
+			return new ByteFlag<T>(a.flags ^ b);
+		}
+
 		public static bool operator ==(ByteFlag<T> a, ByteFlag<T> b)
 		{
 			return a.flags == b.flags;
 		}
 
+		public static bool operator ==(ByteFlag a, ByteFlag<T> b)
+		{
+			return a == b.flags;
+		}
+
+		public static bool operator ==(ByteFlag<T> a, ByteFlag b)
+		{
+			return a.flags == b;
+		}
+
 		public static bool operator !=(ByteFlag<T> a, ByteFlag<T> b)
 		{
 			return a.flags != b.flags;
+		}
+
+		public static bool operator !=(ByteFlag a, ByteFlag<T> b)
+		{
+			return a != b.flags;
+		}
+
+		public static bool operator !=(ByteFlag<T> a, ByteFlag b)
+		{
+			return a.flags != b;
 		}
 
 		public static implicit operator ByteFlag(ByteFlag<T> a)

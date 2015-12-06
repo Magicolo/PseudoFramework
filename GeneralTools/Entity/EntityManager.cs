@@ -17,6 +17,11 @@ namespace Pseudo
 
 		static readonly EntityGroup masterGroup = new EntityGroup();
 
+		public static IEntityGroup GetEntityGroup(EntityGroups group, EntityMatches match = EntityMatches.All)
+		{
+			return masterGroup.Filter(group, match);
+		}
+
 		public static IEntityGroup GetEntityGroup(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All)
 		{
 			return masterGroup.Filter(groups, match);
@@ -25,6 +30,11 @@ namespace Pseudo
 		public static IEntityGroup GetEntityGroup(EntityMatch match)
 		{
 			return masterGroup.Filter(match);
+		}
+
+		public static IEntityGroup GetEntityGroup(Type componentType, EntityMatches match = EntityMatches.All)
+		{
+			return masterGroup.Filter(componentType, match);
 		}
 
 		public static IEntityGroup GetEntityGroup(Type[] componentTypes, EntityMatches match = EntityMatches.All)

@@ -12,7 +12,9 @@ namespace Pseudo
 		IList<PEntity> Entities { get; }
 
 		IEntityGroup Filter(EntityMatch match);
-		IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All);
-		IEntityGroup Filter(Type[] types, EntityMatches match = EntityMatches.All);
+		IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All);
+		IEntityGroup Filter(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All);
+		IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All);
+		IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All);
 	}
 }
