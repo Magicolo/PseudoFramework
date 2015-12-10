@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Pool
 			List
 		}
 
-		public static bool IsPlaying;
+		public static bool IsPlaying { get; set; }
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
 
@@ -127,11 +127,11 @@ namespace Pseudo.Internal.Pool
 				throw new InitializationCycleException(field);
 
 			if (value is IList)
-				return new PoolArraySetter(field, GetElementSetters((IList)value, field, toIgnore));
+				return new PoolArraySetter(field, value.GetType(), GetElementSetters((IList)value, field, toIgnore));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
 				toIgnore.Add(value);
-				return new PoolContentSetter(field, GetSetters(value, toIgnore));
+				return new PoolContentSetter(field, value.GetType(), GetSetters(value, toIgnore));
 			}
 			else
 				return new PoolSetter(field, value);
@@ -157,7 +157,7 @@ namespace Pseudo.Internal.Pool
 			if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
 				toIgnore.Add(element);
-				return new PoolElementContentSetter(GetSetters(element, toIgnore));
+				return new PoolElementContentSetter(element.GetType(), GetSetters(element, toIgnore));
 			}
 			else
 				return new PoolElementSetter(element);

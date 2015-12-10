@@ -16,6 +16,8 @@ namespace Pseudo
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
+		public Transform Transform { get { return CachedTransform; } }
+		public GameObject GameObject { get { return CachedGameObject; } }
 		public ByteFlag<EntityGroups> Group
 		{
 			get { return group; }
@@ -291,6 +293,8 @@ namespace Pseudo
 
 			if (component is PComponent)
 				((PComponent)component).Entity = this;
+			else
+				EntityUtility.SetEntity(component, this);
 
 			allComponents.Add(component);
 

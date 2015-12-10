@@ -504,7 +504,7 @@ namespace Pseudo.Internal.Editor
 			DropFoldout<T>(showable, false, label, null, dropCallback);
 		}
 
-		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, bool disableOnPlay = true, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
+		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, bool disableOnPlay = true, bool showElementBox = false, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
 		{
 			if (foldoutDrawer == null)
 				AddFoldOut(arrayProperty, -1, label, style, disableOnPlay, addCallback);
@@ -519,6 +519,9 @@ namespace Pseudo.Internal.Editor
 				{
 					SerializedProperty elementProperty = arrayProperty.GetArrayElementAtIndex(i);
 
+					if (showElementBox)
+						BeginBox();
+
 					Rect rect = EditorGUI.IndentedRect(EditorGUILayout.BeginVertical());
 					rect.width += EditorGUI.indentLevel * 2f;
 
@@ -527,7 +530,7 @@ namespace Pseudo.Internal.Editor
 
 					EditorGUI.BeginDisabledGroup(disableOnPlay && Application.isPlaying);
 
-					if (GUI.Button(new Rect(rect.x + rect.width - 18f, rect.y, 16f, 16f), "−".ToGUIContent(), buttonStyle))
+					if (GUI.Button(new Rect(rect.x + rect.width - 18f, rect.y + 1f, 16f, 16f), "−".ToGUIContent(), buttonStyle))
 					{
 						DeleteFromArray(arrayProperty, i, deleteCallback);
 						break;
@@ -544,6 +547,9 @@ namespace Pseudo.Internal.Editor
 						elementDrawer(arrayProperty, i, elementProperty);
 
 					EditorGUILayout.EndVertical();
+
+					if (showElementBox)
+						EndBox();
 				}
 
 				EditorGUI.indentLevel--;

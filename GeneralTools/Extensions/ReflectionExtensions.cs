@@ -19,12 +19,12 @@ namespace Pseudo.Internal
 
 		public static MemberInfo GetMemberInfo(this object obj, string memberName)
 		{
-			FieldInfo field = obj.GetType().GetField(memberName, AllFlags);
+			var field = obj.GetType().GetField(memberName, AllFlags);
 
 			if (field != null)
 				return field;
 
-			PropertyInfo property = obj.GetType().GetProperty(memberName, AllFlags);
+			var property = obj.GetType().GetProperty(memberName, AllFlags);
 
 			if (property != null)
 				return property;

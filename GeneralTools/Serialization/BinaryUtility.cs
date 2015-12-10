@@ -4,13 +4,14 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using System.IO;
 
 namespace Pseudo.Internal
 {
 	public static class BinaryUtility
 	{
-		static Dictionary<short, IBinarySerializer> idSerializers;
-		static Dictionary<short, IBinarySerializer> IdSerializers
+		static Dictionary<ushort, IBinarySerializer> idSerializers;
+		static Dictionary<ushort, IBinarySerializer> IdSerializers
 		{
 			get
 			{
@@ -51,6 +52,7 @@ namespace Pseudo.Internal
 			Decimal = 13,
 			Char = 14,
 			String = 15,
+			Type = 16,
 			Vector2 = 100,
 			Vector3 = 101,
 			Vector4 = 102,
@@ -61,28 +63,7 @@ namespace Pseudo.Internal
 			AnimationCurve = 107,
 			Keyframe = 108,
 			Array = 200,
-		}
-
-		public static bool IsSupported(object value)
-		{
-			TypeCodes typeCode = ToTypeCode(value);
-
-			switch (typeCode)
-			{
-				case TypeCodes.Other:
-					return TypeSerializers.ContainsKey(value.GetType());
-				case TypeCodes.Array:
-					var array = (Array)value;
-
-					for (int i = 0; i < array.Length; i++)
-					{
-						if (!IsSupported(array.GetValue(i)))
-							return false;
-					}
-					break;
-			}
-
-			return true;
+			List = 201
 		}
 
 		public static TypeCodes ToTypeCode(Type type)
@@ -117,6 +98,8 @@ namespace Pseudo.Internal
 				return TypeCodes.Char;
 			else if (type == typeof(string))
 				return TypeCodes.String;
+			else if (type == typeof(Type))
+				return TypeCodes.Type;
 			else if (type == typeof(Vector2))
 				return TypeCodes.Vector2;
 			else if (type == typeof(Vector3))
@@ -137,6 +120,8 @@ namespace Pseudo.Internal
 				return TypeCodes.Keyframe;
 			else if (type.IsArray)
 				return TypeCodes.Array;
+			else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(List<>))
+				return TypeCodes.List;
 			else
 				return TypeCodes.Other;
 		}
@@ -146,15 +131,110 @@ namespace Pseudo.Internal
 			return ToTypeCode(value == null ? null : value.GetType());
 		}
 
+		public static Type ToType(TypeCodes typeCode)
+		{
+			Type type = null;
+
+			switch (typeCode)
+			{
+				case TypeCodes.Bool:
+					type = typeof(bool);
+					break;
+				case TypeCodes.SByte:
+					type = typeof(sbyte);
+					break;
+				case TypeCodes.Byte:
+					type = typeof(byte);
+					break;
+				case TypeCodes.Int16:
+					type = typeof(short);
+					break;
+				case TypeCodes.UInt16:
+					type = typeof(ushort);
+					break;
+				case TypeCodes.Int32:
+					type = typeof(int);
+					break;
+				case TypeCodes.UInt32:
+					type = typeof(uint);
+					break;
+				case TypeCodes.Int64:
+					type = typeof(long);
+					break;
+				case TypeCodes.UInt64:
+					type = typeof(ulong);
+					break;
+				case TypeCodes.Single:
+					type = typeof(float);
+					break;
+				case TypeCodes.Double:
+					type = typeof(double);
+					break;
+				case TypeCodes.Decimal:
+					type = typeof(decimal);
+					break;
+				case TypeCodes.Char:
+					type = typeof(char);
+					break;
+				case TypeCodes.String:
+					type = typeof(string);
+					break;
+				case TypeCodes.Type:
+					type = typeof(Type);
+					break;
+				case TypeCodes.Vector2:
+					type = typeof(Vector2);
+					break;
+				case TypeCodes.Vector3:
+					type = typeof(Vector3);
+					break;
+				case TypeCodes.Vector4:
+					type = typeof(Vector4);
+					break;
+				case TypeCodes.Color:
+					type = typeof(Color);
+					break;
+				case TypeCodes.Quaternion:
+					type = typeof(Quaternion);
+					break;
+				case TypeCodes.Rect:
+					type = typeof(Rect);
+					break;
+				case TypeCodes.Bounds:
+					type = typeof(Bounds);
+					break;
+				case TypeCodes.AnimationCurve:
+					type = typeof(AnimationCurve);
+					break;
+				case TypeCodes.Keyframe:
+					type = typeof(Keyframe);
+					break;
+			}
+
+			return type;
+		}
+
+		public static bool IsGenericTypeCode(TypeCodes typeCode)
+		{
+			return typeCode == TypeCodes.Array || typeCode == TypeCodes.List;
+		}
+
+		public static bool IsReferenceTypeCode(TypeCodes typeCode)
+		{
+			return typeCode == TypeCodes.Type || typeCode == TypeCodes.AnimationCurve || typeCode == TypeCodes.Array || typeCode == TypeCodes.List;
+		}
+
 		public static IBinarySerializer GetSerializer(Type type)
 		{
 			IBinarySerializer serializer;
-			TypeSerializers.TryGetValue(type, out serializer);
+
+			if (!TypeSerializers.TryGetValue(type, out serializer) && !(typeof(IEnumerable).IsAssignableFrom(type)))
+				return ObjectSerializer.Instance;
 
 			return serializer;
 		}
 
-		public static IBinarySerializer GetSerializer(short typeIdentifier)
+		public static IBinarySerializer GetSerializer(ushort typeIdentifier)
 		{
 			IBinarySerializer serializer;
 			IdSerializers.TryGetValue(typeIdentifier, out serializer);
@@ -162,15 +242,10 @@ namespace Pseudo.Internal
 			return serializer;
 		}
 
-		public static BinarySerializer<T> GetSerializer<T>()
-		{
-			return (BinarySerializer<T>)GetSerializer(typeof(T));
-		}
-
 		static void InitializeSerializers()
 		{
 			typeSerializers = new Dictionary<Type, IBinarySerializer>();
-			idSerializers = new Dictionary<short, IBinarySerializer>();
+			idSerializers = new Dictionary<ushort, IBinarySerializer>();
 
 			var types = typeof(IBinarySerializer).GetAssignableTypes();
 

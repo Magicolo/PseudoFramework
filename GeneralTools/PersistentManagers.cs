@@ -17,6 +17,12 @@ namespace Pseudo
 
 		protected override void Awake()
 		{
+			if (Instance != null)
+			{
+				CachedGameObject.Destroy();
+				return;
+			}
+
 			base.Awake();
 
 			CreateManager(AudioManager);
