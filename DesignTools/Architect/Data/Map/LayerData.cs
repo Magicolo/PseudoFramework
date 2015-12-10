@@ -15,11 +15,18 @@ namespace Pseudo
 
         TileData[] tiles;
 
-        public LayerData(int layerWidth, int layerheight)
+        public Transform layerTransform;
+
+        public LayerData(Transform parent, string name, int layerWidth, int layerheight)
         {
             LayerWidth = layerWidth;
             LayerHeight = layerheight;
             tiles = new TileData[layerWidth * LayerHeight];
+            tiles.Fill(TileData.Empty);
+
+            GameObject gameObject = new GameObject(name);
+            gameObject.transform.parent = parent;
+            layerTransform = gameObject.transform;
         }
 
         public TileData this[int x, int y]
@@ -36,15 +43,35 @@ namespace Pseudo
             }
             set { tiles[point.X + point.Y * LayerWidth] = value; }
         }
+
+        /// <summary>
+        /// After a Destroy, this instance is unusable, a new instance must be instanciated.
+        /// </summary>
+        public void DestroyAllAndClear()
+        {
+            if (tiles == null) return;
+            for (int i = 0; i < tiles.Length; i++)
+            {
+                tiles[i].GameObject.Destroy();
+            }
+            layerTransform.gameObject.Destroy();
+        }
+
         public bool IsInArrayBound(int x, int y)
         {
-            return x.IsBetween(0, LayerWidth) && y.IsBetween(0, LayerHeight);
+            return x.IsBetweenInclusive(0, LayerWidth) && y.IsBetweenInclusive(0, LayerHeight);
         }
 
         public bool IsInArrayBound(Vector2 vector2)
         {
             return IsInArrayBound((int)vector2.x, (int)vector2.y);
         }
-    }
 
+        public int Count
+        {
+            get { return tiles.Length; }
+        }
+    }
 }
+
+

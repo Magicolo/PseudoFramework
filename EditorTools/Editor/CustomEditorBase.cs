@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using Pseudo.Internal;
 using UnityEngine;
 using UnityEditor;
