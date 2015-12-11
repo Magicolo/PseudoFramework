@@ -54,7 +54,7 @@ namespace Pseudo
 			return matches;
 		}
 
-		public static bool Matches(PEntity entity, ByteFlag components, EntityMatches match)
+		public static bool Matches(IEntity entity, ByteFlag components, EntityMatches match)
 		{
 			bool matches = false;
 
@@ -77,7 +77,7 @@ namespace Pseudo
 			return matches;
 		}
 
-		static bool MatchesAll(PEntity entity, ByteFlag components)
+		static bool MatchesAll(IEntity entity, ByteFlag components)
 		{
 			for (byte i = 0; i < EntityUtility.IdCount; i++)
 			{
@@ -88,7 +88,7 @@ namespace Pseudo
 			return true;
 		}
 
-		static bool MatchesAny(PEntity entity, ByteFlag components)
+		static bool MatchesAny(IEntity entity, ByteFlag components)
 		{
 			for (byte i = 0; i < EntityUtility.IdCount; i++)
 			{
@@ -99,7 +99,7 @@ namespace Pseudo
 			return false;
 		}
 
-		static bool MatchesNone(PEntity entity, ByteFlag components)
+		static bool MatchesNone(IEntity entity, ByteFlag components)
 		{
 			for (byte i = 0; i < EntityUtility.IdCount; i++)
 			{
@@ -110,7 +110,7 @@ namespace Pseudo
 			return true;
 		}
 
-		static bool MatchesExact(PEntity entity, ByteFlag components)
+		static bool MatchesExact(IEntity entity, ByteFlag components)
 		{
 			for (byte i = 0; i < EntityUtility.IdCount; i++)
 			{

@@ -11,8 +11,7 @@ using Pseudo.Internal.Entity;
 namespace Pseudo
 {
 	[DisallowMultipleComponent]
-	[AddComponentMenu("Pseudo/General/Entity")]
-	public class PEntity : PMonoBehaviour, IEntity, IPoolInitializable
+	public class PEntityOld : PMonoBehaviour, IEntityOld, IPoolInitializable
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
@@ -24,12 +23,12 @@ namespace Pseudo
 			set
 			{
 				group = value;
-				EntityManager.UpdateEntity(this);
+				//EntityManager.UpdateEntity(this);
 			}
 		}
 
-		readonly Dictionary<Type, ComponentGroup> componentGroups = new Dictionary<Type, ComponentGroup>();
-		readonly Dictionary<byte, MessageGroup> messageGroups = new Dictionary<byte, MessageGroup>();
+		readonly Dictionary<Type, ComponentGroupOld> componentGroups = new Dictionary<Type, ComponentGroupOld>();
+		readonly Dictionary<byte, MessageGroupOld> messageGroups = new Dictionary<byte, MessageGroupOld>();
 
 		[InitializeContent, NonSerialized]
 		List<Component> allComponents = new List<Component>(8);
@@ -179,7 +178,7 @@ namespace Pseudo
 
 		protected virtual void OnDestroy()
 		{
-			EntityManager.UnregisterEntity(this);
+			//EntityManager.UnregisterEntity(this);
 		}
 
 		protected virtual void Reset()
@@ -192,7 +191,7 @@ namespace Pseudo
 			if (OnComponentAdded != null)
 				OnComponentAdded(component);
 
-			EntityManager.UpdateEntity(this);
+			//EntityManager.UpdateEntity(this);
 		}
 
 		protected virtual void RaiseOnComponentRemovedEvent(Component component)
@@ -200,7 +199,7 @@ namespace Pseudo
 			if (OnComponentRemoved != null)
 				OnComponentRemoved(component);
 
-			EntityManager.UpdateEntity(this);
+			//EntityManager.UpdateEntity(this);
 		}
 
 		public override void OnCreate()
@@ -208,7 +207,7 @@ namespace Pseudo
 			base.OnCreate();
 
 			InitializeComponents();
-			EntityManager.RegisterEntity(this);
+			//EntityManager.RegisterEntity(this);
 
 			for (int i = 0; i < allComponents.Count; i++)
 			{
@@ -223,7 +222,7 @@ namespace Pseudo
 		{
 			base.OnRecycle();
 
-			EntityManager.UnregisterEntity(this);
+			//EntityManager.UnregisterEntity(this);
 
 			for (int i = 0; i < allComponents.Count; i++)
 			{
@@ -234,10 +233,10 @@ namespace Pseudo
 			}
 		}
 
-		ComponentGroup GetComponentGroup(Type type)
+		ComponentGroupOld GetComponentGroup(Type type)
 		{
 			InitializeComponents();
-			ComponentGroup group;
+			ComponentGroupOld group;
 
 			if (!componentGroups.TryGetValue(type, out group))
 			{
@@ -248,14 +247,14 @@ namespace Pseudo
 			return group;
 		}
 
-		ComponentGroup GetComponentGroup<T>()
+		ComponentGroupOld GetComponentGroup<T>()
 		{
 			return GetComponentGroup(typeof(T));
 		}
 
-		ComponentGroup CreateComponentGroup(Type type)
+		ComponentGroupOld CreateComponentGroup(Type type)
 		{
-			var group = new ComponentGroup(type);
+			var group = new ComponentGroupOld(type);
 
 			for (int i = 0; i < allComponents.Count; i++)
 				group.TryAddComponent(allComponents[i]);
@@ -263,9 +262,9 @@ namespace Pseudo
 			return group;
 		}
 
-		MessageGroup GetMessageGroup(EntityMessages message)
+		MessageGroupOld GetMessageGroup(EntityMessages message)
 		{
-			MessageGroup group;
+			MessageGroupOld group;
 
 			if (!messageGroups.TryGetValue((byte)message, out group))
 			{
@@ -276,9 +275,9 @@ namespace Pseudo
 			return group;
 		}
 
-		MessageGroup CreateMessageGroup(EntityMessages message)
+		MessageGroupOld CreateMessageGroup(EntityMessages message)
 		{
-			var group = new MessageGroup(message.ToString());
+			var group = new MessageGroupOld(message.ToString());
 
 			for (int i = 0; i < allComponents.Count; i++)
 				group.TryAddComponent(allComponents[i]);
@@ -288,13 +287,13 @@ namespace Pseudo
 
 		void AddComponent(Component component, bool raiseEvent)
 		{
-			if (component is PEntity)
+			if (component is PEntityOld)
 				return;
 
 			if (component is PComponent)
 				((PComponent)component).Entity = this;
-			else
-				EntityUtility.SetEntity(component, this);
+			//else
+			//	EntityUtility.SetEntity(component, this);
 
 			allComponents.Add(component);
 

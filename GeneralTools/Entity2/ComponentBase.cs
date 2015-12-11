@@ -4,12 +4,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo2;
 
-namespace Pseudo2
+namespace Pseudo
 {
-	public abstract class ComponentBase : IComponent
+	public abstract class ComponentBase : IComponent, IPoolable
 	{
 		public IEntity Entity { get; set; }
+		public bool Active
+		{
+			get { return active; }
+			set { active = value; }
+		}
+
+		[SerializeField, HideInInspector]
+		bool active = true;
+
+		public virtual void OnCreate() { }
+
+		public virtual void OnRecycle() { }
 	}
 }

@@ -12,21 +12,15 @@ namespace Pseudo.Internal.Entity
 	{
 		static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
 
-		public event Action<PEntity> OnEntityAdded;
-		public event Action<PEntity> OnEntityRemoved;
-		public IList<PEntity> Entities
+		public event Action<IEntity> OnEntityAdded;
+		public event Action<IEntity> OnEntityRemoved;
+		public IList<IEntity> Entities
 		{
-			get { return readonlyEntities; }
+			get { return entities; }
 		}
 
-		readonly List<PEntity> entities = new List<PEntity>(2);
-		readonly IList<PEntity> readonlyEntities;
+		readonly List<IEntity> entities = new List<IEntity>(2);
 		EntityMatchGroup[] subGroups;
-
-		public EntityGroup()
-		{
-			readonlyEntities = entities.AsReadOnly();
-		}
 
 		public IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All)
 		{
@@ -74,7 +68,7 @@ namespace Pseudo.Internal.Entity
 			subGroups.Clear();
 		}
 
-		public void UpdateEntity(PEntity entity)
+		public void UpdateEntity(IEntity entity)
 		{
 			if (subGroups != null)
 			{
@@ -88,7 +82,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void RegisterEntity(PEntity entity)
+		public void RegisterEntity(IEntity entity)
 		{
 			if (!entities.Contains(entity))
 			{
@@ -108,7 +102,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void UnregisterEntity(PEntity entity)
+		public void UnregisterEntity(IEntity entity)
 		{
 			if (entities.Remove(entity))
 			{
@@ -143,13 +137,13 @@ namespace Pseudo.Internal.Entity
 			return matchGroup;
 		}
 
-		protected virtual void RaiseOnEntityAdded(PEntity entity)
+		protected virtual void RaiseOnEntityAdded(IEntity entity)
 		{
 			if (OnEntityAdded != null)
 				OnEntityAdded(entity);
 		}
 
-		protected virtual void RaiseOnEntityRemoved(PEntity entity)
+		protected virtual void RaiseOnEntityRemoved(IEntity entity)
 		{
 			if (OnEntityRemoved != null)
 				OnEntityRemoved(entity);

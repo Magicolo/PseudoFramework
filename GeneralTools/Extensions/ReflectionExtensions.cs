@@ -88,17 +88,24 @@ namespace Pseudo.Internal
 
 		public static MemberInfo GetMemberInfoAtPath(this object obj, string memberPath)
 		{
-			string[] pathSplit = memberPath.Split('.');
+			int offset = 0;
+			int separatorIndex = memberPath.IndexOf('.');
 
-			if (pathSplit.Length <= 1)
-				return obj.GetMemberInfo(pathSplit.Pop(out pathSplit));
+			if (separatorIndex == -1)
+				return obj.GetMemberInfo(memberPath);
 
-			object value = obj.GetValueFromMember(pathSplit.Pop(out pathSplit));
+			var value = obj.GetValueFromMember(memberPath.Substring(offset, separatorIndex - offset));
+			offset = separatorIndex + 1;
 
-			while (pathSplit.Length > 1)
-				value = value.GetValueFromMember(pathSplit.Pop(out pathSplit));
+			separatorIndex = memberPath.IndexOf('.', offset);
+			while (separatorIndex != -1)
+			{
+				value = value.GetValueFromMember(memberPath.Substring(offset, separatorIndex - offset));
+				offset = separatorIndex + 1;
+				separatorIndex = memberPath.IndexOf('.', offset);
+			}
 
-			return value.GetMemberInfo(pathSplit.Pop(out pathSplit));
+			return value.GetMemberInfo(memberPath.Substring(offset));
 		}
 
 		public static T GetValueFromMember<T>(this object obj, string memberName)
@@ -111,7 +118,7 @@ namespace Pseudo.Internal
 			if (obj is IList)
 				return ((IList)obj)[int.Parse(memberName)];
 
-			MemberInfo member = obj.GetMemberInfo(memberName);
+			var member = obj.GetMemberInfo(memberName);
 
 			return member.GetMemberValue(obj);
 		}
@@ -123,8 +130,8 @@ namespace Pseudo.Internal
 
 		public static object GetValueFromMemberAtPath(this object obj, string memberPath)
 		{
-			MemberInfo member = obj.GetMemberInfoAtPath(memberPath);
-			string[] pathSplit = memberPath.Split('.');
+			var member = obj.GetMemberInfoAtPath(memberPath);
+			var pathSplit = memberPath.Split('.');
 
 			if (pathSplit.Length <= 1)
 			{
@@ -154,8 +161,8 @@ namespace Pseudo.Internal
 
 		public static void SetValueToMemberAtPath(this object obj, string memberPath, object value)
 		{
-			MemberInfo member = obj.GetMemberInfoAtPath(memberPath);
-			string[] pathSplit = memberPath.Split('.');
+			var member = obj.GetMemberInfoAtPath(memberPath);
+			var pathSplit = memberPath.Split('.');
 
 			if (pathSplit.Length <= 1)
 			{
@@ -228,6 +235,72 @@ namespace Pseudo.Internal
 		public static string[] GetFieldsAndPropertiesNames(this Type type, params Type[] filter)
 		{
 			return GetFieldsAndPropertiesNames(type, AllFlags, filter);
+		}
+
+		public static object GetValueFromField(this object obj, string fieldName)
+		{
+			return obj.GetType().GetField(fieldName, AllFlags).GetValue(obj);
+		}
+
+		public static object GetValueFromFieldAtPath(this object obj, string path)
+		{
+			int separatorIndex = path.IndexOf('.');
+
+			if (separatorIndex == -1)
+				return obj.GetValueFromField(path);
+
+			object value = obj.GetValueFromField(path.Substring(0, separatorIndex));
+			int offset = 0;
+
+			do
+			{
+				offset = separatorIndex + 1;
+				separatorIndex = path.IndexOf('.', offset);
+				string currentPath;
+
+				if (separatorIndex == -1)
+					currentPath = path.Substring(offset);
+				else
+					currentPath = path.Substring(offset, separatorIndex - offset);
+
+				if (value is IList)
+					value = ((IList)value)[int.Parse(currentPath)];
+				else
+					value = value.GetValueFromField(currentPath);
+			}
+			while (separatorIndex != -1);
+
+			return value;
+		}
+
+		public static void SetValueToField(this object obj, string fieldName, object value)
+		{
+			obj.GetType().GetField(fieldName, AllFlags).SetValue(obj, value);
+		}
+
+		public static void SetValueToFieldAtPath(this object obj, string path, object value)
+		{
+			int separatorIndex = path.IndexOf('.');
+
+			if (separatorIndex == -1)
+				obj.SetValueToField(path, value);
+
+			for (int i = path.Length - 1; i >= 0; i--)
+			{
+				if (path[i] == '.')
+				{
+					separatorIndex = i;
+					break;
+				}
+			}
+
+			object parent = obj.GetValueFromFieldAtPath(path.Substring(0, separatorIndex));
+			string fieldName = path.Substring(separatorIndex + 1);
+
+			if (parent is IList)
+				((IList)parent)[int.Parse(fieldName)] = value;
+			else
+				parent.SetValueToField(fieldName, value);
 		}
 
 		public static bool IsBackingField(this FieldInfo field)

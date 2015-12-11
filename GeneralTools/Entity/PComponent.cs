@@ -9,6 +9,6 @@ namespace Pseudo
 {
 	public class PComponent : PMonoBehaviour
 	{
-		public IEntity Entity { get; set; }
+		public IEntityOld Entity { get; set; }
 	}
 }

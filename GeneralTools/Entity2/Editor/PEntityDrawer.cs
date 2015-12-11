@@ -25,22 +25,8 @@ namespace Pseudo.Internal.Entity
 			EditorGUI.PropertyField(currentPosition, property, GUIContent.none);
 			EndIndent();
 
-			if (errors.Count > 0)
-			{
-				currentPosition.x -= 21f;
-				currentPosition.width = 20f;
-				currentPosition.height = 20f;
-				var errorIcon = new GUIStyle("Wizard Error").normal.background;
-				if (GUI.Button(currentPosition, new GUIContent(errorIcon), new GUIStyle()))
-				{
-					GenericMenu menu = new GenericMenu();
-
-					for (int i = 0; i < errors.Count; i++)
-						menu.AddItem(errors[i], false, () => { });
-
-					menu.DropDown(currentPosition);
-				}
-			}
+			currentPosition.x -= 21f;
+			CustomEditorBase.Errors(currentPosition, errors);
 
 			End();
 		}
@@ -72,7 +58,7 @@ namespace Pseudo.Internal.Entity
 			{
 				var type = attribute.Types[j];
 
-				if (!entity.HasComponent(type))
+				if (type != null && typeof(IComponent).IsAssignableFrom(type) && !entity.HasComponent(type))
 					errors.Add(string.Format("Missing required component: {0}", type.Name).ToGUIContent());
 			}
 		}

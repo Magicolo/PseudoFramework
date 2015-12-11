@@ -8,15 +8,15 @@ using System.Reflection;
 
 namespace Pseudo.Internal.Entity
 {
-	public class MessageGroupOld
+	public class MessageGroup
 	{
 		static readonly Dictionary<string, MessagerGroup> messagerGroups = new Dictionary<string, MessagerGroup>();
 
-		readonly Dictionary<Component, IMessager> messagers = new Dictionary<Component, IMessager>();
+		readonly Dictionary<object, IMessager> messagers = new Dictionary<object, IMessager>();
 
 		string method;
 
-		public MessageGroupOld(string method)
+		public MessageGroup(string method)
 		{
 			this.method = method;
 		}
@@ -52,23 +52,20 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void TryAddComponent(Component component)
+		public void TryAdd(object instance)
 		{
-			if (!(component is PComponent) || messagers.ContainsKey(component))
+			if (messagers.ContainsKey(instance))
 				return;
 
-			var messager = GetMessagerGroup(method).GetMessager(component.GetType());
+			var messager = GetMessagerGroup(method).GetMessager(instance.GetType());
 
 			if (messager != null)
-				messagers[component] = messager;
+				messagers[instance] = messager;
 		}
 
-		public void RemoveComponent(Component component)
+		public void RemoveComponent(object instance)
 		{
-			if (!(component is PComponent))
-				return;
-
-			messagers.Remove(component);
+			messagers.Remove(instance);
 		}
 
 		MessagerGroup GetMessagerGroup(string method)

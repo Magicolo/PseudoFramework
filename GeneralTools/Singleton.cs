@@ -15,7 +15,8 @@ namespace Pseudo
 
 		public static T Find()
 		{
-			instance = FindObjectOfType<T>();
+			if (instance == null)
+				instance = FindObjectOfType<T>();
 
 			return instance;
 		}

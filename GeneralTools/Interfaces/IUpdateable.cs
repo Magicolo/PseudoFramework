@@ -1,14 +1,16 @@
-﻿using Pseudo;
+﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Pseudo;
 
 namespace Pseudo
 {
-	public interface IComponent
+	public interface IUpdateable
 	{
-		IEntity Entity { get; set; }
 		bool Active { get; set; }
+
+		void Update();
 	}
 }

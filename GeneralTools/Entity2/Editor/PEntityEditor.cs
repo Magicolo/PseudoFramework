@@ -10,9 +10,8 @@ using System.Reflection;
 using Pseudo;
 using System.Reflection.Emit;
 using System.Collections;
-using Pseudo2;
 
-namespace Pseudo2.Internal.Entity
+namespace Pseudo.Internal.Entity
 {
 	[CustomEditor(typeof(PEntity)), CanEditMultipleObjects]
 	public class PEntityEditor : CustomEditorBase
@@ -50,13 +49,13 @@ namespace Pseudo2.Internal.Entity
 			base.OnEnable();
 
 			entity = (PEntity)target;
-			InitializeCategories();
 		}
 
 		public override void OnInspectorGUI()
 		{
 			Begin();
 
+			InitializeCategories();
 			ShowGroup();
 			Separator();
 			ShowComponentCategories();
@@ -84,11 +83,25 @@ namespace Pseudo2.Internal.Entity
 				if (i > 0)
 					GUILayout.Space(5f);
 
+				BeginBox(CustomEditorStyles.ColoredBox(new Color(0.5f, 0.5f, 0.5f, 0.25f), 0));
+
 				currentCategory = categories[i];
-				ArrayFoldout(currentCategory.DummyValue, currentCategory.Name.ToGUIContent(), disableOnPlay: false, showElementBox: true, foldoutDrawer: ShowComponentCategoryFoldout, elementDrawer: ShowComponent, deleteCallback: DeleteComponent, reorderCallback: ReorderComponent);
+				ArrayFoldout(currentCategory.DummyValue,
+					currentCategory.Name.ToGUIContent(),
+					disableOnPlay: false,
+					foldoutDrawer: ShowComponentCategoryFoldout,
+					elementDrawer: ShowComponent,
+					onPreElementDraw: OnPreComponent,
+					onPostElementDraw: OnPostComponent,
+					deleteCallback: DeleteComponent,
+					reorderCallback: ReorderComponent);
+
+				GUILayout.Space(4f);
+				EndBox();
 			}
 
-			Separator();
+			if (categories.Length > 0)
+				Separator();
 
 			int index = EditorGUILayout.Popup(0, AddOptions, style);
 			if (EditorGUI.EndChangeCheck() && index > 0)
@@ -109,53 +122,67 @@ namespace Pseudo2.Internal.Entity
 			arrayProperty.isExpanded = currentCategory.IsExpanded;
 		}
 
-		void ShowComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
+		void OnPreComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
 		{
 			currentComponent = currentCategory.Components[index];
+			BeginBox();
 
+			int indent = EditorGUI.indentLevel;
+			EditorGUI.indentLevel = 0;
+			var rect = EditorGUILayout.BeginVertical();
+
+			rect.x += rect.width - 34f;
+			rect.width = 16f;
+			rect.height = 16f;
+
+			currentComponent.Active = GUI.Toggle(rect, currentComponent.Active, "");
+			ShowComponentErrors(rect);
+
+			EditorGUI.indentLevel = indent;
+		}
+
+		void ShowComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
+		{
 			var name = currentComponent.GetTypeName();
 
 			if (name.EndsWith("Component"))
 				name = name.Substring(0, name.Length - "Component".Length);
 
 			ObjectField(name, currentComponent);
-			ShowComponentErrors();
 		}
 
-		void ShowComponentErrors()
+		void OnPostComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
+		{
+			EditorGUILayout.EndVertical();
+			EndBox();
+		}
+
+		void ShowComponentErrors(Rect rect)
 		{
 			var errors = new List<GUIContent>();
-			var position = EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect());
 
 			// Gather errors
-			if (currentComponent.GetType().IsDefined(typeof(RequireComponent), true))
+			if (currentComponent.GetType().IsDefined(typeof(EntityRequiresAttribute), true))
 			{
-				//var requireAttribute = (RequireComponent)currentComponent.GetType().GetCustomAttributes(typeof(RequireComponent), true)[0];
-			}
+				var requireAttribute = (EntityRequiresAttribute)currentComponent.GetType().GetCustomAttributes(typeof(EntityRequiresAttribute), true)[0];
 
-			// Show errors
-			if (errors.Count > 0)
-			{
-				position.x -= 21f;
-				position.width = 20f;
-				position.height = 20f;
-				var errorIcon = new GUIStyle("Wizard Error").normal.background;
-				if (GUI.Button(position, new GUIContent(errorIcon), new GUIStyle()))
+				for (int i = 0; i < requireAttribute.Types.Length; i++)
 				{
-					GenericMenu menu = new GenericMenu();
+					var type = requireAttribute.Types[i];
 
-					for (int i = 0; i < errors.Count; i++)
-						menu.AddItem(errors[i], false, () => { });
-
-					menu.DropDown(position);
+					if (type != null && typeof(IComponent).IsAssignableFrom(type) && !entity.HasComponent(type))
+						errors.Add(string.Format("Missing required component: {0}", type.Name).ToGUIContent());
 				}
 			}
+
+			rect.x -= 21f;
+			rect.y -= 1f;
+			Errors(rect, errors);
 		}
 
 		void AddComponent(Type type)
 		{
-			var component = (IComponent)Activator.CreateInstance(type);
-			entity.AddComponent(component);
+			entity.AddComponent(type);
 			InitializeCategories();
 		}
 
@@ -168,7 +195,7 @@ namespace Pseudo2.Internal.Entity
 
 		void ReorderComponent(SerializedProperty arrayProperty, int sourceIndex, int targetIndex)
 		{
-			entity.GetComponents().Switch(currentCategory.Components[sourceIndex], currentCategory.Components[targetIndex]);
+			entity.GetAllComponents().Switch(currentCategory.Components[sourceIndex], currentCategory.Components[targetIndex]);
 			currentCategory.Components.Switch(sourceIndex, targetIndex);
 			InitializeCategories();
 		}
@@ -181,10 +208,11 @@ namespace Pseudo2.Internal.Entity
 			var dummy = DummyUtility.GetDummy(value.GetType());
 			dummy.Value = value;
 			var serializedDummy = DummyUtility.SerializeDummy(dummy);
+			var dummyValueProperty = serializedDummy.FindProperty("Value");
 
 			EditorGUI.BeginChangeCheck();
 
-			EditorGUILayout.PropertyField(serializedDummy.FindProperty("Value"), name.ToGUIContent(), true);
+			EditorGUILayout.PropertyField(dummyValueProperty, name.ToGUIContent(), true);
 
 			if (EditorGUI.EndChangeCheck())
 			{
@@ -198,7 +226,7 @@ namespace Pseudo2.Internal.Entity
 		void InitializeCategories()
 		{
 			var categoryDict = new Dictionary<string, ComponentCategory>();
-			var components = entity.GetComponents();
+			var components = entity.GetAllComponents();
 
 			for (int i = 0; i < components.Count; i++)
 			{
@@ -221,7 +249,7 @@ namespace Pseudo2.Internal.Entity
 				else
 				{
 					ComponentCategory category;
-					const string categoryName = "\0General";
+					const string categoryName = "\0Uncategorized";
 
 					if (!categoryDict.TryGetValue(categoryName, out category))
 					{
@@ -251,7 +279,7 @@ namespace Pseudo2.Internal.Entity
 			{
 				var type = types[i];
 
-				if (type.IsAbstract || type.IsInterface)
+				if (type.IsAbstract || type.IsInterface || !type.IsDefined(typeof(SerializableAttribute), false))
 					continue;
 
 				var option = type.GetName();
@@ -298,7 +326,6 @@ namespace Pseudo2.Internal.Entity
 				get { return EditorPrefs.GetBool(expandedPrefix + Name); }
 				set { EditorPrefs.SetBool(expandedPrefix + Name, value); }
 			}
-			public bool HasErrors;
 
 			public ComponentCategory(string name, int order)
 			{

@@ -6,10 +6,10 @@ namespace Pseudo
 {
 	public interface IEntityGroup
 	{
-		event Action<PEntity> OnEntityAdded;
-		event Action<PEntity> OnEntityRemoved;
+		event Action<IEntity> OnEntityAdded;
+		event Action<IEntity> OnEntityRemoved;
 
-		IList<PEntity> Entities { get; }
+		IList<IEntity> Entities { get; }
 
 		IEntityGroup Filter(EntityMatch match);
 		IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All);

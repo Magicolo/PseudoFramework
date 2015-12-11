@@ -44,8 +44,7 @@ namespace Pseudo.Internal.Editor
 				EditorGUILayout.Space();
 			}
 
-			Undo.RecordObject(target, string.Format("{0} ({1}) modified.", target.name, target.GetType()));
-
+			//Undo.RegisterCompleteObjectUndo(target, string.Format("{0} ({1}) modified.", target.name, target.GetType()));
 			EditorGUI.BeginChangeCheck();
 
 			serializedObject.Update();
@@ -504,7 +503,7 @@ namespace Pseudo.Internal.Editor
 			DropFoldout<T>(showable, false, label, null, dropCallback);
 		}
 
-		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, bool disableOnPlay = true, bool showElementBox = false, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
+		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, ElementDrawer onPreElementDraw = null, ElementDrawer onPostElementDraw = null, bool disableOnPlay = true, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
 		{
 			if (foldoutDrawer == null)
 				AddFoldOut(arrayProperty, -1, label, style, disableOnPlay, addCallback);
@@ -519,14 +518,16 @@ namespace Pseudo.Internal.Editor
 				{
 					SerializedProperty elementProperty = arrayProperty.GetArrayElementAtIndex(i);
 
-					if (showElementBox)
-						BeginBox();
+					if (onPreElementDraw != null)
+						onPreElementDraw(arrayProperty, i, elementProperty);
 
 					Rect rect = EditorGUI.IndentedRect(EditorGUILayout.BeginVertical());
 					rect.width += EditorGUI.indentLevel * 2f;
 
-					GUIStyle buttonStyle = new GUIStyle("MiniToolbarButtonLeft");
-					buttonStyle.clipping = TextClipping.Overflow;
+					var buttonStyle = new GUIStyle("MiniToolbarButtonLeft")
+					{
+						clipping = TextClipping.Overflow
+					};
 
 					EditorGUI.BeginDisabledGroup(disableOnPlay && Application.isPlaying);
 
@@ -548,8 +549,8 @@ namespace Pseudo.Internal.Editor
 
 					EditorGUILayout.EndVertical();
 
-					if (showElementBox)
-						EndBox();
+					if (onPostElementDraw != null)
+						onPostElementDraw(arrayProperty, i, elementProperty);
 				}
 
 				EditorGUI.indentLevel--;
@@ -1282,6 +1283,25 @@ namespace Pseudo.Internal.Editor
 			for (int i = 0; i < amount; i++)
 			{
 				GUILayout.Label("");
+			}
+		}
+
+		public static void Errors(Rect rect, List<GUIContent> errors)
+		{
+			if (errors.Count > 0)
+			{
+				rect.width = 21f;
+				rect.height = 21f;
+				var errorIcon = new GUIStyle("Wizard Error").normal.background;
+				if (GUI.Button(rect, new GUIContent(errorIcon), new GUIStyle()))
+				{
+					GenericMenu menu = new GenericMenu();
+
+					for (int i = 0; i < errors.Count; i++)
+						menu.AddItem(errors[i], false, () => { });
+
+					menu.DropDown(rect);
+				}
 			}
 		}
 		#endregion

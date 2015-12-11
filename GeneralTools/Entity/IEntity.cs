@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	public interface IEntity
+	public interface IEntityOld
 	{
 		event Action<Component> OnComponentAdded;
 		event Action<Component> OnComponentRemoved;

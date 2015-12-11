@@ -73,7 +73,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void UpdateEntity(PEntity entity)
+		public void UpdateEntity(IEntity entity)
 		{
 			// Entity Groups
 			if (entityGroups.Count > 0)
@@ -108,7 +108,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void RegisterEntity(PEntity entity)
+		public void RegisterEntity(IEntity entity)
 		{
 			// Entity Groups
 			if (entityGroups.Count > 0)
@@ -139,7 +139,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void UnregisterEntity(PEntity entity)
+		public void UnregisterEntity(IEntity entity)
 		{
 			// Entity Groups
 			if (entityGroups.Count > 0)
@@ -164,12 +164,12 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public bool IsEntityGroupValid(PEntity entity, ByteFlag groups)
+		public bool IsEntityGroupValid(IEntity entity, ByteFlag groups)
 		{
 			return EntityMatch.Matches(entity.Group, groups, match);
 		}
 
-		public bool IsEntityComponentsValid(PEntity entity, ByteFlag components)
+		public bool IsEntityComponentsValid(IEntity entity, ByteFlag components)
 		{
 			return EntityMatch.Matches(entity, components, match);
 		}
