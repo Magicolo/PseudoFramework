@@ -45,7 +45,7 @@ namespace Pseudo
 
 		public Component AddComponent(GameObject child, Type type)
 		{
-			Component component = child.AddComponent(type);
+			var component = child.AddComponent(type);
 			AddComponent(component, true);
 
 			AddComponent(typeof(int));
