@@ -48,8 +48,6 @@ namespace Pseudo
 			var component = child.AddComponent(type);
 			AddComponent(component, true);
 
-			AddComponent(typeof(int));
-
 			return component;
 		}
 
