@@ -17,8 +17,10 @@ public class ParticleManager : Singleton<ParticleManager>
 
 		for (int i = 0; i < ParticleEffects.Length; i++)
 		{
-			ParticleEffect particleEffect = ParticleEffects[i];
-			particleEffects[particleEffect.name] = particleEffect;
+			var particleEffect = ParticleEffects[i];
+
+			if (particleEffect != null)
+				particleEffects[particleEffect.name] = particleEffect;
 		}
 	}
 

@@ -2,7 +2,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 namespace Pseudo
 {
@@ -283,25 +286,27 @@ namespace Pseudo
 			return path.StartsWith(relativeTo);
 		}
 
-        /// <summary>
-        /// Return a unique path for the file <i>name</i>.
-        /// If a path is provided, it will use it as a root. 
-        /// If no path is provided, it will look for currently selected item.
-        /// </summary>
-        public static string GenerateUniqueAssetPath(string name, string path = "")
-        {
-            string assetDirectory;
-
-            if (!string.IsNullOrEmpty(path))
-                assetDirectory = Path.GetDirectoryName(path);
-            if (Selection.activeObject == null)
-                assetDirectory = "Assets";
-            else if (Selection.activeObject is DefaultAsset)
-                assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
-            else
-                assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
-
-            return AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
-        }
-    }
+		/// <summary>
+		/// Return a unique path for the file <i>name</i>.
+		/// If a path is provided, it will use it as a root. 
+		/// If no path is provided, it will look for currently selected item.
+		/// </summary>
+		public static string GenerateUniqueAssetPath(string name, string path = "")
+		{
+			string uniquePath = "";
+#if UNITY_EDITOR
+			string assetDirectory = "";
+			if (!string.IsNullOrEmpty(path))
+				assetDirectory = Path.GetDirectoryName(path);
+			if (Selection.activeObject == null)
+				assetDirectory = "Assets";
+			else if (Selection.activeObject is DefaultAsset)
+				assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
+			else
+				assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
+			uniquePath = AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+#endif
+			return uniquePath;
+		}
+	}
 }

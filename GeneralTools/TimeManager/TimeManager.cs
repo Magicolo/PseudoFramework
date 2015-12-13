@@ -15,7 +15,8 @@ namespace Pseudo
 			UI,
 			World,
 			Player,
-			Enemy
+			Enemy,
+			Particle
 		}
 
 		public static TimeChannel Unity { get { return GetChannel(TimeChannels.Unity); } }
@@ -23,6 +24,7 @@ namespace Pseudo
 		public static TimeChannel World { get { return GetChannel(TimeChannels.World); } }
 		public static TimeChannel Player { get { return GetChannel(TimeChannels.Player); } }
 		public static TimeChannel Enemy { get { return GetChannel(TimeChannels.Enemy); } }
+		public static TimeChannel Particle { get { return GetChannel(TimeChannels.Particle); } }
 		protected static List<TimeChannel> channels;
 
 		protected override void Awake()

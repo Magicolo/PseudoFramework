@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using UnityEditor;
+
 
 namespace Pseudo
 {
@@ -123,7 +123,7 @@ namespace Pseudo
 		public void addTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
 		{
 			if (tileType == null) return;
-			GameObject newTile = (UnityEngine.GameObject)PrefabUtility.InstantiatePrefab(tileType.Prefab);
+			GameObject newTile = GameObject.Instantiate(tileType.Prefab);
 			newTile.transform.SetPosition(worldP);
 			newTile.transform.parent = layer.layerTransform;
 
