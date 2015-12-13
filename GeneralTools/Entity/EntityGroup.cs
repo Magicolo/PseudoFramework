@@ -28,6 +28,24 @@ namespace Pseudo.Internal.Entity
 			readonlyEntities = entities.AsReadOnly();
 		}
 
+		public void BroadcastMessage(EntityMessages message)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message);
+		}
+
+		public void BroadcastMessage(EntityMessages message, object argument)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message, argument);
+		}
+
+		public void BroadcastMessage<T>(EntityMessages message, T argument)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message, argument);
+		}
+
 		public IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All)
 		{
 			var flag = new ByteFlag();

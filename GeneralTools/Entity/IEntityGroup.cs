@@ -11,6 +11,9 @@ namespace Pseudo
 
 		IList<PEntity> Entities { get; }
 
+		void BroadcastMessage(EntityMessages message);
+		void BroadcastMessage(EntityMessages message, object argument);
+		void BroadcastMessage<T>(EntityMessages message, T argument);
 		IEntityGroup Filter(EntityMatch match);
 		IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All);

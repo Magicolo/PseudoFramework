@@ -363,12 +363,32 @@ namespace Pseudo
 			if (initialized)
 				return;
 
-			var components = GetComponentsInChildren<Component>(true);
+			var components = base.GetComponents<Component>();
 
 			for (int i = 0; i < components.Length; i++)
 				AddComponent(components[i], false);
 
+			InitializeChildrenComponents(CachedTransform);
 			initialized = true;
+		}
+
+		void InitializeChildrenComponents(Transform parent)
+		{
+			for (int i = 0; i < parent.childCount; i++)
+			{
+				var child = parent.GetChild(i);
+
+				if (child.GetComponent<IEntity>() != null)
+					continue;
+
+				var components = child.GetComponents<Component>();
+
+				for (int j = 0; j < components.Length; j++)
+					AddComponent(components[j], false);
+
+				if (child.childCount > 0)
+					InitializeChildrenComponents(child);
+			}
 		}
 
 		void IPoolInitializable.OnPrePoolInitialize()
