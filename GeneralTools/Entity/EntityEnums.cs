@@ -11,13 +11,11 @@ namespace Pseudo
 	{
 		Player = 0,
 		Enemy = 1,
-		Building = 2,
 		Weapon = 64,
 		Bullet = 65,
 		Spawner = 128,
 		UI = 192,
-		World = 193,
-		Manager = 224
+		World = 193
 	}
 
 	public enum EntityMessages : byte
@@ -26,10 +24,6 @@ namespace Pseudo
 		OnDamaged = 1,
 		OnCollide = 2,
 		OnDie = 3,
-		OnDeselected = 4,
-		OnGrow = 5,
-		OnMove = 6,
-		OnLevelChanged = 7,
 		Spawn = 64,
 	}
 
