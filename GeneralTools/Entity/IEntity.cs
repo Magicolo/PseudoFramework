@@ -9,8 +9,8 @@ namespace Pseudo
 		event Action<Component> OnComponentAdded;
 		event Action<Component> OnComponentRemoved;
 
-		Transform CachedTransform { get; }
-		GameObject CachedGameObject { get; }
+		Transform Transform { get; }
+		GameObject GameObject { get; }
 		ByteFlag<EntityGroups> Group { get; set; }
 
 		Component AddComponent(Type type);

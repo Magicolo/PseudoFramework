@@ -28,6 +28,11 @@ namespace Pseudo.Internal.Entity
 			return entity;
 		}
 
+		public static void SetEntity(Component component, IEntity entity)
+		{
+			entities[component] = entity;
+		}
+
 		public static byte GetOrAddComponentId(Type componentType)
 		{
 			byte id;

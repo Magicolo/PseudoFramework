@@ -16,6 +16,8 @@ namespace Pseudo
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
+		public Transform Transform { get { return CachedTransform; } }
+		public GameObject GameObject { get { return CachedGameObject; } }
 		public ByteFlag<EntityGroups> Group
 		{
 			get { return group; }
@@ -43,10 +45,8 @@ namespace Pseudo
 
 		public Component AddComponent(GameObject child, Type type)
 		{
-			Component component = child.AddComponent(type);
+			var component = child.AddComponent(type);
 			AddComponent(component, true);
-
-			AddComponent(typeof(int));
 
 			return component;
 		}
@@ -291,6 +291,8 @@ namespace Pseudo
 
 			if (component is PComponent)
 				((PComponent)component).Entity = this;
+			else
+				EntityUtility.SetEntity(component, this);
 
 			allComponents.Add(component);
 
@@ -361,12 +363,32 @@ namespace Pseudo
 			if (initialized)
 				return;
 
-			var components = GetComponentsInChildren<Component>(true);
+			var components = base.GetComponents<Component>();
 
 			for (int i = 0; i < components.Length; i++)
 				AddComponent(components[i], false);
 
+			InitializeChildrenComponents(CachedTransform);
 			initialized = true;
+		}
+
+		void InitializeChildrenComponents(Transform parent)
+		{
+			for (int i = 0; i < parent.childCount; i++)
+			{
+				var child = parent.GetChild(i);
+
+				if (child.GetComponent<IEntity>() != null)
+					continue;
+
+				var components = child.GetComponents<Component>();
+
+				for (int j = 0; j < components.Length; j++)
+					AddComponent(components[j], false);
+
+				if (child.childCount > 0)
+					InitializeChildrenComponents(child);
+			}
 		}
 
 		void IPoolInitializable.OnPrePoolInitialize()

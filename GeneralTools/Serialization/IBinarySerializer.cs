@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -10,9 +10,9 @@ namespace Pseudo.Internal
 {
 	public interface IBinarySerializer
 	{
-		short TypeIdentifier { get; }
+		ushort TypeIdentifier { get; }
 
-		void Serialie(BinaryWriter writer, object instance);
+		void Serialize(BinaryWriter writer, object value);
 		object Deserialize(BinaryReader reader);
 	}
 }

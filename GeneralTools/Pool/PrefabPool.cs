@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -38,7 +38,10 @@ namespace Pseudo.Internal.Pool
 
 		protected override object CreateInstance()
 		{
-			return UnityEngine.Object.Instantiate((UnityEngine.Object)reference);
+			var instance = UnityEngine.Object.Instantiate((UnityEngine.Object)reference);
+			PoolUtility.InitializeFields(instance, setters);
+
+			return instance;
 		}
 	}
 }

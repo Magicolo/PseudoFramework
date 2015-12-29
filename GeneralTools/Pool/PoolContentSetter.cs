@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +11,13 @@ namespace Pseudo.Internal.Pool
 	public class PoolContentSetter : IPoolSetter
 	{
 		readonly FieldInfo field;
+		readonly Type type;
 		readonly List<IPoolSetter> setters;
 
-		public PoolContentSetter(FieldInfo field, List<IPoolSetter> setters)
+		public PoolContentSetter(FieldInfo field, Type type, List<IPoolSetter> setters)
 		{
 			this.field = field;
+			this.type = type;
 			this.setters = setters;
 		}
 
@@ -24,13 +26,10 @@ namespace Pseudo.Internal.Pool
 			if (instance == null)
 				return;
 
-			var value = field.GetValue(instance);
+			var value = field.GetValue(instance) ?? TypePoolManager.Create(type);
 
-			if (value != null)
-			{
-				for (int i = 0; i < setters.Count; i++)
-					setters[i].SetValue(value);
-			}
+			for (int i = 0; i < setters.Count; i++)
+				setters[i].SetValue(value);
 		}
 
 		public override string ToString()

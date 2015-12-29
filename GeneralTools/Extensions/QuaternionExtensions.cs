@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 namespace Pseudo
@@ -33,6 +33,11 @@ namespace Pseudo
 		public static Quaternion Round(this Quaternion quaternion)
 		{
 			return quaternion.Round(1f, Axes.XYZW);
+		}
+
+		public static Vector4 ToVector4(this Quaternion quaternion)
+		{
+			return new Vector4(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 		}
 	}
 }

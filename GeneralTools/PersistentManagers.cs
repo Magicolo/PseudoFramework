@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,6 +17,12 @@ namespace Pseudo
 
 		protected override void Awake()
 		{
+			if (Instance != null)
+			{
+				CachedGameObject.Destroy();
+				return;
+			}
+
 			base.Awake();
 
 			CreateManager(AudioManager);

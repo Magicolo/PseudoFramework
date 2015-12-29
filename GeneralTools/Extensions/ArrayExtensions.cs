@@ -221,6 +221,12 @@ namespace Pseudo
 			array[targetIndex] = temp;
 		}
 
+		public static void Switch<T>(this IList<T> array, T source, T target)
+		{
+			if (array.Contains(source) && array.Contains(target))
+				array.Switch(array.IndexOf(source), array.IndexOf(target));
+		}
+
 		public static bool ContentEquals(this IList array, IList otherArray)
 		{
 			if (otherArray == null || array.Count != otherArray.Count)

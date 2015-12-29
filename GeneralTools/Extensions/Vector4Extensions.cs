@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 
 namespace Pseudo
@@ -207,6 +207,50 @@ namespace Pseudo
 			return vector.Round(1, Axes.XYZW);
 		}
 
+		public static Vector4 Floor(this Vector4 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Floor(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Floor(vector.y);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = Mathf.Floor(vector.z);
+
+			if ((axes & Axes.W) != 0)
+				vector.w = Mathf.Floor(vector.w);
+
+			return vector;
+		}
+
+		public static Vector4 Floor(this Vector4 vector)
+		{
+			return vector.Floor(Axes.XYZW);
+		}
+
+		public static Vector4 Ceil(this Vector4 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Ceil(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Ceil(vector.y);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = Mathf.Ceil(vector.z);
+
+			if ((axes & Axes.W) != 0)
+				vector.w = Mathf.Ceil(vector.w);
+
+			return vector;
+		}
+
+		public static Vector4 Ceil(this Vector4 vector)
+		{
+			return vector.Ceil(Axes.XYZW);
+		}
+
 		public static float Average(this Vector4 vector, Axes axes)
 		{
 			float average = 0;
@@ -256,6 +300,11 @@ namespace Pseudo
 				vector = vector.normalized * max;
 
 			return vector;
+		}
+
+		public static Quaternion ToQuaternion(this Vector4 vector)
+		{
+			return new Quaternion(vector.x, vector.y, vector.z, vector.w);
 		}
 	}
 }

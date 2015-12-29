@@ -20,7 +20,7 @@ namespace Pseudo.Internal
 			writer.Write(value, typeCode);
 		}
 
-		static void Write(this BinaryWriter writer, object value, BinaryUtility.TypeCodes typeCode)
+		public static void Write(this BinaryWriter writer, object value, BinaryUtility.TypeCodes typeCode)
 		{
 			switch (typeCode)
 			{
@@ -69,6 +69,9 @@ namespace Pseudo.Internal
 				case BinaryUtility.TypeCodes.String:
 					writer.Write((string)value);
 					break;
+				case BinaryUtility.TypeCodes.Type:
+					writer.Write((Type)value);
+					break;
 				case BinaryUtility.TypeCodes.Vector2:
 					writer.Write((Vector2)value);
 					break;
@@ -99,6 +102,9 @@ namespace Pseudo.Internal
 				case BinaryUtility.TypeCodes.Array:
 					writer.Write((Array)value);
 					break;
+				case BinaryUtility.TypeCodes.List:
+					writer.Write((IList)value);
+					break;
 			}
 		}
 
@@ -106,113 +112,61 @@ namespace Pseudo.Internal
 		{
 			var typeCode = BinaryUtility.ToTypeCode(value.GetType().GetElementType());
 			writer.Write((byte)typeCode);
+			writer.Write(value, typeCode);
+		}
 
-			switch (typeCode)
+		public static void Write(this BinaryWriter writer, Array value, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			if (elementTypeCode == BinaryUtility.TypeCodes.Other || BinaryUtility.IsGenericTypeCode(elementTypeCode))
+				writer.Write(value.GetType().GetElementType());
+
+			if (BinaryUtility.IsReferenceTypeCode(elementTypeCode))
 			{
-				case BinaryUtility.TypeCodes.Other:
-					writer.WriteArray(value);
-					break;
-				case BinaryUtility.TypeCodes.Bool:
-					writer.WriteArray((bool[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.SByte:
-					writer.WriteArray((sbyte[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Byte:
-					writer.WriteArray((byte[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Int16:
-					writer.WriteArray((short[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.UInt16:
-					writer.WriteArray((ushort[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Int32:
-					writer.WriteArray((int[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.UInt32:
-					writer.WriteArray((uint[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Int64:
-					writer.WriteArray((long[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.UInt64:
-					writer.WriteArray((ulong[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Single:
-					writer.WriteArray((float[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Double:
-					writer.WriteArray((double[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Decimal:
-					writer.WriteArray((decimal[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Char:
-					writer.WriteArray((char[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.String:
-					writer.WriteArray((string[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Vector2:
-					writer.WriteArray((Vector2[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Vector3:
-					writer.WriteArray((Vector3[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Vector4:
-					writer.WriteArray((Vector4[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Color:
-					writer.WriteArray((Color[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Quaternion:
-					writer.WriteArray((Quaternion[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Rect:
-					writer.WriteArray((Rect[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Bounds:
-					writer.WriteArray((Bounds[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.AnimationCurve:
-					writer.WriteArray((AnimationCurve[])value, typeCode);
-					break;
-				case BinaryUtility.TypeCodes.Keyframe:
-					writer.WriteArray((Keyframe[])value, typeCode);
-					break;
+				writer.Write(value.Length);
+
+				for (int i = 0; i < value.Length; i++)
+					writer.Write(value.GetValue(i));
 			}
-		}
-
-		static void WriteArray(this BinaryWriter writer, Array array)
-		{
-			int length = array.Length;
-			writer.Write(length);
-
-			for (int i = 0; i < length; i++)
-				writer.Write(array.GetValue(i));
-		}
-
-		static void WriteArray<T>(this BinaryWriter writer, T[] array, BinaryUtility.TypeCodes typeCode)
-		{
-			int length = array.Length;
-			writer.Write(length);
-
-			for (int i = 0; i < length; i++)
-				writer.Write(array[i], typeCode);
-		}
-
-		static void WriteOther(this BinaryWriter writer, object value)
-		{
-			IBinarySerializer serializer = BinaryUtility.GetSerializer(value.GetType());
-
-			if (serializer == null)
-				throw new NotSupportedException(string.Format("Type {0} is not supported.", value.GetType()));
 			else
 			{
-				writer.Write(serializer.TypeIdentifier);
-				serializer.Serialie(writer, value);
+				writer.Write(value.Length);
+
+				for (int i = 0; i < value.Length; i++)
+					writer.Write(value.GetValue(i), elementTypeCode);
 			}
+		}
+
+		public static void Write(this BinaryWriter writer, IList value)
+		{
+			var elementTypeCode = BinaryUtility.ToTypeCode(value.GetType().GetGenericArguments()[0]);
+			writer.Write((byte)elementTypeCode);
+			writer.Write(value, elementTypeCode);
+		}
+
+		public static void Write(this BinaryWriter writer, IList value, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			if (elementTypeCode == BinaryUtility.TypeCodes.Other || BinaryUtility.IsGenericTypeCode(elementTypeCode))
+				writer.Write(value.GetType().GetGenericArguments()[0]);
+
+			if (elementTypeCode == BinaryUtility.TypeCodes.Other || BinaryUtility.IsReferenceTypeCode(elementTypeCode))
+			{
+				writer.Write(value.Count);
+
+				for (int i = 0; i < value.Count; i++)
+					writer.Write(value[i]);
+			}
+			else
+			{
+				writer.Write(value.Count);
+
+				for (int i = 0; i < value.Count; i++)
+					writer.Write(value[i], elementTypeCode);
+			}
+		}
+
+		public static void Write(this BinaryWriter writer, Type type)
+		{
+			writer.Write(type.FullName);
 		}
 
 		public static void Write(this BinaryWriter writer, Vector2 value)
@@ -268,7 +222,7 @@ namespace Pseudo.Internal
 
 		public static void Write(this BinaryWriter writer, AnimationCurve value)
 		{
-			writer.WriteArray(value.keys, BinaryUtility.TypeCodes.Keyframe);
+			writer.Write(value.keys, BinaryUtility.TypeCodes.Keyframe);
 			writer.Write((int)value.preWrapMode);
 			writer.Write((int)value.postWrapMode);
 		}
@@ -279,6 +233,19 @@ namespace Pseudo.Internal
 			writer.Write(value.value);
 			writer.Write(value.inTangent);
 			writer.Write(value.outTangent);
+		}
+
+		static void WriteOther(this BinaryWriter writer, object value)
+		{
+			var serializer = BinaryUtility.GetSerializer(value.GetType());
+
+			if (serializer == null)
+				writer.Write(ushort.MaxValue - 1);
+			else
+			{
+				writer.Write(serializer.TypeIdentifier);
+				serializer.Serialize(writer, value);
+			}
 		}
 
 		public static T ReadObject<T>(this BinaryReader reader)
@@ -342,6 +309,9 @@ namespace Pseudo.Internal
 				case BinaryUtility.TypeCodes.String:
 					value = reader.ReadString();
 					break;
+				case BinaryUtility.TypeCodes.Type:
+					value = reader.ReadType();
+					break;
 				case BinaryUtility.TypeCodes.Vector2:
 					value = reader.ReadVector2();
 					break;
@@ -372,6 +342,9 @@ namespace Pseudo.Internal
 				case BinaryUtility.TypeCodes.Array:
 					value = reader.ReadArray();
 					break;
+				case BinaryUtility.TypeCodes.List:
+					value = reader.ReadList();
+					break;
 			}
 
 			return value;
@@ -384,119 +357,183 @@ namespace Pseudo.Internal
 
 		public static Array ReadArray(this BinaryReader reader)
 		{
-			var typeCode = (BinaryUtility.TypeCodes)reader.ReadByte();
-			Array array = null;
+			var elementTypeCode = (BinaryUtility.TypeCodes)reader.ReadByte();
+			Array array;
 
-			switch (typeCode)
+			switch (elementTypeCode)
 			{
-				case BinaryUtility.TypeCodes.Other:
-					array = reader.ReadObjectArray();
+				default:
+					array = reader.ReadObjectArray(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Bool:
-					array = reader.ReadObjectArray<bool>(typeCode);
+					array = reader.ReadObjectArray<bool>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.SByte:
-					array = reader.ReadObjectArray<sbyte>(typeCode);
+					array = reader.ReadObjectArray<sbyte>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Byte:
-					array = reader.ReadObjectArray<byte>(typeCode);
+					array = reader.ReadObjectArray<byte>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Int16:
-					array = reader.ReadObjectArray<short>(typeCode);
+					array = reader.ReadObjectArray<short>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.UInt16:
-					array = reader.ReadObjectArray<ushort>(typeCode);
+					array = reader.ReadObjectArray<ushort>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Int32:
-					array = reader.ReadObjectArray<int>(typeCode);
+					array = reader.ReadObjectArray<int>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.UInt32:
-					array = reader.ReadObjectArray<uint>(typeCode);
+					array = reader.ReadObjectArray<uint>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Int64:
-					array = reader.ReadObjectArray<long>(typeCode);
+					array = reader.ReadObjectArray<long>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.UInt64:
-					array = reader.ReadObjectArray<ulong>(typeCode);
+					array = reader.ReadObjectArray<ulong>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Single:
-					array = reader.ReadObjectArray<float>(typeCode);
+					array = reader.ReadObjectArray<float>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Double:
-					array = reader.ReadObjectArray<double>(typeCode);
+					array = reader.ReadObjectArray<double>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Decimal:
-					array = reader.ReadObjectArray<decimal>(typeCode);
+					array = reader.ReadObjectArray<decimal>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Char:
-					array = reader.ReadObjectArray<char>(typeCode);
+					array = reader.ReadObjectArray<char>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.String:
-					array = reader.ReadObjectArray<string>(typeCode);
+					array = reader.ReadObjectArray<string>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Type:
+					array = reader.ReadObjectArray<Type>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Vector2:
-					array = reader.ReadObjectArray<Vector2>(typeCode);
+					array = reader.ReadObjectArray<Vector2>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Vector3:
-					array = reader.ReadObjectArray<Vector3>(typeCode);
+					array = reader.ReadObjectArray<Vector3>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Vector4:
-					array = reader.ReadObjectArray<Vector4>(typeCode);
+					array = reader.ReadObjectArray<Vector4>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Color:
-					array = reader.ReadObjectArray<Color>(typeCode);
+					array = reader.ReadObjectArray<Color>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Quaternion:
-					array = reader.ReadObjectArray<Quaternion>(typeCode);
+					array = reader.ReadObjectArray<Quaternion>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Rect:
-					array = reader.ReadObjectArray<Rect>(typeCode);
+					array = reader.ReadObjectArray<Rect>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Bounds:
-					array = reader.ReadObjectArray<Bounds>(typeCode);
-					break;
-				case BinaryUtility.TypeCodes.AnimationCurve:
-					array = reader.ReadObjectArray<AnimationCurve>(typeCode);
+					array = reader.ReadObjectArray<Bounds>(elementTypeCode);
 					break;
 				case BinaryUtility.TypeCodes.Keyframe:
-					array = reader.ReadObjectArray<Keyframe>(typeCode);
+					array = reader.ReadObjectArray<Keyframe>(elementTypeCode);
 					break;
 			}
 
 			return array;
 		}
 
-		static object[] ReadObjectArray(this BinaryReader reader)
+		public static List<T> ReadList<T>(this BinaryReader reader)
 		{
-			int length = reader.ReadInt32();
-			object[] array = new object[length];
-
-			for (int i = 0; i < length; i++)
-				array[i] = reader.ReadObject();
-
-			return array;
+			return (List<T>)reader.ReadList();
 		}
 
-		static T[] ReadObjectArray<T>(this BinaryReader reader, BinaryUtility.TypeCodes typeCode)
+		public static IList ReadList(this BinaryReader reader)
 		{
-			int length = reader.ReadInt32();
-			T[] array = new T[length];
+			var elementTypeCode = (BinaryUtility.TypeCodes)reader.ReadByte();
+			IList list;
 
-			for (int i = 0; i < length; i++)
-				array[i] = (T)reader.ReadObject(typeCode);
+			switch (elementTypeCode)
+			{
+				default:
+					list = reader.ReadObjectList(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Bool:
+					list = reader.ReadObjectList<bool>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.SByte:
+					list = reader.ReadObjectList<sbyte>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Byte:
+					list = reader.ReadObjectList<byte>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Int16:
+					list = reader.ReadObjectList<short>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.UInt16:
+					list = reader.ReadObjectList<ushort>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Int32:
+					list = reader.ReadObjectList<int>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.UInt32:
+					list = reader.ReadObjectList<uint>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Int64:
+					list = reader.ReadObjectList<long>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.UInt64:
+					list = reader.ReadObjectList<ulong>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Single:
+					list = reader.ReadObjectList<float>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Double:
+					list = reader.ReadObjectList<double>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Decimal:
+					list = reader.ReadObjectList<decimal>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Char:
+					list = reader.ReadObjectList<char>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.String:
+					list = reader.ReadObjectList<string>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Type:
+					list = reader.ReadObjectList<Type>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Vector2:
+					list = reader.ReadObjectList<Vector2>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Vector3:
+					list = reader.ReadObjectList<Vector3>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Vector4:
+					list = reader.ReadObjectList<Vector4>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Color:
+					list = reader.ReadObjectList<Color>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Quaternion:
+					list = reader.ReadObjectList<Quaternion>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Rect:
+					list = reader.ReadObjectList<Rect>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Bounds:
+					list = reader.ReadObjectList<Bounds>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.AnimationCurve:
+					list = reader.ReadObjectList<AnimationCurve>(elementTypeCode);
+					break;
+				case BinaryUtility.TypeCodes.Keyframe:
+					list = reader.ReadObjectList<Keyframe>(elementTypeCode);
+					break;
+			}
 
-			return array;
+			return list;
 		}
 
-		static object ReadOther(this BinaryReader reader)
+		public static Type ReadType(this BinaryReader reader)
 		{
-			var typeIdentifier = reader.ReadInt16();
-			IBinarySerializer serializer = BinaryUtility.GetSerializer(typeIdentifier);
-
-			if (serializer == null)
-				throw new NotSupportedException(string.Format("Type with identifier {0} is not supported.", typeIdentifier));
-			else
-				return serializer.Deserialize(reader);
+			return Type.GetType(reader.ReadString());
 		}
 
 		public static Vector2 ReadVector2(this BinaryReader reader)
@@ -548,6 +585,63 @@ namespace Pseudo.Internal
 		public static Keyframe ReadKeyframe(this BinaryReader reader)
 		{
 			return new Keyframe(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+		}
+
+		static object ReadOther(this BinaryReader reader)
+		{
+			ushort serializerId = reader.ReadUInt16();
+			var serializer = BinaryUtility.GetSerializer(serializerId);
+
+			if (serializer == null)
+				return null;
+			else
+				return serializer.Deserialize(reader);
+		}
+
+		static Array ReadObjectArray(this BinaryReader reader, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			Type elementType = BinaryUtility.ToType(elementTypeCode) ?? reader.ReadType();
+			int length = reader.ReadInt32();
+			var array = Array.CreateInstance(elementType, length);
+
+			for (int i = 0; i < length; i++)
+				array.SetValue(reader.ReadObject(), i);
+
+			return array;
+		}
+
+		static T[] ReadObjectArray<T>(this BinaryReader reader, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			int length = reader.ReadInt32();
+			var array = new T[length];
+
+			for (int i = 0; i < length; i++)
+				array[i] = (T)reader.ReadObject(elementTypeCode);
+
+			return array;
+		}
+
+		static IList ReadObjectList(this BinaryReader reader, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			Type elementType = BinaryUtility.ToType(elementTypeCode) ?? reader.ReadType();
+			int count = reader.ReadInt32();
+			var list = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(elementType), count);
+
+			for (int i = 0; i < count; i++)
+				list.Add(reader.ReadObject());
+
+			return list;
+		}
+
+		static List<T> ReadObjectList<T>(this BinaryReader reader, BinaryUtility.TypeCodes elementTypeCode)
+		{
+			int count = reader.ReadInt32();
+			var list = new List<T>(count);
+
+			for (int i = 0; i < count; i++)
+				list.Add((T)reader.ReadObject(elementTypeCode));
+
+			return list;
 		}
 	}
 }

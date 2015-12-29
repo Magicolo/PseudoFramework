@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -9,10 +9,12 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolElementContentSetter : IPoolElementSetter
 	{
+		readonly Type type;
 		readonly List<IPoolSetter> setters;
 
-		public PoolElementContentSetter(List<IPoolSetter> setters)
+		public PoolElementContentSetter(Type type, List<IPoolSetter> setters)
 		{
+			this.type = type;
 			this.setters = setters;
 		}
 
@@ -20,13 +22,10 @@ namespace Pseudo.Internal.Pool
 		{
 			if (array.Count > index)
 			{
-				var value = array[index];
+				var value = array[index] ?? (array[index] = TypePoolManager.Create(type));
 
-				if (value != null)
-				{
-					for (int i = 0; i < setters.Count; i++)
-						setters[i].SetValue(value);
-				}
+				for (int i = 0; i < setters.Count; i++)
+					setters[i].SetValue(value);
 			}
 		}
 

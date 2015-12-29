@@ -10,13 +10,13 @@ namespace Pseudo.Internal
 {
 	public abstract class BinarySerializer<T> : IBinarySerializer
 	{
-		public abstract short TypeIdentifier { get; }
+		public abstract ushort TypeIdentifier { get; }
 
 		public abstract void Serialize(BinaryWriter writer, T instance);
 
 		public abstract T Deserialize(BinaryReader reader);
 
-		void IBinarySerializer.Serialie(BinaryWriter writer, object instance)
+		void IBinarySerializer.Serialize(BinaryWriter writer, object instance)
 		{
 			Serialize(writer, (T)instance);
 		}

@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,11 +11,13 @@ namespace Pseudo.Internal.Pool
 	public class PoolArraySetter : IPoolSetter
 	{
 		readonly FieldInfo field;
+		readonly Type type;
 		readonly List<IPoolElementSetter> setters;
 
-		public PoolArraySetter(FieldInfo field, List<IPoolElementSetter> setters)
+		public PoolArraySetter(FieldInfo field, Type type, List<IPoolElementSetter> setters)
 		{
 			this.field = field;
+			this.type = type;
 			this.setters = setters;
 		}
 
@@ -28,19 +30,19 @@ namespace Pseudo.Internal.Pool
 
 			if (array == null)
 			{
-				if (field.FieldType.IsArray)
-					array = Array.CreateInstance(field.FieldType.GetElementType(), setters.Count);
+				if (type.IsArray)
+					array = Array.CreateInstance(type.GetElementType(), setters.Count);
 				else
-					array = (IList)Activator.CreateInstance(field.FieldType);
+					array = (IList)Activator.CreateInstance(type);
 
 				field.SetValue(instance, array);
 			}
 
 			if (array.Count != setters.Count)
 			{
-				if (field.FieldType.IsArray)
+				if (type.IsArray)
 				{
-					array = Array.CreateInstance(field.FieldType.GetElementType(), setters.Count);
+					array = Array.CreateInstance(type.GetElementType(), setters.Count);
 					field.SetValue(instance, array);
 				}
 				else if (!array.IsFixedSize)
