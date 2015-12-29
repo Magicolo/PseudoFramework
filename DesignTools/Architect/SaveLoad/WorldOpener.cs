@@ -49,12 +49,11 @@ namespace Pseudo
 			{
 				int id = readNextInt();
 				Point2 position = new Point2(x, y);
-				Vector3 wPosition = new Vector3(x, y, 0);
 				TileType tileType = null;
 				if (id == 0)
 					continue;
 				tileType = architect.Linker.Tilesets[0][id - 1];
-				architect.addTile(architect.SelectedLayer, position, wPosition, tileType);
+				architect.SelectedLayer.AddTile(position, tileType);
 			}
 		}
 

@@ -33,7 +33,7 @@ namespace Pseudo
 
         private void addLayer(LayerData layer)
         {
-            fileContent += "Layer:" + layer.layerTransform.name + "\n";
+            fileContent += "Layer:" + layer.LayerTransform.name + "\n";
             for (int y = layer.LayerHeight - 1; y >= 0; y--)
             {
                 for (int x = 0; x < layer.LayerWidth; x++)

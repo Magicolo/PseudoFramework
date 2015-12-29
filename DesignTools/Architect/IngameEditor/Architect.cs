@@ -22,12 +22,11 @@ namespace Pseudo
 		public Camera Cam;
 
 		public LayerData SelectedLayer;
+		public List<LayerData> Layers = new List<LayerData>();
 
-		void Start()
+		void Awake()
 		{
 			SelectedTileType = Linker.Tilesets[0].Tiles[0];
-			SelectedLayer.TileHeight = 1;
-			SelectedLayer.TileWidth = 1;
 			New();
 		}
 
@@ -44,9 +43,18 @@ namespace Pseudo
 
 		public void New()
 		{
-			if (SelectedLayer != null)
-				SelectedLayer.DestroyAllAndClear();
-			SelectedLayer = new LayerData(null, "GroundLayer", 20, 20);
+			clearAllLayer();
+			addLayer();
+			SelectedLayer = Layers[0];
+		}
+
+		private void clearAllLayer()
+		{
+			for (int i = 0; i < Layers.Count; i++)
+			{
+				Layers[i].LayerTransform.gameObject.Destroy();
+			}
+			Layers.Clear();
 		}
 
 		void Update()
@@ -103,38 +111,78 @@ namespace Pseudo
 				{
 					if (SelectedLayer[tilePoint.X, tilePoint.Y] == null)
 					{
-						addSelectedTileType(SelectedLayer, worldP, tilePoint);
+						AddSelectedTileType(SelectedLayer, worldP, tilePoint);
 					}
 					else if (SelectedLayer[tilePoint.X, tilePoint.Y].TileType != SelectedTileType)
 					{
 						removeTile(tilePoint);
-						addSelectedTileType(SelectedLayer, worldP, tilePoint);
+						AddSelectedTileType(SelectedLayer, worldP, tilePoint);
 					}
 
 				}
 			}
 		}
 
-		public void addSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
+		public void AddSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
 		{
-			addTile(layer, worldP, tilePoint, SelectedTileType);
+			layer.AddTile(tilePoint, SelectedTileType);
 		}
 
-		public void addTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
+		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
 		{
-			if (tileType == null) return;
-			GameObject newTile = (UnityEngine.GameObject)PrefabUtility.InstantiatePrefab(tileType.Prefab);
-			newTile.transform.SetPosition(worldP);
-			newTile.transform.parent = layer.layerTransform;
+			layer.AddTile(tilePoint, tileType);
+		}
 
-			TileData tileData = new TileData(tileType, newTile);
-			layer[tilePoint.X, tilePoint.Y] = tileData;
+		public void RemoveSelectedLayer()
+		{
+			if (SelectedLayer != null)
+			{
+				SelectedLayer.LayerTransform.gameObject.Destroy();
+				Layers.Remove(SelectedLayer);
+				SelectedLayer = null;
+			}
+		}
+
+		public void MoveDownSelectedLayer()
+		{
+			int selectIndex = Layers.IndexOf(SelectedLayer);
+			if (selectIndex == Layers.Count - 1) return;
+			Layers.Switch(selectIndex, selectIndex + 1);
+		}
+
+		public void MoveUpSelectedLayer()
+		{
+			int selectIndex = Layers.IndexOf(SelectedLayer);
+			if (selectIndex == 0) return;
+			Layers.Switch(selectIndex, selectIndex - 1);
+		}
+
+		public void DuplicateSelectedLayer()
+		{
+			LayerData newLayer = SelectedLayer.Clone();
+
+			Layers.Insert(SelectedIndex, newLayer);
 		}
 
 		void removeTile(Point2 tilePoint)
 		{
 			SelectedLayer[tilePoint.X, tilePoint.Y].GameObject.Destroy();
 			SelectedLayer[tilePoint.X, tilePoint.Y] = TileData.Empty;
+		}
+
+		public int SelectedIndex { get { return Layers.IndexOf(SelectedLayer); } }
+
+		public LayerData addLayer()
+		{
+			return addLayer(null, "Layer", 1, 1);
+		}
+		public LayerData addLayer(Transform parent, string name, int tileHeight, int tileWidth)
+		{
+			LayerData newLayer = new LayerData(parent, name, 20, 20);
+			newLayer.TileHeight = tileHeight;
+			newLayer.TileWidth = tileWidth;
+			Layers.Add(newLayer);
+			return newLayer;
 		}
 	}
 
