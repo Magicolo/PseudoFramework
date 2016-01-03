@@ -17,6 +17,7 @@ namespace Pseudo
 		public InputField NameChangeInput;
 		public Text NameChangeText;
 		public Toggle ShowHideToggle;
+		public UIDoubleClickHandler TextDoubleClick;
 
 		public Color selectedColor = Color.cyan;
 		public Color baseColor = Color.white;
@@ -45,6 +46,8 @@ namespace Pseudo
 			NameChangeInput.onEndEdit.AddListener((text) => stopWriting(text));
 
 			ShowHideToggle.onValueChanged.AddListener((selected) => toggleView(selected));
+
+			TextDoubleClick.OnDoubleClick.AddListener(() => EditButtonClicked());
 		}
 
 		void toggleView(bool selected)
@@ -55,6 +58,9 @@ namespace Pseudo
 		{
 			NameChangeInput.gameObject.SetActive(true);
 			NameChangeInput.text = LayerData.Name;
+			NameChangeInput.Select();
+			NameChangeInput.ActivateInputField();
+			TextDoubleClick.enabled = false;
 		}
 
 		void stopWriting(string newText)
@@ -62,6 +68,7 @@ namespace Pseudo
 			LayerData.Name = newText;
 			LayerNameText.text = newText;
 			NameChangeInput.gameObject.SetActive(false);
+			TextDoubleClick.enabled = true;
 		}
 		public void SetEnabled(bool v)
 		{

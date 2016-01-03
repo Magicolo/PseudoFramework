@@ -30,6 +30,8 @@ namespace Pseudo
 
 		float panelWidth;
 
+		private UISkin skin { get { return architect.UISkin; } }
+
 		void Awake()
 		{
 			architect = GetComponentInParent<Architect>();
@@ -43,7 +45,6 @@ namespace Pseudo
 		public void refreshLayers()
 		{
 			panelWidth = ItemPanel.GetComponent<RectTransform>().rect.width * 0.97f - 10;
-
 			for (int i = 0; i < layerButtons.Count; i++)
 			{
 				layerButtons[i].gameObject.Destroy();
@@ -64,11 +65,12 @@ namespace Pseudo
 		private void crateLayerButtonItem(LayerData layer, int i)
 		{
 			Vector2 dimension = new Vector2(panelWidth, 20);
-			Vector3 position = new Vector3(dimension.x / 2 + 5, -10 - i * 20);
+			Vector3 position = new Vector3(dimension.x / 2 + 5, -12 - i * 20);
 
 			GameObject layerLine = GameObject.Instantiate(LayerLinePrefab);
 			LayerLineGUI layerLineGui = layerLine.GetComponent<LayerLineGUI>();
 			layerLineGui.Init(layer, ItemPanel, position, dimension, () => switchLayer(layer));
+			layerLineGui.GetComponent<RectTransform>().localScale = Vector3.one;
 
 			layerButtons.Add(layerLineGui);
 		}
@@ -117,39 +119,27 @@ namespace Pseudo
 		{
 			if (architect.Layers.Count == 0)
 			{
-				MoveDownLayerButton.enabled = false;
-				MoveUpLayerButton.enabled = false;
-				RemoveLayerButton.enabled = false;
-				DuplicateLayerButton.enabled = false;
+				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton);
+				skin.Enabled(AddLayerButton);
 			}
 			else if (architect.Layers.Count == 1)
 			{
-				MoveDownLayerButton.enabled = false;
-				MoveUpLayerButton.enabled = false;
-				RemoveLayerButton.enabled = true;
-				DuplicateLayerButton.enabled = true;
+				skin.Disable(MoveDownLayerButton, MoveUpLayerButton);
+				skin.Enabled(RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
 
 			}
 			else
 			{
-				SetMoveButton(true);
-				RemoveLayerButton.enabled = true;
-				DuplicateLayerButton.enabled = true;
+				if (architect.Layers.Count == 6)
+				{
+					skin.Disable(AddLayerButton);
+				}
+				skin.Enabled(RemoveLayerButton, DuplicateLayerButton);
+				skin.Enabled(MoveUpLayerButton, MoveDownLayerButton);
 				if (selectedIndex == 0)
-				{
-					MoveUpLayerButton.enabled = false;
-					MoveDownLayerButton.enabled = true;
-				}
+					skin.Disable(MoveUpLayerButton);
 				else if (selectedIndex == architect.Layers.Count - 1)
-				{
-					MoveUpLayerButton.enabled = true;
-					MoveDownLayerButton.enabled = false;
-				}
-				else
-				{
-					MoveUpLayerButton.enabled = true;
-					MoveDownLayerButton.enabled = true;
-				}
+					skin.Disable(MoveDownLayerButton);
 			}
 		}
 
@@ -175,17 +165,6 @@ namespace Pseudo
 
 		}
 
-		private void SetMoveButton(bool enabled)
-		{
-			MoveDownLayerButton.enabled = enabled;
-			MoveUpLayerButton.enabled = enabled;
-		}
 
-		private void SetAddRemoveButtons(bool enabled)
-		{
-			RemoveLayerButton.enabled = enabled;
-			AddLayerButton.enabled = enabled;
-
-		}
 	}
 }

@@ -11,6 +11,7 @@ namespace Pseudo
 		int currentLineIndex = 0;
 		int currentColIndex = 0;
 		string currentLine { get { return fileContent[currentLineIndex]; } }
+		bool isEndOfFile { get { return currentLineIndex >= fileContent.Length; } }
 
 
 		Architect architect;
@@ -23,10 +24,13 @@ namespace Pseudo
 		private void Load(string[] fileContent)
 		{
 			this.fileContent = fileContent;
-			if (currentLine.StartsWith("Layer:"))
+			while (!isEndOfFile)
 			{
-				readLayer();
+				if (currentLine.StartsWith("Layer:"))
+					readLayer();
+				nextLine();
 			}
+
 		}
 
 		private void readLayer()

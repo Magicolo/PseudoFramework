@@ -46,7 +46,6 @@ namespace Pseudo
 		{
 			get
 			{
-				PDebug.Log(point.X + point.Y * LayerWidth);
 				return tiles[point.X + point.Y * LayerWidth];
 			}
 			set { tiles[point.X + point.Y * LayerWidth] = value; }
@@ -119,6 +118,17 @@ namespace Pseudo
 			this[tilePoint.X, tilePoint.Y] = tileData;
 		}
 
+		public bool IsTileEmpty(Point2 tilePoint)
+		{
+			TileData tileData = this[tilePoint.X, tilePoint.Y];
+			return (tileData == null || tileData.TileType.IsNullOrIdZero());
+		}
+
+		public void EmptyTile(Point2 tilePoint)
+		{
+			this[tilePoint.X, tilePoint.Y].GameObject.Destroy();
+			this[tilePoint.X, tilePoint.Y] = TileData.Empty;
+		}
 
 	}
 }
