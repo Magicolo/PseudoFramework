@@ -8,8 +8,6 @@ namespace Pseudo.Internal.Editor
 	[System.Serializable]
 	public static class CustomEditorStyles
 	{
-		static Dictionary<ColoredBoxSettings, GUIStyle> boxStyles = new Dictionary<ColoredBoxSettings, GUIStyle>();
-
 		public static GUIStyle BoldFoldout
 		{
 			get
@@ -78,32 +76,24 @@ namespace Pseudo.Internal.Editor
 
 		public static GUIStyle ColoredBox(Color boxColor, int border = 1, float alphaFalloff = 1f)
 		{
-			var boxSettings = new ColoredBoxSettings(boxColor, border, alphaFalloff);
-
-			GUIStyle style;
-
-			if (!boxStyles.TryGetValue(boxSettings, out style))
-			{
-				style = new GUIStyle("box");
-				style.normal.background = Box(boxColor, border, alphaFalloff);
-				boxStyles[boxSettings] = style;
-			}
+			GUIStyle style = new GUIStyle("box");
+			style.normal.background = Box(boxColor, border, alphaFalloff);
 
 			return style;
 		}
 
 		public static Texture2D Box(Color boxColor, int border = 1, float alphaFalloff = 1f)
 		{
-			var texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
-			var pixels = new Color[texture.height * texture.width];
-			var alpha = boxColor.a;
+			Texture2D texture = new Texture2D(64, 64, TextureFormat.RGBA32, false);
+			Color[] pixels = new Color[texture.height * texture.width];
+			float alpha = boxColor.a;
 
 			for (int y = 0; y < texture.height; y++)
 			{
 				for (int x = 0; x < texture.width; x++)
 				{
 					bool isBorder = (x < border || x > texture.width - border - 1 || y < border || y > texture.height - border - 1);
-					var pixel = isBorder ? boxColor : boxColor.SetValues(boxColor / 2, Channels.RGB);
+					Color pixel = isBorder ? boxColor : boxColor.SetValues(boxColor / 2, Channels.RGB);
 
 					pixel.a = isBorder ? alpha : alpha * alphaFalloff;
 					pixels[y * texture.width + x] = pixel;
@@ -116,20 +106,6 @@ namespace Pseudo.Internal.Editor
 			texture.Apply();
 
 			return texture;
-		}
-
-		struct ColoredBoxSettings
-		{
-			public Color Color;
-			public int Border;
-			public float AlphaFalloff;
-
-			public ColoredBoxSettings(Color color, int border, float alphaFalloff)
-			{
-				Color = color;
-				Border = border;
-				AlphaFalloff = alphaFalloff;
-			}
 		}
 	}
 }

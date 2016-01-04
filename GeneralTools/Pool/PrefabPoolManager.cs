@@ -55,7 +55,7 @@ namespace Pseudo
 
 			if (!pools.TryGetValue(prefab, out pool))
 			{
-				pool = PoolUtility.CreatePrefabPool(prefab, ApplicationUtility.IsPlaying ? StartSize : 0);
+				pool = PoolUtility.CreatePool(prefab, Application.isPlaying ? StartSize : 0);
 				pools[prefab] = pool;
 			}
 

@@ -20,6 +20,7 @@ namespace Pseudo.Internal.Pool
 			List
 		}
 
+		public static bool IsPlaying { get; set; }
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
 
@@ -30,67 +31,39 @@ namespace Pseudo.Internal.Pool
 		});
 		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
 
-		public static Pool CreateTypePool(Type type, int startSize)
+		public static Pool CreatePool(Type type, int startSize, Transform parent = null)
 		{
-			if (typeof(Component).IsAssignableFrom(type))
-			{
-				var gameObject = new GameObject(type.Name);
-				var reference = gameObject.AddComponent(type);
-				gameObject.SetActive(false);
-				var pool = new ComponentPool(reference, startSize);
-
-				if (ApplicationUtility.IsPlaying)
-				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
-				}
-
-				return pool;
-			}
-			else if (typeof(GameObject).IsAssignableFrom(type))
-			{
-				var reference = new GameObject(type.Name);
-				reference.SetActive(false);
-				var pool = new GameObjectPool(reference, startSize);
-
-				if (ApplicationUtility.IsPlaying)
-				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
-				}
-
-				return pool;
-			}
-			else if (typeof(ScriptableObject).IsAssignableFrom(type))
-				return new ScriptablePool(ScriptableObject.CreateInstance(type), startSize);
-			else
-				return new Pool(Activator.CreateInstance(type), startSize);
+			return CreatePool(Activator.CreateInstance(type), startSize, parent);
 		}
 
-		public static Pool CreatePrefabPool(object reference, int startSize)
+		public static Pool CreatePool(object reference, int startSize, Transform parent = null)
 		{
+			Pool pool;
+
 			if (reference is Component)
 			{
-				var pool = new ComponentPool((Component)reference, startSize);
+				var behaviourPool = new ComponentPool((Component)reference, startSize);
 
-				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+				if (Application.isPlaying)
+					behaviourPool.Transform.parent = parent == null ? Transform : parent;
 
-				return pool;
+				pool = behaviourPool;
 			}
 			else if (reference is GameObject)
 			{
-				var pool = new GameObjectPool((GameObject)reference, startSize);
+				var gameObjectPool = new GameObjectPool((GameObject)reference, startSize);
 
-				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+				if (Application.isPlaying)
+					gameObjectPool.Transform.parent = parent == null ? Transform : parent;
 
-				return pool;
+				pool = gameObjectPool;
 			}
 			else if (reference is ScriptableObject)
-				return new ScriptablePool((ScriptableObject)reference, startSize);
+				pool = new ScriptablePool((ScriptableObject)reference, startSize);
 			else
-				return new Pool(reference, startSize);
+				pool = new Pool(reference, startSize);
+
+			return pool;
 		}
 
 		public static void InitializeFields(object instance, List<IPoolSetter> setters)
@@ -119,7 +92,7 @@ namespace Pseudo.Internal.Pool
 
 		public static void InitializeJanitor()
 		{
-			if (ApplicationUtility.IsPlaying && PoolJanitor.Instance == null)
+			if (Application.isPlaying && PoolJanitor.Instance == null)
 				new GameObject("Pool Manager").AddComponent<PoolJanitor>();
 		}
 

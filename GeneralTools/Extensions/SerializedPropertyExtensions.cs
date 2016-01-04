@@ -4,16 +4,19 @@ using UnityEditor;
 using UnityEngine;
 using System.Collections;
 using Pseudo.Internal;
-using Pseudo.Internal.Unity;
-using System.Reflection;
 
 namespace Pseudo.Internal.Editor
 {
 	public static class SerializedPropertyExtensions
 	{
-		public static int GetPropertyHash(this SerializedProperty property)
+		public static string GetUniqueIdentifier(this SerializedProperty property, char separator)
 		{
-			return (int)PropertyHandlerCache.GetPropertyHash.Invoke(null, new[] { property });
+			return property.name + separator + property.propertyPath + separator + property.depth + separator + property.propertyType + separator + property.serializedObject.targetObject.name + separator + property.serializedObject.targetObject.GetHashCode();
+		}
+
+		public static string GetIdentifier(this SerializedProperty property)
+		{
+			return property.GetUniqueIdentifier('¦');
 		}
 
 		public static string GetAdjustedPath(this SerializedProperty property)
@@ -208,7 +211,9 @@ namespace Pseudo.Internal.Editor
 			arrayProperty.arraySize = array.Count;
 
 			for (int i = 0; i < arrayProperty.arraySize; i++)
+			{
 				arrayProperty.GetArrayElementAtIndex(i).SetValue(array[i]);
+			}
 
 			arrayProperty.serializedObject.ApplyModifiedProperties();
 		}
@@ -446,39 +451,19 @@ namespace Pseudo.Internal.Editor
 			return arrayProperty.GetArrayElementAtIndex(arrayProperty.arraySize - 1);
 		}
 
-		public static bool Contains<T>(this SerializedProperty arrayProperty, T value)
+		public static bool Contains(this SerializedProperty arrayProperty, object value)
 		{
 			for (int i = 0; i < arrayProperty.arraySize; i++)
 			{
-				var elementProperty = arrayProperty.GetArrayElementAtIndex(i);
+				SerializedProperty elementProperty = arrayProperty.GetArrayElementAtIndex(i);
 
-				if (Equals(elementProperty.GetValue(), value))
+				if (object.Equals(elementProperty.GetValue(), value))
+				{
 					return true;
+				}
 			}
 
 			return false;
-		}
-
-		public static bool ContainsAll<T>(this SerializedProperty arrayProperty, IList<T> values)
-		{
-			for (int i = 0; i < values.Count; i++)
-			{
-				if (!arrayProperty.Contains(values[i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		public static bool ContainsNone<T>(this SerializedProperty arrayProperty, IList<T> values)
-		{
-			for (int i = 0; i < values.Count; i++)
-			{
-				if (arrayProperty.Contains(values[i]))
-					return false;
-			}
-
-			return true;
 		}
 
 		public static int IndexOf(this SerializedProperty arrayProperty, object value)
@@ -562,12 +547,6 @@ namespace Pseudo.Internal.Editor
 			return elementProperty;
 		}
 
-		public static void AddRange(this SerializedProperty arrayProperty, IList elements)
-		{
-			for (int i = 0; i < elements.Count; i++)
-				arrayProperty.Add(elements[i]);
-		}
-
 		public static SerializedProperty Insert(this SerializedProperty arrayProperty, object element, int index)
 		{
 			SerializedProperty elementProperty;
@@ -591,13 +570,9 @@ namespace Pseudo.Internal.Editor
 			int index = arrayProperty.IndexOf(element);
 
 			if (index != -1)
+			{
 				arrayProperty.RemoveAt(index);
-		}
-
-		public static void RemoveRange(this SerializedProperty arrayProperty, IList elements)
-		{
-			for (int i = 0; i < elements.Count; i++)
-				arrayProperty.Remove(elements[i]);
+			}
 		}
 
 		public static void Clear(this SerializedProperty arrayProperty)

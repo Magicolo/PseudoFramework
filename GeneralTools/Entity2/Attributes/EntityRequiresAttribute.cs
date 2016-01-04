@@ -4,7 +4,7 @@ using Pseudo.Internal.Editor;
 
 namespace Pseudo
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Class)]
+	[AttributeUsage(AttributeTargets.Field)]
 	public sealed class EntityRequiresAttribute : Attribute
 	{
 		public bool CanBeNull = true;

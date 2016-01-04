@@ -7,12 +7,11 @@ using Pseudo;
 
 namespace Pseudo.Internal.Entity
 {
-	public interface IEntityUpdateable
+	public class EntityJanitor : Singleton<EntityJanitor>
 	{
-		bool Active { get; }
-
-		void ComponentUpdate();
-		void ComponentLateUpdate();
-		void ComponentFixedUpdate();
+		void OnDestroy()
+		{
+			EntityUtility.ClearAllEntityGroups();
+		}
 	}
 }

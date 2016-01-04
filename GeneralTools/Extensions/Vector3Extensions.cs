@@ -215,6 +215,44 @@ namespace Pseudo
 			return vector.Round(1f, Axes.XYZW);
 		}
 
+		public static Vector3 Floor(this Vector3 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Floor(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Floor(vector.y);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = Mathf.Floor(vector.z);
+
+			return vector;
+		}
+
+		public static Vector3 Floor(this Vector3 vector)
+		{
+			return vector.Floor(Axes.XYZW);
+		}
+
+		public static Vector3 Ceil(this Vector3 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Ceil(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Ceil(vector.y);
+
+			if ((axes & Axes.Z) != 0)
+				vector.z = Mathf.Ceil(vector.z);
+
+			return vector;
+		}
+
+		public static Vector3 Ceil(this Vector3 vector)
+		{
+			return vector.Ceil(Axes.XYZW);
+		}
+
 		public static float Average(this Vector3 vector, Axes axes)
 		{
 			float average = 0f;

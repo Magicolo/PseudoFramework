@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using System.Text;
 
 namespace Pseudo
 {
@@ -12,80 +11,52 @@ namespace Pseudo
 	public struct ByteFlag : IEquatable<ByteFlag>
 	{
 		[SerializeField]
-		int f1;
+		ulong flag1;
 		[SerializeField]
-		int f2;
+		ulong flag2;
 		[SerializeField]
-		int f3;
+		ulong flag3;
 		[SerializeField]
-		int f4;
-		[SerializeField]
-		int f5;
-		[SerializeField]
-		int f6;
-		[SerializeField]
-		int f7;
-		[SerializeField]
-		int f8;
+		ulong flag4;
 
 		public static ByteFlag Nothing
 		{
-			get { return new ByteFlag(0, 0, 0, 0, 0, 0, 0, 0); }
+			get { return new ByteFlag(0uL, 0uL, 0uL, 0uL); }
 		}
 
 		public static ByteFlag Everything
 		{
-			get { return new ByteFlag(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue); }
+			get { return new ByteFlag(ulong.MaxValue, ulong.MaxValue, ulong.MaxValue, ulong.MaxValue); }
 		}
 
-		public ByteFlag(ByteFlag flags)
+		public ByteFlag(ByteFlag flag)
 		{
-			f1 = flags.f1;
-			f2 = flags.f2;
-			f3 = flags.f3;
-			f4 = flags.f4;
-			f5 = flags.f5;
-			f6 = flags.f6;
-			f7 = flags.f7;
-			f8 = flags.f8;
+			this.flag1 = flag.flag1;
+			this.flag2 = flag.flag2;
+			this.flag3 = flag.flag3;
+			this.flag4 = flag.flag4;
 		}
 
-		public ByteFlag(byte value) : this()
+		public ByteFlag(byte[] indices) : this()
 		{
-			Add(value);
+			for (int i = 0; i < indices.Length; i++)
+				AddBit(indices[i]);
 		}
 
-		public ByteFlag(byte value1, byte value2) : this(value1)
+		public ByteFlag(bool[] values) : this()
 		{
-			Add(value2);
+			int count = Math.Min(values.Length, 255);
+
+			for (byte i = 0; i < count; i++)
+				Set(i, values[i]);
 		}
 
-		public ByteFlag(byte value1, byte value2, byte value3) : this(value1, value2)
+		ByteFlag(ulong flag1, ulong flag2, ulong flag3, ulong flag4)
 		{
-			Add(value3);
-		}
-
-		public ByteFlag(byte value1, byte value2, byte value3, byte value4) : this(value1, value2, value3)
-		{
-			Add(value4);
-		}
-
-		public ByteFlag(params byte[] values) : this()
-		{
-			for (int i = 0; i < values.Length; i++)
-				Add(values[i]);
-		}
-
-		ByteFlag(int flag1, int flag2, int flag3, int flag4, int flag5, int flag6, int flag7, int flag8)
-		{
-			f1 = flag1;
-			f2 = flag2;
-			f3 = flag3;
-			f4 = flag4;
-			f5 = flag5;
-			f6 = flag6;
-			f7 = flag7;
-			f8 = flag8;
+			this.flag1 = flag1;
+			this.flag2 = flag2;
+			this.flag3 = flag3;
+			this.flag4 = flag4;
 		}
 
 		public bool this[byte index]
@@ -94,57 +65,9 @@ namespace Pseudo
 			set { Set(index, value); }
 		}
 
-		public ByteFlag Add(byte value)
+		public byte[] ToIndices()
 		{
-			var shift = value % 32;
-
-			if (value < 32)
-				f1 |= 1 << shift;
-			else if (value < 64)
-				f2 |= 1 << shift;
-			else if (value < 96)
-				f3 |= 1 << shift;
-			else if (value < 128)
-				f4 |= 1 << shift;
-			else if (value < 160)
-				f5 |= 1 << shift;
-			else if (value < 192)
-				f6 |= 1 << shift;
-			else if (value < 224)
-				f7 |= 1 << shift;
-			else
-				f8 |= 1 << shift;
-
-			return this;
-		}
-
-		public ByteFlag Remove(byte value)
-		{
-			var shift = value % 32;
-
-			if (value < 32)
-				f1 &= ~(1 << shift);
-			else if (value < 64)
-				f2 &= ~(1 << shift);
-			else if (value < 96)
-				f3 &= ~(1 << shift);
-			else if (value < 128)
-				f4 &= ~(1 << shift);
-			else if (value < 160)
-				f5 &= ~(1 << shift);
-			else if (value < 192)
-				f6 &= ~(1 << shift);
-			else if (value < 224)
-				f7 &= ~(1 << shift);
-			else
-				f8 &= ~(1 << shift);
-
-			return this;
-		}
-
-		public byte[] ToByteArray()
-		{
-			var indices = new List<byte>();
+			List<byte> indices = new List<byte>();
 
 			for (byte i = 0; i < 255; i++)
 			{
@@ -155,9 +78,9 @@ namespace Pseudo
 			return indices.ToArray();
 		}
 
-		public bool[] ToBoolArray()
+		public bool[] ToValues()
 		{
-			var values = new bool[255];
+			bool[] values = new bool[255];
 
 			for (byte i = 0; i < 255; i++)
 				values[i] = Get(i);
@@ -167,45 +90,51 @@ namespace Pseudo
 
 		bool Get(byte index)
 		{
-			var shift = index % 32;
-
-			if (index < 32)
-				return (f1 & (1 << shift)) != 0;
-			else if (index < 64)
-				return (f2 & (1 << shift)) != 0;
-			else if (index < 96)
-				return (f3 & (1 << shift)) != 0;
+			if (index < 64)
+				return (flag1 & (1uL << index)) != 0;
 			else if (index < 128)
-				return (f4 & (1 << shift)) != 0;
-			else if (index < 160)
-				return (f5 & (1 << shift)) != 0;
+				return (flag2 & (1uL << (index - 64))) != 0;
 			else if (index < 192)
-				return (f6 & (1 << shift)) != 0;
-			else if (index < 224)
-				return (f7 & (1 << shift)) != 0;
+				return (flag3 & (1uL << (index - 128))) != 0;
 			else
-				return (f8 & (1 << shift)) != 0;
+				return (flag4 & (1uL << (index - 192))) != 0;
 		}
 
 		void Set(byte index, bool value)
 		{
 			if (value)
-				Add(index);
+				AddBit(index);
 			else
-				Remove(index);
+				RemoveBit(index);
+		}
+
+		void AddBit(byte index)
+		{
+			if (index < 64)
+				flag1 |= 1uL << index;
+			else if (index < 128)
+				flag2 |= 1uL << (index - 64);
+			else if (index < 192)
+				flag3 |= 1uL << (index - 128);
+			else
+				flag4 |= 1uL << (index - 192);
+		}
+
+		void RemoveBit(byte value)
+		{
+			if (value < 64)
+				flag1 &= ~(1uL << value);
+			else if (value < 128)
+				flag2 &= ~(1uL << (value - 64));
+			else if (value < 192)
+				flag3 &= ~(1uL << (value - 128));
+			else
+				flag4 &= ~(1uL << (value - 192));
 		}
 
 		public override int GetHashCode()
 		{
-			return
-				f1 ^
-				f2 ^
-				f3 ^
-				f4 ^
-				f5 ^
-				f6 ^
-				f7 ^
-				f8;
+			return flag1.GetHashCode() ^ flag2.GetHashCode() ^ flag3.GetHashCode() ^ flag4.GetHashCode();
 		}
 
 		public override bool Equals(object obj)
@@ -213,12 +142,12 @@ namespace Pseudo
 			if (!(obj is ByteFlag))
 				return false;
 
-			return Equals((ByteFlag)obj);
+			return Equals(flag1, (ByteFlag)obj);
 		}
 
 		public override string ToString()
 		{
-			var log = new StringBuilder();
+			var log = new System.Text.StringBuilder();
 			log.Append(GetType().Name + "(");
 			bool first = true;
 
@@ -242,93 +171,41 @@ namespace Pseudo
 
 		public bool Equals(ByteFlag other)
 		{
-			return this == other;
+			return flag1.Equals(other.flag1) && flag2.Equals(other.flag2) && flag3.Equals(other.flag3) && flag4.Equals(other.flag4);
 		}
 
 		public static ByteFlag operator ~(ByteFlag a)
 		{
-			a.f1 = ~a.f1;
-			a.f2 = ~a.f2;
-			a.f3 = ~a.f3;
-			a.f4 = ~a.f4;
-			a.f5 = ~a.f5;
-			a.f6 = ~a.f6;
-			a.f7 = ~a.f7;
-			a.f8 = ~a.f8;
-
-			return a;
+			return new ByteFlag(~a.flag1, ~a.flag2, ~a.flag3, ~a.flag4);
 		}
 
 		public static ByteFlag operator |(ByteFlag a, ByteFlag b)
 		{
-			a.f1 |= b.f1;
-			a.f2 |= b.f2;
-			a.f3 |= b.f3;
-			a.f4 |= b.f4;
-			a.f5 |= b.f5;
-			a.f6 |= b.f6;
-			a.f7 |= b.f7;
-			a.f8 |= b.f8;
-
-			return a;
+			return new ByteFlag(a.flag1 | b.flag1, a.flag2 | b.flag2, a.flag3 | b.flag3, a.flag4 | b.flag4);
 		}
 
 		public static ByteFlag operator &(ByteFlag a, ByteFlag b)
 		{
-			a.f1 &= b.f1;
-			a.f2 &= b.f2;
-			a.f3 &= b.f3;
-			a.f4 &= b.f4;
-			a.f5 &= b.f5;
-			a.f6 &= b.f6;
-			a.f7 &= b.f7;
-			a.f8 &= b.f8;
-
-			return a;
+			return new ByteFlag(a.flag1 & b.flag1, a.flag2 & b.flag2, a.flag3 & b.flag3, a.flag4 & b.flag4);
 		}
 
 		public static ByteFlag operator ^(ByteFlag a, ByteFlag b)
 		{
-			a.f1 ^= b.f1;
-			a.f2 ^= b.f2;
-			a.f3 ^= b.f3;
-			a.f4 ^= b.f4;
-			a.f5 ^= b.f5;
-			a.f6 ^= b.f6;
-			a.f7 ^= b.f7;
-			a.f8 ^= b.f8;
-
-			return a;
+			return new ByteFlag(a.flag1 ^ b.flag1, a.flag2 ^ b.flag2, a.flag3 ^ b.flag3, a.flag4 ^ b.flag4);
 		}
 
 		public static bool operator ==(ByteFlag a, ByteFlag b)
 		{
-			return
-				a.f1 == b.f1 &&
-				a.f2 == b.f2 &&
-				a.f3 == b.f3 &&
-				a.f4 == b.f4 &&
-				a.f5 == b.f5 &&
-				a.f6 == b.f6 &&
-				a.f7 == b.f7 &&
-				a.f8 == b.f8;
+			return a.flag1 == b.flag1 && a.flag2 == b.flag2 && a.flag3 == b.flag3 && a.flag4 == b.flag4;
 		}
 
 		public static bool operator !=(ByteFlag a, ByteFlag b)
 		{
-			return
-				a.f1 != b.f1 ||
-				a.f2 != b.f2 ||
-				a.f3 != b.f3 ||
-				a.f4 != b.f4 ||
-				a.f5 != b.f5 ||
-				a.f6 != b.f6 ||
-				a.f7 != b.f7 ||
-				a.f8 != b.f8;
+			return a.flag1 != b.flag1 || a.flag2 != b.flag2 || a.flag3 != b.flag3 || a.flag4 != b.flag4;
 		}
 	}
 
-	public struct ByteFlag<T> : IEquatable<ByteFlag<T>> where T : struct, IConvertible
+	public struct ByteFlag<T> : IEquatable<ByteFlag<T>> where T : struct
 	{
 		ByteFlag flags;
 
@@ -347,33 +224,20 @@ namespace Pseudo
 			this.flags = flags;
 		}
 
-		public ByteFlag(T flag)
-		{
-			flags = new ByteFlag(flag.ToByte(null));
-		}
-
-		public ByteFlag(params T[] flags)
-		{
-			this.flags = new ByteFlag();
-
-			for (int i = 0; i < flags.Length; i++)
-				this.flags.Add(flags[i].ToByte(null));
-		}
-
 		public bool this[T index]
 		{
-			get { return flags[index.ToByte(null)]; }
-			set { flags[index.ToByte(null)] = value; }
+			get { return flags[Convert.ToByte(index)]; }
+			set { flags[Convert.ToByte(value)] = value; }
 		}
 
 		public void Add(T flag)
 		{
-			flags.Add(flag.ToByte(null));
+			flags[Convert.ToByte(flag)] = true;
 		}
 
 		public void Remove(T flag)
 		{
-			flags.Remove(flag.ToByte(null));
+			flags[Convert.ToByte(flag)] = false;
 		}
 
 		public override int GetHashCode()
@@ -396,8 +260,8 @@ namespace Pseudo
 
 		public override string ToString()
 		{
-			var values = flags.ToByteArray().Convert(b => (T)(object)b);
-			var log = new StringBuilder();
+			var values = flags.ToIndices().Convert(b => (T)(object)b);
+			var log = new System.Text.StringBuilder();
 
 			log.Append(GetType().Name + "(");
 			bool first = true;

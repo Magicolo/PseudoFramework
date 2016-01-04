@@ -9,7 +9,7 @@ namespace Pseudo.Internal.Editor
 	public class EnumFlagsDrawer : CustomAttributePropertyDrawerBase
 	{
 		Type enumType;
-		ByteFlag flags;
+		ByteFlag flag;
 		Array enumValues;
 		string[] enumNames;
 
@@ -36,7 +36,7 @@ namespace Pseudo.Internal.Editor
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
-			enumType = ((EnumFlagsAttribute)attribute).EnumType ?? fieldInfo.FieldType;
+			enumType = typeof(Enum).IsAssignableFrom(fieldInfo.FieldType) ? fieldInfo.FieldType : ((EnumFlagsAttribute)attribute).EnumType;
 			enumValues = Enum.GetValues(enumType);
 			enumNames = Enum.GetNames(enumType);
 
@@ -82,21 +82,91 @@ namespace Pseudo.Internal.Editor
 		{
 			if (Enum.GetUnderlyingType(enumType) != typeof(byte))
 			{
-				EditorGUI.HelpBox(currentPosition, string.Format("Underlying type of {0} must be of type {1}.", enumType.Name, typeof(byte)), MessageType.Error);
+				EditorGUI.HelpBox(currentPosition, string.Format("{0} must be of type {1}.", enumType.Name, typeof(byte)), MessageType.Error);
 				return;
 			}
 
-			flags = currentProperty.GetValue<ByteFlag>();
-			var options = new FlagsOption[enumValues.Length];
+			flag = currentProperty.GetValue<ByteFlag>();
+			byte[] selected = flag.ToIndices();
+			bool nothing = selected.Length == 0;
+			bool everything = selected.Length == enumValues.Length || flag == ByteFlag.Everything;
+			string popupName;
 
-			for (int i = 0; i < options.Length; i++)
+			if (nothing)
+				popupName = "Nothing";
+			else if (everything)
+				popupName = "Everything";
+			else if (selected.Length == 1)
+				popupName = enumNames[FindEnumValueIndex(selected[0], enumValues)];
+			else
+				popupName = "Mixed ...";
+
+			currentPosition = EditorGUI.PrefixLabel(currentPosition, currentLabel);
+
+			BeginIndent(0);
+
+			bool pressed = false;
+			if (GUI.Button(currentPosition, GUIContent.none, new GUIStyle()))
 			{
-				var name = enumNames[i].Replace('_', '/').ToGUIContent();
-				var value = Convert.ToByte(enumValues.GetValue(i));
-				options[i] = new FlagsOption(name, value, flags[value]);
+				pressed = true;
+				var menu = new GenericMenu();
+
+				menu.AddItem("Nothing".ToGUIContent(), nothing, OnEnumSelected, -1);
+				menu.AddItem("Everything".ToGUIContent(), everything, OnEnumSelected, -2);
+
+				for (int i = 0; i < enumNames.Length; i++)
+				{
+					byte value = Convert.ToByte(enumValues.GetValue(i));
+					menu.AddItem(enumNames[i].Replace('_', '/').ToGUIContent(), flag[value], OnEnumSelected, (int)value);
+				}
+
+				menu.DropDown(currentPosition);
 			}
 
-			Flags(currentPosition, options, OnEnumSelected, currentLabel, currentProperty);
+			EditorGUI.LabelField(currentPosition, popupName, EditorStyles.popup);
+
+			if (pressed)
+			{
+				GUIUtility.hotControl = GUIUtility.GetControlID(FocusType.Native, currentPosition);
+				GUIUtility.keyboardControl = GUIUtility.GetControlID(FocusType.Native, currentPosition);
+			}
+
+			EndIndent();
+		}
+
+		int FindEnumValueIndex(int value, Array enumValues)
+		{
+			for (int i = 0; i < enumValues.Length; i++)
+			{
+				if (Convert.ToInt32(enumValues.GetValue(i)) == value)
+					return i;
+			}
+
+			return -1;
+		}
+
+		int FindEnumValueIndex(byte value, Array enumValues)
+		{
+			for (int i = 0; i < enumValues.Length; i++)
+			{
+				if (Convert.ToByte(enumValues.GetValue(i)) == value)
+					return i;
+			}
+
+			return -1;
+		}
+
+		bool HasAllValues(byte[] values, Array enumValues)
+		{
+			if (values.Length == 0 && enumValues.Length > 0)
+				return false;
+
+			bool hasValues = true;
+
+			for (int i = 0; i < enumValues.Length; i++)
+				hasValues &= Array.Exists(values, value => Convert.ToByte(enumValues.GetValue(i)) == value);
+
+			return hasValues;
 		}
 
 		byte[] EnumValuesToBytes(Array enumValues)
@@ -109,28 +179,24 @@ namespace Pseudo.Internal.Editor
 			return bytes;
 		}
 
-		void OnEnumSelected(FlagsOption option, SerializedProperty property)
+		void OnEnumSelected(object data)
 		{
-			switch (option.Type)
+			int value = (int)data;
+
+			if (value == -1)
+				flag = ByteFlag.Nothing;
+			else if (value == -2)
+				flag = new ByteFlag(EnumValuesToBytes(enumValues));
+			else
+				flag[(byte)value] = !flag[(byte)value];
+
+			for (int i = 1; i < 5; i++)
 			{
-				case FlagsOption.OptionTypes.Everything:
-					flags = new ByteFlag(EnumValuesToBytes(enumValues));
-					break;
-				case FlagsOption.OptionTypes.Nothing:
-					flags = ByteFlag.Nothing;
-					break;
-				case FlagsOption.OptionTypes.Custom:
-					flags[(byte)option.Value] = !flags[(byte)option.Value];
-					break;
+				string flagName = "flag" + i;
+				currentProperty.FindPropertyRelative(flagName).longValue = (long)flag.GetValueFromMember<ulong>(flagName);
 			}
 
-			for (int i = 1; i <= 8; i++)
-			{
-				var flagName = "f" + i;
-				property.FindPropertyRelative(flagName).intValue = flags.GetValueFromMember<int>(flagName);
-			}
-
-			property.serializedObject.ApplyModifiedProperties();
+			currentProperty.serializedObject.ApplyModifiedProperties();
 			EditorUtility.SetDirty(target);
 		}
 	}

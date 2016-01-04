@@ -8,15 +8,14 @@ using Pseudo;
 namespace Pseudo
 {
 	[DisallowMultipleComponent]
-	public abstract class Singleton<T> : PMonoBehaviour where T : Singleton<T>
+	public abstract class Singleton<T> : PComponent where T : Singleton<T>
 	{
 		protected static T instance;
-		public static T Instance { get { return ApplicationUtility.IsPlaying ? instance : Find(); } }
+		public static T Instance { get { return Application.isPlaying ? instance : Find(); } }
 
 		public static T Find()
 		{
-			if (instance == null)
-				instance = FindObjectOfType<T>();
+			instance = FindObjectOfType<T>();
 
 			return instance;
 		}

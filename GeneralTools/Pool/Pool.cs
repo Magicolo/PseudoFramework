@@ -32,8 +32,6 @@ namespace Pseudo.Internal.Pool
 
 		protected readonly object reference;
 		protected readonly bool isPoolable;
-		protected readonly bool isInitializable;
-		protected readonly bool isSettersInitializable;
 		protected readonly Queue instances;
 		protected readonly Queue toInitialize;
 		protected List<IPoolSetter> setters;
@@ -49,8 +47,6 @@ namespace Pseudo.Internal.Pool
 			Type = type;
 			StartSize = startSize;
 			isPoolable = reference is IPoolable;
-			isInitializable = reference is IPoolInitializable;
-			isSettersInitializable = reference is IPoolSettersInitializable;
 			instances = new Queue(startSize);
 			toInitialize = new Queue(startSize);
 			Initialize();
@@ -142,16 +138,18 @@ namespace Pseudo.Internal.Pool
 
 		void Initialize()
 		{
-			if (isSettersInitializable)
-				((IPoolSettersInitializable)reference).OnPrePoolSettersInitialize();
+			bool isInitializable = reference is IPoolInitializable;
+
+			if (isInitializable)
+				((IPoolInitializable)reference).OnPrePoolInitialize();
 
 			if (setters == null)
 				setters = PoolUtility.GetSetters(reference);
 			else
 				lock (setters) setters = PoolUtility.GetSetters(reference);
 
-			if (isSettersInitializable)
-				((IPoolSettersInitializable)reference).OnPostPoolSettersInitialize(setters);
+			if (isInitializable)
+				((IPoolInitializable)reference).OnPostPoolInitialize(setters);
 
 			while (Size < StartSize)
 				Enqueue(CreateInstance(), false);
@@ -176,14 +174,7 @@ namespace Pseudo.Internal.Pool
 		protected virtual object CreateInstance()
 		{
 			var instance = Activator.CreateInstance(Type);
-
-			if (isInitializable)
-				((IPoolInitializable)instance).OnPrePoolInitialize();
-
 			PoolUtility.InitializeFields(instance, setters);
-
-			if (isInitializable)
-				((IPoolInitializable)instance).OnPostPoolInitialize();
 
 			return instance;
 		}
@@ -221,12 +212,15 @@ namespace Pseudo.Internal.Pool
 
 		protected static void Unsubscribe(Pool pool)
 		{
+			if (!pool.updating)
+				return;
+
 			pool.updating = false;
 		}
 
 		static void InitializeUpdateThread()
 		{
-			if (updadeThread == null || updadeThread.ThreadState == ThreadState.Stopped)
+			if (updadeThread == null)
 			{
 				updadeThread = new Thread(UpdateAsync);
 				updadeThread.Start();
@@ -237,7 +231,7 @@ namespace Pseudo.Internal.Pool
 		{
 			try
 			{
-				while (ApplicationUtility.IsPlaying)
+				while (PoolUtility.IsPlaying)
 				{
 					for (int i = toUpdate.Count - 1; i >= 0; i--)
 					{
@@ -287,14 +281,8 @@ namespace Pseudo.Internal.Pool
 					}
 				}
 
-				if (pool.isInitializable)
-					((IPoolInitializable)instance).OnPrePoolInitialize();
-
 				lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 				lock (pool.instances) pool.instances.Enqueue(instance);
-
-				if (pool.isInitializable)
-					((IPoolInitializable)instance).OnPostPoolInitialize();
 			}
 		}
 	}

@@ -19,7 +19,7 @@ namespace Pseudo
 			{
 				if (!isValueCached)
 				{
-					isValueCached = ApplicationUtility.IsPlaying;
+					isValueCached = Application.isPlaying;
 					value = getValue();
 				}
 
@@ -42,7 +42,7 @@ namespace Pseudo
 			isValueCached = false;
 			value = default(T);
 		}
-
+		
 		public static implicit operator T(CachedValue<T> cachedValue)
 		{
 			return cachedValue.Value;

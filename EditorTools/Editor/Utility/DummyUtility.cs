@@ -4,41 +4,25 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal;
 using System.Reflection.Emit;
 using System.Reflection;
 using UnityEditor;
-using Pseudo.Internal.Editor;
-using Pseudo.Internal.Unity;
 
 public static class DummyUtility
 {
 	static Dictionary<Type, Type> dummyTypes = new Dictionary<Type, Type>();
 
-	public static SerializedProperty SerializeDummy(IDummy dummy)
+	public static SerializedObject SerializeDummy(IDummy dummy)
 	{
-		var serializedDummy = new SerializedObject((ScriptableObject)dummy);
-		var valueProperty = serializedDummy.FindProperty("Value");
-
-		CacheDrawers(serializedDummy.GetIterator());
-
-		return valueProperty;
+		return new SerializedObject((ScriptableObject)dummy);
 	}
 
-	public static IDummy GetDummy(object value)
+	public static IDummy GetDummy(Type type)
 	{
-		IDummy dummy;
+		var dummy = ScriptableObject.CreateInstance(GetDummyType(type));
+		dummy.hideFlags = HideFlags.DontSave;
 
-		var scriptableDummy = ScriptableObject.CreateInstance(GetDummyType(value.GetType()));
-		dummy = (IDummy)scriptableDummy;
-		dummy.Value = value;
-
-		return dummy;
-	}
-
-	public static SerializedProperty GetSerializedDummy(object value)
-	{
-		return SerializeDummy(GetDummy(value));
+		return (IDummy)dummy;
 	}
 
 	static Type GetDummyType(Type type)
@@ -72,40 +56,7 @@ public static class DummyUtility
 		return typeBuilder.CreateType();
 	}
 
-	public static void CacheDrawers(SerializedProperty iterator)
-	{
-		while (iterator.NextVisible(true))
-			CacheDrawer(iterator);
-	}
-
-	public static void CacheDrawer(SerializedProperty property)
-	{
-		if (property == null)
-			return;
-
-		var field = (FieldInfo)ScriptAttributeUtility.GetFieldInfoFromPropertyPath.Invoke(null, new object[] { property.serializedObject.targetObject.GetType(), property.propertyPath, null });
-
-		if (field == null)
-			return;
-
-		var handlerCache = ScriptAttributeUtility.PropertyHandlerCache.GetValue(null, null);
-		if (handlerCache.InvokeMethod("GetHandler", new object[] { property }) == null)
-		{
-			var handler = Activator.CreateInstance(PropertyHandler.Type);
-			var attributes = field.GetCustomAttributes(typeof(PropertyAttribute), true);
-
-			if (attributes.Length > 0)
-				for (int i = 0; i < attributes.Length; i++)
-					handler.InvokeMethod("HandleAttribute", new object[] { attributes[i], field, field.FieldType });
-			else
-				handler.InvokeMethod("HandleDrawnType", new object[] { field.FieldType, field.FieldType, field, null });
-
-			handlerCache.InvokeMethod("SetHandler", new object[] { property, handler });
-		}
-	}
-
-
-	public class Dummy<T> : ScriptableObject, IDummy
+	class Dummy<T> : ScriptableObject, IDummy
 	{
 		public T Value;
 

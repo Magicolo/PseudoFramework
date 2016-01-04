@@ -8,7 +8,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[Serializable, ComponentCategory("General")]
+	[AddComponentMenu("Pseudo/General/Time")]
 	public class TimeComponent : TimeComponentBase
 	{
 		protected override float GetTime()

@@ -13,6 +13,7 @@ namespace Pseudo
 		public GravityManager GravityManager;
 		public InputManager InputManager;
 		public ParticleManager ParticleManager;
+		public TimeManager TimeManager;
 
 		protected override void Awake()
 		{
@@ -28,6 +29,7 @@ namespace Pseudo
 			CreateManager(GravityManager);
 			CreateManager(InputManager);
 			CreateManager(ParticleManager);
+			CreateManager(TimeManager);
 			DontDestroyOnLoad(CachedGameObject);
 		}
 
