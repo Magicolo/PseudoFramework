@@ -11,8 +11,8 @@ namespace Pseudo
 		public ArchitectLinker Linker;
 		public UIFactory UiFactory;
 
-		public TileType SelectedTileType;
 
+		public SpriteRenderer PreviewSprite;
 
 		public RectTransform drawingRect;
 		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, Input.mousePosition, UICam); } }
@@ -28,7 +28,6 @@ namespace Pseudo
 
 		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z);
 
-		public ArchitectMenus menu;
 		public UISkin UISkin;
 
 		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
@@ -36,15 +35,62 @@ namespace Pseudo
 		public bool HasHistory { get { return architectHistory.History.Count > 0; } }
 		public bool HasRedoHistory { get { return architectHistory.HistoryRedo.Count > 0; } }
 
+		public GridScallerTiller Grid;
+
+		[Space()]
+		ToolFactory.ToolType selectedToolType;
+		public ToolFactory.ToolType SelectedToolType
+		{
+			get { return selectedToolType; }
+			set
+			{
+				selectedToolType = value;
+				Toolbar.Refresh();
+			}
+		}
+
+		TileType selectedTileType;
+		public TileType SelectedTileType
+		{
+			get { return selectedTileType; }
+			set
+			{
+				selectedTileType = value;
+				if (value == null)
+					PreviewSprite.sprite = null;
+				else
+					PreviewSprite.sprite = value.PreviewSprite;
+				tilesetPanel.Refresh();
+			}
+		}
+
+		[Space()]
+		public ArchitectMenus menu;
+		public ToolbarPanel Toolbar;
+		public TilesetItemsPanel tilesetPanel;
+
 		void Awake()
 		{
+
+		}
+		void Start()
+		{
 			SelectedTileType = Linker.Tilesets[0].Tiles[0];
+			SelectedToolType = ToolFactory.ToolType.Brush;
 			New();
 		}
 
 		public void Save()
 		{
 			SaveWorld.SaveAll(this, "map.txt");
+		}
+
+		public void ResetGridSize()
+		{
+			Grid.NbTilesX = SelectedLayer.LayerWidth;
+			Grid.NbTilesY = SelectedLayer.LayerHeight;
+			Grid.TileWidth = SelectedLayer.TileWidth;
+			Grid.TileHeight = SelectedLayer.TileHeight;
 		}
 
 		public void Open(string path)
@@ -58,6 +104,7 @@ namespace Pseudo
 			clearAllLayer();
 			addLayer();
 			SelectedLayer = Layers[0];
+			ResetGridSize();
 		}
 
 		private void clearAllLayer()
@@ -77,12 +124,43 @@ namespace Pseudo
 			if (Input.GetMouseButton(0))
 				HandleLeftMouse();
 			else if (Input.GetMouseButton(1))
-				HandleErase();
+				HandlePipette();
 
 			undoInput.Update();
 			if (undoInput.GetKeyCombinaison())
 				Undo();
+
+			handleKeyboardShortcut();
 			menu.Refresh();
+		}
+
+		private void handleKeyboardShortcut()
+		{
+			if (Input.GetKeyDown(KeyCode.E))
+				SelectedToolType = ToolFactory.ToolType.Eraser;
+			else if (Input.GetKeyDown(KeyCode.B))
+				SelectedToolType = ToolFactory.ToolType.Brush;
+			else if (Input.GetKeyDown(KeyCode.R))
+				Rotate();
+			else if (Input.GetKeyDown(KeyCode.X))
+				FlipX();
+			else if (Input.GetKeyDown(KeyCode.Y))
+				FlipY();
+		}
+
+		private void FlipY()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void FlipX()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void Rotate()
+		{
+			throw new NotImplementedException();
 		}
 
 		private void UpdateTileGetter()
@@ -91,20 +169,21 @@ namespace Pseudo
 			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
 			{
 				tilePositionGetter = newTilePositionGetter;
+				PreviewSprite.transform.position = tilePositionGetter.TileWorldPosition;
 			}
 		}
 
 		private void HandleLeftMouse()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
-				architectHistory.Do(new BrushCommand(this, tilePositionGetter));
+				architectHistory.Do(ToolFactory.Create(selectedToolType, this, tilePositionGetter));
 
 		}
 
-		private void HandleErase()
+		private void HandlePipette()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
-				architectHistory.Do(new EraserTool(this, tilePositionGetter));
+				SelectedTileType = SelectedLayer[tilePositionGetter.TilePosition].TileType;
 		}
 
 
@@ -189,6 +268,8 @@ namespace Pseudo
 			Layers.Add(newLayer);
 			return newLayer;
 		}
+
+
 	}
 
 }

@@ -20,7 +20,7 @@ namespace Pseudo
 			}
 		}
 
-		public void Enabled(params Button[] buttons)
+		public void Enable(params Button[] buttons)
 		{
 			for (int i = 0; i < buttons.Length; i++)
 			{
@@ -41,7 +41,7 @@ namespace Pseudo
 		public void SetEnabled(Button button, bool enabled)
 		{
 			if (enabled)
-				Enabled(button);
+				Enable(button);
 			else
 				Disable(button);
 		}

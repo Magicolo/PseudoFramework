@@ -120,12 +120,12 @@ namespace Pseudo
 			if (architect.Layers.Count == 0)
 			{
 				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton);
-				skin.Enabled(AddLayerButton);
+				skin.Enable(AddLayerButton);
 			}
 			else if (architect.Layers.Count == 1)
 			{
 				skin.Disable(MoveDownLayerButton, MoveUpLayerButton);
-				skin.Enabled(RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
+				skin.Enable(RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
 
 			}
 			else
@@ -134,8 +134,8 @@ namespace Pseudo
 				{
 					skin.Disable(AddLayerButton);
 				}
-				skin.Enabled(RemoveLayerButton, DuplicateLayerButton);
-				skin.Enabled(MoveUpLayerButton, MoveDownLayerButton);
+				skin.Enable(RemoveLayerButton, DuplicateLayerButton);
+				skin.Enable(MoveUpLayerButton, MoveDownLayerButton);
 				if (selectedIndex == 0)
 					skin.Disable(MoveUpLayerButton);
 				else if (selectedIndex == architect.Layers.Count - 1)

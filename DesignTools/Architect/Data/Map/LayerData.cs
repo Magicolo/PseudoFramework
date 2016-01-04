@@ -27,6 +27,7 @@ namespace Pseudo
 
 		public LayerData(Transform parent, string name, int layerWidth, int layerheight)
 		{
+
 			LayerWidth = layerWidth;
 			LayerHeight = layerheight;
 			tiles = new TileData[LayerWidth * LayerHeight];
@@ -39,9 +40,19 @@ namespace Pseudo
 
 		public TileData this[int x, int y]
 		{
-			get { return tiles[x + y * LayerWidth]; }
+			get { return getTile(x, y); }
 			set { tiles[x + y * LayerWidth] = value; }
 		}
+
+		private TileData getTile(int x, int y)
+		{
+			int index = x + y * LayerWidth;
+			if (index >= tiles.Length)
+				return null;
+			else
+				return tiles[index];
+		}
+
 		public TileData this[Point2 point]
 		{
 			get
@@ -71,14 +82,14 @@ namespace Pseudo
 			LayerTransform.gameObject.SetActive(visible);
 		}
 
-		public bool IsInArrayBound(int x, int y)
+		public bool IsInLayerBound(int x, int y)
 		{
-			return x.IsBetweenInclusive(0, LayerWidth) && y.IsBetweenInclusive(0, LayerHeight);
+			return x.IsBetweenInclusive(0, LayerWidth - 1) && y.IsBetweenInclusive(0, LayerHeight - 1);
 		}
 
 		public bool IsInArrayBound(Vector2 vector2)
 		{
-			return IsInArrayBound((int)vector2.x, (int)vector2.y);
+			return IsInLayerBound((int)vector2.x, (int)vector2.y);
 		}
 
 		public int Count
@@ -108,6 +119,7 @@ namespace Pseudo
 
 		public void AddTile(Point2 tilePoint, TileType tileType)
 		{
+			if (!InRange(tilePoint)) return;
 			if (tileType == null || tileType.Prefab == null) return;
 			GameObject newTile = GameObject.Instantiate(tileType.Prefab);
 
@@ -116,6 +128,11 @@ namespace Pseudo
 
 			TileData tileData = new TileData(tileType, newTile);
 			this[tilePoint.X, tilePoint.Y] = tileData;
+		}
+
+		private bool InRange(Point2 tilePoint)
+		{
+			return getTile(tilePoint.X, tilePoint.Y) != null;
 		}
 
 		public bool IsTileEmpty(Point2 tilePoint)

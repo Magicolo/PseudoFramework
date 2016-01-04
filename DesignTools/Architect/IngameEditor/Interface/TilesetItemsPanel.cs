@@ -13,6 +13,7 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	public Color SelectedColor;
 	public Color BaseColor;
+	int currentSelectId;
 
 	void Awake()
 	{
@@ -21,9 +22,7 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	void Start()
 	{
-		TileSet tileset = architect.Linker.Tilesets[0];
-		tilesetButtons.Clear();
-		showTileset(tileset);
+		Refresh();
 	}
 
 	void Update()
@@ -51,8 +50,27 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	void buttonClicked(int id)
 	{
-		tilesetButtons[architect.SelectedTileType.Id - 1].GetComponent<Image>().color = BaseColor;
 		architect.setSelectedTile(id);
-		tilesetButtons[architect.SelectedTileType.Id - 1].GetComponent<Image>().color = SelectedColor;
+	}
+
+	public void Refresh()
+	{
+		TileSet tileset = architect.Linker.Tilesets[0];
+		tilesetButtons.Clear();
+		showTileset(tileset);
+
+		selectTile(architect.SelectedTileType.Id - 1);
+	}
+
+	private void selectTile(int id)
+	{
+		if (currentSelectId >= 0)
+			tilesetButtons[currentSelectId].GetComponent<Image>().color = BaseColor;
+
+		currentSelectId = id;
+
+		if (currentSelectId >= 0)
+			tilesetButtons[currentSelectId].GetComponent<Image>().color = SelectedColor;
+
 	}
 }
