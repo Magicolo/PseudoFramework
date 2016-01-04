@@ -54,7 +54,7 @@ namespace Pseudo.Internal.Entity
 
 		public void TryAddComponent(Component component)
 		{
-			if (!(component is PComponent) || messagers.ContainsKey(component))
+			if (!(component is MonoBehaviour) || messagers.ContainsKey(component))
 				return;
 
 			var messager = GetMessagerGroup(method).GetMessager(component.GetType());
@@ -65,7 +65,7 @@ namespace Pseudo.Internal.Entity
 
 		public void RemoveComponent(Component component)
 		{
-			if (!(component is PComponent))
+			if (!(component is MonoBehaviour))
 				return;
 
 			messagers.Remove(component);

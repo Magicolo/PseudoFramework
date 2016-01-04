@@ -250,7 +250,7 @@ namespace Pseudo.Internal.Pool
 								}
 							}
 							else
-								return;
+								break;
 						}
 
 						UpdatePoolAsync(pool);

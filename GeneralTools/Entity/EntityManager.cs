@@ -17,6 +17,24 @@ namespace Pseudo
 
 		static readonly EntityGroup masterGroup = new EntityGroup();
 
+		public static void BroadcastMessage(EntityMessages message)
+		{
+			for (int i = 0; i < AllEntities.Count; i++)
+				AllEntities[i].SendMessage(message);
+		}
+
+		public static void BroadcastMessage(EntityMessages message, object argument)
+		{
+			for (int i = 0; i < AllEntities.Count; i++)
+				AllEntities[i].SendMessage(message, argument);
+		}
+
+		public static void BroadcastMessage<T>(EntityMessages message, T argument)
+		{
+			for (int i = 0; i < AllEntities.Count; i++)
+				AllEntities[i].SendMessage(message, argument);
+		}
+
 		public static IEntityGroup GetEntityGroup(EntityGroups group, EntityMatches match = EntityMatches.All)
 		{
 			return masterGroup.Filter(group, match);

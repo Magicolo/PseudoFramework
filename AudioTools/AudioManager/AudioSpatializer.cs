@@ -16,7 +16,6 @@ namespace Pseudo.Internal.Audio
 			Dynamic
 		}
 
-
 		Vector3 position;
 		Transform follow;
 		Func<Vector3> getPosition;
