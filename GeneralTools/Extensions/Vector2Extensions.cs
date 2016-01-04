@@ -196,6 +196,38 @@ namespace Pseudo
 			return vector.Round(1f, Axes.XYZW);
 		}
 
+		public static Vector2 Floor(this Vector2 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Floor(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Floor(vector.y);
+
+			return vector;
+		}
+
+		public static Vector2 Floor(this Vector2 vector)
+		{
+			return vector.Floor(Axes.XYZW);
+		}
+
+		public static Vector2 Ceil(this Vector2 vector, Axes axes)
+		{
+			if ((axes & Axes.X) != 0)
+				vector.x = Mathf.Ceil(vector.x);
+
+			if ((axes & Axes.Y) != 0)
+				vector.y = Mathf.Ceil(vector.y);
+
+			return vector;
+		}
+
+		public static Vector2 Ceil(this Vector2 vector)
+		{
+			return vector.Ceil(Axes.XYZW);
+		}
+
 		public static Vector2 Rotate(this Vector2 vector, float angle)
 		{
 			angle %= 360;

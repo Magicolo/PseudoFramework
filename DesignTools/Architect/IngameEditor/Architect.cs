@@ -11,23 +11,72 @@ namespace Pseudo
 		public ArchitectLinker Linker;
 		public UIFactory UiFactory;
 
-		public TileType SelectedTileType;
 
-		[Range(0, 1)]
-		public float DrawingWidth = 0.8f;
-		[Range(0, 1)]
-		public float DrawingHeight = 0.9f;
-		private Rect drawingRect;
+		public SpriteRenderer PreviewSprite;
+
+		public RectTransform drawingRect;
+		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, Input.mousePosition, UICam); } }
+
 
 		public Camera Cam;
+		public Camera UICam;
 
 		public LayerData SelectedLayer;
+		public List<LayerData> Layers = new List<LayerData>();
 
+		ArchitectHistory architectHistory = new ArchitectHistory();
+
+		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z);
+
+		public UISkin UISkin;
+
+		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
+
+		public bool HasHistory { get { return architectHistory.History.Count > 0; } }
+		public bool HasRedoHistory { get { return architectHistory.HistoryRedo.Count > 0; } }
+
+		public GridScallerTiller Grid;
+
+		[Space()]
+		ToolFactory.ToolType selectedToolType;
+		public ToolFactory.ToolType SelectedToolType
+		{
+			get { return selectedToolType; }
+			set
+			{
+				selectedToolType = value;
+				Toolbar.Refresh();
+			}
+		}
+
+		TileType selectedTileType;
+		public TileType SelectedTileType
+		{
+			get { return selectedTileType; }
+			set
+			{
+				selectedTileType = value;
+				if (value == null)
+					PreviewSprite.sprite = null;
+				else
+					PreviewSprite.sprite = value.PreviewSprite;
+				tilesetPanel.Refresh();
+			}
+		}
+
+		[Space()]
+		public ArchitectMenus menu;
+		public ToolbarPanel Toolbar;
+		public TilesetItemsPanel tilesetPanel;
+
+		void Awake()
+		{
+
+		}
 		void Start()
 		{
 			SelectedTileType = Linker.Tilesets[0].Tiles[0];
-			SelectedLayer.TileHeight = 1;
-			SelectedLayer.TileWidth = 1;
+			SelectedToolType = ToolFactory.ToolType.Brush;
 			New();
 		}
 
@@ -36,31 +85,120 @@ namespace Pseudo
 			SaveWorld.SaveAll(this, "map.txt");
 		}
 
+		public void ResetGridSize()
+		{
+			Grid.NbTilesX = SelectedLayer.LayerWidth;
+			Grid.NbTilesY = SelectedLayer.LayerHeight;
+			Grid.TileWidth = SelectedLayer.TileWidth;
+			Grid.TileHeight = SelectedLayer.TileHeight;
+		}
+
 		public void Open(string path)
 		{
-			New();
+			clearAllLayer();
 			WorldOpener.OpenFile(this, path);
 		}
 
 		public void New()
 		{
-			if (SelectedLayer != null)
-				SelectedLayer.DestroyAllAndClear();
-			SelectedLayer = new LayerData(null, "GroundLayer", 20, 20);
+			clearAllLayer();
+			addLayer();
+			SelectedLayer = Layers[0];
+			ResetGridSize();
 		}
+
+		private void clearAllLayer()
+		{
+			for (int i = 0; i < Layers.Count; i++)
+			{
+				Layers[i].LayerTransform.gameObject.Destroy();
+			}
+			Layers.Clear();
+		}
+
 
 		void Update()
 		{
-			drawingRect = new Rect(0, 0, Screen.width * DrawingWidth, Screen.height * DrawingHeight);
-			if (Input.GetMouseButton(0))
-			{
-				handleUseClick();
+			UpdateTileGetter();
 
-			}
+			if (Input.GetMouseButton(0))
+				HandleLeftMouse();
 			else if (Input.GetMouseButton(1))
+				HandlePipette();
+
+			undoInput.Update();
+			if (undoInput.GetKeyCombinaison())
+				Undo();
+
+			handleKeyboardShortcut();
+			menu.Refresh();
+		}
+
+		private void handleKeyboardShortcut()
+		{
+			if (Input.GetKeyDown(KeyCode.E))
+				SelectedToolType = ToolFactory.ToolType.Eraser;
+			else if (Input.GetKeyDown(KeyCode.B))
+				SelectedToolType = ToolFactory.ToolType.Brush;
+			else if (Input.GetKeyDown(KeyCode.R))
+				Rotate();
+			else if (Input.GetKeyDown(KeyCode.X))
+				FlipX();
+			else if (Input.GetKeyDown(KeyCode.Y))
+				FlipY();
+		}
+
+		private void FlipY()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void FlipX()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void Rotate()
+		{
+			throw new NotImplementedException();
+		}
+
+		private void UpdateTileGetter()
+		{
+			ArchitectTilePositionGetter newTilePositionGetter = new ArchitectTilePositionGetter(Cam.GetMouseWorldPosition(), SelectedLayer);
+			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
 			{
-				HandleErase();
+				tilePositionGetter = newTilePositionGetter;
+				PreviewSprite.transform.position = tilePositionGetter.TileWorldPosition;
 			}
+		}
+
+		private void HandleLeftMouse()
+		{
+			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
+				architectHistory.Do(ToolFactory.Create(selectedToolType, this, tilePositionGetter));
+
+		}
+
+		private void HandlePipette()
+		{
+			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
+				SelectedTileType = SelectedLayer[tilePositionGetter.TilePosition].TileType;
+		}
+
+
+
+
+		public void Undo()
+		{
+			architectHistory.Undo();
+			menu.Refresh();
+		}
+
+		public void Redo()
+		{
+			architectHistory.Redo();
+			menu.Refresh();
 		}
 
 		public void setSelectedTile(int id)
@@ -68,74 +206,70 @@ namespace Pseudo
 			SelectedTileType = Linker.Tilesets[0].Tiles[id - 1];
 		}
 
-		private void HandleErase()
+		public void AddSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
 		{
-			if (drawingRect.Contains(Input.mousePosition))
+			layer.AddTile(tilePoint, SelectedTileType);
+		}
+
+		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
+		{
+			layer.AddTile(tilePoint, tileType);
+		}
+
+		public void RemoveSelectedLayer()
+		{
+			if (SelectedLayer != null)
 			{
-				Vector3 p = Cam.ScreenToWorldPoint(Input.mousePosition);
-				Vector3 TileP = p.Div(new Vector3(SelectedLayer.TileWidth, SelectedLayer.TileHeight, 1)).Round().SetValues(0, Axes.Z);
-				// Vector3 worldP = TileP.Mult(new Vector3(Layer.TileWidth, Layer.TileHeight, 1));
-				Point2 tilePoint = new Point2(TileP.ToVector2());
-
-
-				if (SelectedLayer.IsInArrayBound(tilePoint))
-				{
-					if (SelectedLayer[tilePoint.X, tilePoint.Y] != null)
-					{
-						removeTile(tilePoint);
-					}
-				}
+				SelectedLayer.LayerTransform.gameObject.Destroy();
+				Layers.Remove(SelectedLayer);
+				SelectedLayer = null;
 			}
 		}
 
-		void handleUseClick()
+		public void MoveDownSelectedLayer()
 		{
-
-			if (drawingRect.Contains(Input.mousePosition))
-			{
-				Vector3 p = Cam.ScreenToWorldPoint(Input.mousePosition);
-				Vector3 TileP = p.Div(new Vector3(SelectedLayer.TileWidth, SelectedLayer.TileHeight, 1)).Round().SetValues(0, Axes.Z);
-				Vector3 worldP = TileP.Mult(new Vector3(SelectedLayer.TileWidth, SelectedLayer.TileHeight, 1));
-				Point2 tilePoint = new Point2(TileP.ToVector2());
-
-
-				if (SelectedLayer.IsInArrayBound(tilePoint))
-				{
-					if (SelectedLayer[tilePoint.X, tilePoint.Y] == null)
-					{
-						addSelectedTileType(SelectedLayer, worldP, tilePoint);
-					}
-					else if (SelectedLayer[tilePoint.X, tilePoint.Y].TileType != SelectedTileType)
-					{
-						removeTile(tilePoint);
-						addSelectedTileType(SelectedLayer, worldP, tilePoint);
-					}
-
-				}
-			}
+			int selectIndex = Layers.IndexOf(SelectedLayer);
+			if (selectIndex == Layers.Count - 1) return;
+			Layers.Switch(selectIndex, selectIndex + 1);
+			SelectedLayer.LayerTransform.SetSiblingIndex(SelectedLayer.LayerTransform.GetSiblingIndex() + 1);
 		}
 
-		public void addSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
+		public void MoveUpSelectedLayer()
 		{
-			addTile(layer, worldP, tilePoint, SelectedTileType);
+			int selectIndex = Layers.IndexOf(SelectedLayer);
+			if (selectIndex == 0) return;
+			Layers.Switch(selectIndex, selectIndex - 1);
+			SelectedLayer.LayerTransform.SetSiblingIndex(SelectedLayer.LayerTransform.GetSiblingIndex() - 1);
 		}
 
-		public void addTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
+		public void DuplicateSelectedLayer()
 		{
-			if (tileType == null) return;
-			GameObject newTile = (UnityEngine.GameObject)PrefabUtility.InstantiatePrefab(tileType.Prefab);
-			newTile.transform.SetPosition(worldP);
-			newTile.transform.parent = layer.layerTransform;
+			LayerData newLayer = SelectedLayer.Clone();
 
-			TileData tileData = new TileData(tileType, newTile);
-			layer[tilePoint.X, tilePoint.Y] = tileData;
+			Layers.Insert(SelectedIndex, newLayer);
 		}
 
-		void removeTile(Point2 tilePoint)
+		public void RemoveTile(Point2 tilePoint)
 		{
-			SelectedLayer[tilePoint.X, tilePoint.Y].GameObject.Destroy();
-			SelectedLayer[tilePoint.X, tilePoint.Y] = TileData.Empty;
+			SelectedLayer.EmptyTile(tilePoint);
 		}
+
+		public int SelectedIndex { get { return Layers.IndexOf(SelectedLayer); } }
+
+		public LayerData addLayer()
+		{
+			return addLayer(null, "Layer", 1, 1);
+		}
+		public LayerData addLayer(Transform parent, string name, int tileHeight, int tileWidth)
+		{
+			LayerData newLayer = new LayerData(parent, name, 20, 20);
+			newLayer.TileHeight = tileHeight;
+			newLayer.TileWidth = tileWidth;
+			Layers.Add(newLayer);
+			return newLayer;
+		}
+
+
 	}
 
 }

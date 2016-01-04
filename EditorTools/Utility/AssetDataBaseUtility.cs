@@ -2,9 +2,10 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+
+#if UNITY_EDITOR
 using UnityEditor;
-using System.Reflection;
-using Pseudo.Internal;
+#endif
 
 namespace Pseudo
 {
@@ -14,9 +15,9 @@ namespace Pseudo
 		{
 			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
 			{
-				var type = TypeExtensions.AllTypes[i];
+				System.Type type = TypeExtensions.AllTypes[i];
 
-				if (type.FullName.EndsWith(typeName))
+				if (type.Name.Contains(typeName))
 					return type;
 			}
 
@@ -292,8 +293,9 @@ namespace Pseudo
 		/// </summary>
 		public static string GenerateUniqueAssetPath(string name, string path = "")
 		{
-			string assetDirectory;
-
+			string uniquePath = "";
+#if UNITY_EDITOR
+			string assetDirectory = "";
 			if (!string.IsNullOrEmpty(path))
 				assetDirectory = Path.GetDirectoryName(path);
 			if (Selection.activeObject == null)
@@ -302,8 +304,9 @@ namespace Pseudo
 				assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
 			else
 				assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
-
-			return AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+			uniquePath = AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+#endif
+			return uniquePath;
 		}
 	}
 }
