@@ -23,20 +23,9 @@ namespace Pseudo
 			return point.X >= array.GetLowerBound(0) && point.X < array.GetUpperBound(0) && point.Y >= array.GetLowerBound(1) && point.Y < array.GetUpperBound(1);
 		}
 
-		public static void Add<T>(this T[] array, T value)
-		{
-			Array.Resize(ref array, array.Length + 1);
-			array[array.Length - 1] = value;
-		}
-
 		public static bool Contains<T>(this T[] array, T value)
 		{
-			return array.Any(t => object.Equals(t, value));
-		}
-
-		public static bool Contains<T>(this T[] array, Type type)
-		{
-			return typeof(T) == typeof(Type) ? array.Any(t => object.Equals(t, type)) : array.Any(t => t.GetType() == type);
+			return Contains((IList<T>)array, value);
 		}
 
 		public static void Clear<T>(this T[] array)
@@ -81,15 +70,6 @@ namespace Pseudo
 		public static T[] PopRange<T>(this T[] array, int count, out T[] remaining)
 		{
 			return array.PopRange(0, count, out remaining);
-		}
-
-		public static void Join<T>(this T[] array, IList<T> other)
-		{
-			int arrayLength = array.Length;
-
-			Array.Resize(ref array, arrayLength + other.Count);
-
-			other.CopyTo(array, arrayLength);
 		}
 
 		public static T[] Joined<T>(this T[] array, IList<T> other)
@@ -180,22 +160,28 @@ namespace Pseudo
 				array[i] = value;
 		}
 
-		public static Type[] GetTypes<T>(this IList<T> array)
+		public static Type[] GetTypes(this IList array)
 		{
-			Type[] types = new Type[array.Count];
+			var types = new Type[array.Count];
 
 			for (int i = 0; i < array.Count; i++)
-				types[i] = array[i].GetType();
+			{
+				var element = array[i];
+				types[i] = element == null ? null : element.GetType();
+			}
 
 			return types;
 		}
 
-		public static string[] GetTypeNames<T>(this IList<T> array)
+		public static string[] GetTypeNames(this IList array)
 		{
-			string[] typeNames = new string[array.Count];
+			var typeNames = new string[array.Count];
 
 			for (int i = 0; i < array.Count; i++)
-				typeNames[i] = array[i].GetType().Name;
+			{
+				var element = array[i];
+				typeNames[i] = element == null ? "" : element.GetType().Name;
+			}
 
 			return typeNames;
 		}
@@ -216,7 +202,7 @@ namespace Pseudo
 
 		public static void Switch<T>(this IList<T> array, int sourceIndex, int targetIndex)
 		{
-			T temp = array[sourceIndex];
+			var temp = array[sourceIndex];
 			array[sourceIndex] = array[targetIndex];
 			array[targetIndex] = temp;
 		}
@@ -227,27 +213,33 @@ namespace Pseudo
 				array.Switch(array.IndexOf(source), array.IndexOf(target));
 		}
 
-		public static bool ContentEquals(this IList array, IList otherArray)
+		public static bool ContentEquals<T>(this IList<T> array, IList<T> otherArray)
 		{
-			if (otherArray == null || array.Count != otherArray.Count)
+			if (array == null && otherArray == null)
+				return true;
+
+			if (array == null || otherArray == null)
+				return false;
+
+			if (array.Count != otherArray.Count)
 				return false;
 
 			for (int i = 0; i < array.Count; i++)
 			{
-				if (!Equals(array[i], otherArray[i]))
+				if (!EqualityComparer<T>.Default.Equals(array[i], otherArray[i]))
 					return false;
 			}
 
 			return true;
 		}
 
-		public static string[] ToStringArray<T>(this IList<T> array)
+		public static string[] ToStringArray(this IList array)
 		{
-			string[] stringArray = new string[array.Count];
+			var stringArray = new string[array.Count];
 
 			for (int i = 0; i < array.Count; i++)
 			{
-				T element = array[i];
+				var element = array[i];
 
 				if (element is ValueType || element != null)
 					stringArray[i] = array[i].ToString();
@@ -274,6 +266,81 @@ namespace Pseudo
 			}
 
 			return closest;
+		}
+
+		public static bool ContainsAll<T>(this IList<T> array, IList<T> otherArray)
+		{
+			if (array.Count == 0 && otherArray.Count == 0)
+				return true;
+			else if (array.Count == 0)
+				return false;
+			else if (otherArray.Count == 0)
+				return true;
+
+			for (int i = 0; i < otherArray.Count; i++)
+			{
+				if (!Contains(array, otherArray[i]))
+					return false;
+			}
+
+			return true;
+		}
+
+		public static bool ContainsAny<T>(this IList<T> array, IList<T> otherArray)
+		{
+			if (array.Count == 0 || otherArray.Count == 0)
+				return false;
+
+			for (int i = 0; i < otherArray.Count; i++)
+			{
+				if (Contains(array, otherArray[i]))
+					return true;
+			}
+
+			return false;
+		}
+
+		public static bool ContainsNone<T>(this IList<T> array, IList<T> otherArray)
+		{
+			return !array.ContainsAny(otherArray);
+		}
+
+		public static int Count<T>(this IList<T> array, Predicate<T> match)
+		{
+			int count = 0;
+
+			for (int i = 0; i < array.Count; i++)
+			{
+				if (match(array[i]))
+					count++;
+			}
+
+			return count;
+		}
+
+		static bool Contains<T>(IList<T> array, T element)
+		{
+			if (element == null)
+			{
+				for (int i = 0; i < array.Count; i++)
+				{
+					if (array[i] == null)
+						return true;
+				}
+
+				return false;
+			}
+			else
+			{
+				var comparer = EqualityComparer<T>.Default;
+				for (int i = 0; i < array.Count; i++)
+				{
+					if (comparer.Equals(array[i], element))
+						return true;
+				}
+
+				return false;
+			}
 		}
 	}
 }

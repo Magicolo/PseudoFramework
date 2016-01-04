@@ -13,12 +13,14 @@ namespace Pseudo.Internal.Pool
 		readonly FieldInfo field;
 		readonly Type type;
 		readonly List<IPoolSetter> setters;
+		readonly bool isUnityObject;
 
 		public PoolContentSetter(FieldInfo field, Type type, List<IPoolSetter> setters)
 		{
 			this.field = field;
 			this.type = type;
 			this.setters = setters;
+			isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(type);
 		}
 
 		public void SetValue(object instance)
@@ -26,7 +28,15 @@ namespace Pseudo.Internal.Pool
 			if (instance == null)
 				return;
 
-			var value = field.GetValue(instance) ?? TypePoolManager.Create(type);
+			var value = field.GetValue(instance);
+
+			if (value == null)
+			{
+				if (isUnityObject)
+					return;
+				else
+					value = TypePoolManager.Create(type);
+			}
 
 			for (int i = 0; i < setters.Count; i++)
 				setters[i].SetValue(value);

@@ -4,18 +4,35 @@ namespace Pseudo
 {
 	public static class AnimationCurveExtensions
 	{
+		public static void Copy(this AnimationCurve target, AnimationCurve source)
+		{
+			if (target.length != target.length)
+				target.keys = source.keys;
+			else
+			{
+				for (int i = 0; i < source.length; i++)
+					target.MoveKey(i, source[i]);
+			}
+		}
+
 		public static AnimationCurve Clamp(this AnimationCurve curve, float minTime, float maxTime, float minValue, float maxValue)
 		{
-			for (int i = 0; i < curve.keys.Length; i++)
+			var keys = curve.keys;
+
+			for (int i = 0; i < keys.Length; i++)
 			{
-				Keyframe key = curve.keys[i];
+				var key = keys[i];
 
 				if (key.time < minTime || key.time > maxTime || key.value < minValue || key.value > maxValue)
 				{
-					Keyframe newKey = new Keyframe(Mathf.Clamp(key.time, minTime, maxTime), Mathf.Clamp(key.value, minValue, maxValue));
+					var newKey = new Keyframe
+					{
+						time = Mathf.Clamp(key.time, minTime, maxTime),
+						value = Mathf.Clamp(key.value, minValue, maxValue),
+						inTangent = key.inTangent,
+						outTangent = key.outTangent
+					};
 
-					newKey.inTangent = key.inTangent;
-					newKey.outTangent = key.outTangent;
 					curve.MoveKey(i, newKey);
 				}
 			}
@@ -25,7 +42,9 @@ namespace Pseudo
 
 		public static AnimationCurve Reversed(this AnimationCurve curve)
 		{
-			return new AnimationCurve(curve.keys.Reversed());
+			curve.keys = curve.keys.Reversed();
+
+			return curve;
 		}
 	}
 }

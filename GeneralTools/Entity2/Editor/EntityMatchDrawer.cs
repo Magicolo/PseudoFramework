@@ -20,6 +20,9 @@ namespace Pseudo.Internal.Entity
 			var matchProperty = property.FindPropertyRelative("match");
 
 			currentPosition = EditorGUI.PrefixLabel(currentPosition, property.ToGUIContent());
+
+			BeginIndent(0);
+
 			float width = currentPosition.width;
 			currentPosition.width = width * 0.65f - 1f;
 			currentPosition.height = EditorGUI.GetPropertyHeight(groupProperty, label);
@@ -28,6 +31,7 @@ namespace Pseudo.Internal.Entity
 			currentPosition.width = width * 0.35f - 1f;
 			EditorGUI.PropertyField(currentPosition, matchProperty, GUIContent.none);
 
+			EndIndent();
 			End();
 		}
 

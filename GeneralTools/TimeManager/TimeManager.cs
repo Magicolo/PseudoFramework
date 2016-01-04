@@ -7,7 +7,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public class TimeManager : Singleton<TimeManager>
+	public static class TimeManager
 	{
 		public enum TimeChannels
 		{
@@ -15,8 +15,7 @@ namespace Pseudo
 			UI,
 			World,
 			Player,
-			Enemy,
-			Particle
+			Enemy
 		}
 
 		public static TimeChannel Unity { get { return GetChannel(TimeChannels.Unity); } }
@@ -24,76 +23,51 @@ namespace Pseudo
 		public static TimeChannel World { get { return GetChannel(TimeChannels.World); } }
 		public static TimeChannel Player { get { return GetChannel(TimeChannels.Player); } }
 		public static TimeChannel Enemy { get { return GetChannel(TimeChannels.Enemy); } }
-		public static TimeChannel Particle { get { return GetChannel(TimeChannels.Particle); } }
-		protected static List<TimeChannel> channels;
-
-		protected override void Awake()
+		static List<TimeChannel> channels = new List<TimeChannel>
 		{
-			base.Awake();
-
-			var channelValues = (TimeChannels[])Enum.GetValues(typeof(TimeChannels));
-			channels = new List<TimeChannel>(channelValues.Length);
-
-			for (int i = 0; i < channelValues.Length; i++)
-			{
-				var channelValue = channelValues[i];
-				var channel = CreateChannel(channelValue);
-				channels.Add(channel);
-			}
-		}
+			CreateChannel(TimeChannels.Unity),
+			CreateChannel(TimeChannels.UI),
+			CreateChannel(TimeChannels.World),
+			CreateChannel(TimeChannels.Player),
+			CreateChannel(TimeChannels.Enemy),
+		};
 
 		public static TimeChannel GetChannel(TimeChannels channel)
 		{
-			if (channels == null)
-			{
-				Debug.LogError("No instance of the TimeManager has been found.");
-				return null;
-			}
-
 			return channels[(int)channel];
 		}
 
 		public static float GetTime(TimeChannels channel)
 		{
-			if (Application.isPlaying)
-				return GetChannel(channel).Time;
-			else
-				return 0f;
+			return GetChannel(channel).Time;
 		}
 
 		public static float GetTimeScale(TimeChannels channel)
 		{
-			if (Application.isPlaying)
-				return GetChannel(channel).TimeScale;
-			else
-				return 0f;
+			return GetChannel(channel).TimeScale;
 		}
 
 		public static float GetDeltaTime(TimeChannels channel)
 		{
-			if (Application.isPlaying)
-				return GetChannel(channel).DeltaTime;
-			else
-				return 0f;
+			return GetChannel(channel).DeltaTime;
 		}
 
 		public static float GetFixedDeltaTime(TimeChannels channel)
 		{
-			if (Application.isPlaying)
-				return GetChannel(channel).FixedDeltaTime;
-			else
-				return 0f;
+			return GetChannel(channel).FixedDeltaTime;
 		}
 
 		public static void SetTimeScale(TimeChannels channel, float timeScale)
 		{
-			if (Application.isPlaying)
-				GetChannel(channel).TimeScale = timeScale;
+			GetChannel(channel).TimeScale = timeScale;
 		}
 
 		static TimeChannel CreateChannel(TimeChannels channel)
 		{
-			return instance.CachedGameObject.AddChild(channel.ToString()).AddComponent<TimeChannel>();
+			var timeChannel = TypePoolManager.Create<TimeChannel>();
+			timeChannel.Channel = channel;
+
+			return timeChannel;
 		}
 	}
 }

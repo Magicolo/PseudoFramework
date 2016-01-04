@@ -12,6 +12,7 @@ namespace Pseudo
 	{
 		static Dictionary<Type, Type[]> AssignableTypesDict = new Dictionary<Type, Type[]>();
 		static Dictionary<Type, Type[]> SubclassTypes = new Dictionary<Type, Type[]>();
+		static Dictionary<Type, FieldInfo[]> TypeFields = new Dictionary<Type, FieldInfo[]>();
 
 		static Type[] allTypes;
 		public static Type[] AllTypes
@@ -20,12 +21,12 @@ namespace Pseudo
 			{
 				if (allTypes == null)
 				{
-					List<Type> types = new List<Type>();
-					Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+					var types = new List<Type>(512);
+					var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
 					for (int i = 0; i < assemblies.Length; i++)
 					{
-						Assembly assembly = assemblies[i];
+						var assembly = assemblies[i];
 						types.AddRange(assembly.GetTypes());
 					}
 
@@ -74,6 +75,19 @@ namespace Pseudo
 			}
 
 			return AssignableTypesDict[type];
+		}
+
+		public static FieldInfo[] GetAllFields(this Type type)
+		{
+			FieldInfo[] fields;
+
+			if (!TypeFields.TryGetValue(type, out fields))
+			{
+				fields = type.GetFields(ReflectionExtensions.AllFlags);
+				TypeFields[type] = fields;
+			}
+
+			return fields;
 		}
 
 		public static object CreateDefaultInstance(this Type type)

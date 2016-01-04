@@ -40,12 +40,9 @@ namespace Pseudo.Internal.Editor
 			deleteBreak = false;
 
 			if (space)
-			{
 				EditorGUILayout.Space();
-			}
 
-			Undo.RecordObject(target, string.Format("{0} ({1}) modified.", target.name, target.GetType()));
-
+			Undo.RegisterCompleteObjectUndo(target, string.Format("{0} ({1}) modified.", target.name, target.GetType()));
 			EditorGUI.BeginChangeCheck();
 
 			serializedObject.Update();
@@ -54,9 +51,7 @@ namespace Pseudo.Internal.Editor
 		public virtual void End(bool space = true)
 		{
 			if (space)
-			{
 				EditorGUILayout.Space();
-			}
 
 			serializedObject.ApplyModifiedProperties();
 
@@ -504,7 +499,7 @@ namespace Pseudo.Internal.Editor
 			DropFoldout<T>(showable, false, label, null, dropCallback);
 		}
 
-		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, bool disableOnPlay = true, bool showElementBox = false, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
+		public void ArrayFoldout(SerializedProperty arrayProperty, GUIContent label = null, GUIStyle style = null, FoldoutDrawer foldoutDrawer = null, ElementDrawer elementDrawer = null, ElementDrawer onPreElementDraw = null, ElementDrawer onPostElementDraw = null, bool disableOnPlay = true, AddCallback addCallback = null, DeleteCallback deleteCallback = null, ReorderCallback reorderCallback = null)
 		{
 			if (foldoutDrawer == null)
 				AddFoldOut(arrayProperty, -1, label, style, disableOnPlay, addCallback);
@@ -519,14 +514,16 @@ namespace Pseudo.Internal.Editor
 				{
 					SerializedProperty elementProperty = arrayProperty.GetArrayElementAtIndex(i);
 
-					if (showElementBox)
-						BeginBox();
+					if (onPreElementDraw != null)
+						onPreElementDraw(arrayProperty, i, elementProperty);
 
 					Rect rect = EditorGUI.IndentedRect(EditorGUILayout.BeginVertical());
 					rect.width += EditorGUI.indentLevel * 2f;
 
-					GUIStyle buttonStyle = new GUIStyle("MiniToolbarButtonLeft");
-					buttonStyle.clipping = TextClipping.Overflow;
+					var buttonStyle = new GUIStyle("MiniToolbarButtonLeft")
+					{
+						clipping = TextClipping.Overflow
+					};
 
 					EditorGUI.BeginDisabledGroup(disableOnPlay && Application.isPlaying);
 
@@ -548,8 +545,8 @@ namespace Pseudo.Internal.Editor
 
 					EditorGUILayout.EndVertical();
 
-					if (showElementBox)
-						EndBox();
+					if (onPostElementDraw != null)
+						onPostElementDraw(arrayProperty, i, elementProperty);
 				}
 
 				EditorGUI.indentLevel--;
@@ -813,6 +810,27 @@ namespace Pseudo.Internal.Editor
 		#endregion
 
 		#region Miscellaneous
+		public static object ObjectField(object value, GUIContent label)
+		{
+			if (value == null)
+				return null;
+
+			var dummy = DummyUtility.GetDummy(value);
+			var serializedDummy = DummyUtility.SerializeDummy(dummy);
+
+			EditorGUI.BeginChangeCheck();
+
+			EditorGUILayout.PropertyField(serializedDummy, label, true);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				serializedDummy.serializedObject.ApplyModifiedProperties();
+				value = dummy.Value;
+			}
+
+			return value;
+		}
+
 		public void PropertyObjectField<T>(SerializedProperty property, bool disableOnPlay, bool allowSceneObjects, GUIContent label, ClearCallback clearCallback, params GUILayoutOption[] options) where T : Object
 		{
 			label = label ?? property.ToGUIContent();
@@ -1155,11 +1173,11 @@ namespace Pseudo.Internal.Editor
 
 		public static bool Reorderable(SerializedProperty arrayProperty, int index, bool disableOnPlay, Rect dragArea, Rect appearanceArea, ReorderCallback reorderCallback = null)
 		{
-			if (Application.isPlaying && disableOnPlay)
+			if (Application.isPlaying && disableOnPlay || arrayProperty.arraySize <= 1)
 				return false;
 
-			string arrayIdentifier = arrayProperty.name + arrayProperty.arraySize + arrayProperty.depth + arrayProperty.propertyPath + arrayProperty.propertyType + arrayProperty.serializedObject.targetObject.GetHashCode();
-			SerializedProperty selectedArray = DragAndDrop.GetGenericData(arrayIdentifier) as SerializedProperty;
+			int arrayId = arrayProperty.GetPropertyHash();
+			var selectedArray = DragAndDrop.GetGenericData(arrayId.ToString()) as SerializedProperty;
 			int selectedIndex = DragAndDrop.GetGenericData("Selected Index") == null ? -1 : (int)DragAndDrop.GetGenericData("Selected Index");
 			int targetIndex = DragAndDrop.GetGenericData("Target Index") == null ? -1 : (int)DragAndDrop.GetGenericData("Target Index");
 			GUIStyle selectedStyle = new GUIStyle("TL SelectionButton PreDropGlow");
@@ -1171,7 +1189,7 @@ namespace Pseudo.Internal.Editor
 					if (dragArea.Contains(Event.current.mousePosition))
 					{
 						DragAndDrop.PrepareStartDrag();
-						DragAndDrop.SetGenericData(arrayIdentifier, arrayProperty);
+						DragAndDrop.SetGenericData(arrayId.ToString(), arrayProperty);
 						DragAndDrop.SetGenericData("Selected Index", index);
 						DragAndDrop.objectReferences = new Object[] { new Object() };
 						Event.current.Use();
@@ -1282,6 +1300,49 @@ namespace Pseudo.Internal.Editor
 			for (int i = 0; i < amount; i++)
 			{
 				GUILayout.Label("");
+			}
+		}
+
+		public static void Errors(Rect rect, List<GUIContent> errors, GenericMenu.MenuFunction errorCallback = null)
+		{
+			errorCallback = errorCallback == null ? () => { } : errorCallback;
+
+			if (errors.Count > 0)
+			{
+				rect.width = 21f;
+				rect.height = 21f;
+				var errorIcon = new GUIStyle("Wizard Error").normal.background;
+				if (GUI.Button(rect, new GUIContent(errorIcon), new GUIStyle()))
+				{
+					var menu = new GenericMenu();
+
+					for (int i = 0; i < errors.Count; i++)
+						menu.AddItem(errors[i], false, errorCallback);
+
+					menu.DropDown(rect);
+				}
+			}
+		}
+
+		public static void Errors(Rect rect, List<GUIContent> errors, List<object> data, GenericMenu.MenuFunction2 errorCallback = null)
+		{
+			data.Resize(errors.Count);
+			errorCallback = errorCallback == null ? d => { } : errorCallback;
+
+			if (errors.Count > 0)
+			{
+				rect.width = 21f;
+				rect.height = 21f;
+				var errorIcon = new GUIStyle("Wizard Error").normal.background;
+				if (GUI.Button(rect, new GUIContent(errorIcon), new GUIStyle()))
+				{
+					var menu = new GenericMenu();
+
+					for (int i = 0; i < errors.Count; i++)
+						menu.AddItem(errors[i], false, errorCallback, data[i]);
+
+					menu.DropDown(rect);
+				}
 			}
 		}
 		#endregion

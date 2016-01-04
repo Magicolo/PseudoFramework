@@ -14,6 +14,7 @@ namespace Pseudo.Internal.Editor
 		static AudioItem previewItem;
 		static AudioSettingsBase previewSettings;
 		static bool stopPreview;
+		static bool audioManagerExists;
 
 		public override void OnInspectorGUI()
 		{
@@ -27,6 +28,10 @@ namespace Pseudo.Internal.Editor
 		[UnityEditor.Callbacks.DidReloadScripts, InitializeOnLoadMethod]
 		static void InitializeCallbacks()
 		{
+			EditorApplication.playmodeStateChanged -= OnPlaymodeStateChanged;
+			EditorApplication.projectWindowItemOnGUI -= OnProjectWindowItemGUI;
+			EditorApplication.update -= Update;
+
 			EditorApplication.playmodeStateChanged += OnPlaymodeStateChanged;
 			EditorApplication.projectWindowItemOnGUI += OnProjectWindowItemGUI;
 			EditorApplication.update += Update;
@@ -34,7 +39,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnPlaymodeStateChanged()
 		{
-			if (AudioManager.Instance == null)
+			if (!audioManagerExists)
 				return;
 
 			StopPreview();
@@ -42,7 +47,7 @@ namespace Pseudo.Internal.Editor
 
 		static void OnProjectWindowItemGUI(string guid, Rect selectionRect)
 		{
-			if (AudioManager.Instance == null)
+			if (!audioManagerExists)
 				return;
 
 			AudioSettingsBase settings = AssetDatabase.LoadAssetAtPath<AudioSettingsBase>(AssetDatabase.GUIDToAssetPath(guid));
@@ -53,7 +58,9 @@ namespace Pseudo.Internal.Editor
 
 		static void Update()
 		{
-			if (AudioManager.Find() == null || Application.isPlaying)
+			audioManagerExists = AudioManager.Find() != null;
+
+			if (!audioManagerExists || Application.isPlaying)
 				return;
 
 			if (stopPreview || previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)

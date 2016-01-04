@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TimeComponentBase : PComponent
+	public abstract class TimeComponentBase : ComponentBase
 	{
 		public TimeManager.TimeChannels Channel
 		{

@@ -9,11 +9,6 @@ namespace Pseudo.Internal
 {
 	public class TimeChannel : TimeComponentBase
 	{
-		protected virtual void Awake()
-		{
-			channel = (TimeManager.TimeChannels)Enum.Parse(typeof(TimeManager.TimeChannels), name);
-		}
-
 		protected override float GetTime()
 		{
 			return UnityEngine.Time.time;

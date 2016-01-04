@@ -73,19 +73,11 @@ namespace Pseudo.Internal.Entity
 			return flag;
 		}
 
-		public static void ClearAllEntityGroups()
+		public static void ClearAll()
 		{
 			entities.Clear();
 			typeIds.Clear();
 			types.Clear();
-			EntityManager.ClearAllEntityGroups();
-			GC.Collect();
-		}
-
-		public static void InitializeJanitor()
-		{
-			if (Application.isPlaying && EntityJanitor.Instance == null)
-				new GameObject("Entity Manager").AddComponent<EntityJanitor>();
 		}
 	}
 }

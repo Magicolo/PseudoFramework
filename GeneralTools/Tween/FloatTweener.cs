@@ -74,7 +74,7 @@ namespace Pseudo
 			this.time = time;
 			this.setValue = setValue ?? Tweening.EmptyFloatAction;
 			this.easeFunction = Tweening.ToEaseFunction(ease);
-			this.getDeltaTime = getDeltaTime ?? (Application.isPlaying ? Tweening.DefaultGetDeltaTime : Tweening.DefaultEditorGetDeltaTime);
+			this.getDeltaTime = getDeltaTime ?? (ApplicationUtility.IsPlaying ? Tweening.DefaultGetDeltaTime : Tweening.DefaultEditorGetDeltaTime);
 			this.delay = delay;
 			this.startCallback = startCallback ?? Tweening.EmptyAction;
 			this.endCallback = endCallback ?? Tweening.EmptyAction;
