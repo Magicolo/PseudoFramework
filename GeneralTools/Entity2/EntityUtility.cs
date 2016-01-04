@@ -78,7 +78,6 @@ namespace Pseudo.Internal.Entity
 			entities.Clear();
 			typeIds.Clear();
 			types.Clear();
-			GC.Collect();
 		}
 	}
 }

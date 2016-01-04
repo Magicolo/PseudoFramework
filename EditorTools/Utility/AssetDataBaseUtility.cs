@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
+using System.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo
 {
@@ -12,9 +14,9 @@ namespace Pseudo
 		{
 			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
 			{
-				System.Type type = TypeExtensions.AllTypes[i];
+				var type = TypeExtensions.AllTypes[i];
 
-				if (type.Name.Contains(typeName))
+				if (type.FullName.EndsWith(typeName))
 					return type;
 			}
 
@@ -283,25 +285,25 @@ namespace Pseudo
 			return path.StartsWith(relativeTo);
 		}
 
-        /// <summary>
-        /// Return a unique path for the file <i>name</i>.
-        /// If a path is provided, it will use it as a root. 
-        /// If no path is provided, it will look for currently selected item.
-        /// </summary>
-        public static string GenerateUniqueAssetPath(string name, string path = "")
-        {
-            string assetDirectory;
+		/// <summary>
+		/// Return a unique path for the file <i>name</i>.
+		/// If a path is provided, it will use it as a root. 
+		/// If no path is provided, it will look for currently selected item.
+		/// </summary>
+		public static string GenerateUniqueAssetPath(string name, string path = "")
+		{
+			string assetDirectory;
 
-            if (!string.IsNullOrEmpty(path))
-                assetDirectory = Path.GetDirectoryName(path);
-            if (Selection.activeObject == null)
-                assetDirectory = "Assets";
-            else if (Selection.activeObject is DefaultAsset)
-                assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
-            else
-                assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
+			if (!string.IsNullOrEmpty(path))
+				assetDirectory = Path.GetDirectoryName(path);
+			if (Selection.activeObject == null)
+				assetDirectory = "Assets";
+			else if (Selection.activeObject is DefaultAsset)
+				assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
+			else
+				assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
 
-            return AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
-        }
-    }
+			return AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+		}
+	}
 }

@@ -9,21 +9,9 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolJanitor : Singleton<PoolJanitor>
 	{
-		protected override void Awake()
-		{
-			base.Awake();
-
-			PoolUtility.IsPlaying = true;
-		}
-
 		void OnDestroy()
 		{
 			PoolUtility.ClearAllPools();
-		}
-
-		void OnApplicationQuit()
-		{
-			PoolUtility.IsPlaying = false;
 		}
 	}
 }

@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Editor
 	public class PropertyFieldDrawer : CustomAttributePropertyDrawerBase
 	{
 		PropertyDrawer drawerOverride;
-		object lastValue;
+		bool hasChanged;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -18,7 +18,7 @@ namespace Pseudo.Internal.Editor
 
 			if (fieldInfo.FieldType.IsArray)
 			{
-				Debug.LogError(string.Format("{0} should not be applied to arrays or lists.", attribute.GetType().Name));
+				Debug.LogError(string.Format("{0} must not be applied to arrays or lists.", attribute.GetType().Name));
 				return;
 			}
 
@@ -31,31 +31,35 @@ namespace Pseudo.Internal.Editor
 			else
 				drawerOverride.OnGUI(currentPosition, property, label);
 
-			object currentValue = property.GetValue();
+			var value = property.GetValue();
 
-			if (!currentValue.Equals(lastValue))
+			if (hasChanged)
 			{
-				string propertyPath = property.GetAdjustedPath();
-				string[] propertyPathSplit = propertyPath.Split('.');
+				var propertyPath = property.GetAdjustedPath();
+				var propertyPathSplit = propertyPath.Split('.');
 
 				propertyPathSplit[propertyPathSplit.Length - 1] = propertyPathSplit.Last().Replace("_", "").Capitalized();
 				propertyPath = propertyPathSplit.Concat(".");
 				property.serializedObject.ApplyModifiedProperties();
-				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, t.GetValueFromMemberAtPath(propertyPath)));
+				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, value));
 				property.serializedObject.Update();
-				lastValue = currentValue;
+				hasChanged = false;
 			}
+
+			hasChanged = EditorGUI.EndChangeCheck();
 
 			End();
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			Type attributeType = ((PropertyFieldAttribute)attribute).attributeType;
-			object[] arguments = ((PropertyFieldAttribute)attribute).arguments;
+			var attributeType = ((PropertyFieldAttribute)attribute).attributeType;
+			var arguments = ((PropertyFieldAttribute)attribute).arguments;
 
-			if (attributeType != null)
-				drawerOverride = GetPropertyDrawer(attributeType, arguments);
+			if (attributeType == null)
+				drawerOverride = GetPropertyDrawer(fieldInfo.FieldType, fieldInfo);
+			else
+				drawerOverride = GetPropertyAttributeDrawer(attributeType, fieldInfo, arguments);
 
 			if (drawerOverride == null)
 				return base.GetPropertyHeight(property, label);

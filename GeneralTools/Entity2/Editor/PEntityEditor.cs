@@ -39,6 +39,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
+		Dictionary<string, ComponentCategory> categoryDict = new Dictionary<string, ComponentCategory>();
 		PEntity entity;
 		ComponentCategory[] categories;
 		ComponentCategory currentCategory;
@@ -49,6 +50,7 @@ namespace Pseudo.Internal.Entity
 			base.OnEnable();
 
 			entity = (PEntity)target;
+			InitializeCategories();
 		}
 
 		public override void OnInspectorGUI()
@@ -56,16 +58,16 @@ namespace Pseudo.Internal.Entity
 			Begin();
 
 			InitializeCategories();
-			ShowGroup();
+			ShowGroups();
 			Separator();
 			ShowComponentCategories();
 
 			End();
 		}
 
-		void ShowGroup()
+		void ShowGroups()
 		{
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("group"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("groups"));
 		}
 
 		void ShowComponentCategories()
@@ -80,6 +82,11 @@ namespace Pseudo.Internal.Entity
 
 			for (int i = 0; i < categories.Length; i++)
 			{
+				var category = categories[i];
+
+				if (category.Components.Count == 0)
+					continue;
+
 				if (i > 0)
 					GUILayout.Space(5f);
 
@@ -100,7 +107,7 @@ namespace Pseudo.Internal.Entity
 				EndBox();
 			}
 
-			if (categories.Length > 0)
+			if (entity.GetAllComponents().Count > 0)
 				Separator();
 
 			int index = EditorGUILayout.Popup(0, AddOptions, style);
@@ -148,7 +155,7 @@ namespace Pseudo.Internal.Entity
 			if (name.EndsWith("Component"))
 				name = name.Substring(0, name.Length - "Component".Length);
 
-			ObjectField(name, currentComponent);
+			ObjectField(currentComponent, name.ToGUIContent());
 		}
 
 		void OnPostComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
@@ -160,6 +167,7 @@ namespace Pseudo.Internal.Entity
 		void ShowComponentErrors(Rect rect)
 		{
 			var errors = new List<GUIContent>();
+			var data = new List<object>();
 
 			// Gather errors
 			if (currentComponent.GetType().IsDefined(typeof(EntityRequiresAttribute), true))
@@ -171,13 +179,16 @@ namespace Pseudo.Internal.Entity
 					var type = requireAttribute.Types[i];
 
 					if (type != null && typeof(IComponent).IsAssignableFrom(type) && !entity.HasComponent(type))
+					{
 						errors.Add(string.Format("Missing required component: {0}", type.Name).ToGUIContent());
+						data.Add(new ErrorData(currentCategory, currentComponent, ErrorData.ErrorTypes.MissingComponent, type));
+					}
 				}
 			}
 
 			rect.x -= 21f;
 			rect.y -= 1f;
-			Errors(rect, errors);
+			Errors(rect, errors, data, OnComponentError);
 		}
 
 		void AddComponent(Type type)
@@ -188,44 +199,42 @@ namespace Pseudo.Internal.Entity
 
 		void DeleteComponent(SerializedProperty arrayProperty, int index)
 		{
-			DeleteFromArray(arrayProperty, index);
-			entity.RemoveComponent(currentCategory.Components.Pop(index));
+			entity.RemoveComponent(currentCategory.Components[index]);
 			InitializeCategories();
 		}
 
 		void ReorderComponent(SerializedProperty arrayProperty, int sourceIndex, int targetIndex)
 		{
-			entity.GetAllComponents().Switch(currentCategory.Components[sourceIndex], currentCategory.Components[targetIndex]);
-			currentCategory.Components.Switch(sourceIndex, targetIndex);
+			entity.GetAllComponents().Switch(currentCategory.ComponentIndices[sourceIndex], currentCategory.ComponentIndices[targetIndex]);
 			InitializeCategories();
 		}
 
-		object ObjectField(string name, object value)
+		void OnComponentError(object data)
 		{
-			if (value == null)
-				return null;
+			var errorData = (ErrorData)data;
 
-			var dummy = DummyUtility.GetDummy(value.GetType());
-			dummy.Value = value;
-			var serializedDummy = DummyUtility.SerializeDummy(dummy);
-			var dummyValueProperty = serializedDummy.FindProperty("Value");
-
-			EditorGUI.BeginChangeCheck();
-
-			EditorGUILayout.PropertyField(dummyValueProperty, name.ToGUIContent(), true);
-
-			if (EditorGUI.EndChangeCheck())
+			switch (errorData.ErrorType)
 			{
-				serializedDummy.ApplyModifiedProperties();
-				value = dummy.Value;
+				case ErrorData.ErrorTypes.MissingComponent:
+					if (!errorData.MissingComponentType.IsInterface && !errorData.MissingComponentType.IsAbstract)
+						entity.AddComponent(errorData.MissingComponentType);
+					break;
+				default:
+					break;
 			}
 
-			return value;
+			InitializeCategories();
 		}
 
 		void InitializeCategories()
 		{
-			var categoryDict = new Dictionary<string, ComponentCategory>();
+			// Fixes the "Generating diff of this object for undo because the type tree changed." bug.
+			if (EditorApplication.isPlaying != EditorApplication.isPlayingOrWillChangePlaymode)
+				return;
+
+			foreach (var pair in categoryDict)
+				pair.Value.RemoveAllComponents();
+
 			var components = entity.GetAllComponents();
 
 			for (int i = 0; i < components.Count; i++)
@@ -244,7 +253,7 @@ namespace Pseudo.Internal.Entity
 						categoryDict[categoryName] = category;
 					}
 
-					category.AddComponent(component);
+					category.AddComponent(component, i);
 				}
 				else
 				{
@@ -257,7 +266,7 @@ namespace Pseudo.Internal.Entity
 						categoryDict[categoryName] = category;
 					}
 
-					category.AddComponent(component);
+					category.AddComponent(component, i);
 				}
 			}
 
@@ -319,11 +328,11 @@ namespace Pseudo.Internal.Entity
 			public readonly string Name;
 			public readonly int Order;
 			public readonly List<IComponent> Components = new List<IComponent>();
-			public readonly SerializedObject Dummy;
+			public readonly List<int> ComponentIndices = new List<int>();
 			public readonly SerializedProperty DummyValue;
 			public bool IsExpanded
 			{
-				get { return EditorPrefs.GetBool(expandedPrefix + Name); }
+				get { return EditorPrefs.GetBool(expandedPrefix + Name, true); }
 				set { EditorPrefs.SetBool(expandedPrefix + Name, value); }
 			}
 
@@ -331,17 +340,46 @@ namespace Pseudo.Internal.Entity
 			{
 				Name = name;
 				Order = order;
-
-				var dummy = DummyUtility.GetDummy(typeof(string[]));
-				dummy.Value = new string[0];
-				Dummy = DummyUtility.SerializeDummy(dummy);
-				DummyValue = Dummy.FindProperty("Value");
+				DummyValue = DummyUtility.GetSerializedDummy(new string[0]);
 			}
 
-			public void AddComponent(IComponent component)
+			public void AddComponent(IComponent component, int index)
 			{
 				Components.Add(component);
+				ComponentIndices.Add(index);
 				DummyValue.Add(component.GetTypeName());
+			}
+
+			public void RemoveAllComponents()
+			{
+				Components.Clear();
+				ComponentIndices.Clear();
+				DummyValue.arraySize = 0;
+			}
+		}
+
+		public class ErrorData
+		{
+			public enum ErrorTypes
+			{
+				MissingComponent
+			}
+
+			public readonly ComponentCategory Category;
+			public readonly IComponent Component;
+			public readonly ErrorTypes ErrorType;
+			public readonly Type MissingComponentType;
+
+			public ErrorData(ComponentCategory category, IComponent component, ErrorTypes errorType, Type missingComponentType) : this(category, component, errorType)
+			{
+				MissingComponentType = missingComponentType;
+			}
+
+			ErrorData(ComponentCategory category, IComponent component, ErrorTypes errorType)
+			{
+				Category = category;
+				Component = component;
+				ErrorType = errorType;
 			}
 		}
 	}

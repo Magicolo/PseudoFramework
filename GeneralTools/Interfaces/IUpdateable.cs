@@ -10,6 +10,7 @@ namespace Pseudo
 	public interface IUpdateable
 	{
 		bool Active { get; set; }
+		float UpdateRate { get; }
 
 		void Update();
 	}

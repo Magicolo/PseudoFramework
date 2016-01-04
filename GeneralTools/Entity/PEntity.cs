@@ -10,8 +10,29 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
+	public enum EntityGroups : byte
+	{
+		Character_Player = 0,
+		Character_Enemy = 1,
+		Item_Weapon = 64,
+		Item_Bullet = 65,
+		Number_0 = 96,
+		Number_1 = 97,
+		Number_2 = 98,
+		Number_3 = 99,
+		Number_4 = 100,
+		Number_5 = 101,
+		Number_6 = 102,
+		Number_7 = 103,
+		Number_8 = 104,
+		Number_9 = 105,
+		Spawner = 160,
+		UI = 192,
+		World = 193
+	}
+
 	[DisallowMultipleComponent]
-	public class PEntityOld : PMonoBehaviour, IEntityOld, IPoolInitializable
+	public class PEntityOld : PMonoBehaviour, IEntityOld, IPoolSettersInitializable
 	{
 		public event Action<Component> OnComponentAdded;
 		public event Action<Component> OnComponentRemoved;
@@ -372,11 +393,11 @@ namespace Pseudo
 			initialized = true;
 		}
 
-		void IPoolInitializable.OnPrePoolInitialize()
+		void IPoolSettersInitializable.OnPrePoolSettersInitialize()
 		{
 			InitializeComponents();
 		}
 
-		void IPoolInitializable.OnPostPoolInitialize(List<IPoolSetter> setters) { }
+		void IPoolSettersInitializable.OnPostPoolSettersInitialize(List<IPoolSetter> setters) { }
 	}
 }

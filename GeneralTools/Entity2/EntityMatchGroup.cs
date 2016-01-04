@@ -11,8 +11,8 @@ namespace Pseudo.Internal.Entity
 	{
 		readonly IEntityGroup parent;
 		readonly EntityMatches match;
-		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>(2);
-		readonly Dictionary<ByteFlag, EntityGroup> componentGroups = new Dictionary<ByteFlag, EntityGroup>(2);
+		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>();
+		readonly Dictionary<ByteFlag, EntityGroup> componentGroups = new Dictionary<ByteFlag, EntityGroup>();
 
 		public EntityMatchGroup(IEntityGroup parent, EntityMatches match)
 		{
@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Entity
 			this.match = match;
 		}
 
-		public EntityGroup GetEntityGroupByGroup(ByteFlag groups)
+		public EntityGroup GetGroupByEntityGroup(ByteFlag groups)
 		{
 			EntityGroup entityGroup;
 
@@ -33,13 +33,13 @@ namespace Pseudo.Internal.Entity
 			return entityGroup;
 		}
 
-		public EntityGroup GetEntityGroupByComponent(ByteFlag components)
+		public EntityGroup GetGroupByComponentGroup(ByteFlag components)
 		{
 			EntityGroup entityGroup;
 
 			if (!componentGroups.TryGetValue(components, out entityGroup))
 			{
-				entityGroup = CreateEntityComponentGroup(components);
+				entityGroup = CreateComponentGroup(components);
 				componentGroups[components] = entityGroup;
 			}
 
@@ -73,7 +73,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void UpdateEntity(IEntity entity)
+		public void UpdateEntity(IEntity entity, bool isValid)
 		{
 			// Entity Groups
 			if (entityGroups.Count > 0)
@@ -81,12 +81,7 @@ namespace Pseudo.Internal.Entity
 				var enumerator = entityGroups.GetEnumerator();
 
 				while (enumerator.MoveNext())
-				{
-					if (IsEntityGroupValid(entity, enumerator.Current.Key))
-						enumerator.Current.Value.RegisterEntity(entity);
-					else
-						enumerator.Current.Value.UnregisterEntity(entity);
-				}
+					enumerator.Current.Value.UpdateEntity(entity, isValid && IsEntityGroupValid(entity, enumerator.Current.Key));
 
 				enumerator.Dispose();
 			}
@@ -97,68 +92,7 @@ namespace Pseudo.Internal.Entity
 				var enumerator = componentGroups.GetEnumerator();
 
 				while (enumerator.MoveNext())
-				{
-					if (IsEntityComponentsValid(entity, enumerator.Current.Key))
-						enumerator.Current.Value.RegisterEntity(entity);
-					else
-						enumerator.Current.Value.UnregisterEntity(entity);
-				}
-
-				enumerator.Dispose();
-			}
-		}
-
-		public void RegisterEntity(IEntity entity)
-		{
-			// Entity Groups
-			if (entityGroups.Count > 0)
-			{
-				var enumerator = entityGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-				{
-					if (IsEntityGroupValid(entity, enumerator.Current.Key))
-						enumerator.Current.Value.RegisterEntity(entity);
-				}
-
-				enumerator.Dispose();
-			}
-
-			// Component Groups
-			if (componentGroups.Count > 0)
-			{
-				var enumerator = componentGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-				{
-					if (IsEntityComponentsValid(entity, enumerator.Current.Key))
-						enumerator.Current.Value.RegisterEntity(entity);
-				}
-
-				enumerator.Dispose();
-			}
-		}
-
-		public void UnregisterEntity(IEntity entity)
-		{
-			// Entity Groups
-			if (entityGroups.Count > 0)
-			{
-				var enumerator = entityGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-					enumerator.Current.Value.UnregisterEntity(entity);
-
-				enumerator.Dispose();
-			}
-
-			// Component Groups
-			if (componentGroups.Count > 0)
-			{
-				var enumerator = componentGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-					enumerator.Current.Value.UnregisterEntity(entity);
+					enumerator.Current.Value.UpdateEntity(entity, isValid && IsComponentGroupValid(entity, enumerator.Current.Key));
 
 				enumerator.Dispose();
 			}
@@ -166,10 +100,10 @@ namespace Pseudo.Internal.Entity
 
 		public bool IsEntityGroupValid(IEntity entity, ByteFlag groups)
 		{
-			return EntityMatch.Matches(entity.Group, groups, match);
+			return EntityMatch.Matches(entity.Groups.Groups, groups, match);
 		}
 
-		public bool IsEntityComponentsValid(IEntity entity, ByteFlag components)
+		public bool IsComponentGroupValid(IEntity entity, ByteFlag components)
 		{
 			return EntityMatch.Matches(entity, components, match);
 		}
@@ -181,24 +115,20 @@ namespace Pseudo.Internal.Entity
 			for (int i = 0; i < parent.Entities.Count; i++)
 			{
 				var entity = parent.Entities[i];
-
-				if (IsEntityGroupValid(entity, groups))
-					entityGroup.RegisterEntity(entity);
+				entityGroup.UpdateEntity(entity, IsEntityGroupValid(entity, groups));
 			}
 
 			return entityGroup;
 		}
 
-		public EntityGroup CreateEntityComponentGroup(ByteFlag components)
+		public EntityGroup CreateComponentGroup(ByteFlag components)
 		{
 			var entityGroup = new EntityGroup();
 
 			for (int i = 0; i < parent.Entities.Count; i++)
 			{
 				var entity = parent.Entities[i];
-
-				if (IsEntityComponentsValid(entity, components))
-					entityGroup.RegisterEntity(entity);
+				entityGroup.UpdateEntity(entity, IsComponentGroupValid(entity, components));
 			}
 
 			return entityGroup;

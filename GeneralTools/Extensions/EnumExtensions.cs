@@ -11,17 +11,5 @@ namespace Pseudo
 		{
 			return (T)Enum.Parse(typeof(T), e.ToString());
 		}
-
-		public static T ConvertByIndex<T>(this Enum e)
-		{
-			string[] enumNames = Enum.GetNames(typeof(T));
-
-			return (T)Enum.Parse(typeof(T), enumNames[Mathf.Clamp(e.GetHashCode(), 0, Mathf.Max(enumNames.Length - 1, 0))]);
-		}
-
-		public static T ConvertByValue<T>(this Enum e)
-		{
-			return (T)(object)e;
-		}
 	}
 }

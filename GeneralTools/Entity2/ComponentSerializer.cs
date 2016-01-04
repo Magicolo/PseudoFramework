@@ -59,7 +59,11 @@ namespace Pseudo.Internal.Entity
 					var line = reader.ReadLine();
 
 					if (type != null)
-						components.Add((IComponent)JsonUtility.FromJson(line, type));
+					{
+						var component = TypePoolManager.Create(type);
+						JsonUtility.FromJsonOverwrite(line, component);
+						components.Add((IComponent)component);
+					}
 				}
 			}
 
@@ -133,7 +137,7 @@ namespace Pseudo.Internal.Entity
 			{
 				var reference = references[i];
 
-				try { components[reference.Index].SetValueToFieldAtPath(reference.Path, reference.Reference); }
+				try { components[reference.Index].SetValueToFieldAtPath(reference.PathSplit, reference.Reference); }
 				catch { }
 			}
 		}

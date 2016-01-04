@@ -9,13 +9,13 @@ namespace Pseudo
 {
 	public interface IEntity
 	{
-		event Action<IComponent> OnComponentAdded;
-		event Action<IComponent> OnComponentRemoved;
+		event Action<IEntity, IComponent> OnComponentAdded;
+		event Action<IEntity, IComponent> OnComponentRemoved;
 
 		bool Active { get; set; }
 		Transform Transform { get; }
 		GameObject GameObject { get; }
-		ByteFlag<EntityGroups> Group { get; set; }
+		EntityGroupDefinition Groups { get; set; }
 
 		void AddComponent(IComponent component);
 		IComponent AddComponent(Type type);

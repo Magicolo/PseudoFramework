@@ -4,24 +4,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using System.IO;
-using Pseudo.Internal;
-using Pseudo.Internal.Pool;
-using System.Text;
-using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	// FIXME Custom property drawers don't seem to work on components
-	// TODO PEntity should give access to Unity components
-	// FIXME Remove memory allocation when registering/unregistering an Entity   
+	// TODO Find an elegant way to have game specific messages and groups
+	// TODO Find better name for IComponent
+	// TODO Support Undo when modifying components
 
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class PEntity : PMonoBehaviour, IEntity, ISerializationCallbackReceiver, IPoolInitializable
+	public partial class PEntity : PMonoBehaviour, IEntity
 	{
-		public event Action<IComponent> OnComponentAdded;
-		public event Action<IComponent> OnComponentRemoved;
+		public event Action<IEntity, IComponent> OnComponentAdded;
+		public event Action<IEntity, IComponent> OnComponentRemoved;
 		public bool Active
 		{
 			get { return active; }
@@ -36,35 +31,26 @@ namespace Pseudo
 		}
 		public Transform Transform { get { return CachedTransform; } }
 		public GameObject GameObject { get { return CachedGameObject; } }
-		public ByteFlag<EntityGroups> Group
+		public EntityGroupDefinition Groups
 		{
-			get { return group; }
+			get { return groups; }
 			set
 			{
-				group = value;
+				groups = value;
 				EntityManager.UpdateEntity(this);
 			}
 		}
 
-		readonly Dictionary<Type, ComponentGroup> componentGroups = new Dictionary<Type, ComponentGroup>();
-		readonly Dictionary<byte, MessageGroup> messageGroups = new Dictionary<byte, MessageGroup>();
-
+		[NonSerialized, DoNotInitialize]
 		bool active;
-		[SerializeField, PropertyField(typeof(EnumFlagsAttribute), typeof(EntityGroups))]
-		ByteFlag group;
+		[SerializeField, PropertyField, InitializeValue]
+		EntityGroupDefinition groups = EntityGroupDefinition.Empty;
 		[NonSerialized, InitializeContent]
 		List<IComponent> allComponents = new List<IComponent>(8);
-		[SerializeField, DoNotInitialize]
-		ReferenceData[] references = new ReferenceData[0];
-		[SerializeField, DoNotInitialize]
-		string data;
-		[NonSerialized]
-		bool isDeserialized;
 
 		public void AddComponent(IComponent component)
 		{
-			if (!allComponents.Contains(component))
-				AddComponent(component, true);
+			AddComponent(component, true);
 		}
 
 		public IComponent AddComponent(Type type)
@@ -97,7 +83,7 @@ namespace Pseudo
 
 		public void RemoveAllComponents()
 		{
-			RemoveComponents(allComponents, true);
+			RemoveAllComponents(true);
 		}
 
 		public IList<IComponent> GetAllComponents()
@@ -179,27 +165,12 @@ namespace Pseudo
 
 		public bool HasComponent(IComponent component)
 		{
-			return GetComponentGroup(component.GetType()).GetComponents().Contains(component);
+			return allComponents.Contains(component);
 		}
 
 		public bool HasComponent<T>()
 		{
 			return HasComponent(typeof(T));
-		}
-
-		public void SendMessage(EntityMessages message)
-		{
-			GetMessageGroup(message).SendMessage();
-		}
-
-		public void SendMessage(EntityMessages message, object argument)
-		{
-			GetMessageGroup(message).SendMessage(argument);
-		}
-
-		public void SendMessage<T>(EntityMessages message, T argument)
-		{
-			GetMessageGroup(message).SendMessage(argument);
 		}
 
 		void OnEnable()
@@ -222,14 +193,6 @@ namespace Pseudo
 			base.OnCreate();
 
 			EntityManager.RegisterEntity(this);
-
-			//for (int i = 0; i < allComponents.Count; i++)
-			//{
-			//	var component = allComponents[i];
-
-			//	if (component is IPoolable)
-			//		((IPoolable)component).OnCreate();
-			//}
 		}
 
 		public override void OnRecycle()
@@ -237,20 +200,13 @@ namespace Pseudo
 			base.OnRecycle();
 
 			EntityManager.UnregisterEntity(this);
-			TypePoolManager.RecycleElements(allComponents);
-			//for (int i = 0; i < allComponents.Count; i++)
-			//{
-			//	var component = allComponents[i];
-
-			//	if (component is IPoolable)
-			//		((IPoolable)component).OnRecycle();
-			//}
+			RemoveAllComponents(false);
 		}
 
 		protected virtual void RaiseOnComponentAddedEvent(IComponent component)
 		{
 			if (OnComponentAdded != null)
-				OnComponentAdded(component);
+				OnComponentAdded(this, component);
 
 			EntityManager.UpdateEntity(this);
 		}
@@ -258,111 +214,34 @@ namespace Pseudo
 		protected virtual void RaiseOnComponentRemovedEvent(IComponent component)
 		{
 			if (OnComponentRemoved != null)
-				OnComponentRemoved(component);
+				OnComponentRemoved(this, component);
 
 			EntityManager.UpdateEntity(this);
 		}
 
-		ComponentGroup GetComponentGroup(Type type)
-		{
-			ComponentGroup group;
-
-			if (!componentGroups.TryGetValue(type, out group))
-			{
-				group = CreateComponentGroup(type);
-				componentGroups[type] = group;
-			}
-
-			return group;
-		}
-
-		ComponentGroup CreateComponentGroup(Type type)
-		{
-			var group = new ComponentGroup(type);
-
-			for (int i = 0; i < allComponents.Count; i++)
-				group.TryAddComponent(allComponents[i]);
-
-			return group;
-		}
-
-		MessageGroup GetMessageGroup(EntityMessages message)
-		{
-			MessageGroup group;
-
-			if (!messageGroups.TryGetValue((byte)message, out group))
-			{
-				group = CreateMessageGroup(message);
-				messageGroups[(byte)message] = group;
-			}
-
-			return group;
-		}
-
-		MessageGroup CreateMessageGroup(EntityMessages message)
-		{
-			var group = new MessageGroup(message.ToString());
-
-			for (int i = 0; i < allComponents.Count; i++)
-				group.TryAdd(allComponents[i]);
-
-			return group;
-		}
-
 		void AddComponent(IComponent component, bool raiseEvent)
 		{
-			component.Entity = this;
 			allComponents.Add(component);
+			RegisterComponent(component);
 
-			// Add component to component groups
-			if (componentGroups.Count > 0)
-			{
-				var enumerator = componentGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-					enumerator.Current.Value.TryAddComponent(component);
-
-				enumerator.Dispose();
-			}
-
-			// Add component to message groups
-			if (messageGroups.Count > 0)
-			{
-				var enumerator = messageGroups.GetEnumerator();
-
-				while (enumerator.MoveNext())
-					enumerator.Current.Value.TryAdd(component);
-
-				enumerator.Dispose();
-			}
-
+			// Raise event
 			if (raiseEvent)
 				RaiseOnComponentAddedEvent(component);
+		}
+
+		void AddComponents(IList<IComponent> components, bool raiseEvent)
+		{
+			for (int i = 0; i < components.Count; i++)
+				AddComponent(components[i], raiseEvent);
 		}
 
 		void RemoveComponent(IComponent component, bool raiseEvent)
 		{
 			if (allComponents.Remove(component))
 			{
-				// Remove component from component groups
-				if (componentGroups.Count > 0)
-				{
-					var enumerator = componentGroups.GetEnumerator();
+				UnregisterComponent(component);
 
-					while (enumerator.MoveNext())
-						enumerator.Current.Value.RemoveComponent(component);
-
-					enumerator.Dispose();
-				}
-
-				// Remove component from message groups
-				var messageEnumerator = messageGroups.GetEnumerator();
-
-				while (messageEnumerator.MoveNext())
-					messageEnumerator.Current.Value.RemoveComponent(component);
-
-				messageEnumerator.Dispose();
-
+				// Raise event
 				if (raiseEvent)
 					RaiseOnComponentRemovedEvent(component);
 
@@ -372,72 +251,47 @@ namespace Pseudo
 
 		void RemoveComponents(IList<IComponent> components, bool raiseEvent)
 		{
-			for (int i = 0; i < components.Count; i++)
+			for (int i = components.Count - 1; i >= 0; i--)
 				RemoveComponent(components[i], raiseEvent);
 		}
 
-		void SerializeComponents()
+		void RemoveAllComponents(bool raiseEvent)
 		{
-			ComponentSerializer.SerializeComponents(allComponents, out data, out references);
-		}
+			for (int i = 0; i < allComponents.Count; i++)
+			{
+				var component = allComponents[i];
+				UnregisterComponent(component);
 
-		void DeserializeComponents()
-		{
-			if (isDeserialized || string.IsNullOrEmpty(data))
-				return;
+				// Raise event
+				if (raiseEvent)
+					RaiseOnComponentRemovedEvent(component);
 
-			RemoveComponents(allComponents, false);
+				TypePoolManager.Recycle(component);
+			}
+
 			allComponents.Clear();
-
-			var components = ComponentSerializer.DeserializeComponents(data, references);
-
-			for (int i = 0; i < components.Count; i++)
-				AddComponent(components[i], false);
-
-			//isDeserialized = PoolUtility.IsPlaying;
-			//isDeserialized = true;
 		}
 
-		void ISerializationCallbackReceiver.OnBeforeSerialize()
+		void RegisterAllComponents()
 		{
-			if (Application.isPlaying)
-				return;
-
-			SerializeComponents();
+			for (int i = 0; i < allComponents.Count; i++)
+				RegisterComponent(allComponents[i]);
 		}
 
-		void ISerializationCallbackReceiver.OnAfterDeserialize()
+		void RegisterComponent(IComponent component)
 		{
-			DeserializeComponents();
+			component.Entity = this;
+			RegisterComponentToGroups(component);
+			RegisterComponentToMessageGroups(component);
+			RegisterComponentToUpdateCallbacks(component);
 		}
 
-		void IPoolInitializable.OnPrePoolInitialize()
+		void UnregisterComponent(IComponent component)
 		{
-			DeserializeComponents();
+			component.Entity = null;
+			UnregisterComponentFromGroups(component);
+			UnregisterComponentFromMessageGroups(component);
+			UnregisterComponentFromUpdateCallbacks(component);
 		}
-
-		void IPoolInitializable.OnPostPoolInitialize(List<IPoolSetter> setters) { }
-
-		//[UnityEditor.Callbacks.DidReloadScripts]
-		//static void OnScriptReload()
-		//{
-		//	UnityEditor.PrefabUtility.prefabInstanceUpdated += OnPrefabUpdated;
-		//}
-
-		//static void OnPrefabUpdated(UnityEngine.Object prefab)
-		//{
-		//	var entity = ((GameObject)prefab).GetComponent<PEntity>();
-		//	entity.isDeserialized = false;
-		//	entity.DeserializeComponents();
-		//	PDebug.Log(entity, entity.references.Length, entity.allComponents, entity.data);
-		//}
 	}
-}
-
-[Serializable]
-public class ReferenceData
-{
-	public int Index;
-	public string Path;
-	public UnityEngine.Object Reference;
 }

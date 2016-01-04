@@ -123,7 +123,7 @@ namespace Pseudo
 
 			if (!pools.TryGetValue(type, out pool))
 			{
-				pool = PoolUtility.CreatePool(Activator.CreateInstance(type), StartSize);
+				pool = PoolUtility.CreateTypePool(type, StartSize);
 				pools[type] = pool;
 			}
 

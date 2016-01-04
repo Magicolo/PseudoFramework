@@ -20,19 +20,11 @@ namespace Pseudo.Internal.Entity
 		}
 
 		readonly List<IEntity> entities = new List<IEntity>(2);
-		EntityMatchGroup[] subGroups;
+		readonly EntityMatchGroup[] subGroups = new EntityMatchGroup[matchValues.Length];
 
-		public IEntityGroup Filter(EntityGroups group, EntityMatches match = EntityMatches.All)
+		public IEntityGroup Filter(EntityGroupDefinition groups, EntityMatches match = EntityMatches.All)
 		{
-			var flag = new ByteFlag();
-			flag[(byte)group] = true;
-
-			return Filter(flag, match);
-		}
-
-		public IEntityGroup Filter(ByteFlag<EntityGroups> groups, EntityMatches match = EntityMatches.All)
-		{
-			return GetMatchGroup(match).GetEntityGroupByGroup(groups);
+			return GetMatchGroup(match).GetGroupByEntityGroup(groups.Groups);
 		}
 
 		public IEntityGroup Filter(EntityMatch match)
@@ -42,20 +34,17 @@ namespace Pseudo.Internal.Entity
 
 		public IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All)
 		{
-			return GetMatchGroup(match).GetEntityGroupByComponent(EntityUtility.GetComponentFlags(componentType));
+			return GetMatchGroup(match).GetGroupByComponentGroup(EntityUtility.GetComponentFlags(componentType));
 		}
 
 		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
 		{
-			return GetMatchGroup(match).GetEntityGroupByComponent(EntityUtility.GetComponentFlags(componentTypes));
+			return GetMatchGroup(match).GetGroupByComponentGroup(EntityUtility.GetComponentFlags(componentTypes));
 		}
 
 		public void Clear()
 		{
 			entities.Clear();
-
-			if (subGroups == null)
-				return;
 
 			for (int i = 0; i < subGroups.Length; i++)
 			{
@@ -68,64 +57,39 @@ namespace Pseudo.Internal.Entity
 			subGroups.Clear();
 		}
 
-		public void UpdateEntity(IEntity entity)
+		public void UpdateEntity(IEntity entity, bool isValid)
 		{
-			if (subGroups != null)
-			{
-				for (int i = 0; i < subGroups.Length; i++)
-				{
-					var subGroup = subGroups[i];
+			if (isValid)
+				RegisterEntity(entity);
+			else
+				UnregisterEntity(entity);
 
-					if (subGroup != null)
-						subGroup.UpdateEntity(entity);
-				}
+			for (int i = 0; i < subGroups.Length; i++)
+			{
+				var subGroup = subGroups[i];
+
+				if (subGroup != null)
+					subGroup.UpdateEntity(entity, isValid);
 			}
 		}
 
-		public void RegisterEntity(IEntity entity)
+		void RegisterEntity(IEntity entity)
 		{
 			if (!entities.Contains(entity))
 			{
 				entities.Add(entity);
 				RaiseOnEntityAdded(entity);
-
-				if (subGroups != null)
-				{
-					for (int i = 0; i < subGroups.Length; i++)
-					{
-						var subGroup = subGroups[i];
-
-						if (subGroup != null)
-							subGroup.RegisterEntity(entity);
-					}
-				}
 			}
 		}
 
-		public void UnregisterEntity(IEntity entity)
+		void UnregisterEntity(IEntity entity)
 		{
 			if (entities.Remove(entity))
-			{
 				RaiseOnEntityRemoved(entity);
-
-				if (subGroups != null)
-				{
-					for (int i = 0; i < subGroups.Length; i++)
-					{
-						var subGroup = subGroups[i];
-
-						if (subGroup != null)
-							subGroup.UnregisterEntity(entity);
-					}
-				}
-			}
 		}
 
 		EntityMatchGroup GetMatchGroup(EntityMatches match)
 		{
-			if (subGroups == null)
-				subGroups = new EntityMatchGroup[matchValues.Length];
-
 			var matchGroup = subGroups[(int)match];
 
 			if (matchGroup == null)

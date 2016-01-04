@@ -39,7 +39,14 @@ namespace Pseudo.Internal.Pool
 		protected override object CreateInstance()
 		{
 			var instance = UnityEngine.Object.Instantiate((UnityEngine.Object)reference);
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPrePoolInitialize();
+
 			PoolUtility.InitializeFields(instance, setters);
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPostPoolInitialize();
 
 			return instance;
 		}
