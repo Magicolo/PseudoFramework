@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Physics
 {
-	public abstract class Raycaster2DBase : PComponent
+	public abstract class Raycaster2DBase : PMonoBehaviour
 	{
 		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
 
