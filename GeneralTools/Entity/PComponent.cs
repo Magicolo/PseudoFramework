@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿using UnityEngine;
 using System;
 using System.Collections;
@@ -11,4 +12,19 @@ namespace Pseudo
 	{
 		public IEntity Entity { get; set; }
 	}
+=======
+﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Pseudo;
+
+namespace Pseudo
+{
+	public class PComponent : PMonoBehaviour
+	{
+		public IEntityOld Entity { get; set; }
+	}
+>>>>>>> Entity2
 }
