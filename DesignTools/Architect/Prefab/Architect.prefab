@@ -1405,10 +1405,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Linker: {fileID: 11400000, guid: 5e151271d28ed1f45bd45bfe1ef8e850, type: 2}
   UiFactory: {fileID: 11400000, guid: 6031203597ecadd41afb609cd11ddbb9, type: 2}
-  SelectedTileType:
-    Id: 1
-    Prefab: {fileID: 179822, guid: a321a1e5cfe6380498e8790f1ac5cd23, type: 2}
-    PreviewSprite: {fileID: 0}
+  PreviewSprite: {fileID: 0}
   drawingRect: {fileID: 22416978}
   Cam: {fileID: 2072580}
   UICam: {fileID: 2051474}
@@ -1418,8 +1415,14 @@ MonoBehaviour:
     TileHeight: 0
     LayerTransform: {fileID: 0}
   Layers: []
-  menu: {fileID: 11494988}
   UISkin: {fileID: 11468932}
+  Grid: {fileID: 0}
+  NextTileFlipX: 0
+  NextTileFlipY: 0
+  NextTileRotation: 0
+  Menu: {fileID: 0}
+  Toolbar: {fileID: 0}
+  TilesetPanel: {fileID: 0}
 --- !u!114 &11446418
 MonoBehaviour:
   m_ObjectHideFlags: 1
