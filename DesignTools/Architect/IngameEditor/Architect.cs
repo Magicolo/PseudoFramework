@@ -73,11 +73,10 @@ namespace Pseudo
 
 		void Awake()
 		{
-
+			SelectedTileType = Linker.Tilesets[0].Tiles[0];
 		}
 		void Start()
 		{
-			SelectedTileType = Linker.Tilesets[0].Tiles[0];
 			SelectedToolType = ToolFactory.ToolType.Brush;
 			New();
 		}
