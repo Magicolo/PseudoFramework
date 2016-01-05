@@ -149,8 +149,6 @@ namespace Pseudo.Internal.Editor
 
 		public static void Flags(Rect position, SerializedProperty property, FlagsOption[] options, Action<FlagsOption, SerializedProperty> onSelected, GUIContent label = null)
 		{
-			label = label ?? property.ToGUIContent();
-
 			EditorGUI.BeginProperty(position, label, property);
 
 			Flags(position, options, onSelected, label, property);
@@ -160,6 +158,7 @@ namespace Pseudo.Internal.Editor
 
 		public static void Flags(Rect position, FlagsOption[] options, Action<FlagsOption, SerializedProperty> onSelected, GUIContent label = null, SerializedProperty property = null)
 		{
+			label = label ?? property.ToGUIContent();
 			int selectedCount = options.Count(option => option.IsSelected);
 			bool nothing = selectedCount == 0;
 			bool everything = selectedCount == options.Length;

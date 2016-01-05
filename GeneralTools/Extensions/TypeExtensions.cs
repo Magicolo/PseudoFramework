@@ -10,8 +10,9 @@ namespace Pseudo
 {
 	public static class TypeExtensions
 	{
-		static Dictionary<Type, Type[]> AssignableTypesDict = new Dictionary<Type, Type[]>();
+		static Dictionary<Type, Type[]> AssignableTypes = new Dictionary<Type, Type[]>();
 		static Dictionary<Type, Type[]> SubclassTypes = new Dictionary<Type, Type[]>();
+		static Dictionary<Type, Type[]> DefinedTypes = new Dictionary<Type, Type[]>();
 		static Dictionary<Type, FieldInfo[]> TypeFields = new Dictionary<Type, FieldInfo[]>();
 
 		static Type[] allTypes;
@@ -24,11 +25,8 @@ namespace Pseudo
 					var types = new List<Type>(512);
 					var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 
-					for (int i = 0; i < assemblies.Length; i++)
-					{
-						var assembly = assemblies[i];
+					foreach (var assembly in assemblies)
 						types.AddRange(assembly.GetTypes());
-					}
 
 					allTypes = types.ToArray();
 				}
@@ -37,44 +35,67 @@ namespace Pseudo
 			}
 		}
 
-		public static Type[] GetSubclasses(this Type type)
+		public static Type[] GetSubclasses(this Type baseType)
 		{
-			if (!SubclassTypes.ContainsKey(type))
+			Type[] types;
+
+			if (!SubclassTypes.TryGetValue(baseType, out types))
 			{
-				List<Type> derivedTypes = new List<Type>();
+				var typeList = new List<Type>();
 
-				for (int i = 0; i < AllTypes.Length; i++)
+				foreach (var type in AllTypes)
 				{
-					Type derivedType = AllTypes[i];
-
-					if (derivedType.IsSubclassOf(type))
-						derivedTypes.Add(derivedType);
+					if (type.IsSubclassOf(baseType))
+						typeList.Add(type);
 				}
 
-				SubclassTypes[type] = derivedTypes.ToArray();
+				types = typeList.ToArray();
+				SubclassTypes[baseType] = types;
 			}
 
-			return SubclassTypes[type];
+			return types;
 		}
 
-		public static Type[] GetAssignableTypes(this Type type)
+		public static Type[] GetAssignableTypes(this Type baseType)
 		{
-			if (!AssignableTypesDict.ContainsKey(type))
+			Type[] types;
+
+			if (!AssignableTypes.TryGetValue(baseType, out types))
 			{
-				List<Type> derivedTypes = new List<Type>();
+				var typeList = new List<Type>();
 
-				for (int i = 0; i < AllTypes.Length; i++)
+				foreach (var type in AllTypes)
 				{
-					Type derivedType = AllTypes[i];
-
-					if (type.IsAssignableFrom(derivedType))
-						derivedTypes.Add(derivedType);
+					if (baseType.IsAssignableFrom(type))
+						typeList.Add(type);
 				}
 
-				AssignableTypesDict[type] = derivedTypes.ToArray();
+				types = typeList.ToArray();
+				AssignableTypes[baseType] = types;
 			}
 
-			return AssignableTypesDict[type];
+			return types;
+		}
+
+		public static Type[] GetDefinedTypes(this Type attributeType)
+		{
+			Type[] types;
+
+			if (!DefinedTypes.TryGetValue(attributeType, out types))
+			{
+				var typeList = new List<Type>();
+
+				foreach (var type in AllTypes)
+				{
+					if (type.IsDefined(attributeType, true))
+						typeList.Add(type);
+				}
+
+				types = typeList.ToArray();
+				DefinedTypes[attributeType] = types;
+			}
+
+			return types;
 		}
 
 		public static FieldInfo[] GetAllFields(this Type type)
@@ -178,7 +199,7 @@ namespace Pseudo
 		[UnityEditor.Callbacks.DidReloadScripts]
 		static void OnScriptReload()
 		{
-			AssignableTypesDict = new Dictionary<Type, Type[]>();
+			AssignableTypes = new Dictionary<Type, Type[]>();
 			SubclassTypes = new Dictionary<Type, Type[]>();
 		}
 #endif

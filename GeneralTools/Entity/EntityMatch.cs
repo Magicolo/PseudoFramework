@@ -20,7 +20,7 @@ namespace Pseudo
 	[Serializable]
 	public struct EntityMatch
 	{
-		public EntityGroupDefinition Groups
+		public ByteFlag Groups
 		{
 			get { return groups; }
 		}
@@ -29,12 +29,12 @@ namespace Pseudo
 			get { return match; }
 		}
 
-		[SerializeField]
-		EntityGroupDefinition groups;
+		[SerializeField, EntityGroups]
+		ByteFlag groups;
 		[SerializeField]
 		EntityMatches match;
 
-		public EntityMatch(EntityGroupDefinition groups, EntityMatches match = EntityMatches.All)
+		public EntityMatch(ByteFlag groups, EntityMatches match = EntityMatches.All)
 		{
 			this.groups = groups;
 			this.match = match;
@@ -47,16 +47,16 @@ namespace Pseudo
 			switch (match)
 			{
 				case EntityMatches.All:
-					matches = (~groups1 & groups2) == ByteFlag.Nothing;
+					matches = MatchesAll(groups1, groups2);
 					break;
 				case EntityMatches.Any:
-					matches = (groups1 & ~groups2) != groups1;
+					matches = MatchesAny(groups1, groups2);
 					break;
 				case EntityMatches.None:
-					matches = (groups1 & ~groups2) == groups1;
+					matches = !MatchesAny(groups1, groups2);
 					break;
 				case EntityMatches.Exact:
-					matches = groups1 == groups2;
+					matches = MatchesExact(groups1, groups2);
 					break;
 			}
 
@@ -80,29 +80,6 @@ namespace Pseudo
 					break;
 				case EntityMatches.Exact:
 					matches = MatchesExact(entity, components);
-					break;
-			}
-
-			return matches;
-		}
-
-		public static bool Matches(EntityGroupDefinition groups1, EntityGroupDefinition groups2, EntityMatches match = EntityMatches.All)
-		{
-			bool matches = false;
-
-			switch (match)
-			{
-				case EntityMatches.All:
-					matches = MatchesAll(groups1.Groups, groups2.Groups);
-					break;
-				case EntityMatches.Any:
-					matches = MatchesAny(groups1.Groups, groups2.Groups);
-					break;
-				case EntityMatches.None:
-					matches = !MatchesAny(groups1.Groups, groups2.Groups);
-					break;
-				case EntityMatches.Exact:
-					matches = MatchesExact(groups1.Groups, groups2.Groups);
 					break;
 			}
 

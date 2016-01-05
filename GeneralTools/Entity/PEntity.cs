@@ -31,7 +31,7 @@ namespace Pseudo
 		}
 		public Transform Transform { get { return CachedTransform; } }
 		public GameObject GameObject { get { return CachedGameObject; } }
-		public EntityGroupDefinition Groups
+		public ByteFlag Groups
 		{
 			get { return groups; }
 			set
@@ -43,8 +43,8 @@ namespace Pseudo
 
 		[NonSerialized, DoNotInitialize]
 		bool active;
-		[SerializeField, PropertyField, InitializeValue]
-		EntityGroupDefinition groups = EntityGroupDefinition.Empty;
+		[SerializeField, PropertyField(typeof(EntityGroupsAttribute))]
+		ByteFlag groups;
 		[NonSerialized, InitializeContent]
 		List<IComponent> allComponents = new List<IComponent>(8);
 

@@ -100,7 +100,7 @@ namespace Pseudo.Internal.Entity
 
 		public bool IsEntityGroupValid(IEntity entity, ByteFlag groups)
 		{
-			return EntityMatch.Matches(entity.Groups.Groups, groups, match);
+			return EntityMatch.Matches(entity.Groups, groups, match);
 		}
 
 		public bool IsComponentGroupValid(IEntity entity, ByteFlag components)

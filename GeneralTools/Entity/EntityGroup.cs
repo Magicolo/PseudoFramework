@@ -22,9 +22,9 @@ namespace Pseudo.Internal.Entity
 		readonly List<IEntity> entities = new List<IEntity>(2);
 		readonly EntityMatchGroup[] subGroups = new EntityMatchGroup[matchValues.Length];
 
-		public IEntityGroup Filter(EntityGroupDefinition groups, EntityMatches match = EntityMatches.All)
+		public IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All)
 		{
-			return GetMatchGroup(match).GetGroupByEntityGroup(groups.Groups);
+			return GetMatchGroup(match).GetGroupByEntityGroup(groups);
 		}
 
 		public IEntityGroup Filter(EntityMatch match)

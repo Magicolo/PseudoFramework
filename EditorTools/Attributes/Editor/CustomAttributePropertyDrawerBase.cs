@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Editor
 		{
 			base.Initialize(property, label);
 
-			CustomAttributeBase customAttribute = (CustomAttributeBase)attribute;
+			var customAttribute = (CustomAttributeBase)attribute;
 
 			noFieldLabel = customAttribute.NoFieldLabel;
 			noPrefixLabel = customAttribute.NoPrefixLabel;

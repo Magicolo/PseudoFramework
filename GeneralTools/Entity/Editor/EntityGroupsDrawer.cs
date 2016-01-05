@@ -2,21 +2,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Pseudo;
 using UnityEditor;
-using Pseudo.Internal.Editor;
 using System.Reflection;
 
-namespace Pseudo.Internal.Entity
+namespace Pseudo.Internal.Editor
 {
-	[CustomPropertyDrawer(typeof(GroupDefinition), true)]
-	public class GroupDefinitionDrawer : CustomPropertyDrawerBase
+	[CustomPropertyDrawer(typeof(EntityGroupsAttribute))]
+	public class EntityGroupsDrawer : CustomAttributePropertyDrawerBase
 	{
-		static List<GroupData> groups;
+		static List<GroupData> groupData;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
+			drawPrefixLabel = false;
+
 			Begin(position, property, label);
 
 			ShowGroups();
@@ -28,7 +28,7 @@ namespace Pseudo.Internal.Entity
 		{
 			base.Initialize(property, label);
 
-			if (groups == null)
+			if (groupData == null)
 				InitializeGroups();
 		}
 
@@ -41,62 +41,64 @@ namespace Pseudo.Internal.Entity
 
 		void ShowGroups()
 		{
-			var groupProperty = currentProperty.FindPropertyRelative("groups");
-			var flags = groupProperty.GetValue<ByteFlag>();
-			var options = new FlagsOption[groups.Count];
+			var flags = currentProperty.GetValue<ByteFlag>();
+			var options = new FlagsOption[groupData.Count];
 
 			for (int i = 0; i < options.Length; i++)
 			{
-				var group = groups[i];
+				var group = groupData[i];
 				var name = group.GroupName.Replace('_', '/').ToGUIContent();
-				options[i] = new FlagsOption(name, group, EntityMatch.Matches(flags, group.Group.Groups));
+				options[i] = new FlagsOption(name, group, EntityMatch.Matches(flags, group.Group));
 			}
 
-			Flags(currentPosition, groupProperty, options, OnGroupSelected, currentLabel);
+			Flags(currentPosition, currentProperty, options, OnGroupSelected, currentLabel);
 		}
 
 		void InitializeGroups()
 		{
-			groups = new List<GroupData>();
-			var types = TypeExtensions.GetSubclasses(typeof(EntityGroupDefinition));
+			groupData = new List<GroupData>();
+			var types = typeof(EntityGroupsAttribute).GetDefinedTypes();
 
 			foreach (var type in types)
 			{
-				foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy | BindingFlags.ExactBinding))
+				if (type.IsSealed && type.IsAbstract)
 				{
-					if (field.IsStatic && typeof(EntityGroupDefinition).IsAssignableFrom(field.FieldType))
-						groups.Add(new GroupData(type.GetName(), field.Name, (GroupDefinition)field.GetValue(null)));
+					foreach (var field in type.GetFields(BindingFlags.Static | BindingFlags.Public))
+					{
+						if (field.IsStatic && field.IsInitOnly && typeof(ByteFlag).IsAssignableFrom(field.FieldType))
+							groupData.Add(new GroupData(type.GetName(), field.Name, (ByteFlag)field.GetValue(null)));
+					}
 				}
 			}
 		}
 
 		void OnGroupSelected(FlagsOption option, SerializedProperty property)
 		{
-			var flags = property.GetValue<ByteFlag>();
+			var groups = property.GetValue<ByteFlag>();
 
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
-					foreach (var group in GroupDefinitionDrawer.groups)
-						flags |= group.Group.Groups;
+					foreach (var data in groupData)
+						groups |= data.Group;
 					break;
 				case FlagsOption.OptionTypes.Nothing:
-					flags = ByteFlag.Nothing;
+					groups = ByteFlag.Nothing;
 					break;
 				case FlagsOption.OptionTypes.Custom:
-					var groups = ((GroupData)option.Value).Group.Groups;
+					var group = ((GroupData)option.Value).Group;
 
 					if (option.IsSelected)
-						flags &= ~groups;
+						groups &= ~group;
 					else
-						flags |= groups;
+						groups |= group;
 					break;
 			}
 
 			for (int i = 1; i <= 8; i++)
 			{
 				var flagName = "f" + i;
-				property.FindPropertyRelative(flagName).intValue = flags.GetValueFromMember<int>(flagName);
+				property.FindPropertyRelative(flagName).intValue = groups.GetValueFromMember<int>(flagName);
 			}
 
 			property.serializedObject.ApplyModifiedProperties();
@@ -107,9 +109,9 @@ namespace Pseudo.Internal.Entity
 		{
 			public readonly string OwnerName;
 			public readonly string GroupName;
-			public readonly GroupDefinition Group;
+			public readonly ByteFlag Group;
 
-			public GroupData(string ownerName, string groupName, GroupDefinition group)
+			public GroupData(string ownerName, string groupName, ByteFlag group)
 			{
 				OwnerName = ownerName;
 				GroupName = groupName;

@@ -15,7 +15,7 @@ namespace Pseudo
 		bool Active { get; set; }
 		Transform Transform { get; }
 		GameObject GameObject { get; }
-		EntityGroupDefinition Groups { get; set; }
+		ByteFlag Groups { get; set; }
 
 		void AddComponent(IComponent component);
 		IComponent AddComponent(Type type);
