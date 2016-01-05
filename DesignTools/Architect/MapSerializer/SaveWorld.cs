@@ -42,8 +42,12 @@ namespace Pseudo
 				for (int x = 0; x < layer.LayerWidth; x++)
 				{
 					TileType tileType = layer[x, y].TileType;
-					if (tileType != null)
-						fileContent += layer[x, y].TileType.Id + ",";
+					if (!tileType.IsNullOrIdZero())
+					{
+						int rotationFlag = (int)ArchitectRotationHandler.getRotationFlipFlags(layer[x, y].Transform);
+						int id = rotationFlag + layer[x, y].TileType.Id;
+						fileContent += id + ",";
+					}
 					else
 						fileContent += 0 + ",";
 				}

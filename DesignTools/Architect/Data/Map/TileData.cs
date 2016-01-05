@@ -10,6 +10,8 @@ namespace Pseudo
 		public TileType TileType;
 		public GameObject GameObject;
 
+		public Transform Transform { get { return GameObject.transform; } }
+
 		public TileData(TileType tileType, GameObject gameObject)
 		{
 			this.TileType = tileType;
