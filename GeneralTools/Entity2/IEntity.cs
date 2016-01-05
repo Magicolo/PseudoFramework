@@ -20,6 +20,7 @@ namespace Pseudo
 		void AddComponent(IComponent component);
 		IComponent AddComponent(Type type);
 		T AddComponent<T>() where T : IComponent;
+		void RemoveComponent(IComponent component);
 		void RemoveComponents(Type type);
 		void RemoveComponents<T>();
 		void RemoveAllComponents();
