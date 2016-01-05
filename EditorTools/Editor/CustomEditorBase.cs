@@ -27,13 +27,9 @@ namespace Pseudo.Internal.Editor
 
 		public bool deleteBreak;
 
-		public virtual void OnEnable()
-		{
-		}
+		public virtual void OnEnable() { }
 
-		public virtual void OnDisable()
-		{
-		}
+		public virtual void OnDisable() { }
 
 		public virtual void Begin(bool space = true)
 		{
@@ -817,6 +813,9 @@ namespace Pseudo.Internal.Editor
 
 			var dummy = DummyUtility.GetDummy(value);
 			var serializedDummy = DummyUtility.SerializeDummy(dummy);
+
+			if (serializedDummy == null)
+				return null;
 
 			EditorGUI.BeginChangeCheck();
 

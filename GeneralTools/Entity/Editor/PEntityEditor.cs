@@ -93,6 +93,7 @@ namespace Pseudo.Internal.Entity
 				BeginBox(CustomEditorStyles.ColoredBox(new Color(0.5f, 0.5f, 0.5f, 0.25f), 0));
 
 				currentCategory = categories[i];
+
 				ArrayFoldout(currentCategory.DummyValue,
 					currentCategory.Name.ToGUIContent(),
 					disableOnPlay: false,
@@ -276,6 +277,7 @@ namespace Pseudo.Internal.Entity
 			Array.Sort(keys, categories);
 		}
 
+		[UnityEditor.Callbacks.DidReloadScripts]
 		static void InitializeAddComponentPopup()
 		{
 			var types = typeof(IComponent).GetAssignableTypes();

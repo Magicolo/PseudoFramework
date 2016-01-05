@@ -26,6 +26,7 @@ namespace Pseudo.Internal.Entity
 			EndIndent();
 
 			currentPosition.x -= 21f;
+			currentPosition.y -= 1f;
 			CustomEditorBase.Errors(currentPosition, errors);
 
 			End();
