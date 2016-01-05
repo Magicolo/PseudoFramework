@@ -42,7 +42,7 @@ namespace Pseudo
 		public float NextTileRotation;
 
 		[Space()]
-		ToolFactory.ToolType selectedToolType;
+		public ToolFactory.ToolType selectedToolType;
 		public ToolFactory.ToolType SelectedToolType
 		{
 			get { return selectedToolType; }
@@ -84,13 +84,20 @@ namespace Pseudo
 		private void updatePreviewSprite()
 		{
 			PreviewSprite.transform.Reset();
-			if (SelectedTileType == null)
-				PreviewSprite.sprite = null;
+			if (tilePositionGetter.Valid)
+			{
+				PreviewSprite.enabled = true;
+				if (SelectedTileType == null)
+					PreviewSprite.sprite = null;
+				else
+					PreviewSprite.sprite = SelectedTileType.PreviewSprite;
+				PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
+				ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			}
 			else
-				PreviewSprite.sprite = SelectedTileType.PreviewSprite;
-			PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
-
-			ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			{
+				PreviewSprite.enabled = false;
+			}
 		}
 
 		public void Save()
@@ -188,14 +195,17 @@ namespace Pseudo
 			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
 			{
 				tilePositionGetter = newTilePositionGetter;
-				PreviewSprite.transform.position = tilePositionGetter.TileWorldPosition;
+				updatePreviewSprite();
 			}
 		}
 
 		private void HandleLeftMouse()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
+			{
 				architectHistory.Do(ToolFactory.Create(selectedToolType, this, tilePositionGetter));
+			}
+
 
 		}
 

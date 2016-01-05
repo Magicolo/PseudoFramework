@@ -34,7 +34,7 @@ namespace Pseudo
 
 		public void Open()
 		{
-			architect.Open("Assets\\Tests\\DesignTools\\Architectmap.arc");
+			architect.Open("Assets\\Tests\\DesignTools\\Architect\\map.arc");
 		}
 
 		public void Redo()
