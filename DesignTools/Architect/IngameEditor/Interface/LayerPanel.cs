@@ -39,10 +39,10 @@ namespace Pseudo
 
 		void Start()
 		{
-			refreshLayers();
+			RefreshLayers();
 		}
 
-		public void refreshLayers()
+		public void RefreshLayers()
 		{
 			panelWidth = ItemPanel.GetComponent<RectTransform>().rect.width * 0.97f - 10;
 			for (int i = 0; i < layerButtons.Count; i++)
@@ -102,7 +102,7 @@ namespace Pseudo
 		public void AddLayer()
 		{
 			LayerData newLayer = architect.addLayer();
-			refreshLayers();
+			RefreshLayers();
 			switchLayer(newLayer);
 		}
 
@@ -111,7 +111,7 @@ namespace Pseudo
 			int layerIndex = architect.Layers.IndexOf(architect.SelectedLayer);
 			selectedIndex = -1;
 			architect.RemoveSelectedLayer();
-			refreshLayers();
+			RefreshLayers();
 			switchLayerSelection(layerIndex - 1);
 		}
 
@@ -147,7 +147,7 @@ namespace Pseudo
 		{
 			architect.MoveUpSelectedLayer();
 			switchLayerSelection(selectedIndex - 1);
-			refreshLayers();
+			RefreshLayers();
 
 		}
 
@@ -155,13 +155,13 @@ namespace Pseudo
 		{
 			architect.MoveDownSelectedLayer();
 			switchLayerSelection(selectedIndex + 1);
-			refreshLayers();
+			RefreshLayers();
 		}
 
 		public void DuplicateSelectedLayer()
 		{
 			architect.DuplicateSelectedLayer();
-			refreshLayers();
+			RefreshLayers();
 
 		}
 

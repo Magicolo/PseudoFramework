@@ -42,7 +42,7 @@ namespace Pseudo
 		public float NextTileRotation;
 
 		[Space()]
-		ToolFactory.ToolType selectedToolType;
+		public ToolFactory.ToolType selectedToolType;
 		public ToolFactory.ToolType SelectedToolType
 		{
 			get { return selectedToolType; }
@@ -70,6 +70,7 @@ namespace Pseudo
 		public ArchitectMenus Menu;
 		public ToolbarPanel Toolbar;
 		public TilesetItemsPanel TilesetPanel;
+		public LayerPanel LayerPanel;
 
 		void Awake()
 		{
@@ -84,18 +85,25 @@ namespace Pseudo
 		private void updatePreviewSprite()
 		{
 			PreviewSprite.transform.Reset();
-			if (SelectedTileType == null)
-				PreviewSprite.sprite = null;
+			if (tilePositionGetter.Valid)
+			{
+				PreviewSprite.enabled = true;
+				if (SelectedTileType == null)
+					PreviewSprite.sprite = null;
+				else
+					PreviewSprite.sprite = SelectedTileType.PreviewSprite;
+				PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
+				ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			}
 			else
-				PreviewSprite.sprite = SelectedTileType.PreviewSprite;
-			PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
-
-			ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			{
+				PreviewSprite.enabled = false;
+			}
 		}
 
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "Assets\\Tests\\DesignTools\\Architect\\map.arc");
+			SaveWorld.SaveAll(this, "Assets\\Maps\\map1.arc");
 		}
 
 		public void ResetGridSize()
@@ -112,6 +120,7 @@ namespace Pseudo
 			var layers = WorldOpener.OpenFile(Linker, path);
 			Layers.AddRange(layers);
 			SelectedLayer = layers[0];
+			LayerPanel.RefreshLayers();
 		}
 
 		public void New()
@@ -120,6 +129,7 @@ namespace Pseudo
 			addLayer();
 			SelectedLayer = Layers[0];
 			ResetGridSize();
+			LayerPanel.RefreshLayers();
 		}
 
 		private void clearAllLayer()
@@ -188,14 +198,17 @@ namespace Pseudo
 			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
 			{
 				tilePositionGetter = newTilePositionGetter;
-				PreviewSprite.transform.position = tilePositionGetter.TileWorldPosition;
+				updatePreviewSprite();
 			}
 		}
 
 		private void HandleLeftMouse()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
+			{
 				architectHistory.Do(ToolFactory.Create(selectedToolType, this, tilePositionGetter));
+			}
+
 
 		}
 
