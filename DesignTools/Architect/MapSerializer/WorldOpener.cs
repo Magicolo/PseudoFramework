@@ -45,7 +45,7 @@ namespace Pseudo
 			for (int y = 0; y < nbLines; y++)
 			{
 				nextLine();
-				readLayerLine(layer, nbLines - y, lineWidth);
+				readLayerLine(layer, nbLines - y - 1, lineWidth);
 			}
 			return layer;
 		}

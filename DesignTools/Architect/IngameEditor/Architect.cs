@@ -103,7 +103,7 @@ namespace Pseudo
 
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "Assets\\Tests\\DesignTools\\Architect\\map.arc");
+			SaveWorld.SaveAll(this, "Assets\\Maps\\map1.arc");
 		}
 
 		public void ResetGridSize()

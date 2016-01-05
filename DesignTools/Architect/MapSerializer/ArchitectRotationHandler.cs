@@ -32,7 +32,7 @@ namespace Pseudo
 				flags |= RotationFlag.FlipY;
 			if (transform.localRotation.eulerAngles.z == 90f || transform.localRotation.eulerAngles.z == 270f)
 				flags |= RotationFlag.Rotation90;
-			else if (transform.localRotation.eulerAngles.z == 180f || transform.localRotation.eulerAngles.z == 270f)
+			if (transform.localRotation.eulerAngles.z == 180f || transform.localRotation.eulerAngles.z == 270f)
 				flags |= RotationFlag.Rotation180;
 			return flags;
 		}
