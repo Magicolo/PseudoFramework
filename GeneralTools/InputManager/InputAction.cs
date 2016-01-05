@@ -15,6 +15,7 @@ namespace Pseudo
 		string name;
 		public string Name { get { return name; } }
 
+		public List<MouseButton> MouseButtons = new List<MouseButton>();
 		public List<KeyboardButton> KeyboardButtons = new List<KeyboardButton>();
 		public List<KeyboardAxis> KeyboardAxes = new List<KeyboardAxis>();
 		public List<JoystickButton> JoystickButtons = new List<JoystickButton>();
@@ -27,6 +28,12 @@ namespace Pseudo
 
 		public bool GetKeyDown()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKeyDown())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyDown())
@@ -56,6 +63,12 @@ namespace Pseudo
 
 		public bool GetKeyUp()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKeyUp())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyUp())
@@ -85,6 +98,12 @@ namespace Pseudo
 
 		public bool GetKey()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKey())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKey())
@@ -112,7 +131,7 @@ namespace Pseudo
 			return false;
 		}
 
-		public float GetAxis()
+		public float GetAxis(Vector2 relativeScreenPosition = default(Vector2))
 		{
 			float value = 0f;
 

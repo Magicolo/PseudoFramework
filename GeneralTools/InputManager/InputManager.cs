@@ -11,8 +11,28 @@ namespace Pseudo
 	{
 		public enum ControllerTypes
 		{
+			Mouse,
 			Keyboard,
 			Joystick
+		}
+
+		public enum MouseButtons
+		{
+			LeftClick = KeyCode.Mouse0,
+			RightClick = KeyCode.Mouse1,
+			MiddleClick = KeyCode.Mouse2,
+			Mouse3 = KeyCode.Mouse3,
+			Mouse4 = KeyCode.Mouse4,
+			Mouse5 = KeyCode.Mouse5,
+			Mouse6 = KeyCode.Mouse6,
+		}
+
+		public enum MouseAxes
+		{
+			X,
+			Y,
+			WheelX,
+			WheelY
 		}
 
 		public enum Joysticks
@@ -88,7 +108,7 @@ namespace Pseudo
 
 			for (int i = 0; i < Inputs.Length; i++)
 			{
-				PlayerInput playerInput = Instantiate(Inputs[i]);
+				var playerInput = Instantiate(Inputs[i]);
 				playerInput.CachedTransform.parent = CachedTransform;
 				AddInput(playerInput);
 
