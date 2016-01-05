@@ -111,17 +111,33 @@ namespace Pseudo
 			{
 				for (int x = 0; x < LayerWidth; x++)
 				{
-					newLayer.AddTile(new Point2(x, y), this[x, y].TileType);
+					newLayer.AddTile(new Point2(x, y), this[x, y]);
 				}
 			}
 			return newLayer;
 		}
 
+		public void AddTile(Point2 tilePoint, TileData prefab)
+		{
+			AddTile(tilePoint, prefab.TileType);
+			this[tilePoint.X, tilePoint.Y].Transform.localScale = prefab.Transform.localScale;
+			this[tilePoint.X, tilePoint.Y].Transform.rotation = prefab.Transform.rotation;
+		}
+		public void AddTile(Point2 tilePoint, TileType tileType, int rotationFlags)
+		{
+			AddTile(tilePoint, tileType);
+			ArchitectRotationHandler.ApplyFlipFlags(this[tilePoint.X, tilePoint.Y].Transform, rotationFlags);
+		}
+		public void AddTile(Point2 tilePoint, TileType tileType, float angle, bool horizontal, bool vertical)
+		{
+			AddTile(tilePoint, tileType);
+			ArchitectRotationHandler.ApplyRotationFlip(this[tilePoint.X, tilePoint.Y].Transform, angle, horizontal, vertical);
+		}
 		public void AddTile(Point2 tilePoint, TileType tileType)
 		{
 			if (!InRange(tilePoint)) return;
 			if (tileType == null || tileType.Prefab == null) return;
-			GameObject newTile = GameObject.Instantiate(tileType.Prefab);
+			GameObject newTile = UnityEngine.Object.Instantiate(tileType.Prefab);
 
 			newTile.transform.SetPosition(new Vector3(tilePoint.X, tilePoint.Y, 0));
 			newTile.transform.parent = LayerTransform;

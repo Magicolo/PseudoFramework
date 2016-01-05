@@ -26,7 +26,7 @@ namespace Pseudo
 
 		ArchitectHistory architectHistory = new ArchitectHistory();
 
-		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z);
+		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z, KeyCode.LeftControl);
 
 		public UISkin UISkin;
 
@@ -36,6 +36,10 @@ namespace Pseudo
 		public bool HasRedoHistory { get { return architectHistory.HistoryRedo.Count > 0; } }
 
 		public GridScallerTiller Grid;
+
+		public bool NextTileFlipX;
+		public bool NextTileFlipY;
+		public float NextTileRotation;
 
 		[Space()]
 		ToolFactory.ToolType selectedToolType;
@@ -56,18 +60,16 @@ namespace Pseudo
 			set
 			{
 				selectedTileType = value;
-				if (value == null)
-					PreviewSprite.sprite = null;
-				else
-					PreviewSprite.sprite = value.PreviewSprite;
-				tilesetPanel.Refresh();
+				updatePreviewSprite();
+
+				TilesetPanel.Refresh();
 			}
 		}
 
 		[Space()]
-		public ArchitectMenus menu;
+		public ArchitectMenus Menu;
 		public ToolbarPanel Toolbar;
-		public TilesetItemsPanel tilesetPanel;
+		public TilesetItemsPanel TilesetPanel;
 
 		void Awake()
 		{
@@ -80,9 +82,21 @@ namespace Pseudo
 			New();
 		}
 
+		private void updatePreviewSprite()
+		{
+			PreviewSprite.transform.Reset();
+			if (SelectedTileType == null)
+				PreviewSprite.sprite = null;
+			else
+				PreviewSprite.sprite = SelectedTileType.PreviewSprite;
+			PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
+
+			ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+		}
+
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "map.txt");
+			SaveWorld.SaveAll(this, "Assets\\Tests\\DesignTools\\Architect\\map.arc");
 		}
 
 		public void ResetGridSize()
@@ -96,7 +110,9 @@ namespace Pseudo
 		public void Open(string path)
 		{
 			clearAllLayer();
-			WorldOpener.OpenFile(this, path);
+			var layers = WorldOpener.OpenFile(Linker, path);
+			Layers.AddRange(layers);
+			SelectedLayer = layers[0];
 		}
 
 		public void New()
@@ -131,7 +147,7 @@ namespace Pseudo
 				Undo();
 
 			handleKeyboardShortcut();
-			menu.Refresh();
+			Menu.Refresh();
 		}
 
 		private void handleKeyboardShortcut()
@@ -148,19 +164,23 @@ namespace Pseudo
 				FlipY();
 		}
 
-		private void FlipY()
-		{
-			throw new NotImplementedException();
-		}
-
 		private void FlipX()
 		{
-			throw new NotImplementedException();
+			NextTileFlipX = !NextTileFlipX;
+			updatePreviewSprite();
+		}
+
+		private void FlipY()
+		{
+			NextTileFlipY = !NextTileFlipY;
+			updatePreviewSprite();
 		}
 
 		private void Rotate()
 		{
-			throw new NotImplementedException();
+			NextTileRotation -= 90;
+			NextTileRotation %= 360;
+			updatePreviewSprite();
 		}
 
 		private void UpdateTileGetter()
@@ -192,13 +212,13 @@ namespace Pseudo
 		public void Undo()
 		{
 			architectHistory.Undo();
-			menu.Refresh();
+			Menu.Refresh();
 		}
 
 		public void Redo()
 		{
 			architectHistory.Redo();
-			menu.Refresh();
+			Menu.Refresh();
 		}
 
 		public void setSelectedTile(int id)
@@ -208,12 +228,12 @@ namespace Pseudo
 
 		public void AddSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
 		{
-			layer.AddTile(tilePoint, SelectedTileType);
+			layer.AddTile(tilePoint, SelectedTileType, NextTileRotation, NextTileFlipX, NextTileFlipY);
 		}
 
 		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
 		{
-			layer.AddTile(tilePoint, tileType);
+			layer.AddTile(tilePoint, tileType, NextTileRotation, NextTileFlipX, NextTileFlipY);
 		}
 
 		public void RemoveSelectedLayer()

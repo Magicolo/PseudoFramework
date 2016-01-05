@@ -32,6 +32,8 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	void showTileset(TileSet tileset)
 	{
+
+		float width = GetComponent<RectTransform>().rect.width;
 		int x = 20; int y = -20;
 		Vector2 dimension = new Vector2(32, 32);
 
@@ -45,6 +47,11 @@ public class TilesetItemsPanel : MonoBehaviour
 			tilesetButtons.Add(button);
 
 			x += 40;
+			if (x + 40 >= width)
+			{
+				x = 20;
+				y -= 40;
+			}
 		}
 	}
 

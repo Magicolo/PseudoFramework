@@ -308,5 +308,16 @@ namespace Pseudo
 #endif
 			return uniquePath;
 		}
+
+		public static string GetSelectedAssetPath()
+		{
+			return AssetDatabase.GetAssetPath(Selection.activeObject);
+
+		}
+
+		public static string GetSelectedAssetExtention()
+		{
+			return Path.GetExtension(AssetDatabase.GetAssetPath(Selection.activeObject));
+		}
 	}
 }

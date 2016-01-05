@@ -36,6 +36,7 @@ namespace Pseudo
 					}
 				}
 			}
+			//Debug.Log(Input.GetKey(keyCodes[0]) + "  " + Input.GetKey(keyCodes[1]));
 
 		}
 

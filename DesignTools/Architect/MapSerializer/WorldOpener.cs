@@ -13,51 +13,56 @@ namespace Pseudo
 		string currentLine { get { return fileContent[currentLineIndex]; } }
 		bool isEndOfFile { get { return currentLineIndex >= fileContent.Length; } }
 
+		ArchitectLinker linker;
 
-		Architect architect;
-
-		private WorldOpener(Architect architect)
+		private WorldOpener(ArchitectLinker linker)
 		{
-			this.architect = architect;
+			this.linker = linker;
 		}
 
-		private void Load(string[] fileContent)
+		private List<LayerData> Load(string[] fileContent)
 		{
 			this.fileContent = fileContent;
+			List<LayerData> layers = new List<LayerData>();
+
 			while (!isEndOfFile)
 			{
 				if (currentLine.StartsWith("Layer:"))
-					readLayer();
+					layers.Add(readLayer());
 				nextLine();
 			}
-
+			return layers;
 		}
 
-		private void readLayer()
+		private LayerData readLayer()
 		{
+
 			string name = currentLine.Substring(6);
-			architect.SelectedLayer = new LayerData(null, name, 20, 20);
+			LayerData layer = new LayerData(null, name, 20, 20);
 
 			int nbLines = 20;
 			int lineWidth = 20;
 			for (int y = 0; y < nbLines; y++)
 			{
 				nextLine();
-				readLayerLine(nbLines - y, lineWidth);
+				readLayerLine(layer, nbLines - y, lineWidth);
 			}
+			return layer;
 		}
 
-		private void readLayerLine(int y, int lineWidth)
+		private void readLayerLine(LayerData layer, int y, int lineWidth)
 		{
 			for (int x = 0; x < lineWidth; x++)
 			{
-				int id = readNextInt();
+				int value = readNextInt();
+				int id = ArchitectRotationHandler.RemoveRotationFlags(value);
+				int rotationFlags = ArchitectRotationHandler.GetRotationFlags(value);
 				Point2 position = new Point2(x, y);
 				TileType tileType = null;
 				if (id == 0)
 					continue;
-				tileType = architect.Linker.Tilesets[0][id - 1];
-				architect.SelectedLayer.AddTile(position, tileType);
+				tileType = linker.Tilesets[0][id - 1];
+				layer.AddTile(position, tileType, rotationFlags);
 			}
 		}
 
@@ -83,11 +88,11 @@ namespace Pseudo
 			currentColIndex = 0;
 		}
 
-		public static void OpenFile(Architect architect, string fileName)
+		public static List<LayerData> OpenFile(ArchitectLinker linker, string fileName)
 		{
-			WorldOpener wo = new WorldOpener(architect);
+			WorldOpener wo = new WorldOpener(linker);
 			string[] fileContent = System.IO.File.ReadAllLines(fileName);
-			wo.Load(fileContent);
+			return wo.Load(fileContent);
 		}
 
 

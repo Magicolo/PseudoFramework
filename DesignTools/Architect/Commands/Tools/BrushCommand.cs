@@ -20,7 +20,10 @@ namespace Pseudo
 				architect.AddSelectedTileType(Layer, TileWorldPosition, TilePosition);
 				return true;
 			}
-			else if (Layer[TilePosition].TileType != architect.SelectedTileType)
+			//TODO REFACTOR ME PLEASE !!!!!
+			else if (Layer[TilePosition].TileType != architect.SelectedTileType
+				|| Layer[TilePosition].Transform.rotation != architect.PreviewSprite.transform.rotation
+				|| Layer[TilePosition].Transform.localScale != architect.PreviewSprite.transform.localScale)
 			{
 				OldTileType = Layer[TilePosition].TileType;
 				architect.RemoveTile(TilePosition);
