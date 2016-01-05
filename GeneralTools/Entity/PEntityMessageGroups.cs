@@ -45,7 +45,7 @@ namespace Pseudo
 			var messageEnumerator = messageGroups.GetEnumerator();
 
 			while (messageEnumerator.MoveNext())
-				messageEnumerator.Current.Value.RemoveComponent(component);
+				messageEnumerator.Current.Value.Remove(component);
 
 			messageEnumerator.Dispose();
 		}

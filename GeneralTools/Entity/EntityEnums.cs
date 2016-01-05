@@ -14,5 +14,8 @@ namespace Pseudo
 		OnCollide = 2,
 		OnDie = 3,
 		Spawn = 64,
+		OnTriggerEnter2D = 128,
+		OnTriggerStay2D = 129,
+		OnTriggerExit2D = 130,
 	}
 }

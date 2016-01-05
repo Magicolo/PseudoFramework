@@ -29,7 +29,7 @@ namespace Pseudo
 
 		void OnDrawGizmos()
 		{
-			if (!draw)
+			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
 			Vector3 position = CachedTransform.position + rect.position.ToVector3();

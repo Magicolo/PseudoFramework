@@ -24,8 +24,8 @@ namespace Pseudo
 
 				if (startable.Active)
 				{
-					startable.Start();
 					startables.RemoveAt(i--);
+					startable.Start();
 				}
 			}
 		}
@@ -104,8 +104,8 @@ namespace Pseudo
 
 					if (updateCounter >= updateable.UpdateRate)
 					{
-						updateable.Update();
 						updateCounters[i] -= updateable.UpdateRate;
+						updateable.Update();
 					}
 				}
 			}
@@ -125,8 +125,8 @@ namespace Pseudo
 
 					if (lateUpdateCounter >= lateUpdateable.LateUpdateRate)
 					{
-						lateUpdateable.LateUpdate();
 						lateUpdateCounters[i] -= lateUpdateable.LateUpdateRate;
+						lateUpdateable.LateUpdate();
 					}
 				}
 			}

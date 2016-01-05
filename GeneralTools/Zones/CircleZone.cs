@@ -21,10 +21,10 @@ namespace Pseudo
 #if UNITY_EDITOR
 		void OnDrawGizmos()
 		{
-			if (!draw)
+			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-			Vector3 position = CachedTransform.position + circle.Position.ToVector3();
+			var position = CachedTransform.position + circle.Position.ToVector3();
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.75f);
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
 			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);

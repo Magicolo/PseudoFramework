@@ -151,12 +151,27 @@ namespace Pseudo.Internal.Entity
 
 		void ShowComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)
 		{
-			var name = currentComponent.GetTypeName();
+			var script = ScriptUtility.FindScript(currentComponent.GetType());
+			var label = GUIContent.none;
 
-			if (name.EndsWith("Component"))
-				name = name.Substring(0, name.Length - "Component".Length);
+			if (script == null)
+			{
+				var name = currentComponent.GetTypeName();
 
-			ObjectField(currentComponent, name.ToGUIContent());
+				if (name.EndsWith("Component"))
+					name = name.Substring(0, name.Length - "Component".Length);
+
+				label = name.ToGUIContent();
+			}
+			else
+			{
+				var position = GUILayoutUtility.GetRect(label, EditorStyles.label, GUILayout.Height(0f));
+				position.width -= 38f;
+				position.height = 16f;
+				EditorGUI.ObjectField(position, script, typeof(MonoScript), false);
+			}
+
+			ObjectField(currentComponent, label);
 		}
 
 		void OnPostComponent(SerializedProperty arrayProperty, int index, SerializedProperty property)

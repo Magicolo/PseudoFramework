@@ -1185,19 +1185,27 @@ namespace Pseudo.Internal.Editor
 			switch (Event.current.type)
 			{
 				case EventType.MouseDown:
-					if (dragArea.Contains(Event.current.mousePosition))
-					{
-						DragAndDrop.PrepareStartDrag();
-						DragAndDrop.SetGenericData(arrayId.ToString(), arrayProperty);
-						DragAndDrop.SetGenericData("Selected Index", index);
-						DragAndDrop.objectReferences = new Object[] { new Object() };
-						Event.current.Use();
-					}
+					//if (dragArea.Contains(Event.current.mousePosition))
+					//{
+					//	DragAndDrop.PrepareStartDrag();
+					//	DragAndDrop.SetGenericData(arrayId.ToString(), arrayProperty);
+					//	DragAndDrop.SetGenericData("Selected Index", index);
+					//	DragAndDrop.objectReferences = new Object[] { new Object() };
+					//	Event.current.Use();
+					//}
 					break;
 				case EventType.MouseDrag:
 					if (selectedArray != null && selectedIndex == index)
 					{
 						DragAndDrop.StartDrag(string.Format("Dragging array element {0} at index {1}.", arrayProperty.name, index));
+						Event.current.Use();
+					}
+					else if (dragArea.Contains(Event.current.mousePosition))
+					{
+						DragAndDrop.PrepareStartDrag();
+						DragAndDrop.SetGenericData(arrayId.ToString(), arrayProperty);
+						DragAndDrop.SetGenericData("Selected Index", index);
+						DragAndDrop.objectReferences = new Object[] { new Object() };
 						Event.current.Use();
 					}
 					break;
