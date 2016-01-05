@@ -21,7 +21,7 @@ namespace Pseudo
 #if UNITY_EDITOR
 		void OnDrawGizmos()
 		{
-			if (!draw)
+			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
 			Vector3 position = CachedTransform.position + circle.Position.ToVector3();

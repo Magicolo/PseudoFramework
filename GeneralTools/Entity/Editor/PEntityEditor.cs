@@ -165,7 +165,7 @@ namespace Pseudo.Internal.Entity
 			}
 			else
 			{
-				var position = GUILayoutUtility.GetRect(label, EditorStyles.label, GUILayout.Height(-2f));
+				var position = GUILayoutUtility.GetRect(label, EditorStyles.label, GUILayout.Height(0f));
 				position.width -= 38f;
 				position.height = 16f;
 				EditorGUI.ObjectField(position, script, typeof(MonoScript), false);
