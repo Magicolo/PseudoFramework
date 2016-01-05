@@ -63,10 +63,19 @@ public class TilesetItemsPanel : MonoBehaviour
 	public void Refresh()
 	{
 		TileSet tileset = architect.Linker.Tilesets[0];
-		tilesetButtons.Clear();
+		clearTilesetButtons();
 		showTileset(tileset);
 
 		selectTile(architect.SelectedTileType.Id - 1);
+	}
+
+	private void clearTilesetButtons()
+	{
+		for (int i = 0; i < tilesetButtons.Count; i++)
+		{
+			tilesetButtons[i].gameObject.Destroy();
+		}
+		tilesetButtons.Clear();
 	}
 
 	private void selectTile(int id)
