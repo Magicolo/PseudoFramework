@@ -17,7 +17,10 @@ namespace Pseudo
 		OnTriggerEnter2D = 128,
 		OnTriggerStay2D = 129,
 		OnTriggerExit2D = 130,
+
 		OnStartAttacking = 140,
 		OnStopAttacking = 141,
+		OnStateEnter = 142,
+		OnStateExit = 143
 	}
 }
