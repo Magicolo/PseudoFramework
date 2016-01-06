@@ -68,7 +68,7 @@ namespace Pseudo.Internal.Input
 			axisJustUp = axisDown && value == 0f;
 			axisDown = value != 0f;
 
-			return Mathf.Clamp(value, -1f, 1f);
+			return value;
 		}
 
 		public bool GetAxisDown(Vector2 relativeScreenPosition)
