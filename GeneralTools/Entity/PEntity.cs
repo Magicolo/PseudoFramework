@@ -7,10 +7,6 @@ using Pseudo;
 
 namespace Pseudo
 {
-	// TODO Find an elegant way to have game specific messages and groups
-	// TODO Find better name for IComponent
-	// TODO Support Undo when modifying components
-
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
 	public partial class PEntity : PMonoBehaviour, IEntity
