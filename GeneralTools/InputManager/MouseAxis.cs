@@ -13,6 +13,8 @@ namespace Pseudo.Internal.Input
 		[SerializeField]
 		protected InputManager.MouseAxes axis;
 		[SerializeField, Min]
+		protected float scale = 1f;
+		[SerializeField, Min]
 		protected float threshold;
 
 		protected bool axisJustDown;
@@ -23,6 +25,11 @@ namespace Pseudo.Internal.Input
 		{
 			get { return axis; }
 			set { axis = value; }
+		}
+		public float Scale
+		{
+			get { return scale; }
+			set { scale = value; }
 		}
 		public float Threshold
 		{
@@ -56,13 +63,12 @@ namespace Pseudo.Internal.Input
 					break;
 			}
 
-			value = Mathf.Abs(value) >= Threshold ? value : 0f;
-
+			value = (Mathf.Abs(value) >= threshold ? value : 0f) * scale;
 			axisJustDown = !axisDown && value != 0f;
 			axisJustUp = axisDown && value == 0f;
 			axisDown = value != 0f;
 
-			return value;
+			return Mathf.Clamp(value, -1f, 1f);
 		}
 
 		public bool GetAxisDown(Vector2 relativeScreenPosition)

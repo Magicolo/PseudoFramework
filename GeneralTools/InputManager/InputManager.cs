@@ -185,5 +185,25 @@ namespace Pseudo
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetAxis();
 		}
+
+		public virtual bool GetKeyDown(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyDown(relativeScreenPosition);
+		}
+
+		public virtual bool GetKeyUp(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyUp(relativeScreenPosition);
+		}
+
+		public virtual bool GetKey(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKey(relativeScreenPosition);
+		}
+
+		public virtual float GetAxis(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetAxis(relativeScreenPosition);
+		}
 	}
 }

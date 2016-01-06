@@ -11,7 +11,7 @@ namespace Pseudo.Internal.Input
 	public class MouseButton
 	{
 		[SerializeField]
-		protected InputManager.MouseButtons button;
+		protected InputManager.MouseButtons button = InputManager.MouseButtons.LeftClick;
 		protected KeyCode key;
 
 		public InputManager.MouseButtons Button
