@@ -97,12 +97,12 @@ namespace Pseudo.Internal.Input
 
 		public static InputManager.Joysticks KeyToJoystick(KeyCode key)
 		{
-			return (InputManager.Joysticks)(((int)key - (int)KeyCode.JoystickButton0) / 20);
+			return (InputManager.Joysticks)((key - KeyCode.JoystickButton0) / 20);
 		}
 
 		public static InputManager.JoystickButtons KeyToJoystickButton(KeyCode key)
 		{
-			return (InputManager.JoystickButtons)((int)key - (int)KeyCode.JoystickButton0 % 20);
+			return (InputManager.JoystickButtons)((key - KeyCode.JoystickButton0) % 20);
 		}
 
 		public static KeyCode JoystickInputToKey(InputManager.Joysticks joystick, InputManager.JoystickButtons button)
