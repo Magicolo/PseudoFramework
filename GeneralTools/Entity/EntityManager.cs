@@ -38,6 +38,21 @@ namespace Pseudo
 			return masterGroup.Filter(componentTypes, match);
 		}
 
+		public static void BroadcastMessage(EntityMessages message)
+		{
+			masterGroup.BroadcastMessage(message);
+		}
+
+		public static void BroadcastMessage<T>(EntityMessages message, T argument)
+		{
+			masterGroup.BroadcastMessage(message, argument);
+		}
+
+		public static void BroadcastMessage(EntityMessages message, object argument)
+		{
+			masterGroup.BroadcastMessage(message, argument);
+		}
+
 		public static void ClearAllEntityGroups()
 		{
 			masterGroup.Clear();

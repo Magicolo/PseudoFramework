@@ -15,5 +15,8 @@ namespace Pseudo
 		IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All);
+		void BroadcastMessage(EntityMessages message);
+		void BroadcastMessage<T>(EntityMessages message, T argument);
+		void BroadcastMessage(EntityMessages message, object argument);
 	}
 }

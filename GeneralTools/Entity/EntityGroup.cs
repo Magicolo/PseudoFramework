@@ -42,6 +42,24 @@ namespace Pseudo.Internal.Entity
 			return GetMatchGroup(match).GetGroupByComponentGroup(EntityUtility.GetComponentFlags(componentTypes));
 		}
 
+		public void BroadcastMessage(EntityMessages message)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message);
+		}
+
+		public void BroadcastMessage<T>(EntityMessages message, T argument)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message, argument);
+		}
+
+		public void BroadcastMessage(EntityMessages message, object argument)
+		{
+			for (int i = 0; i < entities.Count; i++)
+				entities[i].SendMessage(message, argument);
+		}
+
 		public void Clear()
 		{
 			entities.Clear();
