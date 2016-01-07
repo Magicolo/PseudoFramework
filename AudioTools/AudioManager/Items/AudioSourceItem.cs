@@ -33,7 +33,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Initialize(AudioSourceSettings settings, AudioSource audioSource, AudioSpatializer spatializer, AudioItem parent)
 		{
-			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, spatializer, parent);
 
 			// General Setup
 			originalSettings = settings;
