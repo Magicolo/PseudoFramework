@@ -12,7 +12,6 @@ namespace Pseudo
 		OnDamage = 0,
 		OnDamaged = 1,
 		OnDie = 3,
-		OnAttack = 4,
 		Spawn = 64,
 		Spawned = 65,
 		OnCollisionEnter2D = 125,
