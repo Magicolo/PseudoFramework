@@ -186,7 +186,10 @@ namespace Pseudo.Internal.Audio
 				RaiseStoppingEvent();
 			}
 			else
+			{
+				RaiseStoppingEvent();
 				StopImmediate();
+			}
 		}
 
 		public override void StopImmediate()

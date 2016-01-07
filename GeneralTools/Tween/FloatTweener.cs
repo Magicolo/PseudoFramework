@@ -48,13 +48,17 @@ namespace Pseudo
 					}
 					break;
 				case TweenStates.Playing:
+					// Must be before to ensure at least one frame of ramping.
+					if (counter >= time)
+					{
+						SetState(TweenStates.Stopped);
+						return;
+					}
+
 					completion = Mathf.Clamp01(counter / time);
 					value = (end - start) * easeFunction(completion) + start;
 					setValue(value);
 					counter += getDeltaTime();
-
-					if (counter >= time)
-						SetState(TweenStates.Stopped);
 					break;
 			}
 		}

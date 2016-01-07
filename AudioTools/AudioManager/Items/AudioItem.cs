@@ -224,7 +224,7 @@ namespace Pseudo
 		{
 			for (int i = 0; i < delayedOptions.Count; i++)
 			{
-				AudioDelayedOption delayedOption = delayedOptions[i];
+				var delayedOption = delayedOptions[i];
 
 				if (delayedOption.Update())
 				{
@@ -257,7 +257,7 @@ namespace Pseudo
 
 			for (int i = 0; i < Settings.RTPCs.Count; i++)
 			{
-				AudioRTPC rtpc = Settings.RTPCs[i];
+				var rtpc = Settings.RTPCs[i];
 
 				switch (rtpc.Type)
 				{
@@ -523,7 +523,7 @@ namespace Pseudo
 		/// <summary>
 		/// Copies another AudioItem.
 		/// </summary>
-		/// <param name="castedReference"> The AudioItem to copy. </param>
+		/// <param name="reference"> The AudioItem to copy. </param>
 		public virtual void Copy(object reference)
 		{
 			var castedReference = (AudioItem)reference;
