@@ -136,7 +136,7 @@ namespace Pseudo.Internal.Editor
 			GUIStyle labelStyle = new GUIStyle("boldLabel");
 			labelStyle.fixedHeight += 1;
 			labelStyle.fontSize = playing ? 14 : 20;
-			labelStyle.contentOffset = playing ? new Vector2(2f, -1f) : new Vector2(2f, -8f);
+			labelStyle.contentOffset = playing ? new Vector2(2f, -2f) : new Vector2(2f, -7f);
 			labelStyle.clipping = TextClipping.Overflow;
 
 			GUI.Label(rect, playing ? "►" : "■", labelStyle);
