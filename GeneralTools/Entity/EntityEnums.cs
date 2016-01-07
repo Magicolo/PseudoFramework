@@ -24,6 +24,8 @@ namespace Pseudo
 		OnStartAttacking = 140,
 		OnStopAttacking = 141,
 		OnStateEnter = 142,
-		OnStateExit = 143
+		OnStateExit = 143,
+
+		OnShowEvent = 150
 	}
 }
