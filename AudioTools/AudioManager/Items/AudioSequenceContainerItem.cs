@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Initialize(AudioSequenceContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
-			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);

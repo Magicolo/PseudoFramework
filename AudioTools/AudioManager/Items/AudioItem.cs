@@ -86,7 +86,6 @@ namespace Pseudo
 		/// The type of the AudioItem.
 		/// </summary>
 		public abstract AudioTypes Type { get; }
-
 		/// <summary>
 		/// An event triggered when the Play() method is successfuly called.
 		/// This event will be cleared automaticaly when the AudioItem is recycled.

@@ -25,27 +25,19 @@ namespace Pseudo.Internal.Audio
 
 		public void Deactivate(AudioItem item)
 		{
-			List<AudioItem> items;
-
-			if (idActiveItems.TryGetValue(item.Id, out items))
-				items.Remove(item);
-
+			GetItems(item.Id).Remove(item);
 			toUpdate.Remove(item);
 		}
 
 		public void TrimInstances(AudioItem item, int maxInstances)
 		{
-			List<AudioItem> items;
-
-			if (!idActiveItems.TryGetValue(item.Id, out items))
-			{
-				items = new List<AudioItem>();
-				idActiveItems[item.Id] = items;
-			}
+			var items = GetItems(item.Id);
 
 			if (maxInstances > 0)
+			{
 				while (items.Count >= maxInstances)
 					items.Pop().StopImmediate();
+			}
 
 			items.Add(item);
 		}
@@ -156,10 +148,45 @@ namespace Pseudo.Internal.Audio
 			return item;
 		}
 
-		public void StopAll()
+		public void StopItemsWithId(int id)
+		{
+			var items = GetItems(id);
+
+			for (int i = items.Count; i-- > 0;)
+				items[i].Stop();
+		}
+
+		public void StopItemsWithIdImmediate(int id)
+		{
+			var items = GetItems(id);
+
+			for (int i = items.Count; i-- > 0;)
+				items[i].StopImmediate();
+		}
+
+		public void StopAllItems()
+		{
+			for (int i = toUpdate.Count; i-- > 0;)
+				toUpdate[i].Stop();
+		}
+
+		public void StopAllItemsImmediate()
 		{
 			for (int i = toUpdate.Count; i-- > 0;)
 				toUpdate[i].StopImmediate();
+		}
+
+		List<AudioItem> GetItems(int id)
+		{
+			List<AudioItem> items;
+
+			if (!idActiveItems.TryGetValue(id, out items))
+			{
+				items = new List<AudioItem>();
+				idActiveItems[id] = items;
+			}
+
+			return items;
 		}
 	}
 }

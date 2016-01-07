@@ -11,7 +11,6 @@ namespace Pseudo
 	{
 		OnDamage = 0,
 		OnDamaged = 1,
-		OnCollide = 2,
 		OnDie = 3,
 		Spawn = 64,
 		OnCollisionEnter2D = 125,
@@ -24,8 +23,7 @@ namespace Pseudo
 		OnStartAttacking = 140,
 		OnStopAttacking = 141,
 		OnStateEnter = 142,
-		OnStateExit = 143,
+		OnStateExit = 143
 
-		OnShowEvent = 150
-	}
+		OnShowEvent = 144	}
 }

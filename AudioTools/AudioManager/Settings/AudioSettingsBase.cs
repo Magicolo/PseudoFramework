@@ -15,8 +15,15 @@ namespace Pseudo
 			Semitone
 		}
 
+		static int idCounter;
+
+		int id = ++idCounter;
 		string cachedName;
 
+		/// <summary>
+		/// The unique identifier of the AudioSettingsBase.
+		/// </summary>
+		public int Id { get { return id; } }
 		/// <summary>
 		/// The name of the AudioSettingsBase.
 		/// </summary>

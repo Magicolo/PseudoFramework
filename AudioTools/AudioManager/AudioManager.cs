@@ -12,7 +12,7 @@ namespace Pseudo
 {
 	// TODO Show container types better in container inspectors
 	// TODO Uniformize RTPCValues and SwitchValues
-	// TODO Find a clean way to limit instances of multiple Settings together
+	// TODO Find a clean way to limit instances of multiple Settings together (using the same ids)
 	// TODO AudioSettings editors should all have unique colors/icons
 	// TODO Add random selection types in AudioRandomContainerSettings
 	// FIXME Reordering AudioOption doesn't work
@@ -170,12 +170,37 @@ namespace Pseudo
 			return ItemManager.CreateDynamicItem(getNextSettings, getPosition);
 		}
 
+		public void Stop(AudioSettingsBase settings)
+		{
+			ItemManager.StopItemsWithId(settings.Id);
+		}
+
+		public void StopImmediate(AudioSettingsBase settings)
+		{
+			ItemManager.StopItemsWithIdImmediate(settings.Id);
+		}
+
+		public void Stop(int id)
+		{
+			ItemManager.StopItemsWithId(id);
+		}
+
+		public void StopImmediate(int id)
+		{
+			ItemManager.StopItemsWithIdImmediate(id);
+		}
+
 		/// <summary>
 		/// Stops all active AudioItems
 		/// </summary>
 		public void StopAll()
 		{
-			ItemManager.StopAll();
+			ItemManager.StopAllItems();
+		}
+
+		public void StopAllImmediate()
+		{
+			ItemManager.StopAllItemsImmediate();
 		}
 
 		/// <summary>
