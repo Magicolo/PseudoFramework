@@ -136,10 +136,10 @@ namespace Pseudo.Internal.Pool
 
 			for (int i = 0; i < allFields.Length; i++)
 			{
-				FieldInfo field = allFields[i];
-				object value = field.GetValue(instance);
+				var field = allFields[i];
+				var value = field.GetValue(instance);
 
-				if (ShouldInitialize(field))
+				if (ShouldInitialize(field, value))
 					fields.Add(GetSetter(value, field, toIgnore));
 			}
 
@@ -190,9 +190,11 @@ namespace Pseudo.Internal.Pool
 				return new PoolElementSetter(element);
 		}
 
-		static bool ShouldInitialize(FieldInfo field)
+		static bool ShouldInitialize(FieldInfo field, object value)
 		{
-			if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
+			if (value == null)
+				return true;
+			else if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
 				return true;
 			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
 				return false;
