@@ -205,7 +205,6 @@ namespace Pseudo.Internal.Audio
 				AudioManager.Instance.ItemManager.Deactivate(this);
 
 			spatializer.RemoveSource(source.transform);
-
 			TypePoolManager.Recycle(this);
 		}
 

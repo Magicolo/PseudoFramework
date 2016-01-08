@@ -20,6 +20,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Activate(AudioItem item)
 		{
+			GetItems(item.Id).Add(item);
 			toUpdate.Add(item);
 		}
 
@@ -38,8 +39,6 @@ namespace Pseudo.Internal.Audio
 				while (items.Count >= maxInstances)
 					items.Pop().StopImmediate();
 			}
-
-			items.Add(item);
 		}
 
 		public AudioItem CreateItem(AudioSettingsBase settings)

@@ -44,8 +44,7 @@ namespace Pseudo.Internal.Audio
 		{
 			for (int i = sources.Count; i-- > 0;)
 			{
-				AudioItem source = sources[i];
-
+				var source = sources[i];
 				source.Update();
 
 				if (source.State == AudioStates.Stopped || (state == AudioStates.Stopping && source.State == AudioStates.Waiting))
