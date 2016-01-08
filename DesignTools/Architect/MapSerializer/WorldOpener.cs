@@ -38,10 +38,10 @@ namespace Pseudo
 		{
 
 			string name = currentLine.Substring(6);
-			LayerData layer = new LayerData(null, name, 20, 20);
+			int nbLines = 40;
+			int lineWidth = 40;
+			LayerData layer = new LayerData(null, name, nbLines, lineWidth);
 
-			int nbLines = 20;
-			int lineWidth = 20;
 			for (int y = 0; y < nbLines; y++)
 			{
 				nextLine();
