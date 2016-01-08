@@ -25,5 +25,7 @@ namespace Pseudo
 		OnStateEnter = 142,
 		OnStateExit = 143,
 		OnShowEvent = 144,
+		OnEquip = 145,
+		OnUnequip = 146
 	}
 }
