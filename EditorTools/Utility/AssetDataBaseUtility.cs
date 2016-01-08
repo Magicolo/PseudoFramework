@@ -311,13 +311,20 @@ namespace Pseudo
 
 		public static string GetSelectedAssetPath()
 		{
+#if UNITY_EDITOR
 			return AssetDatabase.GetAssetPath(Selection.activeObject);
-
+#else
+			return "";
+#endif
 		}
 
 		public static string GetSelectedAssetExtention()
 		{
+#if UNITY_EDITOR
 			return Path.GetExtension(AssetDatabase.GetAssetPath(Selection.activeObject));
+#else
+			return "";
+#endif
 		}
 	}
 }
