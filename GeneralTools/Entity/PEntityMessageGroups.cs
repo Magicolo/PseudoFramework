@@ -10,25 +10,38 @@ namespace Pseudo
 {
 	public partial class PEntity
 	{
+		readonly List<IMessageable> messageables = new List<IMessageable>();
 		readonly Dictionary<byte, MessageGroup> messageGroups = new Dictionary<byte, MessageGroup>();
 
 		public void SendMessage(EntityMessages message)
 		{
+			for (int i = 0; i < messageables.Count; i++)
+				messageables[i].OnMessage(message);
+
 			GetMessageGroup(message).SendMessage();
 		}
 
 		public void SendMessage(EntityMessages message, object argument)
 		{
+			for (int i = 0; i < messageables.Count; i++)
+				messageables[i].OnMessage(message);
+
 			GetMessageGroup(message).SendMessage(argument);
 		}
 
 		public void SendMessage<T>(EntityMessages message, T argument)
 		{
+			for (int i = 0; i < messageables.Count; i++)
+				messageables[i].OnMessage(message);
+
 			GetMessageGroup(message).SendMessage(argument);
 		}
 
 		void RegisterComponentToMessageGroups(IComponent component)
 		{
+			if (component is IMessageable)
+				messageables.Add((IMessageable)component);
+
 			if (messageGroups.Count > 0)
 			{
 				var enumerator = messageGroups.GetEnumerator();
@@ -42,6 +55,9 @@ namespace Pseudo
 
 		void UnregisterComponentFromMessageGroups(IComponent component)
 		{
+			if (component is IMessageable)
+				messageables.Remove((IMessageable)component);
+
 			var messageEnumerator = messageGroups.GetEnumerator();
 
 			while (messageEnumerator.MoveNext())
