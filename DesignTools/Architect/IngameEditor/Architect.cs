@@ -102,7 +102,7 @@ namespace Pseudo
 
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "Assets\\Maps\\map2.arc");
+			SaveWorld.SaveAll(this, "Assets\\Maps\\map1.arc");
 		}
 
 		public void ResetGridSize()
@@ -293,7 +293,7 @@ namespace Pseudo
 		}
 		public LayerData addLayer(Transform parent, string name, int tileHeight, int tileWidth)
 		{
-			LayerData newLayer = new LayerData(parent, name, 40, 40);
+			LayerData newLayer = new LayerData(parent, name, 20, 20);
 			newLayer.TileHeight = tileHeight;
 			newLayer.TileWidth = tileWidth;
 			Layers.Add(newLayer);
