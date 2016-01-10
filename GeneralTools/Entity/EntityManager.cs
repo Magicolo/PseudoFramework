@@ -68,8 +68,10 @@ namespace Pseudo
 			InitializeManager();
 			masterGroup.UpdateEntity(entity, true);
 
-			if (entity is IEntityUpdateable)
-				updateables.Add((IEntityUpdateable)entity);
+			var updateable = entity as IEntityUpdateable;
+
+			if (updateable != null)
+				updateables.Add(updateable);
 		}
 
 		public static void UnregisterEntity(IEntity entity)
