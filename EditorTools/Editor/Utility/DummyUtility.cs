@@ -56,17 +56,13 @@ public static class DummyUtility
 
 	static Type CreateDummyType(Type type)
 	{
-		var typeSignature = "GeneratedDummy" + type.Name;
+		var typeSignature = "GeneratedDummyType" + type.Name;
 		var assemblyName = new AssemblyName(typeSignature);
 		var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
-		var moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
+		var moduleBuilder = assemblyBuilder.DefineDynamicModule(typeSignature + "MainModule");
 		var typeBuilder = moduleBuilder.DefineType(typeSignature,
 			TypeAttributes.Public |
-			TypeAttributes.Class |
-			TypeAttributes.AutoClass |
-			TypeAttributes.AnsiClass |
-			TypeAttributes.BeforeFieldInit |
-			TypeAttributes.AutoLayout,
+			TypeAttributes.Class,
 			typeof(Dummy<>).MakeGenericType(type));
 
 		return typeBuilder.CreateType();
