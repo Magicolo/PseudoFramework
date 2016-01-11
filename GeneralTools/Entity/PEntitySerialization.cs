@@ -15,7 +15,7 @@ namespace Pseudo
 		ReferenceData[] references = new ReferenceData[0];
 		[SerializeField, DoNotInitialize]
 		string data;
-		[SerializeField]
+		//[SerializeField]
 		bool isDeserialized;
 
 		void Awake()

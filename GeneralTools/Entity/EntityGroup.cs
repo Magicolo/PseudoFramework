@@ -72,7 +72,7 @@ namespace Pseudo.Internal.Entity
 					subGroup.Clear();
 			}
 
-			subGroups.Clear();
+			//subGroups.Clear();
 		}
 
 		public void UpdateEntity(IEntity entity, bool isValid)

@@ -57,7 +57,7 @@ namespace Pseudo.Internal.Entity
 					enumerator.Current.Value.Clear();
 
 				enumerator.Dispose();
-				entityGroups.Clear();
+				//entityGroups.Clear();
 			}
 
 			// Component Groups
@@ -69,7 +69,7 @@ namespace Pseudo.Internal.Entity
 					enumerator.Current.Value.Clear();
 
 				enumerator.Dispose();
-				componentGroups.Clear();
+				//componentGroups.Clear();
 			}
 		}
 

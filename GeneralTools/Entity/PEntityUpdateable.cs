@@ -37,21 +37,21 @@ namespace Pseudo
 				startables.Add(startable);
 
 			var updateable = component as IUpdateable;
-			if (updateable != null)
+			if (updateable != null && !updateables.Contains(updateable))
 			{
 				updateables.Add(updateable);
 				updateCounters.Add(0f);
 			}
 
 			var lateUpdateable = component as ILateUpdateable;
-			if (lateUpdateable != null)
+			if (lateUpdateable != null && !lateUpdateables.Contains(lateUpdateable))
 			{
 				lateUpdateables.Add(lateUpdateable);
 				lateUpdateCounters.Add(0f);
 			}
 
 			var fixedUpdateable = component as IFixedUpdateable;
-			if (fixedUpdateable != null)
+			if (fixedUpdateable != null && !fixedUpdateables.Contains(fixedUpdateable))
 				fixedUpdateables.Add(fixedUpdateable);
 		}
 
