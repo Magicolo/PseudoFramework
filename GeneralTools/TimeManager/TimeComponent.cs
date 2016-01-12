@@ -1,29 +1,44 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal;
+using Pseudo.Internal.Entity3;
 
 namespace Pseudo
 {
-	[Serializable, ComponentCategory("General")]
-	public class TimeComponent : TimeComponentBase
+	public class TimeComponent : PMonoBehaviour, ITimeComponent
 	{
-		protected override float GetTime()
+		public TimeManager.TimeChannels Channel
 		{
-			return TimeManager.GetTime(channel);
+			get { return time.Channel; }
 		}
 
-		protected override float GetDeltaTime()
+		float ITimeChannel.Time
 		{
-			return TimeManager.GetDeltaTime(channel);
+			get { return time.Time; }
 		}
 
-		protected override float GetFixedDeltaTime()
+		public float TimeScale
 		{
-			return TimeManager.GetFixedDeltaTime(channel);
+			get { return time.TimeScale; }
+			set { time.TimeScale = value; }
 		}
+
+		public float DeltaTime
+		{
+			get { return time.DeltaTime; }
+		}
+
+		public float FixedDeltaTime
+		{
+			get { return time.FixedDeltaTime; }
+		}
+
+		[SerializeField]
+		TimeChannel time;
 	}
+
+	public interface ITimeComponent : ITimeChannel, IComponent { }
 }

@@ -30,7 +30,7 @@ namespace Pseudo
 			}
 		}
 
-		void RegisterComponentToUpdateCallbacks(IComponent component)
+		void RegisterComponentToUpdateCallbacks(IComponentOld component)
 		{
 			var startable = component as IStartable;
 			if (startable != null)
@@ -55,7 +55,7 @@ namespace Pseudo
 				fixedUpdateables.Add(fixedUpdateable);
 		}
 
-		void UnregisterComponentFromUpdateCallbacks(IComponent component)
+		void UnregisterComponentFromUpdateCallbacks(IComponentOld component)
 		{
 			var startable = component as IStartable;
 			if (startable != null)

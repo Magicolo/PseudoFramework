@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Entity3
 		event Action<IEntity> OnEntityAdded;
 		event Action<IEntity> OnEntityRemoved;
 
-		IList<IEntity> AllEntities { get; }
+		IList<IEntity> Entities { get; }
 
 		IEntity CreateEntity();
 		IEntity CreateEntity(ByteFlag groups);

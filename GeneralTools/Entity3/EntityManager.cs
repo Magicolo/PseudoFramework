@@ -8,9 +8,11 @@ namespace Pseudo.Internal.Entity3
 {
 	public class EntityManager : IEntityManager
 	{
+		public static EntityManager Instance = new EntityManager();
+
 		public event Action<IEntity> OnEntityAdded;
 		public event Action<IEntity> OnEntityRemoved;
-		public IList<IEntity> AllEntities
+		public IList<IEntity> Entities
 		{
 			get { return allEntitiesGroup.Entities; }
 		}

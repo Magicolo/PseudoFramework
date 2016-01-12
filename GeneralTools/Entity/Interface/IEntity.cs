@@ -9,32 +9,32 @@ namespace Pseudo
 {
 	public interface IEntity
 	{
-		event Action<IEntity, IComponent> OnComponentAdded;
-		event Action<IEntity, IComponent> OnComponentRemoved;
+		event Action<IEntity, IComponentOld> OnComponentAdded;
+		event Action<IEntity, IComponentOld> OnComponentRemoved;
 
 		bool Active { get; set; }
 		Transform Transform { get; }
 		GameObject GameObject { get; }
 		ByteFlag Groups { get; set; }
 
-		void AddComponent(IComponent component);
-		IComponent AddComponent(Type type);
-		T AddComponent<T>() where T : IComponent;
-		void RemoveComponent(IComponent component);
+		void AddComponent(IComponentOld component);
+		IComponentOld AddComponent(Type type);
+		T AddComponent<T>() where T : IComponentOld;
+		void RemoveComponent(IComponentOld component);
 		void RemoveComponents(Type type);
 		void RemoveComponents<T>();
 		void RemoveAllComponents();
-		IList<IComponent> GetAllComponents();
-		IComponent GetComponent(Type type);
+		IList<IComponentOld> GetAllComponents();
+		IComponentOld GetComponent(Type type);
 		T GetComponent<T>();
-		IList<IComponent> GetComponents(Type type);
+		IList<IComponentOld> GetComponents(Type type);
 		IList<T> GetComponents<T>();
-		bool TryGetComponent(Type type, out IComponent component);
+		bool TryGetComponent(Type type, out IComponentOld component);
 		bool TryGetComponent<T>(out T component);
-		IComponent GetOrAddComponent(Type type);
-		T GetOrAddComponent<T>() where T : IComponent;
+		IComponentOld GetOrAddComponent(Type type);
+		T GetOrAddComponent<T>() where T : IComponentOld;
 		bool HasComponent(Type type);
-		bool HasComponent(IComponent component);
+		bool HasComponent(IComponentOld component);
 		bool HasComponent<T>();
 		void SendMessage(EntityMessages message);
 		void SendMessage(EntityMessages message, object argument);

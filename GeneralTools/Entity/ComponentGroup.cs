@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Entity
 	public class ComponentGroup
 	{
 		readonly Type type;
-		readonly List<IComponent> components = new List<IComponent>();
+		readonly List<IComponentOld> components = new List<IComponentOld>();
 		readonly IList genericComponents;
 
 		public ComponentGroup(Type type)
@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Entity
 			genericComponents = (IList)Activator.CreateInstance(typeof(List<>).MakeGenericType(type));
 		}
 
-		public List<IComponent> GetComponents()
+		public List<IComponentOld> GetComponents()
 		{
 			return components;
 		}
@@ -30,19 +30,19 @@ namespace Pseudo.Internal.Entity
 			return (List<T>)genericComponents;
 		}
 
-		public void TryAddComponent(IComponent component)
+		public void TryAddComponent(IComponentOld component)
 		{
 			if (type.IsAssignableFrom(component.GetType()))
 				AddComponent(component);
 		}
 
-		public void RemoveComponent(IComponent component)
+		public void RemoveComponent(IComponentOld component)
 		{
 			if (components.Remove(component))
 				genericComponents.Remove(component);
 		}
 
-		void AddComponent(IComponent component)
+		void AddComponent(IComponentOld component)
 		{
 			if (!components.Contains(component))
 			{

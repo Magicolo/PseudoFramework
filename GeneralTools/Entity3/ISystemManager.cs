@@ -9,14 +9,10 @@ namespace Pseudo.Internal.Entity3
 	{
 		event Action<ISystem> OnSystemAdded;
 		event Action<ISystem> OnSystemRemoved;
-		IList<ISystem> AllSystems { get; }
+		IList<ISystem> Systems { get; }
 
 		void AddSystem(ISystem system);
 		void RemoveSystem(ISystem system);
 		void RemoveAllSystems();
-
-		void Update();
-		void FixedUpdate();
-		void LateUpdate();
 	}
 }

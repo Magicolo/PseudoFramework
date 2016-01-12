@@ -35,7 +35,7 @@ namespace Pseudo
 			return group;
 		}
 
-		void RegisterComponentToGroups(IComponent component)
+		void RegisterComponentToGroups(IComponentOld component)
 		{
 			if (componentGroups.Count > 0)
 			{
@@ -48,7 +48,7 @@ namespace Pseudo
 			}
 		}
 
-		void UnregisterComponentFromGroups(IComponent component)
+		void UnregisterComponentFromGroups(IComponentOld component)
 		{
 			if (componentGroups.Count > 0)
 			{

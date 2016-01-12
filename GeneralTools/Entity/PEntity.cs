@@ -11,8 +11,8 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/General/Entity")]
 	public partial class PEntity : PMonoBehaviour, IEntity
 	{
-		public event Action<IEntity, IComponent> OnComponentAdded;
-		public event Action<IEntity, IComponent> OnComponentRemoved;
+		public event Action<IEntity, IComponentOld> OnComponentAdded;
+		public event Action<IEntity, IComponentOld> OnComponentRemoved;
 		public bool Active
 		{
 			get { return active; }
@@ -42,27 +42,27 @@ namespace Pseudo
 		[SerializeField, PropertyField(typeof(EntityGroupsAttribute))]
 		ByteFlag groups;
 		[NonSerialized, InitializeContent]
-		List<IComponent> allComponents = new List<IComponent>(8);
+		List<IComponentOld> allComponents = new List<IComponentOld>(8);
 
-		public void AddComponent(IComponent component)
+		public void AddComponent(IComponentOld component)
 		{
 			AddComponent(component, true);
 		}
 
-		public IComponent AddComponent(Type type)
+		public IComponentOld AddComponent(Type type)
 		{
-			var component = (IComponent)TypePoolManager.Create(type);
+			var component = (IComponentOld)TypePoolManager.Create(type);
 			AddComponent(component, true);
 
 			return component;
 		}
 
-		public T AddComponent<T>() where T : IComponent
+		public T AddComponent<T>() where T : IComponentOld
 		{
 			return (T)AddComponent(typeof(T));
 		}
 
-		public void RemoveComponent(IComponent component)
+		public void RemoveComponent(IComponentOld component)
 		{
 			RemoveComponent(component, true);
 		}
@@ -82,12 +82,12 @@ namespace Pseudo
 			RemoveAllComponents(true);
 		}
 
-		public IList<IComponent> GetAllComponents()
+		public IList<IComponentOld> GetAllComponents()
 		{
 			return allComponents;
 		}
 
-		new public IComponent GetComponent(Type type)
+		new public IComponentOld GetComponent(Type type)
 		{
 			return GetComponentGroup(type).GetComponents().First();
 		}
@@ -97,7 +97,7 @@ namespace Pseudo
 			return GetComponentGroup(typeof(T)).GetComponents<T>().First();
 		}
 
-		new public IList<IComponent> GetComponents(Type type)
+		new public IList<IComponentOld> GetComponents(Type type)
 		{
 			return GetComponentGroup(type).GetComponents();
 		}
@@ -107,7 +107,7 @@ namespace Pseudo
 			return GetComponentGroup(typeof(T)).GetComponents<T>();
 		}
 
-		public bool TryGetComponent(Type type, out IComponent component)
+		public bool TryGetComponent(Type type, out IComponentOld component)
 		{
 			var components = GetComponents(type);
 
@@ -139,9 +139,9 @@ namespace Pseudo
 			}
 		}
 
-		public IComponent GetOrAddComponent(Type type)
+		public IComponentOld GetOrAddComponent(Type type)
 		{
-			IComponent component;
+			IComponentOld component;
 
 			if (!TryGetComponent(type, out component))
 				component = AddComponent(type);
@@ -149,7 +149,7 @@ namespace Pseudo
 			return component;
 		}
 
-		public T GetOrAddComponent<T>() where T : IComponent
+		public T GetOrAddComponent<T>() where T : IComponentOld
 		{
 			return (T)GetOrAddComponent(typeof(T));
 		}
@@ -159,7 +159,7 @@ namespace Pseudo
 			return GetComponentGroup(type).GetComponents().Count > 0;
 		}
 
-		public bool HasComponent(IComponent component)
+		public bool HasComponent(IComponentOld component)
 		{
 			return allComponents.Contains(component);
 		}
@@ -199,7 +199,7 @@ namespace Pseudo
 			RemoveAllComponents(false);
 		}
 
-		protected virtual void RaiseOnComponentAddedEvent(IComponent component)
+		protected virtual void RaiseOnComponentAddedEvent(IComponentOld component)
 		{
 			if (OnComponentAdded != null)
 				OnComponentAdded(this, component);
@@ -207,7 +207,7 @@ namespace Pseudo
 			EntityManager.UpdateEntity(this);
 		}
 
-		protected virtual void RaiseOnComponentRemovedEvent(IComponent component)
+		protected virtual void RaiseOnComponentRemovedEvent(IComponentOld component)
 		{
 			if (OnComponentRemoved != null)
 				OnComponentRemoved(this, component);
@@ -215,7 +215,7 @@ namespace Pseudo
 			EntityManager.UpdateEntity(this);
 		}
 
-		void AddComponent(IComponent component, bool raiseEvent)
+		void AddComponent(IComponentOld component, bool raiseEvent)
 		{
 			allComponents.Add(component);
 			RegisterComponent(component);
@@ -225,13 +225,13 @@ namespace Pseudo
 				RaiseOnComponentAddedEvent(component);
 		}
 
-		void AddComponents(IList<IComponent> components, bool raiseEvent)
+		void AddComponents(IList<IComponentOld> components, bool raiseEvent)
 		{
 			for (int i = 0; i < components.Count; i++)
 				AddComponent(components[i], raiseEvent);
 		}
 
-		void RemoveComponent(IComponent component, bool raiseEvent)
+		void RemoveComponent(IComponentOld component, bool raiseEvent)
 		{
 			if (allComponents.Remove(component))
 			{
@@ -245,7 +245,7 @@ namespace Pseudo
 			}
 		}
 
-		void RemoveComponents(IList<IComponent> components, bool raiseEvent)
+		void RemoveComponents(IList<IComponentOld> components, bool raiseEvent)
 		{
 			for (int i = components.Count - 1; i >= 0; i--)
 				RemoveComponent(components[i], raiseEvent);
@@ -274,7 +274,7 @@ namespace Pseudo
 				RegisterComponent(allComponents[i]);
 		}
 
-		void RegisterComponent(IComponent component)
+		void RegisterComponent(IComponentOld component)
 		{
 			component.Entity = this;
 			RegisterComponentToGroups(component);
@@ -282,7 +282,7 @@ namespace Pseudo
 			RegisterComponentToUpdateCallbacks(component);
 		}
 
-		void UnregisterComponent(IComponent component)
+		void UnregisterComponent(IComponentOld component)
 		{
 			component.Entity = null;
 			UnregisterComponentFromGroups(component);

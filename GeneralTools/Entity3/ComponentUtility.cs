@@ -18,7 +18,8 @@ namespace Pseudo.Internal.Entity3
 			get { return componentTypes; }
 		}
 
-		static readonly Dictionary<Type, int> componentIndices = new Dictionary<Type, int>();
+		static readonly Dictionary<Type, int> componentIndexDict = new Dictionary<Type, int>();
+		static readonly Dictionary<Type, Type[]> subComponentTypeDict = new Dictionary<Type, Type[]>();
 		static Type[] componentTypes = new Type[0];
 		static int nextIndex;
 
@@ -26,10 +27,10 @@ namespace Pseudo.Internal.Entity3
 		{
 			int index;
 
-			if (!componentIndices.TryGetValue(type, out index))
+			if (!componentIndexDict.TryGetValue(type, out index))
 			{
 				index = nextIndex++;
-				componentIndices[type] = index;
+				componentIndexDict[type] = index;
 
 				if (componentTypes.Length <= index)
 					Array.Resize(ref componentTypes, Mathf.NextPowerOfTwo(index + 1));
@@ -38,11 +39,6 @@ namespace Pseudo.Internal.Entity3
 			}
 
 			return index;
-		}
-
-		public static Type GetComponentType(int typeIndex)
-		{
-			return componentTypes[typeIndex];
 		}
 
 		public static int[] GetComponentIndices(params Type[] componentTypes)
@@ -55,6 +51,48 @@ namespace Pseudo.Internal.Entity3
 			Array.Sort(componentIndices);
 
 			return componentIndices;
+		}
+
+		public static Type GetComponentType(int typeIndex)
+		{
+			return componentTypes[typeIndex];
+		}
+
+		public static Type[] GetComponentTypes(IList<int> componentIndices)
+		{
+			var componentTypes = new Type[componentIndices.Count];
+
+			for (int i = 0; i < componentIndices.Count; i++)
+				componentTypes[i] = GetComponentType(componentIndices[i]);
+
+			return componentTypes;
+		}
+
+		public static Type[] GetSubComponentTypes(Type componentType)
+		{
+			Type[] subComponentTypes;
+
+			if (!subComponentTypeDict.TryGetValue(componentType, out subComponentTypes))
+			{
+				var type = componentType;
+				var types = new HashSet<Type>();
+
+				var interfaces = type.FindInterfaces((t, f) => typeof(IComponent).IsAssignableFrom(t), null);
+
+				for (int i = 0; i < interfaces.Length; i++)
+					types.Add(interfaces[i]);
+
+				while (type != null && typeof(IComponent).IsAssignableFrom(type))
+				{
+					types.Add(type);
+					type = type.BaseType;
+				}
+
+				subComponentTypes = types.ToArray();
+				subComponentTypeDict[componentType] = subComponentTypes;
+			}
+
+			return subComponentTypes;
 		}
 	}
 

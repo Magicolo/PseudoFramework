@@ -37,7 +37,7 @@ namespace Pseudo
 			GetMessageGroup(message).SendMessage(argument);
 		}
 
-		void RegisterComponentToMessageGroups(IComponent component)
+		void RegisterComponentToMessageGroups(IComponentOld component)
 		{
 			if (component is IMessageable)
 				messageables.Add((IMessageable)component);
@@ -53,7 +53,7 @@ namespace Pseudo
 			}
 		}
 
-		void UnregisterComponentFromMessageGroups(IComponent component)
+		void UnregisterComponentFromMessageGroups(IComponentOld component)
 		{
 			if (component is IMessageable)
 				messageables.Remove((IMessageable)component);

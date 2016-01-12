@@ -43,7 +43,7 @@ namespace Pseudo.Internal.Entity
 		PEntity entity;
 		ComponentCategory[] categories;
 		ComponentCategory currentCategory;
-		IComponent currentComponent;
+		IComponentOld currentComponent;
 
 		public override void OnEnable()
 		{
@@ -200,7 +200,7 @@ namespace Pseudo.Internal.Entity
 				{
 					var type = requireAttribute.Types[i];
 
-					if (type != null && typeof(IComponent).IsAssignableFrom(type) && !entity.HasComponent(type))
+					if (type != null && typeof(IComponentOld).IsAssignableFrom(type) && !entity.HasComponent(type))
 					{
 						errors.Add(string.Format("Missing required component: {0}", type.Name).ToGUIContent());
 						data.Add(new ErrorData(currentCategory, currentComponent, ErrorData.ErrorTypes.MissingComponent, type));
@@ -301,7 +301,7 @@ namespace Pseudo.Internal.Entity
 		[UnityEditor.Callbacks.DidReloadScripts]
 		static void InitializeAddComponentPopup()
 		{
-			var types = typeof(IComponent).GetAssignableTypes();
+			var types = typeof(IComponentOld).GetAssignableTypes();
 			var categorizedOptionsList = new List<string>(types.Length);
 			var categorizedTypesList = new List<Type>(types.Length);
 			var otherOptionsList = new List<string>(types.Length);
@@ -350,7 +350,7 @@ namespace Pseudo.Internal.Entity
 
 			public readonly string Name;
 			public readonly int Order;
-			public readonly List<IComponent> Components = new List<IComponent>();
+			public readonly List<IComponentOld> Components = new List<IComponentOld>();
 			public readonly List<int> ComponentIndices = new List<int>();
 			public readonly SerializedProperty DummyValue;
 			public bool IsExpanded
@@ -366,7 +366,7 @@ namespace Pseudo.Internal.Entity
 				DummyValue = DummyUtility.GetSerializedDummy(new string[0]);
 			}
 
-			public void AddComponent(IComponent component, int index)
+			public void AddComponent(IComponentOld component, int index)
 			{
 				Components.Add(component);
 				ComponentIndices.Add(index);
@@ -389,16 +389,16 @@ namespace Pseudo.Internal.Entity
 			}
 
 			public readonly ComponentCategory Category;
-			public readonly IComponent Component;
+			public readonly IComponentOld Component;
 			public readonly ErrorTypes ErrorType;
 			public readonly Type MissingComponentType;
 
-			public ErrorData(ComponentCategory category, IComponent component, ErrorTypes errorType, Type missingComponentType) : this(category, component, errorType)
+			public ErrorData(ComponentCategory category, IComponentOld component, ErrorTypes errorType, Type missingComponentType) : this(category, component, errorType)
 			{
 				MissingComponentType = missingComponentType;
 			}
 
-			ErrorData(ComponentCategory category, IComponent component, ErrorTypes errorType)
+			ErrorData(ComponentCategory category, IComponentOld component, ErrorTypes errorType)
 			{
 				Category = category;
 				Component = component;

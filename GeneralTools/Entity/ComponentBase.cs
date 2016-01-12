@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public abstract class ComponentBase : IComponent, IPoolable
+	public abstract class ComponentBase : IComponentOld, IPoolable
 	{
 		public IEntity Entity { get; set; }
 		public bool Active

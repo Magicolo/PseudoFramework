@@ -59,7 +59,7 @@ namespace Pseudo.Internal.Entity
 			{
 				var type = attribute.Types[j];
 
-				if (type != null && typeof(IComponent).IsAssignableFrom(type) && !entity.HasComponent(type))
+				if (type != null && typeof(IComponentOld).IsAssignableFrom(type) && !entity.HasComponent(type))
 					errors.Add(string.Format("Missing required component: {0}", type.Name).ToGUIContent());
 			}
 		}

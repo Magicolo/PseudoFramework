@@ -63,32 +63,27 @@ namespace Pseudo.Internal.Entity3
 			return matches;
 		}
 
-		public static bool Matches(IList<int> groups1, int[] groups2, EntityMatches match = EntityMatches.All)
+		public static bool Matches(IEntity entity, int[] componentIndices, EntityMatches match = EntityMatches.All)
 		{
 			bool matches = false;
 
 			switch (match)
 			{
 				case EntityMatches.All:
-					matches = MatchesAll(groups1, groups2);
+					matches = MatchesAll(entity, componentIndices);
 					break;
 				case EntityMatches.Any:
-					matches = MatchesAny(groups1, groups2);
+					matches = MatchesAny(entity, componentIndices);
 					break;
 				case EntityMatches.None:
-					matches = !MatchesAny(groups1, groups2);
+					matches = !MatchesAny(entity, componentIndices);
 					break;
 				case EntityMatches.Exact:
-					matches = MatchesExact(groups1, groups2);
+					matches = MatchesExact(entity, componentIndices);
 					break;
 			}
 
 			return matches;
-		}
-
-		public static bool Matches(IEntity entity, int[] componentIndices, EntityMatches match = EntityMatches.All)
-		{
-			return Matches(entity.GetComponentIndices(), componentIndices, match);
 		}
 
 		static bool MatchesAll(ByteFlag groups1, ByteFlag groups2)
@@ -106,8 +101,10 @@ namespace Pseudo.Internal.Entity3
 			return groups1 == groups2;
 		}
 
-		static bool MatchesAll(IList<int> groups1, int[] groups2)
+		static bool MatchesAll(IEntity entity, int[] groups2)
 		{
+			var groups1 = entity.GetComponentIndices();
+
 			if (groups2.Length == 0)
 				return true;
 			if (groups1.Count < groups2.Length)
@@ -146,8 +143,10 @@ namespace Pseudo.Internal.Entity3
 			return true;
 		}
 
-		static bool MatchesAny(IList<int> groups1, int[] groups2)
+		static bool MatchesAny(IEntity entity, int[] groups2)
 		{
+			var groups1 = entity.GetComponentIndices();
+
 			if (groups2.Length == 0)
 				return true;
 			else if (groups1.Count == 0)
@@ -182,18 +181,18 @@ namespace Pseudo.Internal.Entity3
 			return false;
 		}
 
-		static bool MatchesExact(IList<int> groups1, int[] groups2)
+		static bool MatchesExact(IEntity entity, int[] groups2)
 		{
-			if (groups1.Count != groups2.Length)
+			if (entity.Components.Count != groups2.Length)
 				return false;
-			else if (groups1.Count == 0 && groups2.Length == 0)
+			else if (entity.Components.Count == 0 && groups2.Length == 0)
 				return true;
-			else if (groups1.Count == 1 && groups2.Length == 1)
-				return groups1[0] == groups2[0];
+			else if (entity.Components.Count == 1 && groups2.Length == 1)
+				return entity.HasComponent(ComponentUtility.GetComponentType(groups2[0]));
 
-			for (int i = 0; i < groups1.Count; i++)
+			for (int i = 0; i < groups2.Length; i++)
 			{
-				if (groups1[i] != groups2[i])
+				if (!entity.HasComponent(ComponentUtility.GetComponentType(groups2[i])))
 					return false;
 			}
 

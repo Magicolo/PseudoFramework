@@ -11,7 +11,7 @@ namespace Pseudo.Internal.Entity3
 		event Action<IEntity, IComponent> OnComponentRemoved;
 
 		ByteFlag Groups { get; set; }
-		IList<IComponent> AllComponents { get; }
+		IList<IComponent> Components { get; }
 
 		IList<int> GetComponentIndices();
 		T GetComponent<T>() where T : IComponent;
@@ -25,6 +25,7 @@ namespace Pseudo.Internal.Entity3
 		bool HasComponent(IComponent component);
 
 		void AddComponent(IComponent component);
+		void AddComponents(params IComponent[] components);
 		void RemoveComponent(IComponent component);
 		void RemoveComponents<T>() where T : IComponent;
 		void RemoveComponents(Type type);

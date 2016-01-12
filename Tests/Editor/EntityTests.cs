@@ -9,8 +9,8 @@ namespace Tests
 {
 	public class EntityTests
 	{
-		ISystemManager systemManager;
-		IEntityManager entityManager;
+		SystemManager systemManager;
+		EntityManager entityManager;
 
 		[SetUp]
 		public void EntityTestsSetup()
@@ -34,7 +34,7 @@ namespace Tests
 			var component = new DummyComponent1();
 
 			entity.AddComponent(component);
-			Assert.That(entity.AllComponents.Count == 1);
+			Assert.That(entity.Components.Count == 1);
 		}
 
 		[Test]
@@ -44,9 +44,9 @@ namespace Tests
 			var component = new DummyComponent1();
 
 			entity.AddComponent(component);
-			Assert.That(entity.AllComponents.Count == 1);
+			Assert.That(entity.Components.Count == 1);
 			entity.RemoveComponent(component);
-			Assert.That(entity.AllComponents.Count == 0);
+			Assert.That(entity.Components.Count == 0);
 		}
 
 		[Test]
@@ -60,16 +60,16 @@ namespace Tests
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.AllComponents.Count == 3);
+			Assert.That(entity.Components.Count == 3);
 			entity.RemoveComponents<DummyComponent1>();
-			Assert.That(entity.AllComponents.Count == 0);
+			Assert.That(entity.Components.Count == 0);
 
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.AllComponents.Count == 3);
+			Assert.That(entity.Components.Count == 3);
 			entity.RemoveComponents(typeof(DummyComponent1));
-			Assert.That(entity.AllComponents.Count == 0);
+			Assert.That(entity.Components.Count == 0);
 		}
 
 		[Test]
@@ -83,9 +83,9 @@ namespace Tests
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.AllComponents.Count == 3);
+			Assert.That(entity.Components.Count == 3);
 			entity.RemoveAllComponents();
-			Assert.That(entity.AllComponents.Count == 0);
+			Assert.That(entity.Components.Count == 0);
 		}
 
 		[Test]
@@ -137,7 +137,7 @@ namespace Tests
 			entity.AddComponent(component);
 			entity.AddComponent(component);
 
-			Assert.That(entity.AllComponents.Count == 1);
+			Assert.That(entity.Components.Count == 1);
 			Assert.That(entity.GetComponents(component.GetType()).Count == 1);
 		}
 		#endregion
@@ -297,6 +297,16 @@ namespace Tests
 			entity.RemoveAllComponents();
 			Assert.That(entityGroup.Entities.Count == 0);
 		}
+
+		[Test]
+		public void EntityComponentGroupMatchInheritance()
+		{
+			var entity = entityManager.CreateEntity();
+			entity.AddComponent(Substitute.For<DummyComponent1>());
+
+			var entityGroup = entityManager.GetEntityGroup(typeof(DummyComponent1), EntityMatches.All);
+			Assert.That(entityGroup.Entities.Count == 1);
+		}
 		#endregion
 
 		#region Systems General
@@ -306,7 +316,7 @@ namespace Tests
 			var system = Substitute.For<ISystem>();
 
 			systemManager.AddSystem(system);
-			Assert.That(systemManager.AllSystems.Count == 1);
+			Assert.That(systemManager.Systems.Count == 1);
 		}
 
 		[Test]
@@ -315,9 +325,9 @@ namespace Tests
 			var system = Substitute.For<ISystem>();
 
 			systemManager.AddSystem(system);
-			Assert.That(systemManager.AllSystems.Count == 1);
+			Assert.That(systemManager.Systems.Count == 1);
 			systemManager.RemoveSystem(system);
-			Assert.That(systemManager.AllSystems.Count == 0);
+			Assert.That(systemManager.Systems.Count == 0);
 		}
 
 		[Test]
@@ -326,9 +336,9 @@ namespace Tests
 			var system = Substitute.For<ISystem>();
 
 			systemManager.AddSystem(system);
-			Assert.That(systemManager.AllSystems.Count == 1);
+			Assert.That(systemManager.Systems.Count == 1);
 			systemManager.RemoveAllSystems();
-			Assert.That(systemManager.AllSystems.Count == 0);
+			Assert.That(systemManager.Systems.Count == 0);
 		}
 		#endregion
 

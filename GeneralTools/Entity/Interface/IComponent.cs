@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public interface IComponent
+	public interface IComponentOld
 	{
 		IEntity Entity { get; set; }
 		bool Active { get; set; }

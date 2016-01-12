@@ -14,7 +14,7 @@ namespace Pseudo.Internal.Entity
 	{
 		static Dictionary<Type, FieldInfo[]> typeFields = new Dictionary<Type, FieldInfo[]>();
 
-		public static string SerializeComponents(List<IComponent> components)
+		public static string SerializeComponents(List<IComponentOld> components)
 		{
 			var writer = new StringBuilder();
 			writer.AppendLine(components.Count.ToString());
@@ -29,7 +29,7 @@ namespace Pseudo.Internal.Entity
 			return writer.ToString();
 		}
 
-		public static void SerializeComponents(List<IComponent> components, out string data, out ReferenceData[] references)
+		public static void SerializeComponents(List<IComponentOld> components, out string data, out ReferenceData[] references)
 		{
 			var referenceList = new List<ReferenceData>();
 
@@ -44,14 +44,14 @@ namespace Pseudo.Internal.Entity
 			InjectReferences(components, references);
 		}
 
-		public static List<IComponent> DeserializeComponents(string data)
+		public static List<IComponentOld> DeserializeComponents(string data)
 		{
-			List<IComponent> components;
+			List<IComponentOld> components;
 
 			using (var reader = new StringReader(data))
 			{
 				int count = int.Parse(reader.ReadLine());
-				components = new List<IComponent>(count);
+				components = new List<IComponentOld>(count);
 
 				for (int i = 0; i < count; i++)
 				{
@@ -62,7 +62,7 @@ namespace Pseudo.Internal.Entity
 					{
 						var component = TypePoolManager.Create(type);
 						JsonUtility.FromJsonOverwrite(line, component);
-						components.Add((IComponent)component);
+						components.Add((IComponentOld)component);
 					}
 				}
 			}
@@ -70,7 +70,7 @@ namespace Pseudo.Internal.Entity
 			return components;
 		}
 
-		public static List<IComponent> DeserializeComponents(string data, ReferenceData[] references)
+		public static List<IComponentOld> DeserializeComponents(string data, ReferenceData[] references)
 		{
 			var components = DeserializeComponents(data);
 			InjectReferences(components, references);
@@ -131,7 +131,7 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public static void InjectReferences(List<IComponent> components, ReferenceData[] references)
+		public static void InjectReferences(List<IComponentOld> components, ReferenceData[] references)
 		{
 			for (int i = 0; i < references.Length; i++)
 			{

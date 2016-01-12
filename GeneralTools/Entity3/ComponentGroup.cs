@@ -21,7 +21,7 @@ namespace Pseudo.Internal.Entity3
 			readonlyComponents = components.AsReadOnly();
 		}
 
-		public abstract void TryAdd(IComponent component);
+		public abstract bool TryAdd(IComponent component);
 
 		public abstract void Remove(IComponent component);
 
@@ -44,13 +44,17 @@ namespace Pseudo.Internal.Entity3
 			readonlyGenericComponents = genericComponents.AsReadOnly();
 		}
 
-		public override void TryAdd(IComponent component)
+		public override bool TryAdd(IComponent component)
 		{
 			if (component is T)
 			{
 				components.Add(component);
 				genericComponents.Add((T)component);
+
+				return true;
 			}
+
+			return false;
 		}
 
 		public override void Remove(IComponent component)
