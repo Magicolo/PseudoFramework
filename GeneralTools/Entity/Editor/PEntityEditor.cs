@@ -143,7 +143,13 @@ namespace Pseudo.Internal.Entity
 			rect.width = 16f;
 			rect.height = 16f;
 
-			currentComponent.Active = GUI.Toggle(rect, currentComponent.Active, "");
+			if (currentComponent is IUpdateable)
+				((IUpdateable)currentComponent).Active = GUI.Toggle(rect, ((IUpdateable)currentComponent).Active, "");
+			else if (currentComponent is IFixedUpdateable)
+				((IFixedUpdateable)currentComponent).Active = GUI.Toggle(rect, ((IFixedUpdateable)currentComponent).Active, "");
+			else if (currentComponent is ILateUpdateable)
+				((ILateUpdateable)currentComponent).Active = GUI.Toggle(rect, ((ILateUpdateable)currentComponent).Active, "");
+
 			ShowComponentErrors(rect);
 
 			EditorGUI.indentLevel = indent;

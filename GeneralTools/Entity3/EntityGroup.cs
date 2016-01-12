@@ -1,0 +1,115 @@
+﻿using UnityEngine;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Pseudo;
+using Pseudo.Internal.Entity;
+
+namespace Pseudo.Internal.Entity3
+{
+	public class EntityGroup : IEntityGroup
+	{
+		readonly static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
+
+		public event Action<IEntity> OnEntityAdded;
+		public event Action<IEntity> OnEntityRemoved;
+		public IList<IEntity> Entities
+		{
+			get { return readonlyEntities; }
+		}
+
+		readonly List<IEntity> entities;
+		readonly IList<IEntity> readonlyEntities;
+		readonly EntityMatchGroup[] subGroups;
+
+		public EntityGroup()
+		{
+			entities = new List<IEntity>();
+			readonlyEntities = entities.AsReadOnly();
+			subGroups = new EntityMatchGroup[matchValues.Length];
+		}
+
+		public IEntityGroup Filter(EntityMatch match)
+		{
+			return Filter(match.Groups, match.Match);
+		}
+
+		public IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetGroupByEntityGroup(groups);
+		}
+
+		public IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetGroupByComponentIndices(ComponentUtility.GetComponentIndices(componentType));
+		}
+
+		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
+		{
+			return GetMatchGroup(match).GetGroupByComponentIndices(ComponentUtility.GetComponentIndices(componentTypes));
+		}
+
+		public void Clear()
+		{
+			entities.Clear();
+
+			for (int i = 0; i < subGroups.Length; i++)
+			{
+				var subGroup = subGroups[i];
+
+				if (subGroup != null)
+					subGroup.Clear();
+			}
+		}
+
+		public void UpdateEntity(IEntity entity, bool isValid)
+		{
+			if (isValid)
+				RegisterEntity(entity);
+			else
+				UnregisterEntity(entity);
+
+			for (int i = 0; i < subGroups.Length; i++)
+			{
+				var subGroup = subGroups[i];
+
+				if (subGroup != null)
+					subGroup.UpdateEntity(entity, isValid);
+			}
+		}
+
+		void RegisterEntity(IEntity entity)
+		{
+			if (!entities.Contains(entity))
+			{
+				entities.Add(entity);
+
+				if (OnEntityAdded != null)
+					OnEntityAdded(entity);
+			}
+		}
+
+		void UnregisterEntity(IEntity entity)
+		{
+			if (entities.Remove(entity))
+			{
+				if (OnEntityRemoved != null)
+					OnEntityRemoved(entity);
+			}
+		}
+
+		EntityMatchGroup GetMatchGroup(EntityMatches match)
+		{
+			var matchGroup = subGroups[(int)match];
+
+			if (matchGroup == null)
+			{
+				matchGroup = new EntityMatchGroup(this, match);
+				subGroups[(int)match] = matchGroup;
+			}
+
+			return matchGroup;
+		}
+	}
+}
