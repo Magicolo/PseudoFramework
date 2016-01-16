@@ -8,6 +8,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 428360}
+  - 114: {fileID: 11472014}
   - 114: {fileID: 11414370}
   m_Layer: 0
   m_Name: GlobalInstaller
@@ -39,10 +40,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56c4ed663d754b4469e22d8da5f7cbb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SystemManager: {fileID: 11404276, guid: 453a0b6c83c209046ad352f48d896630, type: 2}
   AudioManager: {fileID: 11493540, guid: 3848034eddc749a41ad66c640cb7bb00, type: 2}
   ParticleManager: {fileID: 11441752, guid: 97a6532eb5f5f93459feb1724d8547a4, type: 2}
   InputManager: {fileID: 11406708, guid: 9abf81ea36faa0341a5c96c158f1011d, type: 2}
+--- !u!114 &11472014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 169748}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1897934582, guid: ba1f970750ab0a6488d1511785daae95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

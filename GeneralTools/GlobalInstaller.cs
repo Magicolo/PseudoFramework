@@ -26,7 +26,10 @@ public class GlobalInstaller : MonoInstaller
 		var instance = FindObjectOfType<TConcrete>();
 
 		if (instance != null)
+		{
 			Container.Bind<TContract>().ToSingleMonoBehaviour<TConcrete>(instance.gameObject);
+			instance.transform.parent = Container.RootTransform;
+		}
 		else if (prefab != null)
 			Container.Bind<TContract>().ToSinglePrefab<TConcrete>(prefab.gameObject);
 	}
