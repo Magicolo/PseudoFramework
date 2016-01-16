@@ -5,9 +5,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using Pseudo.Internal.Entity;
-using Pseudo.Internal;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo
 {
 	public enum EntityMatches
 	{
@@ -20,7 +19,7 @@ namespace Pseudo.Internal.Entity3
 	[Serializable]
 	public struct EntityMatch
 	{
-		public ByteFlag Groups
+		public EntityGroups Groups
 		{
 			get { return groups; }
 		}
@@ -29,34 +28,34 @@ namespace Pseudo.Internal.Entity3
 			get { return match; }
 		}
 
-		[SerializeField, EntityGroups]
-		ByteFlag groups;
+		[SerializeField]
+		EntityGroups groups;
 		[SerializeField]
 		EntityMatches match;
 
-		public EntityMatch(ByteFlag groups, EntityMatches match = EntityMatches.All)
+		public EntityMatch(EntityGroups groups, EntityMatches match = EntityMatches.All)
 		{
 			this.groups = groups;
 			this.match = match;
 		}
 
-		public static bool Matches(ByteFlag groups1, ByteFlag groups2, EntityMatches match = EntityMatches.All)
+		public static bool Matches(EntityGroups groups1, EntityGroups groups2, EntityMatches match = EntityMatches.All)
 		{
 			bool matches = false;
 
 			switch (match)
 			{
 				case EntityMatches.All:
-					matches = MatchesAll(groups1, groups2);
+					matches = groups1.HasAll(groups2);
 					break;
 				case EntityMatches.Any:
-					matches = MatchesAny(groups1, groups2);
+					matches = groups1.HasAny(groups2);
 					break;
 				case EntityMatches.None:
-					matches = !MatchesAny(groups1, groups2);
+					matches = groups1.HasNone(groups2);
 					break;
 				case EntityMatches.Exact:
-					matches = MatchesExact(groups1, groups2);
+					matches = groups1 == groups2;
 					break;
 			}
 
@@ -84,21 +83,6 @@ namespace Pseudo.Internal.Entity3
 			}
 
 			return matches;
-		}
-
-		static bool MatchesAll(ByteFlag groups1, ByteFlag groups2)
-		{
-			return (~groups1 & groups2) == ByteFlag.Nothing;
-		}
-
-		static bool MatchesAny(ByteFlag groups1, ByteFlag groups2)
-		{
-			return (groups1 & ~groups2) != groups1;
-		}
-
-		static bool MatchesExact(ByteFlag groups1, ByteFlag groups2)
-		{
-			return groups1 == groups2;
 		}
 
 		static bool MatchesAll(IEntity entity, int[] groups2)

@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo
 {
 	public interface IEntity
 	{
 		event Action<IEntity, IComponent> OnComponentAdded;
 		event Action<IEntity, IComponent> OnComponentRemoved;
 
-		ByteFlag Groups { get; set; }
+		EntityGroups Groups { get; set; }
 		IList<IComponent> Components { get; }
 
 		IList<int> GetComponentIndices();

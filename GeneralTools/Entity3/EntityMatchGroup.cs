@@ -5,13 +5,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public class EntityMatchGroup
 	{
 		readonly IEntityGroup parent;
 		readonly EntityMatches match;
-		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>();
+		readonly Dictionary<EntityGroups, EntityGroup> entityGroups = new Dictionary<EntityGroups, EntityGroup>();
 		readonly Dictionary<int[], EntityGroup> componentGroups = new Dictionary<int[], EntityGroup>(ComponentIndicesComparer.Instance);
 
 		public EntityMatchGroup(IEntityGroup parent, EntityMatches match)
@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Entity3
 			this.match = match;
 		}
 
-		public EntityGroup GetGroupByEntityGroup(ByteFlag groups)
+		public EntityGroup GetGroupByEntityGroup(EntityGroups groups)
 		{
 			EntityGroup entityGroup;
 
@@ -96,7 +96,7 @@ namespace Pseudo.Internal.Entity3
 			}
 		}
 
-		public bool IsEntityGroupValid(IEntity entity, ByteFlag groups)
+		public bool IsEntityGroupValid(IEntity entity, EntityGroups groups)
 		{
 			return EntityMatch.Matches(entity.Groups, groups, match);
 		}
@@ -106,13 +106,13 @@ namespace Pseudo.Internal.Entity3
 			return EntityMatch.Matches(entity, componentIndinces, match);
 		}
 
-		public EntityGroup CreateEntityGroup(ByteFlag groups)
+		public EntityGroup CreateEntityGroup(EntityGroups groups)
 		{
 			var entityGroup = new EntityGroup();
 
-			for (int i = 0; i < parent.Entities.Count; i++)
+			for (int i = 0; i < parent.Count; i++)
 			{
-				var entity = parent.Entities[i];
+				var entity = parent[i];
 				entityGroup.UpdateEntity(entity, IsEntityGroupValid(entity, groups));
 			}
 
@@ -123,9 +123,9 @@ namespace Pseudo.Internal.Entity3
 		{
 			var entityGroup = new EntityGroup();
 
-			for (int i = 0; i < parent.Entities.Count; i++)
+			for (int i = 0; i < parent.Count; i++)
 			{
-				var entity = parent.Entities[i];
+				var entity = parent[i];
 				entityGroup.UpdateEntity(entity, IsComponentGroupValid(entity, componentIndices));
 			}
 

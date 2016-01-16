@@ -4,9 +4,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal.Entity;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public class EntityGroup : IEntityGroup
 	{
@@ -14,28 +13,24 @@ namespace Pseudo.Internal.Entity3
 
 		public event Action<IEntity> OnEntityAdded;
 		public event Action<IEntity> OnEntityRemoved;
-		public IList<IEntity> Entities
+		public int Count
 		{
-			get { return readonlyEntities; }
+			get { return entities.Count; }
+		}
+		public IEntity this[int index]
+		{
+			get { return entities[index]; }
 		}
 
-		readonly List<IEntity> entities;
-		readonly IList<IEntity> readonlyEntities;
-		readonly EntityMatchGroup[] subGroups;
-
-		public EntityGroup()
-		{
-			entities = new List<IEntity>();
-			readonlyEntities = entities.AsReadOnly();
-			subGroups = new EntityMatchGroup[matchValues.Length];
-		}
+		readonly List<IEntity> entities = new List<IEntity>();
+		readonly EntityMatchGroup[] subGroups = new EntityMatchGroup[matchValues.Length];
 
 		public IEntityGroup Filter(EntityMatch match)
 		{
 			return Filter(match.Groups, match.Match);
 		}
 
-		public IEntityGroup Filter(ByteFlag groups, EntityMatches match = EntityMatches.All)
+		public IEntityGroup Filter(EntityGroups groups, EntityMatches match = EntityMatches.All)
 		{
 			return GetMatchGroup(match).GetGroupByEntityGroup(groups);
 		}
@@ -52,6 +47,8 @@ namespace Pseudo.Internal.Entity3
 
 		public void Clear()
 		{
+			OnEntityAdded = null;
+			OnEntityRemoved = null;
 			entities.Clear();
 
 			for (int i = 0; i < subGroups.Length; i++)

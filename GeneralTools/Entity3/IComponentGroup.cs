@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public interface IComponentGroup
 	{

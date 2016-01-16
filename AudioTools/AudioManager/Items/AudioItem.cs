@@ -50,6 +50,7 @@ namespace Pseudo
 		protected bool hasBreak;
 		protected List<AudioDelayedOption> delayedOptions = new List<AudioDelayedOption>();
 
+		protected readonly AudioItemManager itemManager;
 		protected readonly Action stopImmediate;
 		protected readonly Func<float> getDeltaTime;
 		protected readonly Action<float> setVolumeRampModifier;
@@ -122,8 +123,9 @@ namespace Pseudo
 		/// </summary>
 		public event Action<AudioItem, AudioStates, AudioStates> OnStateChanged;
 
-		protected AudioItem()
+		protected AudioItem(AudioItemManager itemManager)
 		{
+			this.itemManager = itemManager;
 			stopImmediate = StopImmediate;
 			getDeltaTime = GetDeltaTime;
 			setVolumeRampModifier = value => volumeModifier.RampModifier = value;
@@ -141,7 +143,7 @@ namespace Pseudo
 			this.parent = parent;
 
 			if (this.parent == null)
-				AudioManager.Instance.ItemManager.Activate(this);
+				itemManager.Activate(this);
 
 			SetState(AudioStates.Waiting);
 		}

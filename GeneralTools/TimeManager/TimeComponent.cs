@@ -4,18 +4,18 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal.Entity3;
+using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class TimeComponent : PMonoBehaviour, ITimeComponent
+	public class TimeComponent : PMonoBehaviour, ITimeChannel, IComponent
 	{
 		public TimeManager.TimeChannels Channel
 		{
 			get { return time.Channel; }
 		}
 
-		float ITimeChannel.Time
+		public float Time
 		{
 			get { return time.Time; }
 		}
@@ -37,8 +37,6 @@ namespace Pseudo
 		}
 
 		[SerializeField]
-		TimeChannel time;
+		TimeChannel time = null;
 	}
-
-	public interface ITimeComponent : ITimeChannel, IComponent { }
 }

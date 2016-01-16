@@ -16,17 +16,17 @@ namespace Pseudo.Internal
 
 		protected override float GetTime()
 		{
-			return UnityEngine.Time.time;
+			return TimeManager.Unity.Time;
 		}
 
 		protected override float GetDeltaTime()
 		{
-			return UnityEngine.Time.deltaTime;
+			return TimeManager.Unity.DeltaTime;
 		}
 
 		protected override float GetFixedDeltaTime()
 		{
-			return UnityEngine.Time.fixedDeltaTime;
+			return TimeManager.Unity.FixedDeltaTime;
 		}
 	}
 }

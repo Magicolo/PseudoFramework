@@ -14,6 +14,8 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.SwitchContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
+		public AudioSwitchContainerItem(AudioItemManager itemManager) : base(itemManager) { }
+
 		public void Initialize(AudioSwitchContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(settings.Id, settings.Name, spatializer, parent);
@@ -30,7 +32,7 @@ namespace Pseudo.Internal.Audio
 
 		protected override void InitializeSources()
 		{
-			switchValue = AudioManager.Instance.GetSwitchValue(settings.SwitchName);
+			switchValue = itemManager.AudioManager.GetSwitchValue(settings.SwitchName);
 			int stateValue = switchValue.Value;
 
 			for (int i = 0; i < originalSettings.Sources.Count; i++)

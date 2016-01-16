@@ -17,18 +17,24 @@ namespace Pseudo
 	// TODO Add random selection types in AudioRandomContainerSettings
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
-	public class AudioManager : Singleton<AudioManager>
+	public class AudioManager : MonoBehaviour, IAudioManager
 	{
 		[SerializeField]
 		AudioSource reference;
-		AudioItemManager itemManager = new AudioItemManager();
+		[SerializeField]
+		bool useCustomCurves = true;
+		AudioItemManager itemManager;
 
 		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
 
 		/// <summary>
 		/// If you use custom curves in the Reference AudioSource, set this to true.
 		/// </summary>
-		public bool UseCustomCurves = true;
+		public bool UseCustomCurves
+		{
+			get { return useCustomCurves; }
+			set { useCustomCurves = value; }
+		}
 
 		/// <summary>
 		/// Default setup for AudioSources.
@@ -49,14 +55,17 @@ namespace Pseudo
 		/// </summary>
 		public AudioItemManager ItemManager { get { return itemManager; } }
 
-		protected override void Awake()
+		public AudioManager()
 		{
-			base.Awake();
+			itemManager = new AudioItemManager(this);
+		}
 
+		void Awake()
+		{
 			Initialize();
 		}
 
-		protected virtual void Reset()
+		void Reset()
 		{
 			Initialize();
 		}
@@ -68,7 +77,10 @@ namespace Pseudo
 
 		void Initialize()
 		{
-			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			if (this == null)
+				return;
+
+			reference = gameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;

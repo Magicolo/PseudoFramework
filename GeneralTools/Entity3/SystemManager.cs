@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Zenject;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo
 {
-	public class SystemManager : ISystemManager
+	public class SystemManager : ISystemManager, ITickable, IFixedTickable, ILateTickable
 	{
 		public event Action<ISystem> OnSystemAdded;
 		public event Action<ISystem> OnSystemRemoved;
@@ -25,6 +26,10 @@ namespace Pseudo.Internal.Entity3
 		readonly List<float> lateUpdateCounters;
 		readonly List<IFixedUpdateable> fixedUpdateables;
 
+		[Inject]
+		DiContainer container = null;
+
+		[Inject]
 		public SystemManager() : this(TimeManager.Unity) { }
 
 		public SystemManager(ITimeChannel timeChannel)
@@ -70,6 +75,15 @@ namespace Pseudo.Internal.Entity3
 
 			if (OnSystemAdded != null)
 				OnSystemAdded(system);
+		}
+
+		/// <summary>
+		/// Registers an ISystem instance of the provided type to the SystemManager.
+		/// </summary>
+		/// <typeparam name="T">The type of the ISystem instance.</typeparam>
+		public virtual void AddSystem<T>() where T : class, ISystem
+		{
+			AddSystem(container.Instantiate<T>());
 		}
 
 		/// <summary>
@@ -132,10 +146,7 @@ namespace Pseudo.Internal.Entity3
 			lateUpdateables.Clear();
 		}
 
-		/// <summary>
-		/// Method that will update all registered IUpdateable ISystem instances.
-		/// </summary>
-		public virtual void Update()
+		void ITickable.Tick()
 		{
 			for (int i = 0; i < updateables.Count; i++)
 			{
@@ -145,19 +156,16 @@ namespace Pseudo.Internal.Entity3
 				{
 					float updateCounter = (updateCounters[i] += timeChannel.DeltaTime);
 
-					if (updateCounter >= updateable.UpdateRate)
+					if (updateCounter >= updateable.UpdateDelay)
 					{
-						updateCounters[i] -= updateable.UpdateRate;
+						updateCounters[i] -= updateable.UpdateDelay;
 						updateable.Update();
 					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Method that will update all registered ILateUpdateable ISystem instances.
-		/// </summary>
-		public virtual void LateUpdate()
+		void ILateTickable.LateTick()
 		{
 			for (int i = 0; i < lateUpdateables.Count; i++)
 			{
@@ -167,19 +175,16 @@ namespace Pseudo.Internal.Entity3
 				{
 					float lateUpdateCounter = (lateUpdateCounters[i] += timeChannel.DeltaTime);
 
-					if (lateUpdateCounter >= lateUpdateable.LateUpdateRate)
+					if (lateUpdateCounter >= lateUpdateable.LateUpdateDelay)
 					{
-						lateUpdateCounters[i] -= lateUpdateable.LateUpdateRate;
+						lateUpdateCounters[i] -= lateUpdateable.LateUpdateDelay;
 						lateUpdateable.LateUpdate();
 					}
 				}
 			}
 		}
 
-		/// <summary>
-		/// Method that will update all registered IFixedUpdateable ISystem instances.
-		/// </summary>
-		public virtual void FixedUpdate()
+		void IFixedTickable.FixedTick()
 		{
 			for (int i = 0; i < fixedUpdateables.Count; i++)
 			{

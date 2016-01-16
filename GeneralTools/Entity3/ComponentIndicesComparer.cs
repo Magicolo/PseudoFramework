@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public class ComponentIndicesComparer : IEqualityComparer<int[]>
 	{
@@ -32,7 +32,7 @@ namespace Pseudo.Internal.Entity3
 			int hashCode = 0;
 
 			for (int i = 0; i < obj.Length; i++)
-				hashCode ^= obj[i] * 253;
+				hashCode ^= obj[i] * 7331;
 
 			return hashCode;
 		}

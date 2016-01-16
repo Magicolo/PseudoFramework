@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public abstract class ComponentGroup : IComponentGroup
 	{

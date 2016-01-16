@@ -12,7 +12,7 @@ namespace Pseudo.Internal.Audio
 		protected readonly Action<AudioModifier> setVolumeScale;
 		protected readonly Action<AudioModifier> setPitchScale;
 
-		protected AudioContainerItem()
+		protected AudioContainerItem(AudioItemManager itemManager) : base(itemManager)
 		{
 			setVolumeScale = modifer =>
 			{
@@ -158,7 +158,7 @@ namespace Pseudo.Internal.Audio
 			RaiseStopEvent();
 
 			if (parent == null)
-				AudioManager.Instance.ItemManager.Deactivate(this);
+				itemManager.Deactivate(this);
 
 			TypePoolManager.Recycle(this);
 		}
@@ -286,7 +286,7 @@ namespace Pseudo.Internal.Audio
 
 			if (settings != null)
 			{
-				item = AudioManager.Instance.ItemManager.CreateItem(settings, spatializer, this);
+				item = itemManager.CreateItem(settings, spatializer, this);
 
 				if (options != null)
 				{

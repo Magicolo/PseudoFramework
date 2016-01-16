@@ -2,21 +2,26 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Zenject;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo
 {
-	public class SystemBase : ISystem
+	public abstract class SystemBase : ISystem
 	{
-		public ISystemManager SystemManager { get { return systemManager; } }
-		public IEntityManager EntityManager { get { return entityManager; } }
+		[Inject]
+		public ISystemManager SystemManager { get; private set; }
+		[Inject]
+		public IEntityManager EntityManager { get; private set; }
+		[Inject]
+		public IEventManager EventManager { get; private set; }
+		[InjectOptional]
+		public IAudioManager AudioManager { get; private set; }
+		[InjectOptional]
+		public IParticleManager ParticleManager { get; private set; }
+		[InjectOptional]
+		public IInputManager InputManager { get; private set; }
 
-		ISystemManager systemManager;
-		IEntityManager entityManager;
-
-		public SystemBase(ISystemManager systemManager, IEntityManager entityManager)
-		{
-			this.systemManager = systemManager;
-			this.entityManager = entityManager;
-		}
+		[PostInject]
+		protected virtual void Initialize() { }
 	}
 }

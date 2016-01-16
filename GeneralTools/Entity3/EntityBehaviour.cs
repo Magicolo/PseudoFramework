@@ -4,8 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Zenject;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	[AddComponentMenu("Pseudo/Entity3")]
 	public class EntityBehaviour : PMonoBehaviour
@@ -15,13 +16,17 @@ namespace Pseudo.Internal.Entity3
 			get { return entity; }
 		}
 
+		[Inject]
+		IEntityManager entityManager = null;
+
 		[SerializeField, EntityGroups]
-		ByteFlag groups = ByteFlag.Nothing;
+		EntityGroups groups = EntityGroups.Nothing;
 		IEntity entity;
 
-		void Awake()
+		[PostInject]
+		void Initialize()
 		{
-			entity = EntityManager.Instance.CreateEntity(groups);
+			entity = entityManager.CreateEntity(groups);
 			entity.AddComponents(GetComponents<IComponent>());
 		}
 	}

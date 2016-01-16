@@ -268,26 +268,6 @@ namespace Pseudo
 			return closest;
 		}
 
-		public static IEntity GetClosest(this IList<IEntity> array, Vector3 position)
-		{
-			var closest = default(IEntity);
-			float closestDistance = float.MaxValue;
-
-			for (int i = 0; i < array.Count; i++)
-			{
-				var element = array[i];
-				float distance = (element.Transform.position - position).sqrMagnitude;
-
-				if (distance < closestDistance)
-				{
-					closest = element;
-					closestDistance = distance;
-				}
-			}
-
-			return closest;
-		}
-
 		public static bool ContainsAll<T>(this IList<T> array, IList<T> otherArray)
 		{
 			if (array.Count == 0 && otherArray.Count == 0)

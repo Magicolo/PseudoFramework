@@ -13,6 +13,8 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.EnumeratorContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
+		public AudioEnumeratorContainerItem(AudioItemManager itemManager) : base(itemManager) { }
+
 		public void Initialize(AudioEnumeratorContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(settings.Id, settings.Name, spatializer, parent);

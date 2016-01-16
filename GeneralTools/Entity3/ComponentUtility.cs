@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public static class ComponentUtility
 	{
@@ -96,7 +96,7 @@ namespace Pseudo.Internal.Entity3
 		}
 	}
 
-	public static class ComponentIndexHolder<T>
+	public static class ComponentIndexHolder<T> where T : IComponent
 	{
 		public static int Index = ComponentUtility.GetComponentIndex(typeof(T));
 	}

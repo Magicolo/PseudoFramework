@@ -26,6 +26,8 @@ namespace Pseudo
 		public override AudioSettingsBase Settings { get { return settings; } }
 		public int CurrentStep { get { return currentStep; } }
 
+		public AudioDynamicItem(AudioItemManager itemManager) : base(itemManager) { }
+
 		public void Initialize(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, spatializer, parent);

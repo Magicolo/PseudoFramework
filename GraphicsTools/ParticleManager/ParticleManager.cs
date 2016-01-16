@@ -5,16 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-public class ParticleManager : Singleton<ParticleManager>
+public class ParticleManager : MonoBehaviour, IParticleManager
 {
 	public ParticleEffect[] ParticleEffects = new ParticleEffect[0];
 
 	protected readonly Dictionary<string, ParticleEffect> particleEffects = new Dictionary<string, ParticleEffect>();
 
-	protected override void Awake()
+	void Awake()
 	{
-		base.Awake();
-
 		for (int i = 0; i < ParticleEffects.Length; i++)
 		{
 			var particleEffect = ParticleEffects[i];
@@ -39,7 +37,7 @@ public class ParticleManager : Singleton<ParticleManager>
 
 	public virtual ParticleEffect Create(string name, Vector3 position)
 	{
-		return Create(name, position, CachedTransform);
+		return Create(name, position, transform);
 	}
 
 	public virtual T Create<T>(T effect, Vector3 position, Transform parent) where T : ParticleEffect
@@ -54,6 +52,6 @@ public class ParticleManager : Singleton<ParticleManager>
 
 	public virtual T Create<T>(T effect, Vector3 position) where T : ParticleEffect
 	{
-		return Create(effect, position, CachedTransform);
+		return Create(effect, position, transform);
 	}
 }

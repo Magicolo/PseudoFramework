@@ -7,7 +7,7 @@ using Pseudo.Internal.Input;
 
 namespace Pseudo
 {
-	public class InputManager : Singleton<InputManager>
+	public class InputManager : MonoBehaviour, IInputManager
 	{
 		public enum ControllerTypes
 		{
@@ -102,14 +102,12 @@ namespace Pseudo
 		protected readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
 		protected readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			for (int i = 0; i < Inputs.Length; i++)
 			{
 				var playerInput = Instantiate(Inputs[i]);
-				playerInput.CachedTransform.parent = CachedTransform;
+				playerInput.CachedTransform.parent = transform;
 				AddInput(playerInput);
 
 				if (playerInput.Player != Players.None)

@@ -11,6 +11,7 @@ namespace Pseudo.Internal.Editor
 	[CustomEditor(typeof(AudioManager), true), CanEditMultipleObjects]
 	public class AudioManagerEditor : CustomEditorBase
 	{
+		static IAudioManager audioManager;
 		static AudioItem previewItem;
 		static AudioSettingsBase previewSettings;
 		static bool stopPreview;
@@ -20,7 +21,7 @@ namespace Pseudo.Internal.Editor
 		{
 			Begin();
 
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("UseCustomCurves"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("useCustomCurves"));
 
 			End();
 		}
@@ -58,7 +59,8 @@ namespace Pseudo.Internal.Editor
 
 		static void Update()
 		{
-			audioManagerExists = AudioManager.Find() != null;
+			audioManager = FindObjectOfType<AudioManager>();
+			audioManagerExists = audioManager != null;
 
 			if (!audioManagerExists || Application.isPlaying)
 				return;
@@ -66,7 +68,7 @@ namespace Pseudo.Internal.Editor
 			if (stopPreview || previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)
 				StopPreview();
 
-			AudioManager.Instance.ItemManager.Update();
+			audioManager.ItemManager.Update();
 		}
 
 		static void PlayPreview(AudioSettingsBase settings)
@@ -74,14 +76,14 @@ namespace Pseudo.Internal.Editor
 			StopPreview();
 			EditorUtility.SetDirty(settings);
 			previewSettings = settings;
-			previewItem = AudioManager.Instance.CreateItem(previewSettings);
+			previewItem = audioManager.CreateItem(previewSettings);
 			previewItem.OnStop += item => { stopPreview = true; previewItem = null; };
 			previewItem.Play();
 		}
 
 		static void StopPreview()
 		{
-			if (AudioManager.Instance == null)
+			if (audioManager == null)
 				return;
 
 			if (previewItem != null)
@@ -98,14 +100,14 @@ namespace Pseudo.Internal.Editor
 			}
 
 			if (!Application.isPlaying)
-				PrefabPoolManager.ClearPool(AudioManager.Instance.Reference);
+				PrefabPoolManager.ClearPool(audioManager.Reference);
 
 			stopPreview = false;
 		}
 
 		public static void ShowPreviewButton(Rect rect, AudioSettingsBase settings)
 		{
-			if (AudioManager.Instance == null)
+			if (audioManager == null)
 				return;
 
 			// Check if scrollbar is visible

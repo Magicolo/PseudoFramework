@@ -25,7 +25,7 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.Source; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public AudioSourceItem()
+		public AudioSourceItem(AudioItemManager itemManager) : base(itemManager)
 		{
 			setVolumeScale = modifier => source.volume = modifier.Value;
 			setPitchScale = modifier => source.pitch = modifier.Value;
@@ -39,7 +39,7 @@ namespace Pseudo.Internal.Audio
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
 			source = audioSource;
-			source.transform.parent = AudioManager.Instance.CachedTransform;
+			source.transform.parent = itemManager.AudioManager.Reference.transform.parent;
 			base.spatializer.AddSource(source.transform);
 
 			// Setup the AudioSource
@@ -56,7 +56,7 @@ namespace Pseudo.Internal.Audio
 				ApplyOption(originalSettings.Options[i], false);
 
 			if (this.settings.MaxInstances > 0)
-				AudioManager.Instance.ItemManager.TrimInstances(this, this.settings.MaxInstances);
+				itemManager.TrimInstances(this, this.settings.MaxInstances);
 		}
 
 		protected void InitializeModifiers(AudioSettingsBase settings)
@@ -202,7 +202,7 @@ namespace Pseudo.Internal.Audio
 			RaiseStopEvent();
 
 			if (parent == null)
-				AudioManager.Instance.ItemManager.Deactivate(this);
+				itemManager.Deactivate(this);
 
 			spatializer.RemoveSource(source.transform);
 			TypePoolManager.Recycle(this);

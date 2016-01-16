@@ -11,6 +11,17 @@ namespace Pseudo.Internal.Audio
 	{
 		Dictionary<int, List<AudioItem>> idActiveItems = new Dictionary<int, List<AudioItem>>();
 		List<AudioItem> toUpdate = new List<AudioItem>();
+		IAudioManager audioManager;
+
+		public IAudioManager AudioManager
+		{
+			get { return audioManager; }
+		}
+
+		public AudioItemManager(IAudioManager audioManager)
+		{
+			this.audioManager = audioManager;
+		}
 
 		public void Update()
 		{
@@ -81,8 +92,8 @@ namespace Pseudo.Internal.Audio
 			{
 				default:
 					var sourceItem = TypePoolManager.Create<AudioSourceItem>();
-					var source = PrefabPoolManager.Create(AudioManager.Instance.Reference);
-					source.Copy(AudioManager.Instance.Reference, AudioManager.Instance.UseCustomCurves);
+					var source = PrefabPoolManager.Create(audioManager.Reference);
+					source.Copy(audioManager.Reference, audioManager.UseCustomCurves);
 					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
 					return sourceItem;
 				case AudioItem.AudioTypes.MixContainer:

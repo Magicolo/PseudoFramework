@@ -1,23 +1,22 @@
 ﻿using Pseudo;
+using Pseudo.Internal.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo
 {
 	public class EntityManager : IEntityManager
 	{
-		public static EntityManager Instance = new EntityManager();
-
 		public event Action<IEntity> OnEntityAdded;
 		public event Action<IEntity> OnEntityRemoved;
-		public IList<IEntity> Entities
+		public IEntityGroup Entities
 		{
-			get { return allEntitiesGroup.Entities; }
+			get { return entities; }
 		}
 
-		readonly EntityGroup allEntitiesGroup = new EntityGroup();
+		readonly EntityGroup entities = new EntityGroup();
 
 		/// <summary>
 		/// Creates a new IEntity instance and adds it to the SystemManager.
@@ -25,7 +24,7 @@ namespace Pseudo.Internal.Entity3
 		/// <returns>The IEntity instance.</returns>
 		public IEntity CreateEntity()
 		{
-			return CreateEntity(ByteFlag.Nothing);
+			return CreateEntity(EntityGroups.Nothing);
 		}
 
 		/// <summary>
@@ -33,7 +32,7 @@ namespace Pseudo.Internal.Entity3
 		/// </summary>
 		/// <param name="groups">The groups that the IEntity instance should be placed in.</param>
 		/// <returns>The IEntity instance.</returns>
-		public IEntity CreateEntity(ByteFlag groups)
+		public IEntity CreateEntity(EntityGroups groups)
 		{
 			var entity = new Entity(this, groups);
 			AddEntity(entity);
@@ -47,7 +46,7 @@ namespace Pseudo.Internal.Entity3
 		/// <param name="entity">The IEntity instance to register.</param>
 		public void AddEntity(IEntity entity)
 		{
-			allEntitiesGroup.UpdateEntity(entity, true);
+			entities.UpdateEntity(entity, true);
 
 			if (OnEntityAdded != null)
 				OnEntityAdded(entity);
@@ -59,7 +58,7 @@ namespace Pseudo.Internal.Entity3
 		/// <param name="entity">The IEntity instance to unregister.</param>
 		public void RemoveEntity(IEntity entity)
 		{
-			allEntitiesGroup.UpdateEntity(entity, false);
+			entities.UpdateEntity(entity, false);
 
 			if (OnEntityRemoved != null)
 				OnEntityRemoved(entity);
@@ -70,13 +69,13 @@ namespace Pseudo.Internal.Entity3
 		/// </summary>
 		public void RemoveAllEntities()
 		{
-			for (int i = 0; i < allEntitiesGroup.Entities.Count; i++)
+			for (int i = 0; i < entities.Count; i++)
 			{
 				if (OnEntityRemoved != null)
-					OnEntityRemoved(allEntitiesGroup.Entities[i]);
+					OnEntityRemoved(entities[i]);
 			}
 
-			allEntitiesGroup.Clear();
+			entities.Clear();
 		}
 
 		/// <summary>
@@ -85,50 +84,7 @@ namespace Pseudo.Internal.Entity3
 		/// <param name="entity">The modified IEntity instance.</param>
 		public void UpdateEntity(IEntity entity)
 		{
-			allEntitiesGroup.UpdateEntity(entity, true);
-		}
-
-		/// <summary>
-		/// Gets an IEntityGroup instance that contains the IEntity instances that match the provided arguments.
-		/// </summary>
-		/// <param name="match">The match data to be compared.</param>
-		/// <returns>The IEntityGroup instance.</returns>
-		public IEntityGroup GetEntityGroup(EntityMatch match)
-		{
-			return allEntitiesGroup.Filter(match);
-		}
-
-		/// <summary>
-		/// Gets an IEntityGroup instance that contains the IEntity instances that match the provided arguments.
-		/// </summary>
-		/// <param name="groups">The groups to be compared.</param>
-		/// <param name="match">The match algorithm that should be used.</param>
-		/// <returns>The IEntityGroup instance.</returns>
-		public IEntityGroup GetEntityGroup(ByteFlag groups, EntityMatches match = EntityMatches.All)
-		{
-			return allEntitiesGroup.Filter(groups, match);
-		}
-
-		/// <summary>
-		/// Gets an IEntityGroup instance that contains the IEntity instances that match the provided arguments.
-		/// </summary>
-		/// <param name="componentType">The component type to be compared.</param>
-		/// <param name="match">The match algorithm that should be used.</param>
-		/// <returns></returns>
-		public IEntityGroup GetEntityGroup(Type componentType, EntityMatches match = EntityMatches.All)
-		{
-			return allEntitiesGroup.Filter(componentType, match);
-		}
-
-		/// <summary>
-		/// Gets an IEntityGroup instance that contains the IEntity instances that match the provided arguments.
-		/// </summary>
-		/// <param name="componentTypes">The component types to be compared.</param>
-		/// <param name="match">The match algorithm that should be used.</param>
-		/// <returns></returns>
-		public IEntityGroup GetEntityGroup(Type[] componentTypes, EntityMatches match = EntityMatches.All)
-		{
-			return allEntitiesGroup.Filter(componentTypes, match);
+			entities.UpdateEntity(entity, true);
 		}
 	}
 }

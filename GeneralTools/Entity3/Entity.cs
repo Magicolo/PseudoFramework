@@ -4,14 +4,14 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Pseudo.Internal.Entity3
+namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
 		public event Action<IEntity, IComponent> OnComponentAdded;
 		public event Action<IEntity, IComponent> OnComponentRemoved;
 
-		public ByteFlag Groups
+		public EntityGroups Groups
 		{
 			get { return groups; }
 			set
@@ -25,7 +25,7 @@ namespace Pseudo.Internal.Entity3
 			get { return readonlyComponents; }
 		}
 
-		ByteFlag groups;
+		EntityGroups groups;
 		IEntityManager entityManager;
 		readonly List<IComponent> allComponents;
 		readonly IList<IComponent> readonlyComponents;
@@ -33,20 +33,18 @@ namespace Pseudo.Internal.Entity3
 		readonly IList<int> readonlyComponentIndices;
 		ComponentGroup[] componentGroups;
 
-		public Entity(IEntityManager entityManager)
+		public Entity(IEntityManager entityManager) : this(entityManager, EntityGroups.Nothing) { }
+
+		public Entity(IEntityManager entityManager, EntityGroups groups)
 		{
 			this.entityManager = entityManager;
+			this.groups = groups;
 
 			allComponents = new List<IComponent>();
 			readonlyComponents = allComponents.AsReadOnly();
 			componentIndices = new List<int>();
 			readonlyComponentIndices = componentIndices.AsReadOnly();
 			componentGroups = new ComponentGroup[ComponentUtility.ComponentTypes.Length];
-		}
-
-		public Entity(IEntityManager entityManager, ByteFlag groups) : this(entityManager)
-		{
-			this.groups = groups;
 		}
 
 		public IList<int> GetComponentIndices()
@@ -56,12 +54,22 @@ namespace Pseudo.Internal.Entity3
 
 		public T GetComponent<T>() where T : IComponent
 		{
-			return GetComponentGroup<T>().Components.First();
+			var components = GetComponentGroup<T>().Components;
+
+			if (components.Count > 0)
+				return components[0];
+			else
+				return default(T);
 		}
 
 		public IComponent GetComponent(Type type)
 		{
-			return GetComponentGroup(type).Components.First();
+			var components = GetComponentGroup(type).Components;
+
+			if (components.Count > 0)
+				return components[0];
+			else
+				return null;
 		}
 
 		public IList<T> GetComponents<T>() where T : IComponent
@@ -77,12 +85,14 @@ namespace Pseudo.Internal.Entity3
 		public bool TryGetComponent<T>(out T component) where T : IComponent
 		{
 			component = GetComponent<T>();
+
 			return component != null;
 		}
 
 		public bool TryGetComponent(Type type, out IComponent component)
 		{
 			component = GetComponent(type);
+
 			return component != null;
 		}
 
@@ -251,7 +261,27 @@ namespace Pseudo.Internal.Entity3
 
 		IComponentGroup<T> GetComponentGroup<T>() where T : IComponent
 		{
-			return (IComponentGroup<T>)GetComponentGroup(ComponentIndexHolder<T>.Index);
+			ComponentGroup componentGroup;
+			int typeIndex = ComponentIndexHolder<T>.Index;
+
+			if (componentGroups.Length <= typeIndex)
+			{
+				Array.Resize(ref componentGroups, ComponentUtility.ComponentTypes.Length);
+				componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
+				componentGroups[typeIndex] = componentGroup;
+			}
+			else
+			{
+				componentGroup = componentGroups[typeIndex];
+
+				if (componentGroup == null)
+				{
+					componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
+					componentGroups[typeIndex] = componentGroup;
+				}
+			}
+
+			return (IComponentGroup<T>)componentGroup;
 		}
 
 		IComponentGroup GetComponentGroup(Type type)
