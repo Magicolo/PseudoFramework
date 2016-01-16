@@ -6,7 +6,6 @@ using System.Linq;
 using Zenject;
 using Pseudo.Internal.Entity;
 using Pseudo;
-using Zenject.Commands;
 
 public class GlobalInstaller : MonoInstaller
 {
