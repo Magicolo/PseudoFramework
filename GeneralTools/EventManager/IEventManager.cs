@@ -1,25 +1,28 @@
-﻿using System;
+﻿using Pseudo.Internal;
+using System;
 
 namespace Pseudo
 {
 	public interface IEventManager
 	{
-		void Subscribe<T>(Action<T> receiver);
-		void Subscribe<T>(T identifier, Action receiver);
-		void Subscribe<T, TArg>(T identifier, Action<TArg> receiver);
-		void Subscribe<T, TArg1, TArg2>(T identifier, Action<TArg1, TArg2> receiver);
-		void Subscribe<T, TArg1, TArg2, TArg3>(T identifier, Action<TArg1, TArg2, TArg3> receiver);
-		void Subscribe<T, TArg1, TArg2, TArg3, TArg4>(T identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver);
-		void Trigger<T>(T identifier);
-		void Trigger<T, TArg>(T identifier, TArg argument);
-		void Trigger<T, TArg1, TArg2>(T identifier, TArg1 argument1, TArg2 argument2);
-		void Trigger<T, TArg1, TArg2, TArg3>(T identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3);
-		void Trigger<T, TArg1, TArg2, TArg3, TArg4>(T identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4);
-		void Unsubscribe<T>(Action<T> receiver);
-		void Unsubscribe<T>(T identifier, Action receiver);
-		void Unsubscribe<T, TArg>(T identifier, Action<TArg> receiver);
-		void Unsubscribe<T, TArg1, TArg2>(T identifier, Action<TArg1, TArg2> receiver);
-		void Unsubscribe<T, TArg1, TArg2, TArg3>(T identifier, Action<TArg1, TArg2, TArg3> receiver);
-		void Unsubscribe<T, TArg1, TArg2, TArg3, TArg4>(T identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver);
+		void SubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>;
+		void Subscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>;
+		void Subscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>;
+		void Subscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>;
+		void Subscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>;
+		void Subscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>;
+		void UnsubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>;
+		void Unsubscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>;
+		void Unsubscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>;
+		void Unsubscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>;
+		void Unsubscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>;
+		void Unsubscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>;
+		void Trigger<TId>(TId identifier) where TId : IEquatable<TId>;
+		void Trigger<TId, TArg>(TId identifier, TArg argument) where TId : IEquatable<TId>;
+		void Trigger<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2) where TId : IEquatable<TId>;
+		void Trigger<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3) where TId : IEquatable<TId>;
+		void Trigger<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4) where TId : IEquatable<TId>;
+		void ResolveEvents();
+		void EnqueueEvent(IEvent eventData);
 	}
 }

@@ -94,27 +94,27 @@ namespace Pseudo.Internal.Audio
 					var sourceItem = TypePoolManager.Create<AudioSourceItem>();
 					var source = PrefabPoolManager.Create(audioManager.Reference);
 					source.Copy(audioManager.Reference, audioManager.UseCustomCurves);
-					sourceItem.Initialize((AudioSourceSettings)settings, source, spatializer, parent);
+					sourceItem.Initialize((AudioSourceSettings)settings, this, source, spatializer, parent);
 					return sourceItem;
 				case AudioItem.AudioTypes.MixContainer:
 					var mixContainerItem = TypePoolManager.Create<AudioMixContainerItem>();
-					mixContainerItem.Initialize((AudioMixContainerSettings)settings, spatializer, parent);
+					mixContainerItem.Initialize((AudioMixContainerSettings)settings, this, spatializer, parent);
 					return mixContainerItem;
 				case AudioItem.AudioTypes.RandomContainer:
 					var randomContainerItem = TypePoolManager.Create<AudioRandomContainerItem>();
-					randomContainerItem.Initialize((AudioRandomContainerSettings)settings, spatializer, parent);
+					randomContainerItem.Initialize((AudioRandomContainerSettings)settings, this, spatializer, parent);
 					return randomContainerItem;
 				case AudioItem.AudioTypes.EnumeratorContainer:
 					var enumeratorContainerItem = TypePoolManager.Create<AudioEnumeratorContainerItem>();
-					enumeratorContainerItem.Initialize((AudioEnumeratorContainerSettings)settings, spatializer, parent);
+					enumeratorContainerItem.Initialize((AudioEnumeratorContainerSettings)settings, this, spatializer, parent);
 					return enumeratorContainerItem;
 				case AudioItem.AudioTypes.SwitchContainer:
 					var switchContainerItem = TypePoolManager.Create<AudioSwitchContainerItem>();
-					switchContainerItem.Initialize((AudioSwitchContainerSettings)settings, spatializer, parent);
+					switchContainerItem.Initialize((AudioSwitchContainerSettings)settings, this, spatializer, parent);
 					return switchContainerItem;
 				case AudioItem.AudioTypes.SequenceContainer:
 					var sequenceContainerItem = TypePoolManager.Create<AudioSequenceContainerItem>();
-					sequenceContainerItem.Initialize((AudioSequenceContainerSettings)settings, spatializer, parent);
+					sequenceContainerItem.Initialize((AudioSequenceContainerSettings)settings, this, spatializer, parent);
 					return sequenceContainerItem;
 			}
 		}
@@ -153,7 +153,7 @@ namespace Pseudo.Internal.Audio
 		public AudioDynamicItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, AudioItem parent)
 		{
 			var item = TypePoolManager.Create<AudioDynamicItem>();
-			item.Initialize(getNextSettings, spatializer, parent);
+			item.Initialize(getNextSettings, this, spatializer, parent);
 
 			return item;
 		}

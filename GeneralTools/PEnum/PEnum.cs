@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pseudo.Internal;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -8,14 +9,13 @@ using UnityEngine;
 
 namespace Pseudo
 {
-	public abstract class PEnum<TEnum, TValue> : PEnum, IEquatable<PEnum<TEnum, TValue>>
+	public abstract class PEnum<TEnum, TValue> : PEnum, IEquatable<PEnum<TEnum, TValue>>, IEquatable<TEnum>
 		where TEnum : PEnum<TEnum, TValue>
 		where TValue : IEquatable<TValue>
 	{
-		static TEnum[] values;
-		static string[] names;
-		static Dictionary<TValue, TEnum> valueToEnum;
-		static Dictionary<TValue, string> valueToName;
+		static readonly FieldInfo[] fields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static);
+		static readonly Dictionary<TValue, TEnum> valueToEnum = new Dictionary<TValue, TEnum>();
+		static readonly Dictionary<TValue, string> valueToName = new Dictionary<TValue, string>();
 		static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
 		static bool initialized;
 
@@ -25,13 +25,17 @@ namespace Pseudo
 		}
 		public override string Name
 		{
-			get { return name; }
+			get
+			{
+				Initialize();
+				return name;
+			}
 		}
-		protected override Type ValueType
+		protected sealed override Type ValueType
 		{
 			get { return typeof(TValue); }
 		}
-		protected override object ObjectValue
+		protected sealed override object ObjectValue
 		{
 			get { return value; }
 		}
@@ -43,6 +47,7 @@ namespace Pseudo
 		protected PEnum(TValue value)
 		{
 			this.value = value;
+			this.name = string.Empty;
 		}
 
 		public bool Equals(PEnum<TEnum, TValue> other)
@@ -50,12 +55,17 @@ namespace Pseudo
 			return this == other;
 		}
 
+		public virtual bool Equals(TEnum other)
+		{
+			return this == other;
+		}
+
 		public override bool Equals(object obj)
 		{
-			if (!(obj is TEnum))
+			if (!(obj is PEnum<TEnum, TValue>))
 				return false;
 
-			return Equals((TEnum)obj);
+			return Equals((PEnum<TEnum, TValue>)obj);
 		}
 
 		public override int GetHashCode()
@@ -65,14 +75,14 @@ namespace Pseudo
 
 		public override string ToString()
 		{
-			return string.Format("{0}.{1}", GetType().Name, name);
+			return string.Format("{0}.{1}", GetType().Name, Name);
 		}
 
 		public static TEnum[] GetValues()
 		{
 			Initialize();
 
-			return values;
+			return valueToEnum.GetValueArray();
 		}
 
 		public static string GetName(TValue value)
@@ -80,17 +90,16 @@ namespace Pseudo
 			Initialize();
 			string name;
 
-			if (valueToName.TryGetValue(value, out name))
-				return name;
+			valueToName.TryGetValue(value, out name);
 
-			return default(string);
+			return name;
 		}
 
 		public static string[] GetNames()
 		{
 			Initialize();
 
-			return names;
+			return valueToName.GetValueArray();
 		}
 
 		public static TEnum GetValue(TValue value)
@@ -110,7 +119,6 @@ namespace Pseudo
 			var enumValue = (TEnum)FormatterServices.GetUninitializedObject(typeof(TEnum));
 			enumValue.value = value;
 			enumValue.name = name;
-
 			valueToEnum[value] = enumValue;
 
 			if (!string.IsNullOrEmpty(name))
@@ -119,23 +127,16 @@ namespace Pseudo
 			return enumValue;
 		}
 
-		static void Initialize()
+		protected static void Initialize()
 		{
 			if (initialized)
 				return;
-
-			var valueList = new List<TEnum>();
-			var nameList = new List<string>();
-			valueToEnum = new Dictionary<TValue, TEnum>();
-			valueToName = new Dictionary<TValue, string>();
-
-			var fields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.ExactBinding);
 
 			for (int i = 0; i < fields.Length; i++)
 			{
 				var field = fields[i];
 
-				if (field.IsStatic && field.IsInitOnly && typeof(TEnum).IsAssignableFrom(field.FieldType))
+				if (field.IsPublic && field.IsStatic && field.IsInitOnly && typeof(TEnum).IsAssignableFrom(field.FieldType))
 				{
 					var enumValue = field.GetValue(null) as TEnum;
 
@@ -143,15 +144,11 @@ namespace Pseudo
 						continue;
 
 					enumValue.name = field.Name;
-					valueList.Add(enumValue);
-					nameList.Add(field.Name);
 					valueToEnum[enumValue.value] = enumValue;
 					valueToName[enumValue.value] = field.Name;
 				}
 			}
 
-			values = valueList.ToArray();
-			names = nameList.ToArray();
 			initialized = true;
 		}
 
@@ -190,7 +187,10 @@ namespace Pseudo
 				return !comparer.Equals(a.value, b.value);
 		}
 	}
+}
 
+namespace Pseudo.Internal
+{
 	public abstract class PEnum : IPEnum
 	{
 		public abstract string Name { get; }

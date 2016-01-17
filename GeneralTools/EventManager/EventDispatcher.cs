@@ -40,26 +40,6 @@ namespace Pseudo.Internal
 				throw new ArgumentException(string.Format("Type {0} doesn't match event type {1}. Make sure that all subscribers have the same signature.", receiver.GetType().Name, Event.GetType().Name));
 		}
 
-		void IEventDispatcher.Trigger()
-		{
-			Trigger();
-		}
-
-		void IEventDispatcher.Trigger(object argument)
-		{
-			Trigger();
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2)
-		{
-			Trigger();
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3)
-		{
-			Trigger();
-		}
-
 		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3, object argument4)
 		{
 			Trigger();
@@ -101,29 +81,9 @@ namespace Pseudo.Internal
 				throw new ArgumentException(string.Format("Type {0} doesn't match event type {1}. Make sure that all subscribers have the same signature.", receiver.GetType().Name, Event.GetType().Name));
 		}
 
-		void IEventDispatcher.Trigger()
-		{
-			Trigger(default(T));
-		}
-
-		void IEventDispatcher.Trigger(object argument)
-		{
-			Trigger((T)argument);
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2)
-		{
-			Trigger((T)argument1);
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3)
-		{
-			Trigger((T)argument1);
-		}
-
 		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3, object argument4)
 		{
-			Trigger((T)argument1);
+			Trigger(argument1 is T ? (T)argument1 : default(T));
 		}
 	}
 
@@ -162,29 +122,11 @@ namespace Pseudo.Internal
 				throw new ArgumentException(string.Format("Type {0} doesn't match event type {1}. Make sure that all subscribers have the same signature.", receiver.GetType().Name, Event.GetType().Name));
 		}
 
-		void IEventDispatcher.Trigger()
-		{
-			Trigger(default(T1), default(T2));
-		}
-
-		void IEventDispatcher.Trigger(object argument)
-		{
-			Trigger((T1)argument, default(T2));
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2)
-		{
-			Trigger((T1)argument1, (T2)argument2);
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3)
-		{
-			Trigger((T1)argument1, (T2)argument2);
-		}
-
 		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3, object argument4)
 		{
-			Trigger((T1)argument1, (T2)argument2);
+			Trigger(
+				argument1 is T1 ? (T1)argument1 : default(T1),
+				argument1 is T2 ? (T2)argument2 : default(T2));
 		}
 	}
 
@@ -223,29 +165,12 @@ namespace Pseudo.Internal
 				throw new ArgumentException(string.Format("Type {0} doesn't match event type {1}. Make sure that all subscribers have the same signature.", receiver.GetType().Name, Event.GetType().Name));
 		}
 
-		void IEventDispatcher.Trigger()
-		{
-			Trigger(default(T1), default(T2), default(T3));
-		}
-
-		void IEventDispatcher.Trigger(object argument)
-		{
-			Trigger((T1)argument, default(T2), default(T3));
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2)
-		{
-			Trigger((T1)argument1, (T2)argument2, default(T3));
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3)
-		{
-			Trigger((T1)argument1, (T2)argument2, (T3)argument3);
-		}
-
 		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3, object argument4)
 		{
-			Trigger((T1)argument1, (T2)argument2, (T3)argument3);
+			Trigger(
+				argument1 is T1 ? (T1)argument1 : default(T1),
+				argument1 is T2 ? (T2)argument2 : default(T2),
+				argument1 is T3 ? (T3)argument3 : default(T3));
 		}
 	}
 
@@ -284,29 +209,13 @@ namespace Pseudo.Internal
 				throw new ArgumentException(string.Format("Type {0} doesn't match event type {1}. Make sure that all subscribers have the same signature.", receiver.GetType().Name, Event.GetType().Name));
 		}
 
-		void IEventDispatcher.Trigger()
-		{
-			Trigger(default(T1), default(T2), default(T3), default(T4));
-		}
-
-		void IEventDispatcher.Trigger(object argument)
-		{
-			Trigger((T1)argument, default(T2), default(T3), default(T4));
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2)
-		{
-			Trigger((T1)argument1, (T2)argument2, default(T3), default(T4));
-		}
-
-		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3)
-		{
-			Trigger((T1)argument1, (T2)argument2, (T3)argument3, default(T4));
-		}
-
 		void IEventDispatcher.Trigger(object argument1, object argument2, object argument3, object argument4)
 		{
-			Trigger((T1)argument1, (T2)argument2, (T3)argument3, (T4)argument4);
+			Trigger(
+				argument1 is T1 ? (T1)argument1 : default(T1),
+				argument1 is T2 ? (T2)argument2 : default(T2),
+				argument1 is T3 ? (T3)argument3 : default(T3),
+				argument1 is T4 ? (T4)argument4 : default(T4));
 		}
 	}
 }

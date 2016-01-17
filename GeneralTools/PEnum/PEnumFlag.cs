@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public abstract class PEnumFlag<TEnum> : PEnum<TEnum, ByteFlag>, IPEnumFlag, IEquatable<PEnumFlag<TEnum>>
+	public abstract class PEnumFlag<TEnum> : PEnum<TEnum, ByteFlag>, IPEnumFlag
 		where TEnum : PEnumFlag<TEnum>
 	{
 		public static TEnum Nothing
@@ -99,11 +99,6 @@ namespace Pseudo
 		public bool HasNone(ByteFlag flags)
 		{
 			return !HasAny(flags);
-		}
-
-		public bool Equals(PEnumFlag<TEnum> other)
-		{
-			return this == other;
 		}
 
 		IPEnumFlag IPEnumFlag.Add(IPEnumFlag flags)
@@ -203,6 +198,7 @@ namespace Pseudo
 
 		static ByteFlag GetEverything()
 		{
+			Initialize();
 			var values = GetValues();
 			var everything = ByteFlag.Nothing;
 

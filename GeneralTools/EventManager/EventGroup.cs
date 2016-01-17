@@ -5,12 +5,15 @@ using System.Text;
 
 namespace Pseudo.Internal
 {
-	public class EventGroup<TId> : IEventGroup
+	public class EventGroup<TId> : IEventGroup where TId : IEquatable<TId>
 	{
-		EventDispatcher<TId> allDispatcher = new EventDispatcher<TId>();
-		readonly Dictionary<TId, IEventDispatcher> dispatchers = new Dictionary<TId, IEventDispatcher>();
+		static readonly EqualityComparer<TId> comparer = EqualityComparer<TId>.Default;
 
-		public void Subscribe(Action<TId> receiver)
+		EventDispatcher<TId> allDispatcher = new EventDispatcher<TId>();
+		readonly Dictionary<TId, IEventDispatcher> idToDispatchers = new Dictionary<TId, IEventDispatcher>(comparer);
+		readonly Queue<KeyValuePair<TId, IEventDispatcher>> toDispatch = new Queue<KeyValuePair<TId, IEventDispatcher>>();
+
+		public void SubscribeAll(Action<TId> receiver)
 		{
 			allDispatcher.Subscribe(receiver);
 		}
@@ -19,10 +22,10 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (!dispatchers.TryGetValue(identifier, out dispatcher))
+			if (!idToDispatchers.TryGetValue(identifier, out dispatcher))
 			{
 				dispatcher = new EventDispatcher();
-				dispatchers[identifier] = dispatcher;
+				idToDispatchers[identifier] = dispatcher;
 			}
 
 			dispatcher.Subscribe(receiver);
@@ -32,10 +35,10 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (!dispatchers.TryGetValue(identifier, out dispatcher))
+			if (!idToDispatchers.TryGetValue(identifier, out dispatcher))
 			{
 				dispatcher = new EventDispatcher<TArg>();
-				dispatchers[identifier] = dispatcher;
+				idToDispatchers[identifier] = dispatcher;
 			}
 
 			dispatcher.Subscribe(receiver);
@@ -45,10 +48,10 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (!dispatchers.TryGetValue(identifier, out dispatcher))
+			if (!idToDispatchers.TryGetValue(identifier, out dispatcher))
 			{
 				dispatcher = new EventDispatcher<TArg1, TArg2>();
-				dispatchers[identifier] = dispatcher;
+				idToDispatchers[identifier] = dispatcher;
 			}
 
 			dispatcher.Subscribe(receiver);
@@ -58,10 +61,10 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (!dispatchers.TryGetValue(identifier, out dispatcher))
+			if (!idToDispatchers.TryGetValue(identifier, out dispatcher))
 			{
 				dispatcher = new EventDispatcher<TArg1, TArg2, TArg3>();
-				dispatchers[identifier] = dispatcher;
+				idToDispatchers[identifier] = dispatcher;
 			}
 
 			dispatcher.Subscribe(receiver);
@@ -71,16 +74,16 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (!dispatchers.TryGetValue(identifier, out dispatcher))
+			if (!idToDispatchers.TryGetValue(identifier, out dispatcher))
 			{
 				dispatcher = new EventDispatcher<TArg1, TArg2, TArg3, TArg4>();
-				dispatchers[identifier] = dispatcher;
+				idToDispatchers[identifier] = dispatcher;
 			}
 
 			dispatcher.Subscribe(receiver);
 		}
 
-		public void Unsubscribe(Action<TId> receiver)
+		public void UnsubscribeAll(Action<TId> receiver)
 		{
 			allDispatcher.Unsubscribe(receiver);
 		}
@@ -89,7 +92,7 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
 		}
 
@@ -97,7 +100,7 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
 		}
 
@@ -105,7 +108,7 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
 		}
 
@@ -113,7 +116,7 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
 		}
 
@@ -121,83 +124,60 @@ namespace Pseudo.Internal
 		{
 			IEventDispatcher dispatcher;
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
 		}
 
 		public void Trigger(TId identifier)
 		{
-			IEventDispatcher dispatcher;
-
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
-				dispatcher.Trigger();
-
-			allDispatcher.Trigger(identifier);
+			Trigger(identifier, (object)null, (object)null, (object)null, (object)null);
 		}
 
 		public void Trigger<TArg>(TId identifier, TArg argument)
 		{
-			IEventDispatcher dispatcher;
-
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
-			{
-				var castedDispatcher = dispatcher as EventDispatcher<TArg>;
-
-				if (castedDispatcher == null)
-					dispatcher.Trigger(argument);
-				else
-					castedDispatcher.Trigger(argument);
-			}
-
-			allDispatcher.Trigger(identifier);
+			Trigger(identifier, argument, (object)null, (object)null, (object)null);
 		}
 
 		public void Trigger<TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
 		{
-			IEventDispatcher dispatcher;
-
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
-			{
-				var castedDispatcher = dispatcher as EventDispatcher<TArg1, TArg2>;
-
-				if (castedDispatcher == null)
-					dispatcher.Trigger(argument1, argument2);
-				else
-					castedDispatcher.Trigger(argument1, argument2);
-			}
-
-			allDispatcher.Trigger(identifier);
+			Trigger(identifier, argument1, argument2, (object)null, (object)null);
 		}
 
 		public void Trigger<TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
 		{
-			IEventDispatcher dispatcher;
-
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
-			{
-				var castedDispatcher = dispatcher as EventDispatcher<TArg1, TArg2, TArg3>;
-
-				if (castedDispatcher == null)
-					dispatcher.Trigger(argument1, argument2, argument3);
-				else
-					castedDispatcher.Trigger(argument1, argument2, argument3);
-			}
-
-			allDispatcher.Trigger(identifier);
+			Trigger(identifier, argument1, argument2, argument3, (object)null);
 		}
 
 		public void Trigger<TArg1, TArg2, TArg3, TArg4>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4)
 		{
-			IEventDispatcher dispatcher;
+			var enumerator = idToDispatchers.GetEnumerator();
 
-			if (dispatchers.TryGetValue(identifier, out dispatcher))
+			while (enumerator.MoveNext())
 			{
-				var castedDispatcher = dispatcher as EventDispatcher<TArg1, TArg2, TArg3, TArg4>;
+				var pair = enumerator.Current;
 
-				if (castedDispatcher == null)
-					dispatcher.Trigger(argument1, argument2, argument3, argument4);
+				if (comparer.Equals(pair.Key, identifier))
+					toDispatch.Enqueue(pair);
+			}
+
+			enumerator.Dispose();
+
+			while (toDispatch.Count > 0)
+			{
+				var pair = toDispatch.Dequeue();
+
+				if (pair.Value is EventDispatcher<TArg1, TArg2, TArg3, TArg4>)
+					((EventDispatcher<TArg1, TArg2, TArg3, TArg4>)pair.Value).Trigger(argument1, argument2, argument3, argument4);
+				else if (pair.Value is EventDispatcher<TArg1, TArg2, TArg3>)
+					((EventDispatcher<TArg1, TArg2, TArg3>)pair.Value).Trigger(argument1, argument2, argument3);
+				else if (pair.Value is EventDispatcher<TArg1, TArg2>)
+					((EventDispatcher<TArg1, TArg2>)pair.Value).Trigger(argument1, argument2);
+				else if (pair.Value is EventDispatcher<TArg1>)
+					((EventDispatcher<TArg1>)pair.Value).Trigger(argument1);
+				else if (pair.Value is EventDispatcher)
+					((EventDispatcher)pair.Value).Trigger();
 				else
-					castedDispatcher.Trigger(argument1, argument2, argument3, argument4);
+					pair.Value.Trigger(argument1, argument2, argument3, argument4);
 			}
 
 			allDispatcher.Trigger(identifier);

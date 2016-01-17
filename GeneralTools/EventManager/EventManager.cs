@@ -9,105 +9,105 @@ namespace Pseudo
 {
 	public class EventManager : IEventManager, ILateTickable
 	{
-		readonly Dictionary<Type, IEventGroup> eventGroups = new Dictionary<Type, IEventGroup>();
-		Queue<IEventData> queuedEvents = new Queue<IEventData>();
-		Queue<IEventData> resolvingEvents = new Queue<IEventData>();
+		readonly Dictionary<Type, IEventGroup> typeToEventGroups = new Dictionary<Type, IEventGroup>();
+		Queue<IEvent> queuedEvents = new Queue<IEvent>();
+		Queue<IEvent> resolvingEvents = new Queue<IEvent>();
 
-		public void Subscribe<TId>(Action<TId> receiver)
+		public void SubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(receiver);
+			eventGroup.SubscribeAll(receiver);
 		}
 
-		public void Subscribe<TId>(TId identifier, Action receiver)
+		public void Subscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Subscribe(identifier, receiver);
 		}
 
-		public void Subscribe<TId, TArg>(TId identifier, Action<TArg> receiver)
+		public void Subscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Subscribe(identifier, receiver);
 		}
 
-		public void Subscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver)
+		public void Subscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Subscribe(identifier, receiver);
 		}
 
-		public void Subscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver)
+		public void Subscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Subscribe(identifier, receiver);
 		}
 
-		public void Subscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver)
+		public void Subscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Subscribe(identifier, receiver);
 		}
 
-		public void Unsubscribe<TId>(Action<TId> receiver)
+		public void UnsubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(receiver);
+			eventGroup.UnsubscribeAll(receiver);
 		}
 
-		public void Unsubscribe<TId>(TId identifier, Action receiver)
+		public void Unsubscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Unsubscribe(identifier, receiver);
 		}
 
-		public void Unsubscribe<TId, TArg>(TId identifier, Action<TArg> receiver)
+		public void Unsubscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Unsubscribe(identifier, receiver);
 		}
 
-		public void Unsubscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver)
+		public void Unsubscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Unsubscribe(identifier, receiver);
 		}
 
-		public void Unsubscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver)
+		public void Unsubscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Unsubscribe(identifier, receiver);
 		}
 
-		public void Unsubscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver)
+		public void Unsubscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
 			eventGroup.Unsubscribe(identifier, receiver);
 		}
 
-		public void Trigger<TId>(TId identifier)
+		public void Trigger<TId>(TId identifier) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<EventData<TId>>();
+			var eventData = TypePoolManager.Create<TriggerEvent<TId>>();
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			EnqueueEvent(eventData);
 		}
 
-		public void Trigger<TId, TArg>(TId identifier, TArg argument)
+		public void Trigger<TId, TArg>(TId identifier, TArg argument) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<EventData<TId, TArg>>();
+			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg>>();
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			eventData.Argument = argument;
 			EnqueueEvent(eventData);
 		}
 
-		public void Trigger<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
+		public void Trigger<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<EventData<TId, TArg1, TArg2>>();
+			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg1, TArg2>>();
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			eventData.Argument1 = argument1;
@@ -115,10 +115,10 @@ namespace Pseudo
 			EnqueueEvent(eventData);
 		}
 
-		public void Trigger<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		public void Trigger<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<EventData<TId, TArg1, TArg2, TArg3>>();
+			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg1, TArg2, TArg3>>();
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			eventData.Argument1 = argument1;
@@ -127,10 +127,10 @@ namespace Pseudo
 			EnqueueEvent(eventData);
 		}
 
-		public void Trigger<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4)
+		public void Trigger<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4) where TId : IEquatable<TId>
 		{
 			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<EventData<TId, TArg1, TArg2, TArg3, TArg4>>();
+			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg1, TArg2, TArg3, TArg4>>();
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			eventData.Argument1 = argument1;
@@ -140,12 +140,7 @@ namespace Pseudo
 			EnqueueEvent(eventData);
 		}
 
-		void EnqueueEvent(IEventData eventData)
-		{
-			queuedEvents.Enqueue(eventData);
-		}
-
-		void ResolveQueuedEvents()
+		public void ResolveEvents()
 		{
 			SwitchQueues();
 
@@ -157,6 +152,11 @@ namespace Pseudo
 			}
 		}
 
+		public void EnqueueEvent(IEvent eventData)
+		{
+			queuedEvents.Enqueue(eventData);
+		}
+
 		void SwitchQueues()
 		{
 			var tempQueue = resolvingEvents;
@@ -164,14 +164,14 @@ namespace Pseudo
 			queuedEvents = tempQueue;
 		}
 
-		EventGroup<TId> GetEventGroup<TId>()
+		EventGroup<TId> GetEventGroup<TId>() where TId : IEquatable<TId>
 		{
 			IEventGroup eventGroup;
 
-			if (!eventGroups.TryGetValue(typeof(TId), out eventGroup))
+			if (!typeToEventGroups.TryGetValue(typeof(TId), out eventGroup))
 			{
 				eventGroup = new EventGroup<TId>();
-				eventGroups[typeof(TId)] = eventGroup;
+				typeToEventGroups[typeof(TId)] = eventGroup;
 			}
 
 			return (EventGroup<TId>)eventGroup;
@@ -179,7 +179,7 @@ namespace Pseudo
 
 		void ILateTickable.LateTick()
 		{
-			ResolveQueuedEvents();
+			ResolveEvents();
 		}
 	}
 }

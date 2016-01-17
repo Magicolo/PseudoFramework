@@ -31,10 +31,11 @@ namespace Tests
 			Action<int> allReceiver = (int id) => triggerCount++;
 
 			eventManager.Subscribe(EventsDummy.Zero, receiver);
-			eventManager.Subscribe(allReceiver);
+			eventManager.SubscribeAll(allReceiver);
 			eventManager.Unsubscribe(EventsDummy.Zero, receiver);
-			eventManager.Unsubscribe(allReceiver);
+			eventManager.UnsubscribeAll(allReceiver);
 			eventManager.Trigger(EventsDummy.Zero);
+			eventManager.ResolveEvents();
 
 			Assert.That(triggerCount == 0);
 		}
@@ -43,66 +44,82 @@ namespace Tests
 		public void TriggerNoArgument()
 		{
 			int triggerCount = 0;
+			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
+			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
 			eventManager.Subscribe(EventsDummy.Zero, () => triggerCount++);
-			eventManager.Subscribe((EventsDummy id) => triggerCount++);
 			eventManager.Trigger(EventsDummy.Zero);
+			eventManager.ResolveEvents();
 
-			Assert.That(triggerCount == 2);
+			Assert.That(triggerCount == 3);
 		}
 
 		[Test]
 		public void TriggerOneArgument()
 		{
 			int triggerCount = 0;
+			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
+			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
 			eventManager.Subscribe(EventsDummy.One, (int arg) => triggerCount += arg);
-			eventManager.Subscribe((EventsDummy id) => triggerCount++);
 			eventManager.Trigger(EventsDummy.One, 2);
+			eventManager.ResolveEvents();
 
-			Assert.That(triggerCount == 3);
+			Assert.That(triggerCount == 4);
 		}
 
 		[Test]
 		public void TriggerTwoArguments()
 		{
 			int triggerCount = 0;
+			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
+			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
 			eventManager.Subscribe(EventsDummy.Two, (int arg1, int arg2) => triggerCount += arg1 + arg2);
-			eventManager.Subscribe((EventsDummy id) => triggerCount++);
 			eventManager.Trigger(EventsDummy.Two, 2, 3);
+			eventManager.ResolveEvents();
 
-			Assert.That(triggerCount == 6);
+			Assert.That(triggerCount == 7);
 		}
 
 		[Test]
 		public void TriggerThreeArguments()
 		{
 			int triggerCount = 0;
+			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
+			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
 			eventManager.Subscribe(EventsDummy.Three, (int arg1, int arg2, int arg3) => triggerCount += arg1 + arg2 + arg3);
-			eventManager.Subscribe((EventsDummy id) => triggerCount++);
 			eventManager.Trigger(EventsDummy.Three, 2, 3, 4);
+			eventManager.ResolveEvents();
 
-			Assert.That(triggerCount == 10);
+			Assert.That(triggerCount == 11);
 		}
 
 		[Test]
 		public void TriggerFourArguments()
 		{
 			int triggerCount = 0;
+			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
+			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
 			eventManager.Subscribe(EventsDummy.Four, (int arg1, int arg2, int arg3, int arg4) => triggerCount += arg1 + arg2 + arg3 + arg4);
-			eventManager.Subscribe((EventsDummy id) => triggerCount++);
 			eventManager.Trigger(EventsDummy.Four, 2, 3, 4, 5);
+			eventManager.ResolveEvents();
 
-			Assert.That(triggerCount == 15);
+			Assert.That(triggerCount == 16);
 		}
 
-		public class EventsDummy : PEnum<EventsDummy, int>
+		public class EventsDummy : PEnumFlag<EventsDummy>
 		{
+			public static readonly EventsDummy All = new EventsDummy(0, 1, 2, 3, 4);
 			public static readonly EventsDummy Zero = new EventsDummy(0);
 			public static readonly EventsDummy One = new EventsDummy(1);
 			public static readonly EventsDummy Two = new EventsDummy(2);
 			public static readonly EventsDummy Three = new EventsDummy(3);
 			public static readonly EventsDummy Four = new EventsDummy(4);
 
-			protected EventsDummy(int value) : base(value) { }
+			protected EventsDummy(params byte[] values) : base(values) { }
+
+			public override bool Equals(EventsDummy other)
+			{
+				return HasAny(other);
+			}
 		}
 	}
 }

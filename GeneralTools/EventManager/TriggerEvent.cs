@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo.Internal
 {
-	public class EventData<TId> : IEventData
+	public class TriggerEvent<TId> : IEvent where TId : IEquatable<TId>
 	{
 		public EventGroup<TId> EventGroup;
 		public TId Identifier;
@@ -16,7 +16,7 @@ namespace Pseudo.Internal
 		}
 	}
 
-	public class EventData<TId, TArg> : IEventData
+	public class TriggerEvent<TId, TArg> : IEvent where TId : IEquatable<TId>
 	{
 		public EventGroup<TId> EventGroup;
 		public TId Identifier;
@@ -28,7 +28,7 @@ namespace Pseudo.Internal
 		}
 	}
 
-	public class EventData<TId, TArg1, TArg2> : IEventData
+	public class TriggerEvent<TId, TArg1, TArg2> : IEvent where TId : IEquatable<TId>
 	{
 		public EventGroup<TId> EventGroup;
 		public TId Identifier;
@@ -41,7 +41,7 @@ namespace Pseudo.Internal
 		}
 	}
 
-	public class EventData<TId, TArg1, TArg2, TArg3> : IEventData
+	public class TriggerEvent<TId, TArg1, TArg2, TArg3> : IEvent where TId : IEquatable<TId>
 	{
 		public EventGroup<TId> EventGroup;
 		public TId Identifier;
@@ -55,7 +55,7 @@ namespace Pseudo.Internal
 		}
 	}
 
-	public class EventData<TId, TArg1, TArg2, TArg3, TArg4> : IEventData
+	public class TriggerEvent<TId, TArg1, TArg2, TArg3, TArg4> : IEvent where TId : IEquatable<TId>
 	{
 		public EventGroup<TId> EventGroup;
 		public TId Identifier;

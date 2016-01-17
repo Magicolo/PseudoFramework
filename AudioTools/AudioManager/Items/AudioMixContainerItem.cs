@@ -18,11 +18,9 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.MixContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public AudioMixContainerItem(AudioItemManager itemManager) : base(itemManager) { }
-
-		public void Initialize(AudioMixContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioMixContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, AudioItem parent)
 		{
-			base.Initialize(settings.Id, settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);

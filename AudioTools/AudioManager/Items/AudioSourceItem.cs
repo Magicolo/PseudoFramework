@@ -25,15 +25,15 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.Source; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public AudioSourceItem(AudioItemManager itemManager) : base(itemManager)
+		public AudioSourceItem()
 		{
 			setVolumeScale = modifier => source.volume = modifier.Value;
 			setPitchScale = modifier => source.pitch = modifier.Value;
 		}
 
-		public void Initialize(AudioSourceSettings settings, AudioSource audioSource, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioSourceSettings settings, AudioItemManager itemManager, AudioSource audioSource, AudioSpatializer spatializer, AudioItem parent)
 		{
-			base.Initialize(settings.Id, settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
 			// General Setup
 			originalSettings = settings;

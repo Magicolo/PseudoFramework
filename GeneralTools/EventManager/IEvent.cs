@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo.Internal
 {
-	public interface IEventData
+	public interface IEvent
 	{
 		void Resolve();
 	}

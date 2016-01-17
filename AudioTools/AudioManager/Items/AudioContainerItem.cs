@@ -12,7 +12,7 @@ namespace Pseudo.Internal.Audio
 		protected readonly Action<AudioModifier> setVolumeScale;
 		protected readonly Action<AudioModifier> setPitchScale;
 
-		protected AudioContainerItem(AudioItemManager itemManager) : base(itemManager)
+		protected AudioContainerItem()
 		{
 			setVolumeScale = modifer =>
 			{

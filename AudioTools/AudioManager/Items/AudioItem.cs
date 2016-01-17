@@ -33,6 +33,7 @@ namespace Pseudo
 
 		protected int id;
 		protected string name;
+		protected AudioItemManager itemManager;
 		protected AudioStates state;
 		protected AudioSpatializer spatializer;
 		protected AudioItem parent;
@@ -50,7 +51,6 @@ namespace Pseudo
 		protected bool hasBreak;
 		protected List<AudioDelayedOption> delayedOptions = new List<AudioDelayedOption>();
 
-		protected readonly AudioItemManager itemManager;
 		protected readonly Action stopImmediate;
 		protected readonly Func<float> getDeltaTime;
 		protected readonly Action<float> setVolumeRampModifier;
@@ -123,9 +123,8 @@ namespace Pseudo
 		/// </summary>
 		public event Action<AudioItem, AudioStates, AudioStates> OnStateChanged;
 
-		protected AudioItem(AudioItemManager itemManager)
+		protected AudioItem()
 		{
-			this.itemManager = itemManager;
 			stopImmediate = StopImmediate;
 			getDeltaTime = GetDeltaTime;
 			setVolumeRampModifier = value => volumeModifier.RampModifier = value;
@@ -135,10 +134,11 @@ namespace Pseudo
 			setVolumeFadeModifier = value => volumeModifier.FadeModifier = value;
 		}
 
-		protected virtual void Initialize(int id, string name, AudioSpatializer spatializer, AudioItem parent)
+		protected virtual void Initialize(int id, string name, AudioItemManager itemManager, AudioSpatializer spatializer, AudioItem parent)
 		{
 			this.id = id;
 			this.name = name;
+			this.itemManager = itemManager;
 			this.spatializer = spatializer;
 			this.parent = parent;
 
