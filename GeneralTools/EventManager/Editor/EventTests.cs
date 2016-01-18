@@ -92,27 +92,13 @@ namespace Tests
 			Assert.That(triggerCount == 11);
 		}
 
-		[Test]
-		public void TriggerFourArguments()
-		{
-			int triggerCount = 0;
-			eventManager.SubscribeAll((EventsDummy id) => triggerCount++);
-			eventManager.Subscribe(EventsDummy.All, () => triggerCount++);
-			eventManager.Subscribe(EventsDummy.Four, (int arg1, int arg2, int arg3, int arg4) => triggerCount += arg1 + arg2 + arg3 + arg4);
-			eventManager.Trigger(EventsDummy.Four, 2, 3, 4, 5);
-			eventManager.ResolveEvents();
-
-			Assert.That(triggerCount == 16);
-		}
-
 		public class EventsDummy : PEnumFlag<EventsDummy>
 		{
-			public static readonly EventsDummy All = new EventsDummy(0, 1, 2, 3, 4);
+			public static readonly EventsDummy All = new EventsDummy(0, 1, 2, 3);
 			public static readonly EventsDummy Zero = new EventsDummy(0);
 			public static readonly EventsDummy One = new EventsDummy(1);
 			public static readonly EventsDummy Two = new EventsDummy(2);
 			public static readonly EventsDummy Three = new EventsDummy(3);
-			public static readonly EventsDummy Four = new EventsDummy(4);
 
 			protected EventsDummy(params byte[] values) : base(values) { }
 

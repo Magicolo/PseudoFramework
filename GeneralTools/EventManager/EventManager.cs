@@ -1,4 +1,5 @@
 ﻿using Pseudo.Internal;
+using Pseudo.Internal.Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,74 +16,82 @@ namespace Pseudo
 
 		public void SubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.SubscribeAll(receiver);
+			GetEventGroup<TId>().SubscribeAll(receiver);
+		}
+
+		public void SubscribeAll<TId, TArg>(Action<TId, TArg> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().SubscribeAll(receiver);
+		}
+
+		public void SubscribeAll<TId, TArg1, TArg2>(Action<TId, TArg1, TArg2> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().SubscribeAll(receiver);
+		}
+
+		public void SubscribeAll<TId, TArg1, TArg2, TArg3>(Action<TId, TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().SubscribeAll(receiver);
 		}
 
 		public void Subscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(identifier, receiver);
+			GetEventGroup<TId>().Subscribe(identifier, receiver);
 		}
 
 		public void Subscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(identifier, receiver);
+			GetEventGroup<TId>().Subscribe(identifier, receiver);
 		}
 
 		public void Subscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(identifier, receiver);
+			GetEventGroup<TId>().Subscribe(identifier, receiver);
 		}
 
 		public void Subscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(identifier, receiver);
-		}
-
-		public void Subscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>
-		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Subscribe(identifier, receiver);
+			GetEventGroup<TId>().Subscribe(identifier, receiver);
 		}
 
 		public void UnsubscribeAll<TId>(Action<TId> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.UnsubscribeAll(receiver);
+			GetEventGroup<TId>().UnsubscribeAll(receiver);
+		}
+
+		public void UnsubscribeAll<TId, TArg>(Action<TId, TArg> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().UnsubscribeAll(receiver);
+		}
+
+		public void UnsubscribeAll<TId, TArg1, TArg2>(Action<TId, TArg1, TArg2> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().UnsubscribeAll(receiver);
+		}
+
+		public void UnsubscribeAll<TId, TArg1, TArg2, TArg3>(Action<TId, TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
+		{
+			GetEventGroup<TId>().UnsubscribeAll(receiver);
 		}
 
 		public void Unsubscribe<TId>(TId identifier, Action receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(identifier, receiver);
+			GetEventGroup<TId>().Unsubscribe(identifier, receiver);
 		}
 
 		public void Unsubscribe<TId, TArg>(TId identifier, Action<TArg> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(identifier, receiver);
+			GetEventGroup<TId>().Unsubscribe(identifier, receiver);
 		}
 
 		public void Unsubscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(identifier, receiver);
+			GetEventGroup<TId>().Unsubscribe(identifier, receiver);
 		}
 
 		public void Unsubscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver) where TId : IEquatable<TId>
 		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(identifier, receiver);
-		}
-
-		public void Unsubscribe<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver) where TId : IEquatable<TId>
-		{
-			var eventGroup = GetEventGroup<TId>();
-			eventGroup.Unsubscribe(identifier, receiver);
+			GetEventGroup<TId>().Unsubscribe(identifier, receiver);
 		}
 
 		public void Trigger<TId>(TId identifier) where TId : IEquatable<TId>
@@ -124,19 +133,6 @@ namespace Pseudo
 			eventData.Argument1 = argument1;
 			eventData.Argument2 = argument2;
 			eventData.Argument3 = argument3;
-			EnqueueEvent(eventData);
-		}
-
-		public void Trigger<TId, TArg1, TArg2, TArg3, TArg4>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, TArg4 argument4) where TId : IEquatable<TId>
-		{
-			var eventGroup = GetEventGroup<TId>();
-			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg1, TArg2, TArg3, TArg4>>();
-			eventData.EventGroup = eventGroup;
-			eventData.Identifier = identifier;
-			eventData.Argument1 = argument1;
-			eventData.Argument2 = argument2;
-			eventData.Argument3 = argument3;
-			eventData.Argument4 = argument4;
 			EnqueueEvent(eventData);
 		}
 

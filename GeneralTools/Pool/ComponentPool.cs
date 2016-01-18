@@ -4,85 +4,56 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Zenject;
 
 namespace Pseudo.Internal.Pool
 {
-	public class ComponentPool<T> : ComponentPool where T : Component
+	public class ComponentPool<T> : Pool<T> where T : Component
 	{
-		public ComponentPool(T reference, int startSize) : base(reference, startSize) { }
+		public readonly Transform Transform;
 
-		new public T Create()
+		public ComponentPool(T reference, Transform transform, int startSize) :
+			base(reference, () =>
+			{
+				var instance = UnityEngine.Object.Instantiate(reference);
+				instance.transform.parent = transform;
+				instance.gameObject.SetActive(true);
+
+				return instance;
+			},
+				instance => ((T)instance).gameObject.Destroy(), startSize)
 		{
-			return (T)base.Create();
+			Transform = transform;
 		}
-	}
 
-	public class ComponentPool : PrefabPool
-	{
-		public GameObject GameObject { get { return gameObject == null ? (gameObject = new GameObject(((UnityEngine.Object)reference).name + " Pool")) : gameObject; } }
-		public Transform Transform { get { return transform == null ? (transform = GameObject.transform) : transform; } }
-
-		protected GameObject gameObject;
-		protected Transform transform;
-
-		public ComponentPool(Component reference, int startSize) : base(reference, startSize) { }
-
-		public override object Create()
+		public override T Create()
 		{
-			var instance = (Component)base.Create();
-			instance.transform.Copy(((Component)reference).transform);
+			var instance = (T)base.Create();
+			instance.transform.Copy(((T)reference).transform);
 
 			return instance;
 		}
 
 		public override void Clear()
 		{
-			lock (instances)
-			{
-				while (instances.Count > 0)
-				{
-					var instance = (Component)instances.Dequeue();
+			base.Clear();
 
-					if (instance != null)
-						instance.gameObject.Destroy();
-				}
-			}
-
-			lock (toInitialize)
-			{
-				while (toInitialize.Count > 0)
-				{
-					var instance = (Component)toInitialize.Dequeue();
-
-					if (instance != null)
-						instance.gameObject.Destroy();
-				}
-			}
-
-			Pseudo.ObjectExtensions.Destroy(GameObject);
-		}
-
-		protected override object CreateInstance()
-		{
-			var instance = (Component)base.CreateInstance();
-			instance.gameObject.SetActive(true);
-			instance.transform.parent = Transform;
-
-			return instance;
+			if (Transform != null)
+				Transform.gameObject.Destroy();
 		}
 
 		protected override void Enqueue(object instance, bool initialize)
 		{
 			base.Enqueue(instance, initialize);
 
-			var component = (Component)instance;
+			var component = (T)instance;
 			component.gameObject.SetActive(false);
 			component.transform.parent = Transform;
 		}
 
 		protected override object Dequeue()
 		{
-			var instance = (Component)base.Dequeue();
+			var instance = (T)base.Dequeue();
 			instance.gameObject.SetActive(true);
 
 			return instance;

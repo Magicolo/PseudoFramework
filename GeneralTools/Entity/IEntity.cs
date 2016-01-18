@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public interface IEntity
+	public interface IEntity : IPoolable
 	{
 		event Action<IEntity, IComponent> OnComponentAdded;
 		event Action<IEntity, IComponent> OnComponentRemoved;

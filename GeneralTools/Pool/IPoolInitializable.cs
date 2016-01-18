@@ -7,7 +7,7 @@ namespace Pseudo.Internal.Pool
 {
 	public interface IPoolInitializable
 	{
-		void OnPrePoolInitialize();
-		void OnPostPoolInitialize();
+		void OnPrePoolInitialize(object reference);
+		void OnPostPoolInitialize(object reference);
 	}
 }

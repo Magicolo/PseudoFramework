@@ -3,17 +3,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using System.Reflection;
 using System.Threading;
 using Pseudo.Internal;
 using System;
-using System.Runtime.Serialization;
 
 namespace Pseudo.Internal.Pool
 {
 	public class Pool<T> : Pool where T : class
 	{
-		public Pool(T reference, int startSize) : base(reference, reference.GetType(), startSize) { }
+		public Pool(T reference, int startSize) : base(reference, startSize) { }
+
+		public Pool(T reference, Constructor<T> constructor, int startSize) : base(reference, constructor, startSize) { }
+
+		public Pool(T reference, Constructor<T> constructor, Destructor destructor, int startSize) : base(reference, constructor, destructor, startSize) { }
 
 		new public virtual T Create()
 		{
@@ -23,14 +25,19 @@ namespace Pseudo.Internal.Pool
 
 	public class Pool
 	{
+		public delegate T Constructor<out T>();
+		public delegate void Destructor(object instance);
+
 		static readonly List<Pool> toUpdate = new List<Pool>(4);
 		static Thread updadeThread;
 
 		public Type Type { get; protected set; }
-		public int StartSize { get; protected set; }
 		public int Size { get; protected set; }
 
 		protected readonly object reference;
+		protected readonly Constructor<object> constructor;
+		protected readonly Destructor destructor;
+		protected readonly int startSize;
 		protected readonly bool isPoolable;
 		protected readonly bool isInitializable;
 		protected readonly bool isSettersInitializable;
@@ -39,15 +46,22 @@ namespace Pseudo.Internal.Pool
 		protected List<IPoolSetter> setters;
 		protected bool updating;
 
-		public Pool(object reference, int startSize) : this(reference, reference.GetType(), startSize) { }
+		public Pool(object reference, int startSize) : this(reference, reference.GetType(), null, null, startSize) { }
 
-		protected Pool(object reference, Type type, int startSize)
+		public Pool(object reference, Constructor<object> constructor, int startSize) : this(reference, reference.GetType(), constructor, null, startSize) { }
+
+		public Pool(object reference, Constructor<object> constructor, Destructor destructor, int startSize) : this(reference, reference.GetType(), constructor, destructor, startSize) { }
+
+		Pool(object reference, Type type, Constructor<object> constructor, Destructor destructor, int startSize)
 		{
 			PoolUtility.InitializeJanitor();
 
 			this.reference = reference;
+			this.constructor = constructor ?? (() => Activator.CreateInstance(type));
+			this.destructor = destructor ?? ((object instance) => { });
+			this.startSize = startSize;
+
 			Type = type;
-			StartSize = startSize;
 			isPoolable = reference is IPoolable;
 			isInitializable = reference is IPoolInitializable;
 			isSettersInitializable = reference is IPoolSettersInitializable;
@@ -82,7 +96,7 @@ namespace Pseudo.Internal.Pool
 				return;
 
 			if (instance.GetType() != Type)
-				throw new TypeMismatchException(string.Format("The type of the instance ({0}) doesn't match the pool type ({1}).", instance.GetType().Name, Type.Name));
+				throw new ArgumentException(string.Format("The type of the instance ({0}) doesn't match the pool type ({1}).", instance.GetType().Name, Type.Name));
 
 			if (isPoolable)
 				((IPoolable)instance).OnRecycle();
@@ -121,8 +135,28 @@ namespace Pseudo.Internal.Pool
 
 		public virtual void Clear()
 		{
-			lock (instances) { instances.Clear(); }
-			lock (toInitialize) { toInitialize.Clear(); }
+			lock (instances)
+			{
+				while (instances.Count > 0)
+				{
+					var instance = instances.Dequeue();
+
+					if (instance != null)
+						destructor(instance);
+				}
+			}
+
+			lock (toInitialize)
+			{
+				while (toInitialize.Count > 0)
+				{
+					var instance = toInitialize.Dequeue();
+
+					if (instance != null)
+						destructor(instance);
+				}
+			}
+
 			Unsubscribe(this);
 		}
 
@@ -153,7 +187,7 @@ namespace Pseudo.Internal.Pool
 			if (isSettersInitializable)
 				((IPoolSettersInitializable)reference).OnPostPoolSettersInitialize(setters);
 
-			while (Size < StartSize)
+			while (Size < startSize)
 				Enqueue(CreateInstance(), false);
 		}
 
@@ -175,15 +209,15 @@ namespace Pseudo.Internal.Pool
 
 		protected virtual object CreateInstance()
 		{
-			var instance = Activator.CreateInstance(Type);
+			var instance = constructor();
 
 			if (isInitializable)
-				((IPoolInitializable)instance).OnPrePoolInitialize();
+				((IPoolInitializable)instance).OnPrePoolInitialize(reference);
 
 			PoolUtility.InitializeFields(instance, setters);
 
 			if (isInitializable)
-				((IPoolInitializable)instance).OnPostPoolInitialize();
+				((IPoolInitializable)instance).OnPostPoolInitialize(reference);
 
 			return instance;
 		}
@@ -288,13 +322,13 @@ namespace Pseudo.Internal.Pool
 				}
 
 				if (pool.isInitializable)
-					((IPoolInitializable)instance).OnPrePoolInitialize();
+					((IPoolInitializable)instance).OnPrePoolInitialize(pool.reference);
 
 				lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 				lock (pool.instances) pool.instances.Enqueue(instance);
 
 				if (pool.isInitializable)
-					((IPoolInitializable)instance).OnPostPoolInitialize();
+					((IPoolInitializable)instance).OnPostPoolInitialize(pool.reference);
 			}
 		}
 	}

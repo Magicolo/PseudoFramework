@@ -8,29 +8,28 @@ using Pseudo.Internal;
 
 namespace Pseudo.Internal.Pool
 {
-	public class GameObjectPool : PrefabPool
+	public class GameObjectPool : Pool<GameObject>
 	{
-		public GameObject GameObject { get { return gameObject == null ? (gameObject = new GameObject(((UnityEngine.Object)reference).name + " Pool")) : gameObject; } }
-		public Transform Transform { get { return transform == null ? (transform = GameObject.transform) : transform; } }
+		public readonly Transform Transform;
 
-		protected GameObject gameObject;
-		protected Transform transform;
+		public GameObjectPool(GameObject reference, Transform transform, int startSize) :
+			base(reference, () =>
+			{
+				var instance = UnityEngine.Object.Instantiate(reference);
+				instance.transform.parent = transform;
+				instance.gameObject.SetActive(true);
 
-		public GameObjectPool(GameObject reference, int startSize) : base(reference, startSize) { }
+				return instance;
+			},
+				instance => ((GameObject)instance).Destroy(), startSize)
+		{
+			Transform = transform;
+		}
 
 		new public GameObject Create()
 		{
-			var instance = (GameObject)base.Create();
+			var instance = base.Create();
 			instance.transform.Copy(((GameObject)reference).transform);
-
-			return instance;
-		}
-
-		protected override object CreateInstance()
-		{
-			var instance = (GameObject)base.CreateInstance();
-			instance.SetActive(true);
-			instance.transform.parent = Transform;
 
 			return instance;
 		}
@@ -39,7 +38,8 @@ namespace Pseudo.Internal.Pool
 		{
 			base.Clear();
 
-			Pseudo.ObjectExtensions.Destroy(GameObject);
+			if (Transform != null)
+				Transform.gameObject.Destroy();
 		}
 
 		protected override void Enqueue(object instance, bool initialize)

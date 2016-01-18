@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace Pseudo.Internal
 	public class PEnumDrawer : CustomPropertyDrawerBase
 	{
 		bool isFlag;
-		IPEnum enumValue;
+		IEnum enumValue;
 		Array enumValues;
 		string[] enumNames;
 
@@ -37,17 +38,17 @@ namespace Pseudo.Internal
 			index = EditorGUI.Popup(currentPosition, currentProperty.displayName, index, enumNames);
 
 			if (EditorGUI.EndChangeCheck())
-				currentProperty.SetValue((PEnum)enumValues.GetValue(index));
+				currentProperty.SetValue((IEnum)enumValues.GetValue(index));
 		}
 
 		void ShowEnumFlag()
 		{
-			var enumFlag = (IPEnumFlag)enumValue;
+			var enumFlag = (IEnumFlag)enumValue;
 			var options = new FlagsOption[enumValues.Length];
 
 			for (int i = 0; i < options.Length; i++)
 			{
-				var flags = (IPEnumFlag)enumValues.GetValue(i);
+				var flags = (IEnumFlag)enumValues.GetValue(i);
 				options[i] = new FlagsOption(enumNames[i].ToGUIContent(), flags, enumFlag.HasAll(flags));
 			}
 
@@ -56,22 +57,22 @@ namespace Pseudo.Internal
 
 		void OnEnumSelected(FlagsOption option, SerializedProperty property)
 		{
-			var enumValue = property.GetValue<IPEnumFlag>();
+			var enumValue = property.GetValue<IEnumFlag>();
 
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
 					foreach (var value in enumValues)
-						enumValue = enumValue.Add((IPEnumFlag)value);
+						enumValue = enumValue.Add((IEnumFlag)value);
 					break;
 				case FlagsOption.OptionTypes.Nothing:
 					enumValue = enumValue.Remove(ByteFlag.Everything);
 					break;
 				case FlagsOption.OptionTypes.Custom:
 					if (option.IsSelected)
-						enumValue = enumValue.Remove((IPEnumFlag)option.Value);
+						enumValue = enumValue.Remove((IEnumFlag)option.Value);
 					else
-						enumValue = enumValue.Add((IPEnumFlag)option.Value);
+						enumValue = enumValue.Add((IEnumFlag)option.Value);
 					break;
 			}
 
@@ -82,10 +83,12 @@ namespace Pseudo.Internal
 		{
 			base.GetPropertyHeight(property, label);
 
-			isFlag = typeof(IPEnumFlag).IsAssignableFrom(fieldInfo.FieldType);
-			enumValue = property.GetValue<IPEnum>();
-			enumValues = PEnum.GetValues(enumValue.GetType(), enumValue.ValueType);
-			enumNames = PEnum.GetNames(enumValue.GetType(), enumValue.ValueType).Convert(name => name.Replace('_', '/'));
+			isFlag = typeof(IEnumFlag).IsAssignableFrom(fieldInfo.FieldType);
+			enumValue = property.GetValue<IEnum>();
+
+			var type = typeof(PEnum<,>).MakeGenericType(enumValue.GetType(), enumValue.ValueType);
+			enumValues = (Array)type.GetMethod("GetValues").Invoke(null, null);
+			enumNames = ((string[])type.GetMethod("GetNames").Invoke(null, null)).Convert(name => name.Replace('_', '/'));
 
 			return 16f;
 		}

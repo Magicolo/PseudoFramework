@@ -13,6 +13,9 @@ namespace Pseudo
 
 		IEntity CreateEntity();
 		IEntity CreateEntity(EntityGroups groups);
+		EntityBehaviour CreateEntity(EntityBehaviour prefab);
+		void RecycleEntity(IEntity entity);
+		void RecycleEntity(EntityBehaviour instance);
 		void AddEntity(IEntity entity);
 		void RemoveEntity(IEntity entity);
 		void RemoveAllEntities();

@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public abstract class PEnumFlag<TEnum> : PEnum<TEnum, ByteFlag>, IPEnumFlag
+	public abstract class PEnumFlag<TEnum> : PEnum<TEnum, ByteFlag>, IEnumFlag
 		where TEnum : PEnumFlag<TEnum>
 	{
 		public static TEnum Nothing
@@ -101,97 +101,97 @@ namespace Pseudo
 			return !HasAny(flags);
 		}
 
-		IPEnumFlag IPEnumFlag.Add(IPEnumFlag flags)
+		IEnumFlag IEnumFlag.Add(IEnumFlag flags)
 		{
 			return Add((TEnum)flags);
 		}
 
-		IPEnumFlag IPEnumFlag.Add(ByteFlag flags)
+		IEnumFlag IEnumFlag.Add(ByteFlag flags)
 		{
 			return Add(flags);
 		}
 
-		IPEnumFlag IPEnumFlag.Add(byte flag)
+		IEnumFlag IEnumFlag.Add(byte flag)
 		{
 			return Add(flag);
 		}
 
-		IPEnumFlag IPEnumFlag.Remove(IPEnumFlag flags)
+		IEnumFlag IEnumFlag.Remove(IEnumFlag flags)
 		{
 			return Remove((TEnum)flags);
 		}
 
-		IPEnumFlag IPEnumFlag.Remove(ByteFlag flags)
+		IEnumFlag IEnumFlag.Remove(ByteFlag flags)
 		{
 			return Remove(flags);
 		}
 
-		IPEnumFlag IPEnumFlag.Remove(byte flag)
+		IEnumFlag IEnumFlag.Remove(byte flag)
 		{
 			return Remove(flag);
 		}
 
-		bool IPEnumFlag.HasAll(IPEnumFlag flags)
+		bool IEnumFlag.HasAll(IEnumFlag flags)
 		{
 			return HasAll((TEnum)flags);
 		}
 
-		bool IPEnumFlag.HasAll(ByteFlag flags)
+		bool IEnumFlag.HasAll(ByteFlag flags)
 		{
 			return HasAll(flags);
 		}
 
-		bool IPEnumFlag.HasAny(IPEnumFlag flags)
+		bool IEnumFlag.HasAny(IEnumFlag flags)
 		{
 			return HasAny((TEnum)flags);
 		}
 
-		bool IPEnumFlag.HasAny(ByteFlag flags)
+		bool IEnumFlag.HasAny(ByteFlag flags)
 		{
 			return HasAny(flags);
 		}
 
-		bool IPEnumFlag.HasNone(IPEnumFlag flags)
+		bool IEnumFlag.HasNone(IEnumFlag flags)
 		{
 			return HasAll((TEnum)flags);
 		}
 
-		bool IPEnumFlag.HasNone(ByteFlag flags)
+		bool IEnumFlag.HasNone(ByteFlag flags)
 		{
 			return HasAll(flags);
 		}
 
-		IPEnumFlag IPEnumFlag.And(IPEnumFlag flags)
+		IEnumFlag IEnumFlag.And(IEnumFlag flags)
 		{
 			return this & flags.Value;
 		}
 
-		IPEnumFlag IPEnumFlag.And(ByteFlag flags)
+		IEnumFlag IEnumFlag.And(ByteFlag flags)
 		{
 			return this & flags;
 		}
 
-		IPEnumFlag IPEnumFlag.Or(IPEnumFlag flags)
+		IEnumFlag IEnumFlag.Or(IEnumFlag flags)
 		{
 			return this | flags.Value;
 		}
 
-		IPEnumFlag IPEnumFlag.Or(ByteFlag flags)
+		IEnumFlag IEnumFlag.Or(ByteFlag flags)
 		{
 			return this | flags;
 		}
 
-		IPEnumFlag IPEnumFlag.Xor(IPEnumFlag flags)
+		IEnumFlag IEnumFlag.Xor(IEnumFlag flags)
 		{
 			return this ^ flags.Value;
 		}
 
-		IPEnumFlag IPEnumFlag.Xor(ByteFlag flags)
+		IEnumFlag IEnumFlag.Xor(ByteFlag flags)
 		{
 			return this ^ flags;
 		}
 
-		IPEnumFlag IPEnumFlag.Not()
+		IEnumFlag IEnumFlag.Not()
 		{
 			return ~this;
 		}

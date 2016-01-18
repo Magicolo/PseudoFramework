@@ -20,10 +20,14 @@ namespace Pseudo.Internal.Pool
 		}
 	}
 
-	public class ScriptablePool : PrefabPool
+	public class ScriptablePool : Pool
 	{
-		public ScriptablePool(Type type, int startSize) : base(ScriptableObject.CreateInstance(type), startSize) { }
+		public ScriptablePool(Type type, int startSize) :
+			this(ScriptableObject.CreateInstance(type), startSize)
+		{ }
 
-		public ScriptablePool(ScriptableObject reference, int startSize) : base(reference, startSize) { }
+		public ScriptablePool(ScriptableObject reference, int startSize) :
+			base(reference, () => UnityEngine.Object.Instantiate(reference), instance => ((ScriptableObject)instance).Destroy(), startSize)
+		{ }
 	}
 }

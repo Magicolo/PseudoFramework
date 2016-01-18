@@ -2,7 +2,7 @@
 
 namespace Pseudo
 {
-	public interface IPEnum
+	public interface IEnum
 	{
 		Type ValueType { get; }
 		object Value { get; }

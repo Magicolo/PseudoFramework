@@ -1,9 +1,11 @@
 ﻿using Pseudo;
 using Pseudo.Internal.Entity;
+using Pseudo.Internal.Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Zenject;
 
 namespace Pseudo
 {
@@ -17,6 +19,7 @@ namespace Pseudo
 		}
 
 		readonly EntityGroup entities = new EntityGroup();
+		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), 16);
 
 		/// <summary>
 		/// Creates a new IEntity instance and adds it to the SystemManager.
@@ -34,10 +37,30 @@ namespace Pseudo
 		/// <returns>The IEntity instance.</returns>
 		public IEntity CreateEntity(EntityGroups groups)
 		{
-			var entity = new Entity(this, groups);
+			var entity = entityPool.Create();
+			entity.Initialize(this, groups);
 			AddEntity(entity);
 
 			return entity;
+		}
+
+		public EntityBehaviour CreateEntity(EntityBehaviour prefab)
+		{
+			var entity = PrefabPoolManager.Create(prefab);
+			entity.Initialize(this, CreateEntity(entity.Groups));
+
+			return entity;
+		}
+
+		public void RecycleEntity(IEntity entity)
+		{
+			entityPool.Recycle(entity);
+		}
+
+		public void RecycleEntity(EntityBehaviour instance)
+		{
+			RecycleEntity(instance.Entity);
+			PrefabPoolManager.Recycle(instance);
 		}
 
 		/// <summary>

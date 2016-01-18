@@ -54,19 +54,4 @@ namespace Pseudo.Internal
 			EventGroup.Trigger(Identifier, Argument1, Argument2, Argument3);
 		}
 	}
-
-	public class TriggerEvent<TId, TArg1, TArg2, TArg3, TArg4> : IEvent where TId : IEquatable<TId>
-	{
-		public EventGroup<TId> EventGroup;
-		public TId Identifier;
-		public TArg1 Argument1;
-		public TArg2 Argument2;
-		public TArg3 Argument3;
-		public TArg4 Argument4;
-
-		public void Resolve()
-		{
-			EventGroup.Trigger(Identifier, Argument1, Argument2, Argument3, Argument4);
-		}
-	}
 }

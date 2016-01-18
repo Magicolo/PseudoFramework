@@ -37,55 +37,63 @@ namespace Pseudo.Internal.Pool
 				var gameObject = new GameObject(type.Name);
 				var reference = gameObject.AddComponent(type);
 				gameObject.SetActive(false);
-				var pool = new ComponentPool(reference, startSize);
+
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
 				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
+					poolTransform = Transform.AddChild(reference.name + " Pool");
+					reference.transform.parent = poolTransform;
 				}
 
-				return pool;
+				var poolType = typeof(ComponentPool<>).MakeGenericType(type);
+
+				return (Pool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (typeof(GameObject).IsAssignableFrom(type))
 			{
 				var reference = new GameObject(type.Name);
 				reference.SetActive(false);
-				var pool = new GameObjectPool(reference, startSize);
+
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
 				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
+					poolTransform = Transform.AddChild(reference.name + " Pool");
+					reference.transform.parent = poolTransform;
 				}
 
-				return pool;
+				return new GameObjectPool(reference, poolTransform, startSize);
 			}
 			else if (typeof(ScriptableObject).IsAssignableFrom(type))
-				return new ScriptablePool(ScriptableObject.CreateInstance(type), startSize);
+				return new ScriptablePool(type, startSize);
 			else
-				return new Pool(Activator.CreateInstance(type), startSize);
+				return new Pool(type, startSize);
 		}
 
 		public static Pool CreatePrefabPool(object reference, int startSize)
 		{
 			if (reference is Component)
 			{
-				var pool = new ComponentPool((Component)reference, startSize);
+				var component = (Component)reference;
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+					poolTransform = Transform.AddChild(component.name + " Pool");
 
-				return pool;
+				var poolType = typeof(ComponentPool<>).MakeGenericType(reference.GetType());
+
+				return (Pool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (reference is GameObject)
 			{
-				var pool = new GameObjectPool((GameObject)reference, startSize);
+				var gameObject = (GameObject)reference;
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+					poolTransform = Transform.AddChild(gameObject.name + " Pool");
 
-				return pool;
+				return new GameObjectPool(gameObject, poolTransform, startSize);
 			}
 			else if (reference is ScriptableObject)
 				return new ScriptablePool((ScriptableObject)reference, startSize);
@@ -212,10 +220,5 @@ namespace Pseudo.Internal.Pool
 		public InitializationCycleException(FieldInfo field) :
 			base(string.Format("Initialization cycle detected on field {0}. You might be initializing the content of a field that references back to the its owner.", field.DeclaringType.Name + "." + field.Name))
 		{ }
-	}
-
-	public class TypeMismatchException : Exception
-	{
-		public TypeMismatchException(string message) : base(message) { }
 	}
 }

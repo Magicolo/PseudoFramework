@@ -33,18 +33,19 @@ namespace Pseudo.Internal.Entity
 		readonly IList<int> readonlyComponentIndices;
 		ComponentGroup[] componentGroups;
 
-		public Entity(IEntityManager entityManager) : this(entityManager, EntityGroups.Nothing) { }
-
-		public Entity(IEntityManager entityManager, EntityGroups groups)
+		public Entity()
 		{
-			this.entityManager = entityManager;
-			this.groups = groups;
-
 			allComponents = new List<IComponent>();
 			readonlyComponents = allComponents.AsReadOnly();
 			componentIndices = new List<int>();
 			readonlyComponentIndices = componentIndices.AsReadOnly();
 			componentGroups = new ComponentGroup[ComponentUtility.ComponentTypes.Length];
+		}
+
+		public void Initialize(IEntityManager entityManager, EntityGroups groups)
+		{
+			this.entityManager = entityManager;
+			this.groups = groups;
 		}
 
 		public IList<int> GetComponentIndices()
@@ -351,5 +352,9 @@ namespace Pseudo.Internal.Entity
 
 			return componentGroup;
 		}
+
+		void IPoolable.OnCreate() { }
+
+		void IPoolable.OnRecycle() { }
 	}
 }
