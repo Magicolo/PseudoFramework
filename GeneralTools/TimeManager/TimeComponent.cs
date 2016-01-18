@@ -36,7 +36,7 @@ namespace Pseudo
 			get { return time.FixedDeltaTime; }
 		}
 
-		[SerializeField]
-		TimeChannel time = null;
+		[SerializeField, InitializeContent]
+		TimeChannel time = new TimeChannel();
 	}
 }

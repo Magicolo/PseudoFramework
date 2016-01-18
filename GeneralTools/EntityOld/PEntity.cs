@@ -8,7 +8,6 @@ using Pseudo;
 namespace Pseudo
 {
 	[DisallowMultipleComponent]
-	[AddComponentMenu("Pseudo/General/Entity")]
 	public partial class PEntity : PMonoBehaviour, IEntityOld
 	{
 		public event Action<IEntityOld, IComponentOld> OnComponentAdded;

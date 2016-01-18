@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo.Internal.Entity
 {
-	public abstract class ComponentGroup : IComponentGroup
+	public abstract class ComponentGroup : IComponentGroup, IPoolable
 	{
 		public IList<IComponent> Components
 		{
@@ -13,7 +13,7 @@ namespace Pseudo.Internal.Entity
 		}
 
 		protected readonly List<IComponent> components;
-		readonly IList<IComponent> readonlyComponents;
+		protected readonly IList<IComponent> readonlyComponents;
 
 		protected ComponentGroup()
 		{
@@ -26,6 +26,13 @@ namespace Pseudo.Internal.Entity
 		public abstract void Remove(IComponent component);
 
 		public abstract void RemoveAll();
+
+		void IPoolable.OnCreate() { }
+
+		void IPoolable.OnRecycle()
+		{
+			RemoveAll();
+		}
 	}
 
 	public class ComponentGroup<T> : ComponentGroup, IComponentGroup<T> where T : IComponent

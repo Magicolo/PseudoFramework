@@ -17,5 +17,6 @@ namespace Pseudo
 		IEntityGroup Filter(EntityGroups groups, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All);
+		bool Contains(IEntity entity);
 	}
 }

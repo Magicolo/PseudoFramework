@@ -18,8 +18,9 @@ namespace Pseudo.Internal.Entity
 			get { return componentTypes; }
 		}
 
-		static readonly Dictionary<Type, int> componentIndexDict = new Dictionary<Type, int>();
-		static readonly Dictionary<Type, Type[]> subComponentTypeDict = new Dictionary<Type, Type[]>();
+		static readonly Dictionary<Type, Type> typeToGroupType = new Dictionary<Type, Type>();
+		static readonly Dictionary<Type, int> typeToIndex = new Dictionary<Type, int>();
+		static readonly Dictionary<Type, Type[]> typeToSubTypes = new Dictionary<Type, Type[]>();
 		static Type[] componentTypes = new Type[0];
 		static int nextIndex;
 
@@ -27,10 +28,10 @@ namespace Pseudo.Internal.Entity
 		{
 			int index;
 
-			if (!componentIndexDict.TryGetValue(type, out index))
+			if (!typeToIndex.TryGetValue(type, out index))
 			{
 				index = nextIndex++;
-				componentIndexDict[type] = index;
+				typeToIndex[type] = index;
 
 				if (componentTypes.Length <= index)
 					Array.Resize(ref componentTypes, Mathf.NextPowerOfTwo(index + 1));
@@ -53,6 +54,19 @@ namespace Pseudo.Internal.Entity
 			return componentIndices;
 		}
 
+		public static Type GetComponentGroupType(Type type)
+		{
+			Type groupType;
+
+			if (!typeToGroupType.TryGetValue(type, out groupType))
+			{
+				groupType = typeof(ComponentGroup<>).MakeGenericType(type);
+				typeToGroupType[type] = groupType;
+			}
+
+			return groupType;
+		}
+
 		public static Type GetComponentType(int typeIndex)
 		{
 			return componentTypes[typeIndex];
@@ -72,7 +86,7 @@ namespace Pseudo.Internal.Entity
 		{
 			Type[] subComponentTypes;
 
-			if (!subComponentTypeDict.TryGetValue(componentType, out subComponentTypes))
+			if (!typeToSubTypes.TryGetValue(componentType, out subComponentTypes))
 			{
 				var type = componentType;
 				var types = new HashSet<Type>();
@@ -89,7 +103,7 @@ namespace Pseudo.Internal.Entity
 				}
 
 				subComponentTypes = types.ToArray();
-				subComponentTypeDict[componentType] = subComponentTypes;
+				typeToSubTypes[componentType] = subComponentTypes;
 			}
 
 			return subComponentTypes;

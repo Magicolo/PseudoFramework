@@ -9,6 +9,6 @@ namespace Pseudo.Internal.Pool
 {
 	public static class PoolHolder<T> where T : class
 	{
-		public readonly static Pool Pool = TypePoolManager.GetPool(typeof(T));
+		public readonly static IPool Pool = TypePoolManager.GetPool(typeof(T));
 	}
 }

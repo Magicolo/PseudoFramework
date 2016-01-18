@@ -19,7 +19,7 @@ namespace Pseudo
 		}
 
 		readonly EntityGroup entities = new EntityGroup();
-		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), 16);
+		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 16);
 
 		/// <summary>
 		/// Creates a new IEntity instance and adds it to the SystemManager.
@@ -47,13 +47,14 @@ namespace Pseudo
 		public EntityBehaviour CreateEntity(EntityBehaviour prefab)
 		{
 			var entity = PrefabPoolManager.Create(prefab);
-			entity.Initialize(this, CreateEntity(entity.Groups));
+			entity.Initialize(this);
 
 			return entity;
 		}
 
 		public void RecycleEntity(IEntity entity)
 		{
+			RemoveEntity(entity);
 			entityPool.Recycle(entity);
 		}
 

@@ -6,29 +6,21 @@ using System.Linq;
 using Pseudo;
 using Zenject;
 
-namespace Pseudo.Internal.Pool
+namespace Pseudo
 {
 	public class ComponentPool<T> : Pool<T> where T : Component
 	{
 		public readonly Transform Transform;
 
-		public ComponentPool(T reference, Transform transform, int startSize) :
-			base(reference, () =>
-			{
-				var instance = UnityEngine.Object.Instantiate(reference);
-				instance.transform.parent = transform;
-				instance.gameObject.SetActive(true);
-
-				return instance;
-			},
-				instance => ((T)instance).gameObject.Destroy(), startSize)
+		public ComponentPool(T reference, Transform transform, int startSize) : base(reference, reference.GetType(), null, null, startSize, false)
 		{
 			Transform = transform;
+			Initialize();
 		}
 
 		public override T Create()
 		{
-			var instance = (T)base.Create();
+			var instance = base.Create();
 			instance.transform.Copy(((T)reference).transform);
 
 			return instance;
@@ -57,6 +49,20 @@ namespace Pseudo.Internal.Pool
 			instance.gameObject.SetActive(true);
 
 			return instance;
+		}
+
+		protected override object Construct()
+		{
+			var instance = UnityEngine.Object.Instantiate((T)reference);
+			instance.transform.parent = Transform;
+			instance.gameObject.SetActive(true);
+
+			return instance;
+		}
+
+		protected override void Destroy(object instance)
+		{
+			((T)instance).gameObject.Destroy();
 		}
 	}
 }

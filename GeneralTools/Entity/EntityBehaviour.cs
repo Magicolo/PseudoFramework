@@ -9,10 +9,14 @@ using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/Entity3")]
+	[DisallowMultipleComponent]
+	[AddComponentMenu("Pseudo/General/Entity")]
 	public class EntityBehaviour : PMonoBehaviour, IPoolSettersInitializable
 	{
-		public IEntity Entity { get; private set; }
+		public IEntity Entity
+		{
+			get { return entity; }
+		}
 		public EntityGroups Groups
 		{
 			get { return groups; }
@@ -22,20 +26,25 @@ namespace Pseudo
 		EntityGroups groups = EntityGroups.Nothing;
 		[InitializeContent]
 		IComponent[] components;
-		IEntityManager entityManager = null;
+		IEntity entity;
+		IEntityManager entityManager;
+
+		void Awake()
+		{
+			components = GetComponents<IComponent>();
+		}
 
 		[PostInject]
-		public void Initialize(IEntityManager entityManager, IEntity entity)
+		public void Initialize(IEntityManager entityManager)
 		{
 			this.entityManager = entityManager;
-			Entity = entity;
-			Entity.AddComponents(components ?? (components = GetComponents<IComponent>()));
+			entity = entityManager.CreateEntity(groups);
+			entity.AddComponents(components ?? (components = GetComponents<IComponent>()));
 		}
 
 		public void Recycle()
 		{
 			entityManager.RecycleEntity(this);
-			Entity = null;
 		}
 
 		void IPoolSettersInitializable.OnPrePoolSettersInitialize()

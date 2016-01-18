@@ -13,7 +13,7 @@ namespace Pseudo
 {
 	public static class TypePoolManager
 	{
-		static readonly Dictionary<Type, Pool> pools = new Dictionary<Type, Pool>(8);
+		static readonly Dictionary<Type, IPool> pools = new Dictionary<Type, IPool>(8);
 
 		public static int StartSize = 2;
 
@@ -112,14 +112,14 @@ namespace Pseudo
 			elements.Clear();
 		}
 
-		public static Pool GetPool<T>() where T : class
+		public static IPool GetPool<T>() where T : class
 		{
 			return PoolHolder<T>.Pool;
 		}
 
-		public static Pool GetPool(Type type)
+		public static IPool GetPool(Type type)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (!pools.TryGetValue(type, out pool))
 			{

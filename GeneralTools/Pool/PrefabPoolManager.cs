@@ -13,8 +13,8 @@ namespace Pseudo
 	{
 		public static int StartSize = 2;
 
-		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(8);
-		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(64);
+		static readonly Dictionary<object, IPool> pools = new Dictionary<object, IPool>(8);
+		static readonly Dictionary<object, IPool> instancePool = new Dictionary<object, IPool>(64);
 
 		public static T Create<T>(T prefab) where T : class
 		{
@@ -33,7 +33,7 @@ namespace Pseudo
 			if (instance == null)
 				return;
 
-			Pool pool;
+			IPool pool;
 
 			if (instancePool.TryGetValue(instance, out pool))
 				pool.Recycle(instance);
@@ -49,9 +49,9 @@ namespace Pseudo
 			instance = null;
 		}
 
-		public static Pool GetPool(object prefab)
+		public static IPool GetPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (!pools.TryGetValue(prefab, out pool))
 			{
@@ -69,7 +69,7 @@ namespace Pseudo
 
 		public static void ClearPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (pools.Pop(prefab, out pool))
 				pool.Clear();
@@ -86,7 +86,7 @@ namespace Pseudo
 
 		public static void ResetPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (pools.TryGetValue(prefab, out pool))
 				pool.Reset();

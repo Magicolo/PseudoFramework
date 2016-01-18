@@ -30,8 +30,10 @@ namespace Pseudo.Internal.Pool
 		});
 		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
 
-		public static Pool CreateTypePool(Type type, int startSize)
+		public static IPool CreateTypePool(Type type, int startSize)
 		{
+			IPool pool;
+
 			if (typeof(Component).IsAssignableFrom(type))
 			{
 				var gameObject = new GameObject(type.Name);
@@ -47,8 +49,7 @@ namespace Pseudo.Internal.Pool
 				}
 
 				var poolType = typeof(ComponentPool<>).MakeGenericType(type);
-
-				return (Pool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
+				pool = (IPool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (typeof(GameObject).IsAssignableFrom(type))
 			{
@@ -63,16 +64,27 @@ namespace Pseudo.Internal.Pool
 					reference.transform.parent = poolTransform;
 				}
 
-				return new GameObjectPool(reference, poolTransform, startSize);
+				pool = new GameObjectPool(reference, poolTransform, startSize);
 			}
 			else if (typeof(ScriptableObject).IsAssignableFrom(type))
-				return new ScriptablePool(type, startSize);
+			{
+				var poolType = typeof(ScriptablePool<>).MakeGenericType(type);
+				pool = (IPool)Activator.CreateInstance(poolType, startSize);
+			}
 			else
-				return new Pool(type, startSize);
+			{
+				var reference = Activator.CreateInstance(type);
+				var poolType = typeof(Pool<>).MakeGenericType(type);
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
+
+			return pool;
 		}
 
-		public static Pool CreatePrefabPool(object reference, int startSize)
+		public static IPool CreatePrefabPool(object reference, int startSize)
 		{
+			IPool pool;
+
 			if (reference is Component)
 			{
 				var component = (Component)reference;
@@ -82,8 +94,7 @@ namespace Pseudo.Internal.Pool
 					poolTransform = Transform.AddChild(component.name + " Pool");
 
 				var poolType = typeof(ComponentPool<>).MakeGenericType(reference.GetType());
-
-				return (Pool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
+				pool = (IPool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (reference is GameObject)
 			{
@@ -93,12 +104,20 @@ namespace Pseudo.Internal.Pool
 				if (ApplicationUtility.IsPlaying)
 					poolTransform = Transform.AddChild(gameObject.name + " Pool");
 
-				return new GameObjectPool(gameObject, poolTransform, startSize);
+				pool = new GameObjectPool(gameObject, poolTransform, startSize);
 			}
 			else if (reference is ScriptableObject)
-				return new ScriptablePool((ScriptableObject)reference, startSize);
+			{
+				var poolType = typeof(ScriptablePool<>).MakeGenericType(reference.GetType());
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
 			else
-				return new Pool(reference, startSize);
+			{
+				var poolType = typeof(Pool<>).MakeGenericType(reference.GetType());
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
+
+			return pool;
 		}
 
 		public static void InitializeFields(object instance, List<IPoolSetter> setters)

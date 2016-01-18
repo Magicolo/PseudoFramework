@@ -45,8 +45,8 @@ namespace Pseudo
 		protected readonly CachedValue<TimeComponent> cachedTime;
 		public TimeComponent CachedTime { get { return cachedTime; } }
 
-		[SerializeField]
-		GravityChannel gravity = null;
+		[SerializeField, InitializeContent]
+		GravityChannel gravity = new GravityChannel();
 		bool hasRigidbody;
 		bool hasRigidbody2D;
 

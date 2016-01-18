@@ -22,6 +22,7 @@ namespace Pseudo.Internal.Entity
 			get { return entities[index]; }
 		}
 
+		readonly HashSet<IEntity> hashedEntities = new HashSet<IEntity>();
 		readonly List<IEntity> entities = new List<IEntity>();
 		readonly EntityMatchGroup[] subGroups = new EntityMatchGroup[matchValues.Length];
 
@@ -45,10 +46,16 @@ namespace Pseudo.Internal.Entity
 			return GetMatchGroup(match).GetGroupByComponentIndices(ComponentUtility.GetComponentIndices(componentTypes));
 		}
 
+		public bool Contains(IEntity entity)
+		{
+			return hashedEntities.Contains(entity);
+		}
+
 		public void Clear()
 		{
 			OnEntityAdded = null;
 			OnEntityRemoved = null;
+			hashedEntities.Clear();
 			entities.Clear();
 
 			for (int i = 0; i < subGroups.Length; i++)
@@ -78,7 +85,7 @@ namespace Pseudo.Internal.Entity
 
 		void RegisterEntity(IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (hashedEntities.Add(entity))
 			{
 				entities.Add(entity);
 
@@ -89,8 +96,10 @@ namespace Pseudo.Internal.Entity
 
 		void UnregisterEntity(IEntity entity)
 		{
-			if (entities.Remove(entity))
+			if (hashedEntities.Remove(entity))
 			{
+				entities.Remove(entity);
+
 				if (OnEntityRemoved != null)
 					OnEntityRemoved(entity);
 			}
