@@ -8,6 +8,31 @@ namespace Pseudo
 {
 	public abstract class SystemBase : ISystem
 	{
+		public bool Active
+		{
+			get { return active; }
+			set
+			{
+				if (active != value)
+				{
+					active = value;
+
+					if (active)
+						OnActivate();
+					else
+						OnDeactivate();
+				}
+			}
+		}
+		public virtual float UpdateDelay
+		{
+			get { return 0f; }
+		}
+		public virtual float LateUpdateDelay
+		{
+			get { return 0f; }
+		}
+
 		[Inject]
 		public ISystemManager SystemManager { get; private set; }
 		[Inject]
@@ -21,7 +46,13 @@ namespace Pseudo
 		[InjectOptional]
 		public IInputManager InputManager { get; private set; }
 
+		bool active;
+
 		[PostInject]
 		protected virtual void Initialize() { }
+
+		protected virtual void OnActivate() { }
+
+		protected virtual void OnDeactivate() { }
 	}
 }

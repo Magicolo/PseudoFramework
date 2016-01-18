@@ -27,7 +27,6 @@ namespace Pseudo
 		[InitializeContent]
 		IComponent[] components;
 		IEntity entity;
-		IEntityManager entityManager;
 
 		void Awake()
 		{
@@ -37,14 +36,35 @@ namespace Pseudo
 		[PostInject]
 		public void Initialize(IEntityManager entityManager)
 		{
-			this.entityManager = entityManager;
+			components = components ?? GetComponents<IComponent>();
 			entity = entityManager.CreateEntity(groups);
-			entity.AddComponents(components ?? (components = GetComponents<IComponent>()));
+			entity.AddComponents(components);
 		}
 
-		public void Recycle()
+		public override void OnCreate()
 		{
-			entityManager.RecycleEntity(this);
+			base.OnCreate();
+
+			for (int i = 0; i < components.Length; i++)
+			{
+				var poolable = components[i] as IPoolable;
+
+				if (poolable != null)
+					poolable.OnCreate();
+			}
+		}
+
+		public override void OnRecycle()
+		{
+			base.OnRecycle();
+
+			for (int i = 0; i < components.Length; i++)
+			{
+				var poolable = components[i] as IPoolable;
+
+				if (poolable != null)
+					poolable.OnRecycle();
+			}
 		}
 
 		void IPoolSettersInitializable.OnPrePoolSettersInitialize()

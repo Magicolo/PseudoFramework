@@ -59,9 +59,9 @@ namespace Pseudo
 
 		void IPoolSettersInitializable.OnPostPoolSettersInitialize(List<IPoolSetter> setters) { }
 
-		void IPoolInitializable.OnPrePoolInitialize(object reference) { }
+		void IPoolInitializable.OnPrePoolInitialize() { }
 
-		void IPoolInitializable.OnPostPoolInitialize(object reference)
+		void IPoolInitializable.OnPostPoolInitialize()
 		{
 			RegisterAllComponents();
 			ComponentSerializer.InjectReferences(allComponents, references);

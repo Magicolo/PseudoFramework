@@ -41,20 +41,21 @@ namespace Pseudo.Internal
 		protected float time;
 		protected float lastTime;
 
+		public virtual void ResetTime()
+		{
+			time = 0f;
+			lastTime = GetTime();
+		}
+
 		protected virtual void UpdateTime()
 		{
 			float currentTime = GetTime();
 			time += (currentTime - lastTime) * timeScale;
 			lastTime = currentTime;
 		}
+
 		protected abstract float GetTime();
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
-
-		public virtual void ResetTime()
-		{
-			time = 0f;
-			lastTime = 0f;
-		}
 	}
 }

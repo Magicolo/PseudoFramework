@@ -7,6 +7,8 @@ namespace Pseudo
 {
 	public interface ISystem
 	{
+		bool Active { get; set; }
+
 		ISystemManager SystemManager { get; }
 		IEntityManager EntityManager { get; }
 		IEventManager EventManager { get; }

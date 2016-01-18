@@ -29,6 +29,13 @@ namespace Pseudo
 				OnCreate();
 		}
 
+		protected virtual void OnValidate()
+		{
+#if UNITY_EDITOR
+			Pseydo.Internal.Editor.InspectorUtility.OnValidate(this);
+#endif
+		}
+
 		public virtual void OnCreate() { created = true; }
 		public virtual void OnRecycle() { }
 	}

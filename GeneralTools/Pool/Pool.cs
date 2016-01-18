@@ -203,12 +203,12 @@ namespace Pseudo
 				var instance = constructor();
 
 				if (isInitializable)
-					((IPoolInitializable)instance).OnPrePoolInitialize(reference);
+					((IPoolInitializable)instance).OnPrePoolInitialize();
 
 				PoolUtility.InitializeFields(instance, setters);
 
 				if (isInitializable)
-					((IPoolInitializable)instance).OnPostPoolInitialize(reference);
+					((IPoolInitializable)instance).OnPostPoolInitialize();
 
 				return instance;
 			}
@@ -325,13 +325,13 @@ namespace Pseudo
 					}
 
 					if (pool.isInitializable)
-						((IPoolInitializable)instance).OnPrePoolInitialize(pool.reference);
+						((IPoolInitializable)instance).OnPrePoolInitialize();
 
 					lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 					lock (pool.instances) pool.instances.Enqueue(instance);
 
 					if (pool.isInitializable)
-						((IPoolInitializable)instance).OnPostPoolInitialize(pool.reference);
+						((IPoolInitializable)instance).OnPostPoolInitialize();
 				}
 			}
 		}

@@ -51,6 +51,7 @@ namespace Pseudo
 		public virtual void AddSystem(ISystem system)
 		{
 			systems.Add(system);
+			system.Active = true;
 
 			var updateable = system as IUpdateable;
 

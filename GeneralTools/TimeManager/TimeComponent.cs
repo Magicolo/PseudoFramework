@@ -38,5 +38,12 @@ namespace Pseudo
 
 		[SerializeField, InitializeContent]
 		TimeChannel time = new TimeChannel();
+
+		public override void OnCreate()
+		{
+			base.OnCreate();
+
+			time.ResetTime();
+		}
 	}
 }

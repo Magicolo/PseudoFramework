@@ -67,6 +67,11 @@ namespace Pseudo
 			return pools.Count;
 		}
 
+		public static bool HasPool(object prefab)
+		{
+			return pools.ContainsKey(prefab);
+		}
+
 		public static void ClearPool(object prefab)
 		{
 			IPool pool;
@@ -97,5 +102,32 @@ namespace Pseudo
 			foreach (var pool in pools)
 				pool.Value.Reset();
 		}
+
+#if UNITY_EDITOR
+		[UnityEditor.Callbacks.DidReloadScripts]
+		static void OnReloadScripts()
+		{
+			Pseydo.Internal.Editor.InspectorUtility.OnValidate += OnValidate;
+		}
+
+		static void OnValidate(UnityEngine.Object instance)
+		{
+			ResetPool(instance);
+			GameObject gameObject = null;
+
+			if (instance is GameObject)
+				gameObject = (GameObject)instance;
+			else if (instance is Component)
+				gameObject = ((Component)instance).gameObject;
+
+			if (gameObject == null)
+				return;
+
+			var components = gameObject.GetComponents<Component>();
+
+			for (int i = 0; i < components.Length; i++)
+				ResetPool(components[i]);
+		}
+#endif
 	}
 }
