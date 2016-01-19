@@ -281,7 +281,7 @@ namespace Pseudo.Internal.Editor
 		{
 			property = property.serializedObject.FindProperty(property.propertyPath);
 
-			List<SerializedProperty> children = new List<SerializedProperty>();
+			var children = new List<SerializedProperty>();
 
 			while (property.NextVisible(true))
 				children.Add(property.serializedObject.FindProperty(property.propertyPath));

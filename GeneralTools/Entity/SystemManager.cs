@@ -20,6 +20,7 @@ namespace Pseudo
 		readonly ITimeChannel timeChannel;
 		readonly List<ISystem> systems;
 		readonly IList<ISystem> readonlySystems;
+		readonly Dictionary<Type, ISystem> typeToSystem;
 		readonly List<IUpdateable> updateables;
 		readonly List<float> updateCounters;
 		readonly List<ILateUpdateable> lateUpdateables;
@@ -37,6 +38,7 @@ namespace Pseudo
 			this.timeChannel = timeChannel;
 			systems = new List<ISystem>();
 			readonlySystems = systems.AsReadOnly();
+			typeToSystem = new Dictionary<Type, ISystem>();
 			updateables = new List<IUpdateable>();
 			updateCounters = new List<float>();
 			lateUpdateables = new List<ILateUpdateable>();
@@ -44,12 +46,44 @@ namespace Pseudo
 			fixedUpdateables = new List<IFixedUpdateable>();
 		}
 
+		public T GetSystem<T>() where T : class, ISystem
+		{
+			return (T)GetSystem(typeof(T));
+		}
+
+		public ISystem GetSystem(Type type)
+		{
+			ISystem system;
+			typeToSystem.TryGetValue(type, out system);
+
+			return system;
+		}
+
+		public bool HasSystem(ISystem system)
+		{
+			return systems.Contains(system);
+		}
+
+		public bool HasSystem<T>() where T : class, ISystem
+		{
+			return HasSystem(typeof(T));
+		}
+
+		public bool HasSystem(Type type)
+		{
+			return typeToSystem.ContainsKey(type);
+		}
+
 		/// <summary>
 		/// Registers an ISystem instance to the SystemManager.
 		/// </summary>
 		/// <param name="system">The ISystem instance to register.</param>
-		public virtual void AddSystem(ISystem system)
+		public void AddSystem(ISystem system)
 		{
+			if (typeToSystem.ContainsKey(system.GetType()))
+				return;
+
+			typeToSystem[system.GetType()] = system;
 			systems.Add(system);
 			system.Active = true;
 
@@ -82,18 +116,36 @@ namespace Pseudo
 		/// Registers an ISystem instance of the provided type to the SystemManager.
 		/// </summary>
 		/// <typeparam name="T">The type of the ISystem instance.</typeparam>
-		public virtual void AddSystem<T>() where T : class, ISystem
+		public void AddSystem<T>() where T : class, ISystem
 		{
-			AddSystem(container.Instantiate<T>());
+			AddSystem(typeof(T));
+		}
+
+		public void AddSystem(Type type)
+		{
+			AddSystem((ISystem)container.Instantiate(type));
 		}
 
 		/// <summary>
 		/// Unregisters an ISystem instance from the SystemManager.
 		/// </summary>
 		/// <param name="system">The ISystem instance to unregister.</param>
-		public virtual void RemoveSystem(ISystem system)
+		public void RemoveSystem(ISystem system)
 		{
-			if (systems.Remove(system))
+			if (systems.Contains(system))
+				RemoveSystem(system.GetType());
+		}
+
+		public void RemoveSystem<T>() where T : class, ISystem
+		{
+			RemoveSystem(typeof(T));
+		}
+
+		public void RemoveSystem(Type type)
+		{
+			ISystem system;
+
+			if (typeToSystem.Pop(type, out system) && systems.Remove(system))
 			{
 				var updateable = system as IUpdateable;
 				if (updateable != null)
@@ -131,7 +183,7 @@ namespace Pseudo
 		/// <summary>
 		/// Unregisters all ISystem instances from the SystemManager.
 		/// </summary>
-		public virtual void RemoveAllSystems()
+		public void RemoveAllSystems()
 		{
 			for (int i = 0; i < systems.Count; i++)
 			{
@@ -142,6 +194,7 @@ namespace Pseudo
 			}
 
 			systems.Clear();
+			typeToSystem.Clear();
 			updateables.Clear();
 			fixedUpdateables.Clear();
 			lateUpdateables.Clear();

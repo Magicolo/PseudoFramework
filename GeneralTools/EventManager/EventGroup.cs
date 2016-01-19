@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo.Internal
 {
-	public class EventGroup<TId> : IEventGroup where TId : IEquatable<TId>
+	public class EventGroup<TId> : IEventGroup
 	{
 		static readonly EqualityComparer<TId> comparer = EqualityComparer<TId>.Default;
 
