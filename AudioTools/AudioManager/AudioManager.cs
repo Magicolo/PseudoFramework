@@ -61,6 +61,11 @@ namespace Pseudo
 			Initialize();
 		}
 
+		void OnDestroy()
+		{
+			StopAllItemsImmediate();
+		}
+
 		void Reset()
 		{
 			Initialize();

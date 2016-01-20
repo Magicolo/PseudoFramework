@@ -7,18 +7,18 @@ using System.Text;
 
 namespace Tests
 {
-	public class EventTests
+	public class EventManagerTests
 	{
 		EventManager eventManager;
 
 		[SetUp]
-		public void EntityTestsSetup()
+		public void Setup()
 		{
 			eventManager = new EventManager();
 		}
 
 		[TearDown]
-		public void EntityTestsTearDown()
+		public void TearDown()
 		{
 			eventManager = null;
 		}

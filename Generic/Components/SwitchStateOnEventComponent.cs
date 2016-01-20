@@ -18,6 +18,7 @@ namespace Pseudo
 			public int State;
 		}
 
+		[InitializeContent]
 		public EventData[] Events = new EventData[0];
 	}
 }

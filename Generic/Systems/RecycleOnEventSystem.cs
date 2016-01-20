@@ -44,7 +44,10 @@ namespace Pseudo
 				var recycleEvent = recycle.Events[i];
 
 				if (recycleEvent.Event.HasAll(identifier))
+				{
 					EntityManager.RecycleEntity(recycleEvent.Recycle);
+					break;
+				}
 			}
 		}
 	}

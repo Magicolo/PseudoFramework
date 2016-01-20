@@ -17,6 +17,7 @@ namespace Pseudo
 			public AudioSettingsBase Audio;
 		}
 
+		[InitializeContent]
 		public EventData[] Events = new EventData[0];
 	}
 }

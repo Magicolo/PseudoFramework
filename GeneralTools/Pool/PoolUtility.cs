@@ -175,7 +175,7 @@ namespace Pseudo.Internal.Pool
 
 		static IPoolSetter GetSetter(object value, FieldInfo field, List<object> toIgnore)
 		{
-			if (value == null || value.GetType().IsValueType)
+			if (value == null)
 				return new PoolSetter(field, value);
 			else if (toIgnore.Contains(value))
 				throw new InitializationCycleException(field);
@@ -184,7 +184,9 @@ namespace Pseudo.Internal.Pool
 				return new PoolArraySetter(field, value.GetType(), GetElementSetters((IList)value, field, toIgnore));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
-				toIgnore.Add(value);
+				if (!(value is ValueType))
+					toIgnore.Add(value);
+
 				return new PoolContentSetter(field, value.GetType(), GetSetters(value, toIgnore));
 			}
 			else
@@ -203,14 +205,16 @@ namespace Pseudo.Internal.Pool
 
 		static IPoolElementSetter GetElementSetter(object element, FieldInfo field, List<object> toIgnore)
 		{
-			if (element == null || element.GetType().IsValueType)
+			if (element == null)
 				return new PoolElementSetter(element);
 			else if (toIgnore.Contains(element))
 				throw new InitializationCycleException(field);
 
 			if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
-				toIgnore.Add(element);
+				if (!(element is ValueType))
+					toIgnore.Add(element);
+
 				return new PoolElementContentSetter(element.GetType(), GetSetters(element, toIgnore));
 			}
 			else
@@ -227,7 +231,7 @@ namespace Pseudo.Internal.Pool
 				return false;
 			else if (field.IsInitOnly || field.IsBackingField())
 				return false;
-			else if (typeof(UnityEngine.Object).IsAssignableFrom(field.FieldType) && field.IsPublic && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
+			else if ((value is UnityEngine.Object) && (field.IsPublic || field.IsDefined(typeof(SerializeField), true)) && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
 				return false;
 			else
 				return true;

@@ -58,12 +58,12 @@ namespace Pseudo
 		{
 			var stateMachine = entity.GetComponent<StateMachineComponent>();
 
-			EventManager.Trigger(StateMachineEvents.OnSwitchState, entity, stateMachine.InitialStateIndex);
+			EventManager.TriggerImmediate(StateMachineEvents.OnSwitchState, entity, stateMachine.InitialStateIndex);
 		}
 
 		void OnEntityRemove(IEntity entity)
 		{
-			EventManager.Trigger(StateMachineEvents.OnSwitchState, entity, -1);
+			EventManager.TriggerImmediate(StateMachineEvents.OnSwitchState, entity, -1);
 		}
 
 		void OnSwitchState(IEntity entity, int stateIndex)

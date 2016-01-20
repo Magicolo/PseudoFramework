@@ -17,6 +17,7 @@ namespace Pseudo
 			public EntityBehaviour Recycle;
 		}
 
+		[InitializeContent]
 		public EventData[] Events = new EventData[0];
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Entity
 {
@@ -66,6 +67,8 @@ namespace Pseudo.Internal.Entity
 
 		public override void Remove(IComponent component)
 		{
+			Assert.IsTrue(component is T);
+
 			if (components.Remove(component))
 				genericComponents.Remove((T)component);
 		}

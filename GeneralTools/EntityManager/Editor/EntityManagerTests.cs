@@ -8,28 +8,25 @@ using Pseudo;
 
 namespace Tests
 {
-	public class EntityTests
+	public class EntityManagerTests
 	{
-		SystemManager systemManager;
 		EntityManager entityManager;
 
 		[SetUp]
-		public void EntityTestsSetup()
+		public void Setup()
 		{
-			systemManager = new SystemManager();
 			entityManager = new EntityManager();
 		}
 
 		[TearDown]
-		public void EntityTestsTearDown()
+		public void TearDown()
 		{
-			systemManager = null;
 			entityManager = null;
 		}
 
 		#region Entity General
 		[Test]
-		public void EntityAddComponent()
+		public void AddComponent()
 		{
 			var entity = entityManager.CreateEntity();
 			var component = new DummyComponent1();
@@ -39,7 +36,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityRemoveComponent()
+		public void RemoveComponent()
 		{
 			var entity = entityManager.CreateEntity();
 			var component = new DummyComponent1();
@@ -51,7 +48,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityRemoveComponents()
+		public void RemoveComponents()
 		{
 			var entity = entityManager.CreateEntity();
 			var component1 = new DummyComponent1();
@@ -74,7 +71,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityRemoveAllComponents()
+		public void RemoveAllComponents()
 		{
 			var entity = entityManager.CreateEntity();
 			var component1 = new DummyComponent1();
@@ -90,7 +87,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityGetComponent()
+		public void GetComponent()
 		{
 			var entity = entityManager.CreateEntity();
 			var component = new DummyComponent1();
@@ -101,7 +98,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityGetComponents()
+		public void GetComponents()
 		{
 			var entity = entityManager.CreateEntity();
 			var component1 = new DummyComponent1();
@@ -117,7 +114,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityHasComponent()
+		public void HasComponent()
 		{
 			var entity = entityManager.CreateEntity();
 			var component = new DummyComponent1();
@@ -129,7 +126,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentDuplicatesNotAllowed()
+		public void ComponentDuplicatesNotAllowed()
 		{
 			var entity = entityManager.CreateEntity();
 			var component = new DummyComponent1();
@@ -144,7 +141,7 @@ namespace Tests
 		#endregion
 
 		#region Entity Group Match
-		void EntityGroupMatchSetup()
+		void GroupMatchSetup()
 		{
 			entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1)));
 			entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2)));
@@ -154,43 +151,43 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityGroupMatchAll()
+		public void GroupMatchAll()
 		{
-			EntityGroupMatchSetup();
+			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1)), EntityMatches.All);
 			Assert.That(entityGroup.Count == 2);
 		}
 
 		[Test]
-		public void EntityGroupMatchAny()
+		public void GroupMatchAny()
 		{
-			EntityGroupMatchSetup();
+			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.Any);
 			Assert.That(entityGroup.Count == 4);
 		}
 
 		[Test]
-		public void EntityGroupMatchNone()
+		public void GroupMatchNone()
 		{
-			EntityGroupMatchSetup();
+			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.None);
 			Assert.That(entityGroup.Count == 1);
 		}
 
 		[Test]
-		public void EntityGroupMatchExact()
+		public void GroupMatchExact()
 		{
-			EntityGroupMatchSetup();
+			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.Exact);
 			Assert.That(entityGroup.Count == 1);
 		}
 
 		[Test]
-		public void EntityGroupChangeUpdate()
+		public void GroupChangeUpdate()
 		{
 			var entity = entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2, 3)));
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
@@ -204,7 +201,7 @@ namespace Tests
 		#endregion
 
 		#region Entity Component Group Match
-		void EntityComponentGroupMatchSetup()
+		void ComponentGroupMatchSetup()
 		{
 			entityManager.CreateEntity().AddComponent(new DummyComponent1());
 			entityManager.CreateEntity().AddComponent(new DummyComponent2());
@@ -220,9 +217,9 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupMatchAll()
+		public void ComponentGroupMatchAll()
 		{
-			EntityComponentGroupMatchSetup();
+			ComponentGroupMatchSetup();
 
 			var entityGroup1 = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.All);
 			var entityGroup2 = entityManager.Entities.Filter(typeof(DummyComponent2), EntityMatches.All);
@@ -236,9 +233,9 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupMatchAny()
+		public void ComponentGroupMatchAny()
 		{
-			EntityComponentGroupMatchSetup();
+			ComponentGroupMatchSetup();
 
 			var entityGroup1 = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.Any);
 			var entityGroup2 = entityManager.Entities.Filter(typeof(DummyComponent2), EntityMatches.Any);
@@ -252,9 +249,9 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupMatchNone()
+		public void ComponentGroupMatchNone()
 		{
-			EntityComponentGroupMatchSetup();
+			ComponentGroupMatchSetup();
 
 			var entityGroup1 = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.None);
 			var entityGroup2 = entityManager.Entities.Filter(typeof(DummyComponent2), EntityMatches.None);
@@ -268,9 +265,9 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupMatchExact()
+		public void ComponentGroupMatchExact()
 		{
-			EntityComponentGroupMatchSetup();
+			ComponentGroupMatchSetup();
 
 			var entityGroup1 = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.Exact);
 			var entityGroup2 = entityManager.Entities.Filter(typeof(DummyComponent2), EntityMatches.Exact);
@@ -284,7 +281,7 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupChangeUpdate()
+		public void ComponentGroupChangeUpdate()
 		{
 			var entity = entityManager.CreateEntity();
 			entity.AddComponent(new DummyComponent1());
@@ -298,93 +295,13 @@ namespace Tests
 		}
 
 		[Test]
-		public void EntityComponentGroupMatchInheritance()
+		public void ComponentGroupMatchInheritance()
 		{
 			var entity = entityManager.CreateEntity();
 			entity.AddComponent(Substitute.For<DummyComponent1>());
 
 			var entityGroup = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.All);
 			Assert.That(entityGroup.Count == 1);
-		}
-		#endregion
-
-		#region Systems General
-		[Test]
-		public void SystemAdd()
-		{
-			var system = Substitute.For<ISystem>();
-
-			systemManager.AddSystem(system);
-			Assert.That(systemManager.Systems.Count == 1);
-		}
-
-		[Test]
-		public void SystemRemove()
-		{
-			var system = Substitute.For<ISystem>();
-
-			systemManager.AddSystem(system);
-			Assert.That(systemManager.Systems.Count == 1);
-			systemManager.RemoveSystem(system);
-			Assert.That(systemManager.Systems.Count == 0);
-		}
-
-		[Test]
-		public void SystemRemoveAll()
-		{
-			var system = Substitute.For<ISystem>();
-
-			systemManager.AddSystem(system);
-			Assert.That(systemManager.Systems.Count == 1);
-			systemManager.RemoveAllSystems();
-			Assert.That(systemManager.Systems.Count == 0);
-		}
-		#endregion
-
-		#region Systems Update
-		[Test]
-		public void SystemUpdate()
-		{
-			var system = Substitute.For<ISystem, IUpdateable>();
-			var updateable = (IUpdateable)system;
-			updateable.Active = true;
-
-			systemManager.AddSystem(system);
-			((ITickable)systemManager).Tick();
-			((ILateTickable)systemManager).LateTick();
-			((IFixedTickable)systemManager).FixedTick();
-
-			updateable.Received(1).Update();
-		}
-
-		[Test]
-		public void SystemFixedUpdate()
-		{
-			var system = Substitute.For<ISystem, IFixedUpdateable>();
-			var fixedUpdateable = (IFixedUpdateable)system;
-			fixedUpdateable.Active = true;
-
-			systemManager.AddSystem(system);
-			((ITickable)systemManager).Tick();
-			((ILateTickable)systemManager).LateTick();
-			((IFixedTickable)systemManager).FixedTick();
-
-			fixedUpdateable.Received(1).FixedUpdate();
-		}
-
-		[Test]
-		public void SystemLateUpdate()
-		{
-			var system = Substitute.For<ISystem, ILateUpdateable>();
-			var lateUpdateable = (ILateUpdateable)system;
-			lateUpdateable.Active = true;
-
-			systemManager.AddSystem(system);
-			((ITickable)systemManager).Tick();
-			((ILateTickable)systemManager).LateTick();
-			((IFixedTickable)systemManager).FixedTick();
-
-			lateUpdateable.Received(1).LateUpdate();
 		}
 		#endregion
 

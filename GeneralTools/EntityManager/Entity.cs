@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
-		public event Action<IEntity, IComponent> OnComponentAdded;
-		public event Action<IEntity, IComponent> OnComponentRemoved;
+		public event Action<IEntity, IComponent> OnComponentAdded = delegate { };
+		public event Action<IEntity, IComponent> OnComponentRemoved = delegate { };
 
 		public EntityGroups Groups
 		{
@@ -28,6 +29,8 @@ namespace Pseudo.Internal.Entity
 		EntityGroups groups;
 		IEntityManager entityManager;
 		[DoNotInitialize]
+		IComponent[] singleComponents;
+		[DoNotInitialize]
 		ComponentGroup[] componentGroups;
 		readonly List<IComponent> allComponents;
 		readonly IList<IComponent> readonlyComponents;
@@ -36,11 +39,12 @@ namespace Pseudo.Internal.Entity
 
 		public Entity()
 		{
+			singleComponents = new IComponent[ComponentUtility.ComponentTypes.Length];
+			componentGroups = new ComponentGroup[ComponentUtility.ComponentTypes.Length];
 			allComponents = new List<IComponent>();
 			readonlyComponents = allComponents.AsReadOnly();
 			componentIndices = new List<int>();
 			readonlyComponentIndices = componentIndices.AsReadOnly();
-			componentGroups = new ComponentGroup[ComponentUtility.ComponentTypes.Length];
 		}
 
 		public void Initialize(IEntityManager entityManager, EntityGroups groups)
@@ -56,22 +60,24 @@ namespace Pseudo.Internal.Entity
 
 		public T GetComponent<T>() where T : IComponent
 		{
-			var components = GetComponentGroup<T>().Components;
+			int index = ComponentIndexHolder<T>.Index;
 
-			if (components.Count > 0)
-				return components[0];
-			else
+			if (index >= singleComponents.Length)
 				return default(T);
+			else
+				return (T)singleComponents[index];
 		}
 
 		public IComponent GetComponent(Type type)
 		{
-			var components = GetComponentGroup(type).Components;
+			Assert.IsNotNull(type);
 
-			if (components.Count > 0)
-				return components[0];
-			else
+			int index = ComponentUtility.GetComponentIndex(type);
+
+			if (index >= singleComponents.Length)
 				return null;
+			else
+				return singleComponents[index];
 		}
 
 		public IList<T> GetComponents<T>() where T : IComponent
@@ -81,6 +87,8 @@ namespace Pseudo.Internal.Entity
 
 		public IList<IComponent> GetComponents(Type type)
 		{
+			Assert.IsNotNull(type);
+
 			return GetComponentGroup(type).Components;
 		}
 
@@ -93,6 +101,8 @@ namespace Pseudo.Internal.Entity
 
 		public bool TryGetComponent(Type type, out IComponent component)
 		{
+			Assert.IsNotNull(type);
+
 			component = GetComponent(type);
 
 			return component != null;
@@ -105,26 +115,36 @@ namespace Pseudo.Internal.Entity
 
 		public bool HasComponent(Type type)
 		{
+			Assert.IsNotNull(type);
+
 			return GetComponent(type) != null;
 		}
 
 		public bool HasComponent(IComponent component)
 		{
+			Assert.IsNotNull(component);
+
 			return GetComponentGroup(component.GetType()).Components.Contains(component);
 		}
 
 		public void AddComponent(IComponent component)
 		{
+			Assert.IsNotNull(component);
+
 			AddComponent(component, true, true);
 		}
 
 		public void AddComponents(params IComponent[] components)
 		{
+			Assert.IsNotNull(components);
+
 			AddComponents(components, true);
 		}
 
 		public void RemoveComponent(IComponent component)
 		{
+			Assert.IsNotNull(component);
+
 			RemoveComponent(component, true, true);
 		}
 
@@ -132,16 +152,16 @@ namespace Pseudo.Internal.Entity
 		{
 			var components = GetComponents<T>();
 
-			for (int i = 0; i < components.Count; i++)
-				RemoveComponent(components[i--]);
+			for (int i = components.Count - 1; i >= 0; i--)
+				RemoveComponent(components[i]);
 		}
 
 		public void RemoveComponents(Type type)
 		{
 			var components = GetComponents(type);
 
-			for (int i = 0; i < components.Count; i++)
-				RemoveComponent(components[i--]);
+			for (int i = components.Count - 1; i >= 0; i--)
+				RemoveComponent(components[i]);
 		}
 
 		public void RemoveAllComponents()
@@ -149,71 +169,127 @@ namespace Pseudo.Internal.Entity
 			RemoveAllComponents(true);
 		}
 
-		void AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
+		bool AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
 		{
 			if (HasComponent(component))
-				return;
+				return false;
 
 			allComponents.Add(component);
-
-			for (int i = 0; i < componentGroups.Length; i++)
-			{
-				var componentGroup = componentGroups[i];
-
-				if (componentGroup != null)
-				{
-					bool isEmpty = componentGroup.Components.Count == 0;
-
-					if (componentGroup.TryAdd(component) && isEmpty)
-						AddComponentIndex(i);
-				}
-			}
-
-			// Ensure component groups exist for sub types for proper entity matching
 			var subComponentTypes = ComponentUtility.GetSubComponentTypes(component.GetType());
+			bool isNew = false;
 
 			for (int i = 0; i < subComponentTypes.Length; i++)
-				GetComponentGroup(subComponentTypes[i]);
-			////
+			{
+				int index = ComponentUtility.GetComponentIndex(subComponentTypes[i]);
+				AddComponentToGroup(component, index);
+				isNew |= AddSingleComponent(component, index);
+			}
 
-			if (raiseEvent && OnComponentAdded != null)
+			if (raiseEvent)
 				OnComponentAdded(this, component);
 
-			if (updateEntity)
+			if (isNew && updateEntity)
 				entityManager.UpdateEntity(this);
+
+			return isNew;
+		}
+
+		void AddComponentToGroup(IComponent component, int index)
+		{
+			var componentGroup = componentGroups.Length <= index ? null : componentGroups[index];
+
+			if (componentGroup != null)
+				componentGroup.TryAdd(component);
+		}
+
+		bool AddSingleComponent(IComponent component, int index)
+		{
+			bool isNew = false;
+			if (singleComponents.Length <= index)
+				Array.Resize(ref singleComponents, ComponentUtility.ComponentTypes.Length);
+
+			if (singleComponents[index] == null)
+			{
+				singleComponents[index] = component;
+				AddComponentIndex(index);
+				isNew = true;
+			}
+
+			return isNew;
 		}
 
 		void AddComponents(IList<IComponent> components, bool raiseEvent)
 		{
-			for (int i = 0; i < components.Count; i++)
-				AddComponent(components[i], raiseEvent, false);
+			bool isNew = false;
 
-			entityManager.UpdateEntity(this);
+			for (int i = 0; i < components.Count; i++)
+				isNew |= AddComponent(components[i], raiseEvent, false);
+
+			if (isNew)
+				entityManager.UpdateEntity(this);
 		}
 
 		void RemoveComponent(IComponent component, bool raiseEvent, bool updateEntity)
 		{
 			if (allComponents.Remove(component))
 			{
-				for (int i = 0; i < componentGroups.Length; i++)
+				var subComponentTypes = ComponentUtility.GetSubComponentTypes(component.GetType());
+
+				for (int i = 0; i < subComponentTypes.Length; i++)
 				{
-					var componentGroup = componentGroups[i];
-
-					if (componentGroup != null && componentGroup.Components.Count > 0)
-					{
-						componentGroup.Remove(component);
-
-						if (componentGroup.Components.Count == 0)
-							RemoveComponentIndex(i);
-					}
+					var type = subComponentTypes[i];
+					int index = ComponentUtility.GetComponentIndex(subComponentTypes[i]);
+					bool isEmpty = RemoveComponentFromGroup(component, index);
+					RemoveSingleComponent(component, type, index, isEmpty);
 				}
+
+				if (raiseEvent)
+					OnComponentRemoved(this, component);
+
+				if (updateEntity)
+					entityManager.UpdateEntity(this);
+			}
+		}
+
+		bool RemoveComponentFromGroup(IComponent component, int index)
+		{
+			var componentGroup = componentGroups.Length <= index ? null : componentGroups[index];
+			bool isEmpty = false;
+
+			if (componentGroup != null)
+			{
+				componentGroup.Remove(component);
+				isEmpty = componentGroup.Components.Count == 0;
 			}
 
-			if (raiseEvent && OnComponentRemoved != null)
-				OnComponentRemoved(this, component);
+			return isEmpty;
+		}
 
-			if (updateEntity)
-				entityManager.UpdateEntity(this);
+		void RemoveSingleComponent(IComponent component, Type type, int index, bool isGroupEmpty)
+		{
+			var singleComponent = singleComponents[index];
+
+			if (singleComponent == component)
+			{
+				singleComponent = isGroupEmpty ? null : FindAssignableComponent(type);
+				singleComponents[index] = singleComponent;
+
+				if (singleComponent == null)
+					RemoveComponentIndex(index);
+			}
+		}
+
+		IComponent FindAssignableComponent(Type type)
+		{
+			for (int i = 0; i < allComponents.Count; i++)
+			{
+				var component = allComponents[i];
+
+				if (type.IsAssignableFrom(component.GetType()))
+					return component;
+			}
+
+			return null;
 		}
 
 		void RemoveComponents(IList<IComponent> components, bool raiseEvent)
@@ -234,12 +310,13 @@ namespace Pseudo.Internal.Entity
 					componentGroup.RemoveAll();
 			}
 
-			if (raiseEvent && OnComponentRemoved != null)
+			if (raiseEvent)
 			{
 				for (int i = 0; i < allComponents.Count; i++)
 					OnComponentRemoved(this, allComponents[i]);
 			}
 
+			singleComponents.Clear();
 			allComponents.Clear();
 			componentIndices.Clear();
 			entityManager.UpdateEntity(this);
@@ -261,56 +338,12 @@ namespace Pseudo.Internal.Entity
 
 		IComponentGroup<T> GetComponentGroup<T>() where T : IComponent
 		{
-			ComponentGroup componentGroup;
-			int typeIndex = ComponentIndexHolder<T>.Index;
-
-			if (componentGroups.Length <= typeIndex)
-			{
-				Array.Resize(ref componentGroups, ComponentUtility.ComponentTypes.Length);
-				componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
-				componentGroups[typeIndex] = componentGroup;
-			}
-			else
-			{
-				componentGroup = componentGroups[typeIndex];
-
-				if (componentGroup == null)
-				{
-					componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
-					componentGroups[typeIndex] = componentGroup;
-				}
-			}
-
-			return (IComponentGroup<T>)componentGroup;
+			return (IComponentGroup<T>)GetComponentGroup(typeof(T), ComponentIndexHolder<T>.Index);
 		}
 
 		IComponentGroup GetComponentGroup(Type type)
 		{
 			return GetComponentGroup(type, ComponentUtility.GetComponentIndex(type));
-		}
-
-		IComponentGroup GetComponentGroup(int typeIndex)
-		{
-			ComponentGroup componentGroup;
-
-			if (componentGroups.Length <= typeIndex)
-			{
-				Array.Resize(ref componentGroups, ComponentUtility.ComponentTypes.Length);
-				componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
-				componentGroups[typeIndex] = componentGroup;
-			}
-			else
-			{
-				componentGroup = componentGroups[typeIndex];
-
-				if (componentGroup == null)
-				{
-					componentGroup = CreateComponentGroup(ComponentUtility.GetComponentType(typeIndex));
-					componentGroups[typeIndex] = componentGroup;
-				}
-			}
-
-			return componentGroup;
 		}
 
 		IComponentGroup GetComponentGroup(Type type, int typeIndex)
