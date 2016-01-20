@@ -11,7 +11,7 @@ namespace Pseudo
 {
 	public static class PrefabPoolManager
 	{
-		public static int StartSize = 2;
+		public static int StartSize;
 
 		static readonly Dictionary<object, IPool> pools = new Dictionary<object, IPool>(8);
 		static readonly Dictionary<object, IPool> instancePool = new Dictionary<object, IPool>(64);

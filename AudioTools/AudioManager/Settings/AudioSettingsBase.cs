@@ -31,7 +31,7 @@ namespace Pseudo
 		/// <summary>
 		/// The type of the AudioSettingsBase.
 		/// </summary>
-		public abstract AudioItem.AudioTypes Type { get; }
+		public abstract AudioTypes Type { get; }
 		/// <summary>
 		/// Toggles the looping behaviour of the AudioSettingsBase.
 		/// </summary>
@@ -100,7 +100,7 @@ namespace Pseudo
 		{
 			for (int i = 0; i < RTPCs.Count; i++)
 			{
-				AudioRTPC rtpc = RTPCs[i];
+				var rtpc = RTPCs[i];
 
 				if (rtpc.Name == name)
 					return rtpc;

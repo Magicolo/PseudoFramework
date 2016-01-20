@@ -4,14 +4,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Zenject;
 
 namespace Pseudo
 {
 	public class SystemManager : ISystemManager, ITickable, IFixedTickable, ILateTickable
 	{
-		public event Action<ISystem> OnSystemAdded;
-		public event Action<ISystem> OnSystemRemoved;
+		public event Action<ISystem> OnSystemAdded = delegate { };
+		public event Action<ISystem> OnSystemRemoved = delegate { };
 		public IList<ISystem> Systems
 		{
 			get { return readonlySystems; }
@@ -80,12 +81,9 @@ namespace Pseudo
 		/// <param name="system">The ISystem instance to register.</param>
 		public void AddSystem(ISystem system)
 		{
-			if (typeToSystem.ContainsKey(system.GetType()))
-				return;
-
+			Assert.IsFalse(typeToSystem.ContainsKey(system.GetType()));
 			typeToSystem[system.GetType()] = system;
 			systems.Add(system);
-			system.Active = true;
 
 			var updateable = system as IUpdateable;
 
@@ -108,8 +106,9 @@ namespace Pseudo
 			if (fixedUpdateable != null)
 				fixedUpdateables.Add(fixedUpdateable);
 
-			if (OnSystemAdded != null)
-				OnSystemAdded(system);
+			system.OnInitialize();
+			system.Active = true;
+			OnSystemAdded(system);
 		}
 
 		/// <summary>
@@ -123,6 +122,7 @@ namespace Pseudo
 
 		public void AddSystem(Type type)
 		{
+			Assert.IsFalse(typeToSystem.ContainsKey(type));
 			AddSystem((ISystem)container.Instantiate(type));
 		}
 
@@ -143,6 +143,7 @@ namespace Pseudo
 
 		public void RemoveSystem(Type type)
 		{
+			Assert.IsNotNull(type);
 			ISystem system;
 
 			if (typeToSystem.Pop(type, out system) && systems.Remove(system))
@@ -175,8 +176,9 @@ namespace Pseudo
 				if (fixedUpdateable != null)
 					fixedUpdateables.Remove(fixedUpdateable);
 
-				if (OnSystemRemoved != null)
-					OnSystemRemoved(system);
+				system.Active = false;
+				system.OnDestroy();
+				OnSystemRemoved(system);
 			}
 		}
 
@@ -188,9 +190,7 @@ namespace Pseudo
 			for (int i = 0; i < systems.Count; i++)
 			{
 				var system = systems[i];
-
-				if (OnSystemRemoved != null)
-					OnSystemRemoved(system);
+				OnSystemRemoved(system);
 			}
 
 			systems.Clear();

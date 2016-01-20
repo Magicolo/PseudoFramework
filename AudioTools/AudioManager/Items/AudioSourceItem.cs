@@ -10,7 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioSourceItem : AudioItem
+	public class AudioSourceItem : AudioItemBase
 	{
 		AudioSourceSettings originalSettings;
 		AudioSourceSettings settings;
@@ -31,7 +31,7 @@ namespace Pseudo.Internal.Audio
 			setPitchScale = modifier => source.pitch = modifier.Value;
 		}
 
-		public void Initialize(AudioSourceSettings settings, AudioItemManager itemManager, AudioSource audioSource, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioSourceSettings settings, AudioItemManager itemManager, AudioSource audioSource, AudioSpatializer spatializer, IAudioItem parent)
 		{
 			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
@@ -376,15 +376,10 @@ namespace Pseudo.Internal.Audio
 			if (state == AudioStates.Stopped)
 				return;
 
-			AudioRTPC rtpc = settings.GetRTPC(name);
+			var rtpc = settings.GetRTPC(name);
 
 			if (rtpc != null)
 				rtpc.SetValue(value);
-		}
-
-		public override List<AudioItem> GetChildren()
-		{
-			return null;
 		}
 
 		protected override float GetDeltaTime()

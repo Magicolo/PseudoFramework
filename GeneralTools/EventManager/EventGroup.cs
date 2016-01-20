@@ -124,59 +124,12 @@ namespace Pseudo.Internal
 				allDispatcher3.Unsubscribe(receiver);
 		}
 
-		public void Unsubscribe(TId identifier, Action receiver)
+		public void Unsubscribe(TId identifier, Delegate receiver)
 		{
 			IEventDispatcher dispatcher;
 
 			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
 				dispatcher.Unsubscribe(receiver);
-		}
-
-		public void Unsubscribe<TArg>(TId identifier, Action<TArg> receiver)
-		{
-			IEventDispatcher dispatcher;
-
-			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
-				dispatcher.Unsubscribe(receiver);
-		}
-
-		public void Unsubscribe<TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver)
-		{
-			IEventDispatcher dispatcher;
-
-			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
-				dispatcher.Unsubscribe(receiver);
-		}
-
-		public void Unsubscribe<TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver)
-		{
-			IEventDispatcher dispatcher;
-
-			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
-				dispatcher.Unsubscribe(receiver);
-		}
-
-		public void Unsubscribe<TArg1, TArg2, TArg3, TArg4>(TId identifier, Action<TArg1, TArg2, TArg3, TArg4> receiver)
-		{
-			IEventDispatcher dispatcher;
-
-			if (idToDispatchers.TryGetValue(identifier, out dispatcher))
-				dispatcher.Unsubscribe(receiver);
-		}
-
-		public void Trigger(TId identifier)
-		{
-			Trigger(identifier, (object)null, (object)null, (object)null);
-		}
-
-		public void Trigger<TArg>(TId identifier, TArg argument)
-		{
-			Trigger(identifier, argument, (object)null, (object)null);
-		}
-
-		public void Trigger<TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
-		{
-			Trigger(identifier, argument1, argument2, (object)null);
 		}
 
 		public void Trigger<TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)

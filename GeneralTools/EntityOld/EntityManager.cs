@@ -15,7 +15,7 @@ namespace Pseudo
 			get { return masterGroup.Entities; }
 		}
 
-		static readonly EntityGroup masterGroup = new EntityGroup();
+		static readonly EntityGroupOld masterGroup = new EntityGroupOld();
 		static readonly List<IEntityUpdateable> updateables = new List<IEntityUpdateable>();
 
 		public static IEntityGroupOld GetEntityGroup(ByteFlag groups, EntityMatchesOld match = EntityMatchesOld.All)

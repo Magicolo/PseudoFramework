@@ -20,7 +20,7 @@ namespace Pseudo
 
 		public PlayModes PlayMode = PlayModes.After;
 		public double Delay;
-		public Action<AudioItem> OnInitialize;
+		public Action<IAudioItem> OnInitialize;
 
 		public void Copy(object reference)
 		{

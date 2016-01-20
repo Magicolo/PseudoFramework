@@ -15,13 +15,15 @@ namespace Pseudo
 		Rect rect = new Rect(0f, 0f, 1f, 1f);
 		[SerializeField]
 		bool draw = true;
+		[SerializeField]
+		Color color = new Color(1f, 0f, 0f, 0.5f);
 
 		public Rect LocalRect { get { return new Rect(rect.position - rect.size / 2f, rect.size); } set { rect = new Rect(value.center, value.size); } }
 		public Rect WorldRect
 		{
 			get
 			{
-				Rect rect = LocalRect;
+				var rect = LocalRect;
 				rect.position += CachedTransform.position.ToVector2();
 				return rect;
 			}
@@ -32,11 +34,12 @@ namespace Pseudo
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-			Vector3 position = CachedTransform.position + rect.position.ToVector3();
+			var position = CachedTransform.position + rect.position.ToVector3();
 			Vector3 size = rect.size;
-			Gizmos.color = new Color(1f, 0f, 0f, 0.6f);
+
+			Gizmos.color = color;
 			Gizmos.DrawWireCube(position, size);
-			Gizmos.color = new Color(1f, 0f, 0f, 0.15f);
+			Gizmos.color = color.SetValues(color.a / 4f, Channels.A);
 			Gizmos.DrawCube(position, size);
 		}
 

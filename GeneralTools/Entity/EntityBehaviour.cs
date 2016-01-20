@@ -19,10 +19,19 @@ namespace Pseudo
 		}
 		public EntityGroups Groups
 		{
-			get { return groups; }
+			get { return entity.Groups; }
+			set { entity.Groups = value; }
 		}
 
-		[SerializeField]
+		public IList<IComponent> Components
+		{
+			get
+			{
+				return entity.Components;
+			}
+		}
+
+		[SerializeField, Disable(DisableOnStop = false)]
 		EntityGroups groups = EntityGroups.Nothing;
 		[InitializeContent]
 		IComponent[] components;

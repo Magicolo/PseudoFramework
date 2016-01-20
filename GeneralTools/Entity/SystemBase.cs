@@ -48,11 +48,12 @@ namespace Pseudo
 
 		bool active;
 
-		[PostInject]
-		protected virtual void Initialize() { }
+		public virtual void OnInitialize() { }
 
-		protected virtual void OnActivate() { }
+		public virtual void OnDestroy() { }
 
-		protected virtual void OnDeactivate() { }
+		public virtual void OnActivate() { }
+
+		public virtual void OnDeactivate() { }
 	}
 }

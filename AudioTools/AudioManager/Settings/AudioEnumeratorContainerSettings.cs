@@ -19,7 +19,7 @@ namespace Pseudo.Internal.Audio
 		public int CurrentIndex { get; set; }
 		public int CurrentRepeat { get; set; }
 
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.EnumeratorContainer; } }
+		public override AudioTypes Type { get { return AudioTypes.EnumeratorContainer; } }
 
 		void OnEnable()
 		{

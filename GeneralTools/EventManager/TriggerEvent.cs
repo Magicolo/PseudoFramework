@@ -12,7 +12,7 @@ namespace Pseudo.Internal
 
 		public void Resolve()
 		{
-			EventGroup.Trigger(Identifier);
+			EventGroup.Trigger(Identifier, (object)null, (object)null, (object)null);
 		}
 	}
 
@@ -24,7 +24,7 @@ namespace Pseudo.Internal
 
 		public void Resolve()
 		{
-			EventGroup.Trigger(Identifier, Argument);
+			EventGroup.Trigger(Identifier, Argument, (object)null, (object)null);
 		}
 	}
 
@@ -37,7 +37,7 @@ namespace Pseudo.Internal
 
 		public void Resolve()
 		{
-			EventGroup.Trigger(Identifier, Argument1, Argument2);
+			EventGroup.Trigger(Identifier, Argument1, Argument2, (object)null);
 		}
 	}
 

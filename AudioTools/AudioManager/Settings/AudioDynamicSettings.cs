@@ -9,6 +9,6 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioDynamicSettings : AudioContainerSettings
 	{
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Dynamic; } }
+		public override AudioTypes Type { get { return AudioTypes.Dynamic; } }
 	}
 }

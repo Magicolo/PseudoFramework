@@ -7,6 +7,7 @@ using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Audio;
 using Pseudo.Internal.Pool;
+using UnityEngine.Assertions;
 
 namespace Pseudo
 {
@@ -28,7 +29,7 @@ namespace Pseudo
 		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
 
 		/// <summary>
-		/// If you use custom curves in the Reference AudioSource, set this to true.
+		/// If you use custom curves in the Reference AudioSource, set this to true otherwise, leave it to false to save useless memory allocations.
 		/// </summary>
 		public bool UseCustomCurves
 		{
@@ -50,11 +51,6 @@ namespace Pseudo
 			}
 		}
 
-		/// <summary>
-		/// Used internaly to manager AudioItems
-		/// </summary>
-		public AudioItemManager ItemManager { get { return itemManager; } }
-
 		public AudioManager()
 		{
 			itemManager = new AudioItemManager(this);
@@ -70,11 +66,6 @@ namespace Pseudo
 			Initialize();
 		}
 
-		void Update()
-		{
-			itemManager.Update();
-		}
-
 		void Initialize()
 		{
 			if (this == null)
@@ -86,13 +77,19 @@ namespace Pseudo
 			reference.spatialBlend = 1f;
 		}
 
+		public void Update()
+		{
+			itemManager.Update();
+		}
+
 		/// <summary>
 		/// Creates a non spatialized AudioItem that corresponds to the type of the <paramref name="settings"/>.
 		/// </summary>
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings)
+		public IAudioItem CreateItem(AudioSettingsBase settings)
 		{
+			Assert.IsNotNull(settings);
 			return itemManager.CreateItem(settings);
 		}
 
@@ -102,8 +99,9 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
+			Assert.IsNotNull(settings);
 			return itemManager.CreateItem(settings, position);
 		}
 
@@ -114,8 +112,10 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
+			Assert.IsNotNull(settings);
+			Assert.IsNotNull(follow);
 			return itemManager.CreateItem(settings, follow);
 		}
 
@@ -125,8 +125,10 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
+			Assert.IsNotNull(settings);
+			Assert.IsNotNull(getPosition);
 			return itemManager.CreateItem(settings, getPosition);
 		}
 
@@ -137,9 +139,10 @@ namespace Pseudo
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings);
+			Assert.IsNotNull(getNextSettings);
+			return itemManager.CreateDynamicItem(getNextSettings);
 		}
 
 		/// <summary>
@@ -150,9 +153,10 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, position);
+			Assert.IsNotNull(getNextSettings);
+			return itemManager.CreateDynamicItem(getNextSettings, position);
 		}
 
 		/// <summary>
@@ -164,9 +168,11 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, follow);
+			Assert.IsNotNull(getNextSettings);
+			Assert.IsNotNull(follow);
+			return itemManager.CreateDynamicItem(getNextSettings, follow);
 		}
 
 		/// <summary>
@@ -177,42 +183,46 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, getPosition);
+			Assert.IsNotNull(getNextSettings);
+			Assert.IsNotNull(getPosition);
+			return itemManager.CreateDynamicItem(getNextSettings, getPosition);
 		}
 
-		public void Stop(AudioSettingsBase settings)
+		public void StopItems(AudioSettingsBase settings)
 		{
-			ItemManager.StopItemsWithId(settings.Id);
+			Assert.IsNotNull(settings);
+			itemManager.StopItemsWithId(settings.Id);
 		}
 
-		public void StopImmediate(AudioSettingsBase settings)
+		public void StopItemsImmediate(AudioSettingsBase settings)
 		{
-			ItemManager.StopItemsWithIdImmediate(settings.Id);
+			Assert.IsNotNull(settings);
+			itemManager.StopItemsWithIdImmediate(settings.Id);
 		}
 
-		public void Stop(int id)
+		public void StopItems(int id)
 		{
-			ItemManager.StopItemsWithId(id);
+			itemManager.StopItemsWithId(id);
 		}
 
-		public void StopImmediate(int id)
+		public void StopItemsImmediate(int id)
 		{
-			ItemManager.StopItemsWithIdImmediate(id);
+			itemManager.StopItemsWithIdImmediate(id);
 		}
 
 		/// <summary>
 		/// Stops all active AudioItems
 		/// </summary>
-		public void StopAll()
+		public void StopAllItems()
 		{
-			ItemManager.StopAllItems();
+			itemManager.StopAllItems();
 		}
 
-		public void StopAllImmediate()
+		public void StopAllItemsImmediate()
 		{
-			ItemManager.StopAllItemsImmediate();
+			itemManager.StopAllItemsImmediate();
 		}
 
 		/// <summary>

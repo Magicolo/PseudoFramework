@@ -18,7 +18,7 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.SequenceContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public void Initialize(AudioSequenceContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioSequenceContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
 			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
@@ -101,7 +101,7 @@ namespace Pseudo.Internal.Audio
 
 			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem item = sources[i];
+				IAudioItem item = sources[i];
 				double time;
 
 				if (i == 0)

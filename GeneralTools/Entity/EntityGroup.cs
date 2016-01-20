@@ -11,8 +11,10 @@ namespace Pseudo.Internal.Entity
 	{
 		readonly static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
 
-		public event Action<IEntity> OnEntityAdded;
-		public event Action<IEntity> OnEntityRemoved;
+		public event Action<IEntity> OnEntityAdd = delegate { };
+		public event Action<IEntity> OnEntityAdded = delegate { };
+		public event Action<IEntity> OnEntityRemove = delegate { };
+		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public int Count
 		{
 			get { return entities.Count; }
@@ -53,8 +55,10 @@ namespace Pseudo.Internal.Entity
 
 		public void Clear()
 		{
-			OnEntityAdded = null;
-			OnEntityRemoved = null;
+			OnEntityAdd = delegate { };
+			OnEntityAdded = delegate { };
+			OnEntityRemove = delegate { };
+			OnEntityRemoved = delegate { };
 			hashedEntities.Clear();
 			entities.Clear();
 
@@ -85,23 +89,23 @@ namespace Pseudo.Internal.Entity
 
 		void RegisterEntity(IEntity entity)
 		{
-			if (hashedEntities.Add(entity))
+			if (!Contains(entity))
 			{
+				OnEntityAdd(entity);
+				hashedEntities.Add(entity);
 				entities.Add(entity);
-
-				if (OnEntityAdded != null)
-					OnEntityAdded(entity);
+				OnEntityAdded(entity);
 			}
 		}
 
 		void UnregisterEntity(IEntity entity)
 		{
-			if (hashedEntities.Remove(entity))
+			if (Contains(entity))
 			{
+				OnEntityRemove(entity);
+				hashedEntities.Remove(entity);
 				entities.Remove(entity);
-
-				if (OnEntityRemoved != null)
-					OnEntityRemoved(entity);
+				OnEntityRemoved(entity);
 			}
 		}
 

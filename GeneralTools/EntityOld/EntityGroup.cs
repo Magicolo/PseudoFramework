@@ -8,7 +8,7 @@ using Pseudo.Internal.EntityOld;
 
 namespace Pseudo.Internal.EntityOld
 {
-	public class EntityGroup : IEntityGroupOld
+	public class EntityGroupOld : IEntityGroupOld
 	{
 		static EntityMatchesOld[] matchValues = (EntityMatchesOld[])Enum.GetValues(typeof(EntityMatchesOld));
 

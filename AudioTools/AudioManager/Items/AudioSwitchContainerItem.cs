@@ -15,7 +15,7 @@ namespace Pseudo.Internal.Audio
 		public override AudioSettingsBase Settings { get { return settings; } }
 
 
-		public void Initialize(AudioSwitchContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioSwitchContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
 			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 

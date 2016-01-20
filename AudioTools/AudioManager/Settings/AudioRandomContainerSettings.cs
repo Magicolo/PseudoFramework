@@ -13,6 +13,6 @@ namespace Pseudo.Internal.Audio
 	{
 		public List<float> Weights = new List<float>();
 
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.RandomContainer; } }
+		public override AudioTypes Type { get { return AudioTypes.RandomContainer; } }
 	}
 }

@@ -6,9 +6,9 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	public abstract class AudioContainerItem : AudioItem
+	public abstract class AudioContainerItem : AudioItemBase
 	{
-		protected readonly List<AudioItem> sources = new List<AudioItem>();
+		protected readonly List<AudioItemBase> sources = new List<AudioItemBase>();
 		protected readonly Action<AudioModifier> setVolumeScale;
 		protected readonly Action<AudioModifier> setPitchScale;
 
@@ -239,7 +239,7 @@ namespace Pseudo.Internal.Audio
 		{
 			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem source = sources[i];
+				IAudioItem source = sources[i];
 
 				if (source.State != AudioStates.Waiting && source.GetScheduledTime() <= AudioSettings.dspTime)
 					source.Break();
@@ -253,7 +253,7 @@ namespace Pseudo.Internal.Audio
 			if (State == AudioStates.Stopped)
 				return;
 
-			AudioRTPC rtpc = Settings.GetRTPC(name);
+			var rtpc = Settings.GetRTPC(name);
 
 			if (rtpc != null)
 				rtpc.SetValue(value);
@@ -262,17 +262,9 @@ namespace Pseudo.Internal.Audio
 				sources[i].SetRTPCValue(name, value);
 		}
 
-		public override List<AudioItem> GetChildren()
+		protected virtual IAudioItem AddSource(AudioContainerSourceData data)
 		{
-			if (state == AudioStates.Stopped)
-				return null;
-
-			return sources;
-		}
-
-		protected virtual AudioItem AddSource(AudioContainerSourceData data)
-		{
-			AudioItem item = null;
+			IAudioItem item = null;
 
 			if (data != null)
 				item = AddSource(data.Settings, data.Options);
@@ -280,9 +272,9 @@ namespace Pseudo.Internal.Audio
 			return item;
 		}
 
-		protected virtual AudioItem AddSource(AudioSettingsBase settings, List<AudioOption> options)
+		protected virtual IAudioItem AddSource(AudioSettingsBase settings, List<AudioOption> options)
 		{
-			AudioItem item = null;
+			AudioItemBase item = null;
 
 			if (settings != null)
 			{

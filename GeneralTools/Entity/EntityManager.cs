@@ -5,14 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine.Assertions;
 using Zenject;
 
 namespace Pseudo
 {
 	public class EntityManager : IEntityManager
 	{
-		public event Action<IEntity> OnEntityAdded;
-		public event Action<IEntity> OnEntityRemoved;
+		public event Action<IEntity> OnEntityAdded = delegate { };
+		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public IEntityGroup Entities
 		{
 			get { return entities; }
@@ -37,6 +38,7 @@ namespace Pseudo
 		/// <returns>The IEntity instance.</returns>
 		public IEntity CreateEntity(EntityGroups groups)
 		{
+			Assert.IsNotNull(groups);
 			var entity = entityPool.Create();
 			entity.Initialize(this, groups);
 			AddEntity(entity);
@@ -46,6 +48,7 @@ namespace Pseudo
 
 		public EntityBehaviour CreateEntity(EntityBehaviour prefab)
 		{
+			Assert.IsNotNull(prefab);
 			var entity = PrefabPoolManager.Create(prefab);
 			entity.Initialize(this);
 
@@ -54,12 +57,14 @@ namespace Pseudo
 
 		public void RecycleEntity(IEntity entity)
 		{
+			Assert.IsNotNull(entity);
 			RemoveEntity(entity);
 			entityPool.Recycle(entity);
 		}
 
 		public void RecycleEntity(EntityBehaviour instance)
 		{
+			Assert.IsNotNull(instance);
 			RecycleEntity(instance.Entity);
 			PrefabPoolManager.Recycle(instance);
 		}
@@ -70,10 +75,9 @@ namespace Pseudo
 		/// <param name="entity">The IEntity instance to register.</param>
 		public void AddEntity(IEntity entity)
 		{
+			Assert.IsNotNull(entity);
 			entities.UpdateEntity(entity, true);
-
-			if (OnEntityAdded != null)
-				OnEntityAdded(entity);
+			OnEntityAdded(entity);
 		}
 
 		/// <summary>
@@ -82,10 +86,9 @@ namespace Pseudo
 		/// <param name="entity">The IEntity instance to unregister.</param>
 		public void RemoveEntity(IEntity entity)
 		{
+			Assert.IsNotNull(entity);
 			entities.UpdateEntity(entity, false);
-
-			if (OnEntityRemoved != null)
-				OnEntityRemoved(entity);
+			OnEntityRemoved(entity);
 		}
 
 		/// <summary>
@@ -94,10 +97,7 @@ namespace Pseudo
 		public void RemoveAllEntities()
 		{
 			for (int i = 0; i < entities.Count; i++)
-			{
-				if (OnEntityRemoved != null)
-					OnEntityRemoved(entities[i]);
-			}
+				OnEntityRemoved(entities[i]);
 
 			entities.Clear();
 		}
@@ -108,6 +108,7 @@ namespace Pseudo
 		/// <param name="entity">The modified IEntity instance.</param>
 		public void UpdateEntity(IEntity entity)
 		{
+			Assert.IsNotNull(entity);
 			entities.UpdateEntity(entity, true);
 		}
 	}

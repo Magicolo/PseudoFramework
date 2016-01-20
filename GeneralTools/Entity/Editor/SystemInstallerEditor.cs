@@ -43,6 +43,8 @@ namespace Pseudo.Internal.EntityOld
 			EditorGUILayout.PropertyField(serializedObject.FindProperty("m_Script"));
 			EditorGUI.EndDisabledGroup();
 
+			systemList.displayAdd = installer.Systems.Length < systemTypes.Length;
+			systemList.displayRemove = systemList.count > 0;
 			systemList.DoLayoutList();
 
 			End(false);
@@ -55,13 +57,22 @@ namespace Pseudo.Internal.EntityOld
 
 		void ShowSystem(Rect rect, int index, bool isActive, bool isFocused)
 		{
+			if (index >= systemList.serializedProperty.arraySize)
+				return;
+
 			var property = systemList.serializedProperty.GetArrayElementAtIndex(index);
 			var typeName = property.GetValue<string>();
 			var type = Type.GetType(typeName);
-			var displayTypeName = type == null ? "" : type.Name;
+
+			if (type == null)
+			{
+				systemList.serializedProperty.RemoveAt(index);
+				return;
+			}
 
 			rect.y += 2f;
-			EditorGUI.LabelField(rect, displayTypeName);
+			var prefix = string.IsNullOrEmpty(type.Namespace) ? "" : type.Namespace + ".";
+			EditorGUI.LabelField(rect, prefix + type.Name);
 
 			rect.x += rect.width - 16f;
 			rect.width = 16f;
@@ -71,11 +82,12 @@ namespace Pseudo.Internal.EntityOld
 				EditorGUI.BeginDisabledGroup(true);
 				EditorGUI.Toggle(rect, true);
 				EditorGUI.EndDisabledGroup();
-				return;
 			}
-
-			var system = installer.SystemManager.GetSystem(type);
-			system.Active = EditorGUI.Toggle(rect, system.Active);
+			else
+			{
+				var system = installer.SystemManager.GetSystem(type);
+				system.Active = EditorGUI.Toggle(rect, system.Active);
+			}
 		}
 
 		void OnAddSystemDropdown(Rect buttonRect, ReorderableList list)
@@ -90,7 +102,7 @@ namespace Pseudo.Internal.EntityOld
 					dropdown.AddItem(systemTypeNames[i].ToGUIContent(), false, OnSystemSelected, type);
 			}
 
-			dropdown.ShowAsContext();
+			dropdown.DropDown(buttonRect);
 		}
 
 		void OnSystemSelected(object data)
@@ -126,7 +138,11 @@ namespace Pseudo.Internal.EntityOld
 			}
 
 			systemTypes = typeList.ToArray();
-			systemTypeNames = systemTypes.Convert(type => type.Name.Replace("System", ""));
+			systemTypeNames = systemTypes.Convert(type =>
+			{
+				var prefix = string.IsNullOrEmpty(type.Namespace) ? "" : type.Namespace + "/";
+				return prefix + type.Name.Replace("System", "");
+			});
 		}
 	}
 }

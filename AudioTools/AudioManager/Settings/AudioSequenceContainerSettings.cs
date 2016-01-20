@@ -15,6 +15,6 @@ namespace Pseudo.Internal.Audio
 	{
 		public List<double> Delays = new List<double>();
 
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.SequenceContainer; } }
+		public override AudioTypes Type { get { return AudioTypes.SequenceContainer; } }
 	}
 }

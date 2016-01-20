@@ -75,8 +75,9 @@ namespace Pseudo.Internal.Editor
 		static T CreateAudioContainerSettings<T>(string name, string settingsPath = "") where T : AudioSettingsBase
 		{
 			T settings = ScriptableObject.CreateInstance<T>();
-            string path = AssetDatabaseUtility.GenerateUniqueAssetPath(name, settingsPath);
+			string path = AssetDatabaseUtility.GenerateUniqueAssetPath(name, settingsPath);
 			AssetDatabase.CreateAsset(settings, path);
+			Selection.activeObject = settings;
 
 			return settings;
 		}

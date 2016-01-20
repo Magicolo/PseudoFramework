@@ -38,7 +38,7 @@ namespace Pseudo.Internal
 			index = EditorGUI.Popup(currentPosition, currentProperty.displayName, index, enumNames);
 
 			if (EditorGUI.EndChangeCheck())
-				currentProperty.SetValue((IEnum)enumValues.GetValue(index));
+				currentProperty.SetValue("value", ((IEnum)enumValues.GetValue(index)).Value);
 		}
 
 		void ShowEnumFlag()
@@ -57,26 +57,36 @@ namespace Pseudo.Internal
 
 		void OnEnumSelected(FlagsOption option, SerializedProperty property)
 		{
-			var enumValue = property.GetValue<IEnumFlag>();
+			var flagsProperty = property.FindPropertyRelative("value");
+			var flags = property.GetValue<IEnumFlag>().Value;
 
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
 					foreach (var value in enumValues)
-						enumValue = enumValue.Add((IEnumFlag)value);
+						flags = flags.Add(((IEnumFlag)value).Value);
 					break;
 				case FlagsOption.OptionTypes.Nothing:
-					enumValue = enumValue.Remove(ByteFlag.Everything);
+					flags = ByteFlag.Nothing;
 					break;
 				case FlagsOption.OptionTypes.Custom:
 					if (option.IsSelected)
-						enumValue = enumValue.Remove((IEnumFlag)option.Value);
+						flags = flags.Remove(((IEnumFlag)option.Value).Value);
 					else
-						enumValue = enumValue.Add((IEnumFlag)option.Value);
+						flags = flags.Add(((IEnumFlag)option.Value).Value);
 					break;
 			}
 
-			property.SetValue(enumValue);
+			for (int i = 1; i <= 8; i++)
+			{
+				var flagName = "f" + i;
+				flagsProperty.FindPropertyRelative(flagName).intValue = flags.GetValueFromMember<int>(flagName);
+			}
+
+			property.serializedObject.ApplyModifiedProperties();
+			EditorUtility.SetDirty(target);
+
+			//property.SetValue("value", enumValue.Value);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

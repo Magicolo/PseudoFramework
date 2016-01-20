@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Input;
+using UnityEngine.Assertions;
 
 namespace Pseudo
 {
@@ -99,8 +100,8 @@ namespace Pseudo
 
 		public PlayerInput[] Inputs = new PlayerInput[0];
 
-		protected readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
-		protected readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
+		readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
+		readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
 
 		void Awake()
 		{
@@ -115,7 +116,7 @@ namespace Pseudo
 			}
 		}
 
-		public virtual PlayerInput GetInput(string inputName)
+		public PlayerInput GetInput(string inputName)
 		{
 			PlayerInput playerInput;
 
@@ -125,7 +126,7 @@ namespace Pseudo
 			return playerInput;
 		}
 
-		public virtual PlayerInput GetAssignedInput(Players player)
+		public PlayerInput GetAssignedInput(Players player)
 		{
 			PlayerInput playerInput;
 
@@ -135,18 +136,19 @@ namespace Pseudo
 			return playerInput;
 		}
 
-		public virtual void AssignInput(Players player, string inputName)
+		public void AssignInput(Players player, string inputName)
 		{
 			AssignInput(player, GetInput(inputName));
 		}
 
-		public virtual void AssignInput(Players player, PlayerInput input)
+		public void AssignInput(Players player, PlayerInput input)
 		{
+			Assert.IsNotNull(input);
 			input.Player = player;
 			assignedInputs[(int)player] = input;
 		}
 
-		public virtual void UnassignInput(Players player)
+		public void UnassignInput(Players player)
 		{
 			PlayerInput playerInput;
 
@@ -154,52 +156,53 @@ namespace Pseudo
 				playerInput.Player = Players.None;
 		}
 
-		public virtual bool IsAssigned(Players player)
+		public bool IsAssigned(Players player)
 		{
 			return assignedInputs.ContainsKey((int)player);
 		}
 
-		public virtual void AddInput(PlayerInput input)
+		public void AddInput(PlayerInput input)
 		{
+			Assert.IsNotNull(input);
 			unassignedInputs[input.name] = input;
 		}
 
-		public virtual bool GetKeyDown(Players player, string actionName)
+		public bool GetKeyDown(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyDown();
 		}
 
-		public virtual bool GetKeyUp(Players player, string actionName)
+		public bool GetKeyUp(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyUp();
 		}
 
-		public virtual bool GetKey(Players player, string actionName)
+		public bool GetKey(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKey();
 		}
 
-		public virtual float GetAxis(Players player, string actionName)
+		public float GetAxis(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetAxis();
 		}
 
-		public virtual bool GetKeyDown(Players player, string actionName, Vector2 relativeScreenPosition)
+		public bool GetKeyDown(Players player, string actionName, Vector2 relativeScreenPosition)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyDown(relativeScreenPosition);
 		}
 
-		public virtual bool GetKeyUp(Players player, string actionName, Vector2 relativeScreenPosition)
+		public bool GetKeyUp(Players player, string actionName, Vector2 relativeScreenPosition)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyUp(relativeScreenPosition);
 		}
 
-		public virtual bool GetKey(Players player, string actionName, Vector2 relativeScreenPosition)
+		public bool GetKey(Players player, string actionName, Vector2 relativeScreenPosition)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKey(relativeScreenPosition);
 		}
 
-		public virtual float GetAxis(Players player, string actionName, Vector2 relativeScreenPosition)
+		public float GetAxis(Players player, string actionName, Vector2 relativeScreenPosition)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetAxis(relativeScreenPosition);
 		}

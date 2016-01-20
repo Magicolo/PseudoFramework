@@ -11,8 +11,8 @@ namespace Pseudo.Internal.EntityOld
 	{
 		readonly IEntityGroupOld parent;
 		readonly EntityMatchesOld match;
-		readonly Dictionary<ByteFlag, EntityGroup> entityGroups = new Dictionary<ByteFlag, EntityGroup>();
-		readonly Dictionary<ByteFlag, EntityGroup> componentGroups = new Dictionary<ByteFlag, EntityGroup>();
+		readonly Dictionary<ByteFlag, EntityGroupOld> entityGroups = new Dictionary<ByteFlag, EntityGroupOld>();
+		readonly Dictionary<ByteFlag, EntityGroupOld> componentGroups = new Dictionary<ByteFlag, EntityGroupOld>();
 
 		public EntityMatchGroup(IEntityGroupOld parent, EntityMatchesOld match)
 		{
@@ -20,9 +20,9 @@ namespace Pseudo.Internal.EntityOld
 			this.match = match;
 		}
 
-		public EntityGroup GetGroupByEntityGroup(ByteFlag groups)
+		public EntityGroupOld GetGroupByEntityGroup(ByteFlag groups)
 		{
-			EntityGroup entityGroup;
+			EntityGroupOld entityGroup;
 
 			if (!entityGroups.TryGetValue(groups, out entityGroup))
 			{
@@ -33,9 +33,9 @@ namespace Pseudo.Internal.EntityOld
 			return entityGroup;
 		}
 
-		public EntityGroup GetGroupByComponentGroup(ByteFlag components)
+		public EntityGroupOld GetGroupByComponentGroup(ByteFlag components)
 		{
-			EntityGroup entityGroup;
+			EntityGroupOld entityGroup;
 
 			if (!componentGroups.TryGetValue(components, out entityGroup))
 			{
@@ -108,9 +108,9 @@ namespace Pseudo.Internal.EntityOld
 			return EntityMatchOld.Matches(entity, components, match);
 		}
 
-		public EntityGroup CreateEntityGroup(ByteFlag groups)
+		public EntityGroupOld CreateEntityGroup(ByteFlag groups)
 		{
-			var entityGroup = new EntityGroup();
+			var entityGroup = new EntityGroupOld();
 
 			for (int i = 0; i < parent.Entities.Count; i++)
 			{
@@ -121,9 +121,9 @@ namespace Pseudo.Internal.EntityOld
 			return entityGroup;
 		}
 
-		public EntityGroup CreateComponentGroup(ByteFlag components)
+		public EntityGroupOld CreateComponentGroup(ByteFlag components)
 		{
-			var entityGroup = new EntityGroup();
+			var entityGroup = new EntityGroupOld();
 
 			for (int i = 0; i < parent.Entities.Count; i++)
 			{
