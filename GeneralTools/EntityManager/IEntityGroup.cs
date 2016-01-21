@@ -7,9 +7,7 @@ namespace Pseudo
 {
 	public interface IEntityGroup
 	{
-		event Action<IEntity> OnEntityAdd;
 		event Action<IEntity> OnEntityAdded;
-		event Action<IEntity> OnEntityRemove;
 		event Action<IEntity> OnEntityRemoved;
 
 		int Count { get; }

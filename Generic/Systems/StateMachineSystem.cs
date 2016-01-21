@@ -35,7 +35,7 @@ namespace Pseudo
 			EventManager.SubscribeAll((Action<Events, IEntity>)OnEvent);
 			EventManager.Subscribe(StateMachineEvents.OnSwitchState, (Action<IEntity, int>)OnSwitchState);
 			entities.OnEntityAdded += OnEntityAdded;
-			entities.OnEntityRemove += OnEntityRemove;
+			entities.OnEntityRemoved += OnEntityRemove;
 
 			for (int i = 0; i < entities.Count; i++)
 				OnEntityAdded(entities[i]);
@@ -48,7 +48,7 @@ namespace Pseudo
 			EventManager.UnsubscribeAll((Action<Events, IEntity>)OnEvent);
 			EventManager.Unsubscribe(StateMachineEvents.OnSwitchState, (Action<IEntity, int>)OnSwitchState);
 			entities.OnEntityAdded -= OnEntityAdded;
-			entities.OnEntityRemove -= OnEntityRemove;
+			entities.OnEntityRemoved -= OnEntityRemove;
 
 			for (int i = 0; i < entities.Count; i++)
 				OnEntityRemove(entities[i]);

@@ -31,7 +31,7 @@ namespace Pseudo
 			}
 		}
 
-		[SerializeField, Disable(DisableOnStop = false)]
+		[SerializeField]
 		EntityGroups groups = EntityGroups.Nothing;
 		[InitializeContent]
 		IComponent[] components;

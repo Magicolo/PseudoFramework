@@ -11,9 +11,7 @@ namespace Pseudo.Internal.Entity
 	{
 		readonly static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
 
-		public event Action<IEntity> OnEntityAdd = delegate { };
 		public event Action<IEntity> OnEntityAdded = delegate { };
-		public event Action<IEntity> OnEntityRemove = delegate { };
 		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public int Count
 		{
@@ -55,9 +53,7 @@ namespace Pseudo.Internal.Entity
 
 		public void Clear()
 		{
-			OnEntityAdd = delegate { };
 			OnEntityAdded = delegate { };
-			OnEntityRemove = delegate { };
 			OnEntityRemoved = delegate { };
 			hashedEntities.Clear();
 			entities.Clear();
@@ -91,7 +87,6 @@ namespace Pseudo.Internal.Entity
 		{
 			if (!Contains(entity))
 			{
-				OnEntityAdd(entity);
 				hashedEntities.Add(entity);
 				entities.Add(entity);
 				OnEntityAdded(entity);
@@ -102,10 +97,9 @@ namespace Pseudo.Internal.Entity
 		{
 			if (Contains(entity))
 			{
-				OnEntityRemove(entity);
+				OnEntityRemoved(entity);
 				hashedEntities.Remove(entity);
 				entities.Remove(entity);
-				OnEntityRemoved(entity);
 			}
 		}
 

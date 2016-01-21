@@ -124,7 +124,7 @@ namespace Pseudo.Internal.Entity
 		{
 			Assert.IsNotNull(component);
 
-			return GetComponentGroup(component.GetType()).Components.Contains(component);
+			return allComponents.Contains(component);
 		}
 
 		public void AddComponent(IComponent component)
@@ -372,6 +372,7 @@ namespace Pseudo.Internal.Entity
 
 		ComponentGroup CreateComponentGroup(Type type)
 		{
+			PDebug.Log(type);
 			var componentGroupType = ComponentUtility.GetComponentGroupType(type);
 			var componentGroup = (ComponentGroup)TypePoolManager.Create(componentGroupType);
 
