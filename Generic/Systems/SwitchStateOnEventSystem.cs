@@ -49,7 +49,7 @@ namespace Pseudo
 				var switchEvent = switchState.Events[i];
 
 				if (switchEvent.Event.HasAll(identifier))
-					EventManager.Trigger(StateMachineEvents.OnSwitchState, state.StateMachine, switchEvent.State);
+					EventManager.Trigger(StateMachineEvents.OnStateSwitch, state.StateMachine, switchEvent.State);
 			}
 		}
 	}

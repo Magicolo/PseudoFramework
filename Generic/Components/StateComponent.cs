@@ -8,7 +8,7 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class StateComponent : PMonoBehaviour, IComponent
+	public class StateComponent : ComponentBehaviour
 	{
 		public IEntity StateMachine
 		{

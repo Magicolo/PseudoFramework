@@ -14,13 +14,13 @@ namespace Pseudo
 		public ParticleSystem CachedParticleSystem { get { return cachedParticleSystem; } }
 		public bool IsPlaying { get { return CachedParticleSystem.isPlaying; } }
 
-		readonly CachedValue<ParticleSystem> cachedParticleSystem;
+		readonly Lazy<ParticleSystem> cachedParticleSystem;
 		IParticleManager particleManager;
 		bool hasPlayed;
 
 		public ParticleEffect()
 		{
-			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
+			cachedParticleSystem = new Lazy<ParticleSystem>(GetComponent<ParticleSystem>);
 		}
 
 		public virtual void Initialize(IParticleManager particleManager, Vector3 position, Transform parent)

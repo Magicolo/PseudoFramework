@@ -27,12 +27,12 @@ namespace Pseudo
 		public float CenterRandomness;
 		public Vector3 Center;
 
-		readonly CachedValue<Renderer> cachedRenderer;
+		readonly Lazy<Renderer> cachedRenderer;
 		public Renderer Renderer { get { return cachedRenderer; } }
 
 		public SmoothOscillate()
 		{
-			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
+			cachedRenderer = new Lazy<Renderer>(GetComponent<Renderer>);
 		}
 
 		void Awake()

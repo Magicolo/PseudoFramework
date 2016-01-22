@@ -168,7 +168,7 @@ namespace Pseudo
 		Rect area;
 		public Rect Area { get { return area; } }
 
-		readonly CachedValue<SpriteRenderer> cachedRenderer;
+		readonly Lazy<SpriteRenderer> cachedRenderer;
 		public SpriteRenderer CachedRenderer { get { return cachedRenderer; } }
 
 		float updateCount;
@@ -189,7 +189,7 @@ namespace Pseudo
 
 		public FogOfWar()
 		{
-			cachedRenderer = new CachedValue<SpriteRenderer>(GetComponent<SpriteRenderer>);
+			cachedRenderer = new Lazy<SpriteRenderer>(GetComponent<SpriteRenderer>);
 		}
 
 		void Awake()

@@ -36,11 +36,11 @@ namespace Pseudo
 
 		protected override void Enqueue(object instance, bool initialize)
 		{
-			base.Enqueue(instance, initialize);
-
 			var component = (T)instance;
 			component.gameObject.SetActive(false);
 			component.transform.parent = Transform;
+
+			base.Enqueue(instance, initialize);
 		}
 
 		protected override object Dequeue()

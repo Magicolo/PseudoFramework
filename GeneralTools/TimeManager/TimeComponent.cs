@@ -8,7 +8,7 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class TimeComponent : PMonoBehaviour, ITimeChannel, IComponent
+	public class TimeComponent : ComponentBehaviour, ITimeChannel
 	{
 		public TimeManager.TimeChannels Channel
 		{

@@ -75,11 +75,11 @@ namespace Pseudo
 				return gameObject.GetComponentInChildren(type);
 
 			Component component = null;
-			Transform[] children = gameObject.transform.GetChildren();
+			var children = gameObject.transform.GetChildren();
 
 			for (int i = 0; i < children.Length; i++)
 			{
-				GameObject child = children[i].gameObject;
+				var child = children[i].gameObject;
 				component = child.GetComponentInChildren(type);
 
 				if (component != null)
@@ -91,7 +91,19 @@ namespace Pseudo
 
 		public static T[] GetComponentsInChildren<T>(this GameObject gameObject, bool includeInactive, bool exclusive) where T : class
 		{
-			return gameObject.GetComponentsInChildren(typeof(T), includeInactive, exclusive) as T[];
+			if (!exclusive)
+				return gameObject.GetComponentsInChildren<T>(includeInactive);
+
+			var componentList = new List<T>();
+			var children = gameObject.transform.GetChildren();
+
+			for (int i = 0; i < children.Length; i++)
+			{
+				var child = children[i].gameObject;
+				componentList.AddRange(child.GetComponentsInChildren<T>(includeInactive));
+			}
+
+			return componentList.ToArray();
 		}
 
 		public static Component[] GetComponentsInChildren(this GameObject gameObject, Type type, bool includeInactive, bool exclusive)
@@ -99,16 +111,16 @@ namespace Pseudo
 			if (!exclusive)
 				return gameObject.GetComponentsInChildren(type, includeInactive);
 
-			List<Component> components = new List<Component>();
-			Transform[] children = gameObject.transform.GetChildren();
+			var componentList = new List<Component>();
+			var children = gameObject.transform.GetChildren();
 
 			for (int i = 0; i < children.Length; i++)
 			{
-				GameObject child = children[i].gameObject;
-				components.AddRange(child.GetComponentsInChildren(type, includeInactive, exclusive));
+				var child = children[i].gameObject;
+				componentList.AddRange(child.GetComponentsInChildren(type, includeInactive));
 			}
 
-			return components.ToArray();
+			return componentList.ToArray();
 		}
 
 		public static T GetComponentInParent<T>(this GameObject gameObject, bool exclusive) where T : Component
@@ -121,14 +133,19 @@ namespace Pseudo
 			if (!exclusive)
 				return gameObject.GetComponentInParent(type);
 
-			Transform parent = gameObject.transform.parent;
+			var parent = gameObject.transform.parent;
 
 			return parent != null ? parent.GetComponentInParent(type) : null;
 		}
 
 		public static T[] GetComponentsInParent<T>(this GameObject gameObject, bool includeInactive, bool exclusive) where T : class
 		{
-			return gameObject.GetComponentsInParent(typeof(T), includeInactive, exclusive) as T[];
+			if (!exclusive)
+				return gameObject.GetComponentsInParent<T>();
+
+			var parent = gameObject.transform.parent;
+
+			return parent != null ? parent.GetComponentsInParent<T>(includeInactive) : new T[0];
 		}
 
 		public static Component[] GetComponentsInParent(this GameObject gameObject, Type type, bool includeInactive, bool exclusive)
@@ -136,7 +153,7 @@ namespace Pseudo
 			if (!exclusive)
 				return gameObject.GetComponentsInParent(type);
 
-			Transform parent = gameObject.transform.parent;
+			var parent = gameObject.transform.parent;
 
 			return parent != null ? parent.GetComponentsInParent(type, includeInactive) : new Component[0];
 		}
@@ -163,15 +180,24 @@ namespace Pseudo
 
 		public static T[] FindComponents<T>(this GameObject gameObject, bool includeInactive) where T : class
 		{
-			return gameObject.FindComponents(typeof(T), includeInactive) as T[];
+			var selfComponents = gameObject.GetComponents<T>();
+			var parentsComponents = gameObject.GetComponentsInParent<T>(includeInactive, true);
+			var childrenComponents = gameObject.GetComponentsInChildren<T>(includeInactive, true);
+			var components = new T[selfComponents.Length + parentsComponents.Length + childrenComponents.Length];
+
+			selfComponents.CopyTo(components, 0);
+			parentsComponents.CopyTo(components, selfComponents.Length);
+			childrenComponents.CopyTo(components, selfComponents.Length + parentsComponents.Length);
+
+			return components;
 		}
 
 		public static Component[] FindComponents(this GameObject gameObject, Type type, bool includeInactive)
 		{
-			Component[] selfComponents = gameObject.GetComponents(type);
-			Component[] parentsComponents = gameObject.GetComponentsInParent(type, includeInactive, true);
-			Component[] childrenComponents = gameObject.GetComponentsInChildren(type, includeInactive, true);
-			Component[] components = new Component[selfComponents.Length + parentsComponents.Length + childrenComponents.Length];
+			var selfComponents = gameObject.GetComponents(type);
+			var parentsComponents = gameObject.GetComponentsInParent(type, includeInactive, true);
+			var childrenComponents = gameObject.GetComponentsInChildren(type, includeInactive, true);
+			var components = new Component[selfComponents.Length + parentsComponents.Length + childrenComponents.Length];
 
 			selfComponents.CopyTo(components, 0);
 			parentsComponents.CopyTo(components, selfComponents.Length);

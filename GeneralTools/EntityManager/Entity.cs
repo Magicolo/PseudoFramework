@@ -166,7 +166,7 @@ namespace Pseudo.Internal.Entity
 
 		public void RemoveAllComponents()
 		{
-			RemoveAllComponents(true);
+			RemoveAllComponents(true, true);
 		}
 
 		bool AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
@@ -300,7 +300,7 @@ namespace Pseudo.Internal.Entity
 			entityManager.UpdateEntity(this);
 		}
 
-		void RemoveAllComponents(bool raiseEvent)
+		void RemoveAllComponents(bool raiseEvent, bool updateEntity)
 		{
 			for (int i = 0; i < componentGroups.Length; i++)
 			{
@@ -319,7 +319,9 @@ namespace Pseudo.Internal.Entity
 			singleComponents.Clear();
 			allComponents.Clear();
 			componentIndices.Clear();
-			entityManager.UpdateEntity(this);
+
+			if (updateEntity)
+				entityManager.UpdateEntity(this);
 		}
 
 		void AddComponentIndex(int index)
@@ -372,7 +374,6 @@ namespace Pseudo.Internal.Entity
 
 		ComponentGroup CreateComponentGroup(Type type)
 		{
-			PDebug.Log(type);
 			var componentGroupType = ComponentUtility.GetComponentGroupType(type);
 			var componentGroup = (ComponentGroup)TypePoolManager.Create(componentGroupType);
 
@@ -391,7 +392,7 @@ namespace Pseudo.Internal.Entity
 
 		void IPoolable.OnRecycle()
 		{
-			RemoveAllComponents(false);
+			RemoveAllComponents(false, false);
 			TypePoolManager.RecycleElements(componentGroups);
 		}
 	}

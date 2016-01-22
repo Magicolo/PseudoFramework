@@ -12,23 +12,11 @@ namespace Pseudo
 	{
 		public static TEnum Nothing
 		{
-			get
-			{
-				if (nothing == null)
-					nothing = CreateValue(ByteFlag.Nothing, "Nothing");
-
-				return nothing;
-			}
+			get { return nothing ?? (nothing = CreateValue(ByteFlag.Nothing, "Nothing")); }
 		}
 		public static TEnum Everything
 		{
-			get
-			{
-				if (everything == null)
-					everything = CreateValue(GetEverything(), "Everything");
-
-				return everything;
-			}
+			get { return everything ?? (everything = CreateValue(GetEverything(), "Everything")); }
 		}
 
 		static TEnum nothing;

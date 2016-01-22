@@ -57,20 +57,16 @@ namespace Pseudo
 
 		public static Vector3 LerpLinear(this Vector3 vector, Vector3 target, float deltaTime, Axes axes)
 		{
-			Vector3 difference = target - vector;
-			Vector3 direction = Vector3.zero.SetValues(difference, axes);
+			var difference = target - vector;
+			var direction = Vector3.zero.SetValues(difference, axes);
 			float distance = direction.magnitude;
 
-			Vector3 adjustedDirection = direction.normalized * deltaTime;
+			var adjustedDirection = direction.normalized * deltaTime;
 
 			if (adjustedDirection.magnitude < distance)
-			{
 				vector += Vector3.zero.SetValues(adjustedDirection, axes);
-			}
 			else
-			{
 				vector = vector.SetValues(target, axes);
-			}
 
 			return vector;
 		}
@@ -101,11 +97,11 @@ namespace Pseudo
 
 		public static Vector3 LerpAnglesLinear(this Vector3 vector, Vector3 targetAngles, float time, Axes axes)
 		{
-			Vector3 difference = new Vector3(Mathf.DeltaAngle(vector.x, targetAngles.x), Mathf.DeltaAngle(vector.y, targetAngles.y), Mathf.DeltaAngle(vector.z, targetAngles.z));
-			Vector3 direction = Vector3.zero.SetValues(difference, axes);
+			var difference = new Vector3(Mathf.DeltaAngle(vector.x, targetAngles.x), Mathf.DeltaAngle(vector.y, targetAngles.y), Mathf.DeltaAngle(vector.z, targetAngles.z));
+			var direction = Vector3.zero.SetValues(difference, axes);
 			float distance = direction.magnitude * Mathf.Rad2Deg;
 
-			Vector3 adjustedDirection = direction.normalized * time;
+			var adjustedDirection = direction.normalized * time;
 
 			if (adjustedDirection.magnitude < distance)
 				vector += Vector3.zero.SetValues(adjustedDirection, axes);

@@ -8,7 +8,7 @@ using Pseudo.Internal.EntityOld;
 
 namespace Pseudo
 {
-	public static class EntityExtensions
+	public static class EntityExtensionsOld
 	{
 		public static IEntityOld GetEntity(this Component component)
 		{

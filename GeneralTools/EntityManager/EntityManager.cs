@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
-using Zenject;
 
 namespace Pseudo
 {
@@ -39,6 +38,7 @@ namespace Pseudo
 		public IEntity CreateEntity(EntityGroups groups)
 		{
 			Assert.IsNotNull(groups);
+
 			var entity = entityPool.Create();
 			entity.Initialize(this, groups);
 			AddEntity(entity);
@@ -49,6 +49,7 @@ namespace Pseudo
 		public EntityBehaviour CreateEntity(EntityBehaviour prefab)
 		{
 			Assert.IsNotNull(prefab);
+
 			var entity = PrefabPoolManager.Create(prefab);
 			entity.Initialize(this);
 
@@ -58,6 +59,7 @@ namespace Pseudo
 		public void RecycleEntity(IEntity entity)
 		{
 			Assert.IsNotNull(entity);
+
 			RemoveEntity(entity);
 			entityPool.Recycle(entity);
 		}
@@ -65,7 +67,7 @@ namespace Pseudo
 		public void RecycleEntity(EntityBehaviour instance)
 		{
 			Assert.IsNotNull(instance);
-			RecycleEntity(instance.Entity);
+
 			PrefabPoolManager.Recycle(instance);
 		}
 
@@ -76,6 +78,7 @@ namespace Pseudo
 		public void AddEntity(IEntity entity)
 		{
 			Assert.IsNotNull(entity);
+
 			entities.UpdateEntity(entity, true);
 			OnEntityAdded(entity);
 		}
@@ -87,6 +90,7 @@ namespace Pseudo
 		public void RemoveEntity(IEntity entity)
 		{
 			Assert.IsNotNull(entity);
+
 			entities.UpdateEntity(entity, false);
 			OnEntityRemoved(entity);
 		}
@@ -109,6 +113,7 @@ namespace Pseudo
 		public void UpdateEntity(IEntity entity)
 		{
 			Assert.IsNotNull(entity);
+
 			entities.UpdateEntity(entity, true);
 		}
 	}

@@ -23,12 +23,12 @@ namespace Pseudo.Internal.Pool
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
 
-		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() =>
+		static readonly Lazy<GameObject> cachedGameObject = new Lazy<GameObject>(() =>
 		{
 			InitializeJanitor();
 			return PoolJanitor.Instance.CachedGameObject;
 		});
-		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
+		static readonly Lazy<Transform> cachedTransform = new Lazy<Transform>(() => cachedGameObject.Value.transform);
 
 		public static IPool CreateTypePool(Type type, int startSize)
 		{
@@ -122,8 +122,16 @@ namespace Pseudo.Internal.Pool
 
 		public static void InitializeFields(object instance, List<IPoolSetter> setters)
 		{
+			bool isInitializable = instance is IPoolInitializable;
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPrePoolInitialize();
+
 			for (int i = 0; i < setters.Count; i++)
 				setters[i].SetValue(instance);
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPostPoolInitialize();
 		}
 
 		public static void Resize(IList array, int length)
@@ -160,6 +168,10 @@ namespace Pseudo.Internal.Pool
 			var type = instance.GetType();
 			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			var fields = new List<IPoolSetter>(allFields.Length);
+			bool isInitializable = instance is IPoolSettersInitializable;
+
+			if (isInitializable)
+				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
 
 			for (int i = 0; i < allFields.Length; i++)
 			{
@@ -169,6 +181,9 @@ namespace Pseudo.Internal.Pool
 				if (ShouldInitialize(field, value))
 					fields.Add(GetSetter(value, field, toIgnore));
 			}
+
+			if (isInitializable)
+				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(fields);
 
 			return fields;
 		}

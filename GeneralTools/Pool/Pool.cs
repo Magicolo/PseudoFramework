@@ -155,16 +155,10 @@ namespace Pseudo
 
 			protected void Initialize()
 			{
-				if (isSettersInitializable)
-					((IPoolSettersInitializable)reference).OnPrePoolSettersInitialize();
-
 				if (setters == null)
 					setters = PoolUtility.GetSetters(reference);
 				else
 					lock (setters) setters = PoolUtility.GetSetters(reference);
-
-				if (isSettersInitializable)
-					((IPoolSettersInitializable)reference).OnPostPoolSettersInitialize(setters);
 
 				while (Size < startSize)
 					Enqueue(CreateInstance(), false);
@@ -201,14 +195,7 @@ namespace Pseudo
 			protected virtual object CreateInstance()
 			{
 				var instance = constructor();
-
-				if (isInitializable)
-					((IPoolInitializable)instance).OnPrePoolInitialize();
-
 				PoolUtility.InitializeFields(instance, setters);
-
-				if (isInitializable)
-					((IPoolInitializable)instance).OnPostPoolInitialize();
 
 				return instance;
 			}
@@ -307,7 +294,7 @@ namespace Pseudo
 
 			static void UpdatePoolAsync(Pool pool)
 			{
-				int count = Mathf.Max(pool.Size / 10, 1);
+				int count = Mathf.Max(pool.Size / 2, 1);
 
 				for (int i = 0; i < count; i++)
 				{
@@ -324,14 +311,8 @@ namespace Pseudo
 						}
 					}
 
-					if (pool.isInitializable)
-						((IPoolInitializable)instance).OnPrePoolInitialize();
-
 					lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
 					lock (pool.instances) pool.instances.Enqueue(instance);
-
-					if (pool.isInitializable)
-						((IPoolInitializable)instance).OnPostPoolInitialize();
 				}
 			}
 		}

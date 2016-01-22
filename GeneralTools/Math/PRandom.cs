@@ -10,31 +10,70 @@ public static class PRandom
 
 	static List<float> weightSums = new List<float>();
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <returns>The random value.</returns>
 	public static int Range(int min, int max)
 	{
 		return (int)Math.Round(Range((double)min, (double)max, ProbabilityDistributions.Uniform));
 	}
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <param name="distribution">Distribution of probabilities.</param>
+	/// <returns>The random value.</returns>
 	public static int Range(int min, int max, ProbabilityDistributions distribution)
 	{
 		return (int)Math.Round(Range((double)min, (double)max, distribution));
 	}
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <returns>The random value.</returns>
 	public static float Range(float min, float max)
 	{
 		return (float)Range((double)min, (double)max, ProbabilityDistributions.Uniform);
 	}
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <param name="distribution">Distribution of probabilities.</param>
+	/// <returns>The random value.</returns>
 	public static float Range(float min, float max, ProbabilityDistributions distribution)
 	{
 		return (float)Range((double)min, (double)max, distribution);
 	}
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <returns>The random value.</returns>
 	public static double Range(double min, double max)
 	{
 		return Range(min, max, ProbabilityDistributions.Uniform);
 	}
 
+	/// <summary>
+	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
+	/// </summary>
+	/// <param name="min">Lower bound.</param>
+	/// <param name="max">Upper bound.</param>
+	/// <param name="distribution">Distribution of probabilities.</param>
+	/// <returns>The random value.</returns>
 	public static double Range(double min, double max, ProbabilityDistributions distribution)
 	{
 		double randomValue = 0d;
@@ -67,9 +106,8 @@ public static class PRandom
 
 	public static T WeightedRandom<T>(Dictionary<T, float> objectsAndWeights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
-		T[] objects = new T[objectsAndWeights.Keys.Count];
-		float[] weights = new float[objectsAndWeights.Values.Count];
-
+		var objects = new T[objectsAndWeights.Keys.Count];
+		var weights = new float[objectsAndWeights.Values.Count];
 		objectsAndWeights.GetOrderedKeysValues(out objects, out weights);
 
 		return WeightedRandom(objects, weights, distribution);
@@ -77,9 +115,9 @@ public static class PRandom
 
 	public static T WeightedRandom<T>(IList<T> objects, IList<float> weights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
 	{
-		weightSums.Clear();
 		float weightSum = 0f;
 		float randomValue = 0f;
+		var randomObject = default(T);
 
 		for (int i = 0; i < weights.Count; i++)
 		{
@@ -92,15 +130,19 @@ public static class PRandom
 		for (int i = 0; i < weights.Count; i++)
 		{
 			if (randomValue < weightSums[i])
-				return objects[i];
+			{
+				randomObject = objects[i];
+				break;
+			}
 		}
 
-		return default(T);
+		weightSums.Clear();
+		return randomObject;
 	}
 
 	public static UnityEngine.AnimationCurve DistributionToCurve(ProbabilityDistributions distribution, int definition)
 	{
-		UnityEngine.Keyframe[] keys = new UnityEngine.Keyframe[definition];
+		var keys = new UnityEngine.Keyframe[definition];
 
 		for (int i = 0; i < keys.Length; i++)
 			keys[i] = new UnityEngine.Keyframe((float)i / keys.Length, 0f);

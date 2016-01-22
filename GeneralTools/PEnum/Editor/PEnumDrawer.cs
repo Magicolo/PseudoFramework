@@ -43,13 +43,13 @@ namespace Pseudo.Internal
 
 		void ShowEnumFlag()
 		{
-			var enumFlag = (IEnumFlag)enumValue;
+			var enumFlagValue = currentProperty.GetValue<IEnumFlag>();
 			var options = new FlagsOption[enumValues.Length];
 
 			for (int i = 0; i < options.Length; i++)
 			{
 				var flags = (IEnumFlag)enumValues.GetValue(i);
-				options[i] = new FlagsOption(enumNames[i].ToGUIContent(), flags, enumFlag.HasAll(flags));
+				options[i] = new FlagsOption(enumNames[i].ToGUIContent(), flags, enumFlagValue.HasAll(flags));
 			}
 
 			Flags(currentPosition, currentProperty, options, OnEnumSelected, currentLabel);
@@ -63,8 +63,8 @@ namespace Pseudo.Internal
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
-					foreach (var value in enumValues)
-						flags = flags.Add(((IEnumFlag)value).Value);
+					foreach (IEnumFlag value in enumValues)
+						flags = flags.Add(value.Value);
 					break;
 				case FlagsOption.OptionTypes.Nothing:
 					flags = ByteFlag.Nothing;
@@ -85,20 +85,16 @@ namespace Pseudo.Internal
 
 			property.serializedObject.ApplyModifiedProperties();
 			EditorUtility.SetDirty(target);
-
-			//property.SetValue("value", enumValue.Value);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
 
-			isFlag = typeof(IEnumFlag).IsAssignableFrom(fieldInfo.FieldType);
 			enumValue = property.GetValue<IEnum>();
-
-			var type = typeof(PEnum<,>).MakeGenericType(enumValue.GetType(), enumValue.ValueType);
-			enumValues = (Array)type.GetMethod("GetValues").Invoke(null, null);
-			enumNames = ((string[])type.GetMethod("GetNames").Invoke(null, null)).Convert(name => name.Replace('_', '/'));
+			enumValues = enumValue.GetValues();
+			enumNames = enumValue.GetNames().Convert(name => name.Replace('_', '/'));
+			isFlag = enumValue is IEnumFlag;
 
 			return 16f;
 		}

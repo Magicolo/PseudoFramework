@@ -20,12 +20,12 @@ namespace Pseudo
 		public float Randomness;
 		public Vector3 Speed = Vector3.one;
 
-		readonly CachedValue<Renderer> cachedRenderer;
+		readonly Lazy<Renderer> cachedRenderer;
 		public Renderer CachedRenderer { get { return cachedRenderer; } }
 
 		public SmoothMove()
 		{
-			cachedRenderer = new CachedValue<Renderer>(GetComponent<Renderer>);
+			cachedRenderer = new Lazy<Renderer>(GetComponent<Renderer>);
 		}
 
 		void Awake()

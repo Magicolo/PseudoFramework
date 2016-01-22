@@ -9,7 +9,7 @@ using Pseudo.Internal.Entity;
 namespace Pseudo
 {
 	[RequireComponent(typeof(StateComponent))]
-	public class SwitchStateOnEventComponent : PMonoBehaviour, IComponent
+	public class SwitchStateOnEventComponent : ComponentBehaviour
 	{
 		[Serializable]
 		public struct EventData

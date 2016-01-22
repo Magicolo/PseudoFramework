@@ -8,7 +8,7 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class AudioOnEventComponent : PMonoBehaviour, IComponent
+	public class AudioOnEventComponent : ComponentBehaviour
 	{
 		[Serializable]
 		public struct EventData

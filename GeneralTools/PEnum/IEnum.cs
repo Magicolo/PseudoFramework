@@ -7,5 +7,8 @@ namespace Pseudo
 		Type ValueType { get; }
 		object Value { get; }
 		string Name { get; }
+
+		Array GetValues();
+		string[] GetNames();
 	}
 }

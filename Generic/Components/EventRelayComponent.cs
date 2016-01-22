@@ -8,7 +8,7 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class EventRelayComponent : PMonoBehaviour, IComponent
+	public class EventRelayComponent : ComponentBehaviour
 	{
 		[Serializable]
 		public struct EventData

@@ -8,10 +8,10 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class StateMachineComponent : PMonoBehaviour, IComponent
+	public class StateMachineComponent : ComponentBehaviour
 	{
 		public int InitialStateIndex;
-		[EntityRequires(typeof(StateComponent), CanBeNull = false)]
+		[EntityRequires(typeof(StateComponent), CanBeNull = false), DoNotInitialize]
 		public EntityBehaviour[] States;
 
 		public EntityBehaviour CurrentState

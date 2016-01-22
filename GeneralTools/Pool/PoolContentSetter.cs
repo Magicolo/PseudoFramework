@@ -35,11 +35,10 @@ namespace Pseudo.Internal.Pool
 				if (isUnityObject)
 					return;
 				else
-					value = TypePoolManager.Create(type);
+					field.SetValue(instance, value = TypePoolManager.Create(type));
 			}
 
-			for (int i = 0; i < setters.Count; i++)
-				setters[i].SetValue(value);
+			PoolUtility.InitializeFields(value, setters);
 		}
 
 		public override string ToString()

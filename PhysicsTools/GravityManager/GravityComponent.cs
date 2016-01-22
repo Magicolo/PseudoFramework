@@ -11,7 +11,7 @@ namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/Physics/Gravity")]
 	[RequireComponent(typeof(TimeComponent))]
-	public class GravityComponent : PMonoBehaviour, IGravityChannel, IComponent
+	public class GravityComponent : ComponentBehaviour, IGravityChannel
 	{
 		public GravityManager.GravityChannels Channel
 		{
@@ -36,13 +36,13 @@ namespace Pseudo
 			set { gravity.Rotation = value; }
 		}
 
-		protected readonly CachedValue<Rigidbody> cachedRigidbody;
+		protected readonly Lazy<Rigidbody> cachedRigidbody;
 		public Rigidbody CachedRigidbody { get { return cachedRigidbody; } }
 
-		protected readonly CachedValue<Rigidbody2D> cachedRigidbody2D;
+		protected readonly Lazy<Rigidbody2D> cachedRigidbody2D;
 		public Rigidbody2D CachedRigidbody2D { get { return cachedRigidbody2D; } }
 
-		protected readonly CachedValue<TimeComponent> cachedTime;
+		protected readonly Lazy<TimeComponent> cachedTime;
 		public TimeComponent CachedTime { get { return cachedTime; } }
 
 		[SerializeField, InitializeContent]
@@ -52,9 +52,9 @@ namespace Pseudo
 
 		public GravityComponent()
 		{
-			cachedRigidbody = new CachedValue<Rigidbody>(GetComponent<Rigidbody>);
-			cachedRigidbody2D = new CachedValue<Rigidbody2D>(GetComponent<Rigidbody2D>);
-			cachedTime = new CachedValue<TimeComponent>(GetComponent<TimeComponent>);
+			cachedRigidbody = new Lazy<Rigidbody>(GetComponent<Rigidbody>);
+			cachedRigidbody2D = new Lazy<Rigidbody2D>(GetComponent<Rigidbody2D>);
+			cachedTime = new Lazy<TimeComponent>(GetComponent<TimeComponent>);
 		}
 
 		void Awake()

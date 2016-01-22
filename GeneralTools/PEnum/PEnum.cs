@@ -81,6 +81,16 @@ namespace Pseudo
 			return string.Format("{0}.{1}", GetType().Name, Name);
 		}
 
+		Array IEnum.GetValues()
+		{
+			return GetValues();
+		}
+
+		string[] IEnum.GetNames()
+		{
+			return GetNames();
+		}
+
 		public static TEnum[] GetValues()
 		{
 			Initialize();

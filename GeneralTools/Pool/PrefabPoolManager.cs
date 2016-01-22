@@ -112,18 +112,21 @@ namespace Pseudo
 
 		static void OnValidate(UnityEngine.Object instance)
 		{
-			ResetPool(instance);
-			GameObject gameObject = null;
-
-			if (instance is GameObject)
-				gameObject = (GameObject)instance;
-			else if (instance is Component)
-				gameObject = ((Component)instance).gameObject;
-
-			if (gameObject == null)
+			if (UnityEditor.PrefabUtility.GetPrefabType(instance) != UnityEditor.PrefabType.Prefab)
 				return;
 
-			var components = gameObject.GetComponents<Component>();
+			Transform root = null;
+
+			if (instance is GameObject)
+				root = ((GameObject)instance).transform.root;
+			else if (instance is Component)
+				root = ((Component)instance).transform.root;
+
+			if (root == null)
+				return;
+
+			ResetPool(root.gameObject);
+			var components = root.GetComponents<Component>();
 
 			for (int i = 0; i < components.Length; i++)
 				ResetPool(components[i]);

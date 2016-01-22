@@ -31,11 +31,10 @@ namespace Pseudo.Internal.Pool
 					if (isUnityObject)
 						return;
 					else
-						value = (array[index] = TypePoolManager.Create(elementType));
+						value = array[index] = TypePoolManager.Create(elementType);
 				}
 
-				for (int i = 0; i < setters.Count; i++)
-					setters[i].SetValue(value);
+				PoolUtility.InitializeFields(value, setters);
 			}
 		}
 
