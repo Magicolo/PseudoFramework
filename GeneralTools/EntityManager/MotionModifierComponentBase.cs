@@ -7,8 +7,9 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[RequireComponent(typeof(MotionComponent))]
 	public abstract class MotionModifierComponentBase : ComponentBehaviour
 	{
-
+		public float Strength = 1f;
 	}
 }

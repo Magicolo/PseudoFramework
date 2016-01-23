@@ -9,6 +9,12 @@ using UnityEngine;
 
 namespace Pseudo
 {
+	/// <summary>
+	/// Custom enum implementation to overcome C#'s enum limitations.
+	/// *WARNING* Do not use default values on fields that are serialized by Unity.
+	/// </summary>
+	/// <typeparam name="TEnum">Type of the enum.</typeparam>
+	/// <typeparam name="TValue">Type of the value held by the enum.</typeparam>
 	public abstract class PEnum<TEnum, TValue> : PEnum, IEnum, IEquatable<PEnum<TEnum, TValue>>, IEquatable<TEnum>
 		where TEnum : PEnum<TEnum, TValue>
 		where TValue : IEquatable<TValue>

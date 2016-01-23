@@ -30,7 +30,7 @@ namespace Pseudo
 
 		[SerializeField]
 		EntityGroups groups = null;
-		[InitializeContent]
+		[NonSerialized, InitializeContent]
 		EntityBehaviour[] children;
 		[InitializeContent]
 		IComponent[] components;
@@ -42,12 +42,13 @@ namespace Pseudo
 
 		void OnEnable()
 		{
-			Create();
+			Initialize();
+			CreateEntity();
 		}
 
 		void OnDisable()
 		{
-			Recycle();
+			RecycleEntity();
 		}
 
 		[PostInject]
@@ -56,10 +57,11 @@ namespace Pseudo
 			this.entityManager = entityManager;
 
 			Initialize();
-			Create();
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].Initialize(entityManager);
+
+			CreateEntity();
 		}
 
 		public override void OnCreate()
@@ -68,6 +70,9 @@ namespace Pseudo
 
 			Initialize();
 
+			for (int i = 0; i < children.Length; i++)
+				children[i].OnCreate();
+
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
 				var poolable = componentBehaviours[i] as IPoolable;
@@ -75,14 +80,14 @@ namespace Pseudo
 				if (poolable != null)
 					poolable.OnCreate();
 			}
-
-			for (int i = 0; i < children.Length; i++)
-				children[i].OnCreate();
 		}
 
 		public override void OnRecycle()
 		{
 			base.OnRecycle();
+
+			for (int i = 0; i < children.Length; i++)
+				children[i].OnRecycle();
 
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
@@ -92,33 +97,26 @@ namespace Pseudo
 					poolable.OnRecycle();
 			}
 
-			for (int i = 0; i < children.Length; i++)
-				children[i].OnRecycle();
+			RecycleEntity();
 		}
 
-		void Create()
+		void CreateEntity()
 		{
-			if (entityManager == null || entity != null)
+			if (entityManager == null || entity != null || !CachedGameObject.activeInHierarchy || !enabled)
 				return;
 
 			entity = entityManager.CreateEntity(groups);
 			entity.AddComponents(components);
 			entity.AddComponents(componentBehaviours);
-
-			for (int i = 0; i < children.Length; i++)
-				children[i].Create();
 		}
 
-		void Recycle()
+		void RecycleEntity()
 		{
 			if (entityManager == null || entity == null)
 				return;
 
 			entityManager.RecycleEntity(entity);
 			entity = null;
-
-			for (int i = 0; i < children.Length; i++)
-				children[i].Recycle();
 		}
 
 		void Initialize()

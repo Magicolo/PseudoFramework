@@ -17,6 +17,7 @@ namespace Pseudo
 			public EntityBehaviour Relay;
 		}
 
+		[InitializeContent]
 		public EventData[] Events = new EventData[0];
 	}
 }

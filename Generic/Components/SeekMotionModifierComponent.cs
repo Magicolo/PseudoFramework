@@ -10,7 +10,6 @@ namespace Pseudo
 	public class SeekMotionModifierComponent : MotionModifierComponentBase
 	{
 		public TargetComponentBase Target;
-		public float Strength = 1f;
 		public float PerceptionDistance = 10f;
 		public float SlowDistance = 3f;
 		public float StopDistance = 1f;

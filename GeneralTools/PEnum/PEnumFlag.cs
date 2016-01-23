@@ -7,6 +7,11 @@ using System.Text;
 
 namespace Pseudo
 {
+	/// <summary>
+	/// Custom enum flag implementation to overcome C#'s enum limitations.
+	/// *WARNING* Do not use default values on fields that are serialized by Unity.
+	/// </summary>
+	/// <typeparam name="TEnum">Type of the enum flag.</typeparam>
 	public abstract class PEnumFlag<TEnum> : PEnum<TEnum, ByteFlag>, IEnumFlag
 		where TEnum : PEnumFlag<TEnum>
 	{

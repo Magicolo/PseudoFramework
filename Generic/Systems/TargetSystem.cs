@@ -11,7 +11,7 @@ namespace Pseudo
 	{
 		public override float UpdateDelay
 		{
-			get { return 1f; }
+			get { return 0.5f; }
 		}
 
 		IEntityGroup entities;

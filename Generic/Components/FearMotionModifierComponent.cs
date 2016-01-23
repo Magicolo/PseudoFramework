@@ -10,8 +10,8 @@ namespace Pseudo
 	public class FearMotionModifierComponent : MotionModifierComponentBase
 	{
 		public TargetComponentBase Target;
-		public float Strength = 1f;
-		public float SlowDistance = 3f;
-		public float StopDistance = 1f;
+		[Tooltip("Rate at which the fear progresses over distance.")]
+		public float Ratio = 1f;
+		public float PerceptionDistance = 10f;
 	}
 }

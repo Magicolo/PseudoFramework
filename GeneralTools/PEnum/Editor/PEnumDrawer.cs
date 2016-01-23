@@ -31,14 +31,14 @@ namespace Pseudo.Internal
 
 		void ShowEnum()
 		{
-			int index = Mathf.Max(Array.IndexOf(enumValues, enumValue), 0);
+			int index = Mathf.Max(enumValues.FindIndex((IEnum e) => e.Equals(enumValue)), 0);
 
 			EditorGUI.BeginChangeCheck();
 
 			index = EditorGUI.Popup(currentPosition, currentProperty.displayName, index, enumNames);
 
 			if (EditorGUI.EndChangeCheck())
-				currentProperty.SetValue("value", ((IEnum)enumValues.GetValue(index)).Value);
+				currentProperty.SetValue("value", enumValues.GetValue<IEnum>(index).Value);
 		}
 
 		void ShowEnumFlag()
