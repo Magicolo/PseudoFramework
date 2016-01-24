@@ -9,12 +9,12 @@ namespace Pseudo
 	{
 		static ArchitectLinker linker;
 
-		[MenuItem("Assets/Create/Architect/LoadThisMapFile", true)]
+		[MenuItem("Assets/Create/Pseudo/Architect/LoadThisMapFile", true)]
 		static bool LoadMapValidation()
 		{
 			return Selection.activeObject != null && AssetDatabaseUtility.GetSelectedAssetExtention().Equals(".arc");
 		}
-		[MenuItem("Assets/Create/Architect/LoadThisMapFile")]
+		[MenuItem("Assets/Create/Pseudo/Architect/LoadThisMapFile")]
 		static void LoadMap()
 		{
 			if (linker == null)
@@ -27,12 +27,12 @@ namespace Pseudo
 		}
 
 
-		[MenuItem("Assets/Create/Architect/SelectValidation", true)]
+		[MenuItem("Assets/Create/Pseudo/Architect/SelectValidation", true)]
 		static bool SelectLinkerValidation()
 		{
 			return Selection.activeObject != null && AssetDatabaseUtility.GetSelectedAssetExtention().Equals(".asset");
 		}
-		[MenuItem("Assets/Create/Architect/SelectValidation")]
+		[MenuItem("Assets/Create/Pseudo/Architect/SelectValidation")]
 		static void SelectLinker()
 		{
 			linker = (ArchitectLinker)Selection.activeObject;
