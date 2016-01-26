@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Audio
 {
 	public class AudioSourceSettings : AudioSettingsBase
 	{
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.Source; } }
+		public override AudioTypes Type { get { return AudioTypes.Source; } }
 
 		public AudioClip Clip;
 		public AudioMixerGroup Output;

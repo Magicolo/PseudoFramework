@@ -11,25 +11,40 @@ namespace Pseudo
 	[RequireComponent(typeof(ParticleSystem))]
 	public class ParticleEffect : PMonoBehaviour
 	{
-		protected readonly CachedValue<ParticleSystem> cachedParticleSystem;
-
 		public ParticleSystem CachedParticleSystem { get { return cachedParticleSystem; } }
-		public bool IsPlaying { get { return cachedParticleSystem.Value.isPlaying; } }
+		public bool IsPlaying { get { return CachedParticleSystem.isPlaying; } }
+
+		readonly Lazy<ParticleSystem> cachedParticleSystem;
+		IParticleManager particleManager;
+		bool hasPlayed;
 
 		public ParticleEffect()
 		{
-			cachedParticleSystem = new CachedValue<ParticleSystem>(GetComponent<ParticleSystem>);
+			cachedParticleSystem = new Lazy<ParticleSystem>(GetComponent<ParticleSystem>);
 		}
 
-		protected virtual void LateUpdate()
+		public virtual void Initialize(IParticleManager particleManager, Vector3 position, Transform parent)
 		{
-			if (!IsPlaying)
-				PrefabPoolManager.Recycle(this);
+			this.particleManager = particleManager;
+			CachedTransform.position = position;
+			CachedTransform.parent = parent;
 		}
 
-		public virtual void Stop()
+		public void Play()
 		{
-			cachedParticleSystem.Value.Stop(true);
+			CachedParticleSystem.Play(true);
+			hasPlayed = true;
+		}
+
+		public void Stop()
+		{
+			CachedParticleSystem.Stop(true);
+		}
+
+		void LateUpdate()
+		{
+			if (hasPlayed && !IsPlaying)
+				particleManager.RecycleEffect(this);
 		}
 	}
 }

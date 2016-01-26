@@ -1,27 +1,29 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
+using Pseudo.Internal;
 
-namespace Pseudo.Internal
+namespace Pseudo
 {
-	public class TimeChannel : TimeComponentBase
+	[Serializable]
+	public class TimeChannel : TimeChannelBase
 	{
 		protected override float GetTime()
 		{
-			return UnityEngine.Time.time;
+			return TimeManager.GetTime(channel);
 		}
 
 		protected override float GetDeltaTime()
 		{
-			return UnityEngine.Time.deltaTime;
+			return TimeManager.GetDeltaTime(channel);
 		}
 
 		protected override float GetFixedDeltaTime()
 		{
-			return UnityEngine.Time.fixedDeltaTime;
+			return TimeManager.GetFixedDeltaTime(channel);
 		}
 	}
 }

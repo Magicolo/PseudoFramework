@@ -8,22 +8,17 @@ using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
-	public class GravityChannel : GravityComponentBase
+	[Serializable]
+	public class GravityChannel : GravityChannelBase
 	{
-		protected virtual void Awake()
-		{
-			channel = (GravityManager.GravityChannels)Enum.Parse(typeof(GravityManager.GravityChannels), name);
-		}
-
 		protected override Vector3 GetGravity()
 		{
-			switch (GravityManager.Mode)
-			{
-				default:
-					return Physics2D.gravity;
-				case GravityManager.Dimensions._3D:
-					return Physics.gravity;
-			}
+			return GravityManager.GetGravity(channel);
+		}
+
+		protected override Vector2 GetGravity2D()
+		{
+			return GravityManager.GetGravity2D(channel);
 		}
 	}
 }

@@ -119,17 +119,20 @@ namespace Pseudo
 
 		public void AddTile(Point2 tilePoint, TileData prefab)
 		{
+			if (this[tilePoint.X, tilePoint.Y] == null) return;
 			AddTile(tilePoint, prefab.TileType);
 			this[tilePoint.X, tilePoint.Y].Transform.localScale = prefab.Transform.localScale;
 			this[tilePoint.X, tilePoint.Y].Transform.rotation = prefab.Transform.rotation;
 		}
 		public void AddTile(Point2 tilePoint, TileType tileType, int rotationFlags)
 		{
+			if (this[tilePoint.X, tilePoint.Y] == null) return;
 			AddTile(tilePoint, tileType);
 			ArchitectRotationHandler.ApplyFlipFlags(this[tilePoint.X, tilePoint.Y].Transform, rotationFlags);
 		}
 		public void AddTile(Point2 tilePoint, TileType tileType, float angle, bool horizontal, bool vertical)
 		{
+			if (this[tilePoint.X, tilePoint.Y] == null) return;
 			AddTile(tilePoint, tileType);
 			ArchitectRotationHandler.ApplyRotationFlip(this[tilePoint.X, tilePoint.Y].Transform, angle, horizontal, vertical);
 		}

@@ -38,14 +38,14 @@ namespace Pseudo
 		{
 
 			string name = currentLine.Substring(6);
-			LayerData layer = new LayerData(null, name, 20, 20);
-
 			int nbLines = 20;
 			int lineWidth = 20;
+			LayerData layer = new LayerData(null, name, nbLines, lineWidth);
+
 			for (int y = 0; y < nbLines; y++)
 			{
 				nextLine();
-				readLayerLine(layer, nbLines - y, lineWidth);
+				readLayerLine(layer, nbLines - y - 1, lineWidth);
 			}
 			return layer;
 		}

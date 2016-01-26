@@ -14,9 +14,10 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.SwitchContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public void Initialize(AudioSwitchContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
+
+		public void Initialize(AudioSwitchContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
@@ -30,7 +31,7 @@ namespace Pseudo.Internal.Audio
 
 		protected override void InitializeSources()
 		{
-			switchValue = AudioManager.Instance.GetSwitchValue(settings.SwitchName);
+			switchValue = itemManager.AudioManager.GetSwitchValue(settings.SwitchName);
 			int stateValue = switchValue.Value;
 
 			for (int i = 0; i < originalSettings.Sources.Count; i++)

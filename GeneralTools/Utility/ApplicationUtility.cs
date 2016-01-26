@@ -10,10 +10,7 @@ public static class ApplicationUtility
 {
 	public static bool IsPlaying
 	{
-		get
-		{
-			return isPlaying;
-		}
+		get { return isPlaying; }
 	}
 	public static bool IsMainThread
 	{

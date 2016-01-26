@@ -21,14 +21,14 @@ namespace Pseudo
 
 		public Color32 Color { set { CachedRenderer.sharedMaterial.color = value; } }
 
-		readonly CachedValue<MeshRenderer> cachedRenderer;
+		readonly Lazy<MeshRenderer> cachedRenderer;
 		public MeshRenderer CachedRenderer { get { return cachedRenderer; } }
 
 		public Vector3 PositionOffset;
 
 		public GridScallerTiller()
 		{
-			cachedRenderer = new CachedValue<MeshRenderer>(GetComponent<MeshRenderer>);
+			cachedRenderer = new Lazy<MeshRenderer>(GetComponent<MeshRenderer>);
 		}
 
 		void Update()

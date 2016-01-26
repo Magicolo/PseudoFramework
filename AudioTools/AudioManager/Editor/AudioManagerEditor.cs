@@ -11,7 +11,8 @@ namespace Pseudo.Internal.Editor
 	[CustomEditor(typeof(AudioManager), true), CanEditMultipleObjects]
 	public class AudioManagerEditor : CustomEditorBase
 	{
-		static AudioItem previewItem;
+		static AudioManager audioManager;
+		static IAudioItem previewItem;
 		static AudioSettingsBase previewSettings;
 		static bool stopPreview;
 		static bool audioManagerExists;
@@ -20,7 +21,7 @@ namespace Pseudo.Internal.Editor
 		{
 			Begin();
 
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("UseCustomCurves"));
+			EditorGUILayout.PropertyField(serializedObject.FindProperty("useCustomCurves"));
 
 			End();
 		}
@@ -50,7 +51,7 @@ namespace Pseudo.Internal.Editor
 			if (!audioManagerExists)
 				return;
 
-			AudioSettingsBase settings = AssetDatabase.LoadAssetAtPath<AudioSettingsBase>(AssetDatabase.GUIDToAssetPath(guid));
+			var settings = AssetDatabase.LoadAssetAtPath<AudioSettingsBase>(AssetDatabase.GUIDToAssetPath(guid));
 
 			if (settings != null)
 				ShowPreviewButton(selectionRect, settings);
@@ -58,15 +59,16 @@ namespace Pseudo.Internal.Editor
 
 		static void Update()
 		{
-			audioManagerExists = AudioManager.Find() != null;
+			audioManager = FindObjectOfType<AudioManager>();
+			audioManagerExists = audioManager != null;
 
 			if (!audioManagerExists || Application.isPlaying)
 				return;
 
-			if (stopPreview || previewItem == null || previewItem.State == AudioItem.AudioStates.Stopped || Selection.activeObject != previewSettings)
+			if (stopPreview || previewItem == null || previewItem.State == AudioStates.Stopped || Selection.activeObject != previewSettings)
 				StopPreview();
 
-			AudioManager.Instance.ItemManager.Update();
+			audioManager.Update();
 		}
 
 		static void PlayPreview(AudioSettingsBase settings)
@@ -74,14 +76,14 @@ namespace Pseudo.Internal.Editor
 			StopPreview();
 			EditorUtility.SetDirty(settings);
 			previewSettings = settings;
-			previewItem = AudioManager.Instance.CreateItem(previewSettings);
+			previewItem = audioManager.CreateItem(previewSettings);
 			previewItem.OnStop += item => { stopPreview = true; previewItem = null; };
 			previewItem.Play();
 		}
 
 		static void StopPreview()
 		{
-			if (AudioManager.Instance == null)
+			if (audioManager == null)
 				return;
 
 			if (previewItem != null)
@@ -98,14 +100,14 @@ namespace Pseudo.Internal.Editor
 			}
 
 			if (!Application.isPlaying)
-				PrefabPoolManager.ClearPool(AudioManager.Instance.Reference);
+				PrefabPoolManager.ClearPool(audioManager.Reference);
 
 			stopPreview = false;
 		}
 
 		public static void ShowPreviewButton(Rect rect, AudioSettingsBase settings)
 		{
-			if (AudioManager.Instance == null)
+			if (audioManager == null)
 				return;
 
 			// Check if scrollbar is visible
@@ -117,14 +119,14 @@ namespace Pseudo.Internal.Editor
 			rect.width = 21f;
 			rect.height = 16f;
 
-			GUIStyle buttonStyle = new GUIStyle("MiniToolbarButtonLeft");
+			var buttonStyle = new GUIStyle("MiniToolbarButtonLeft");
 			buttonStyle.fixedHeight += 1;
 
 			if (GUI.Button(rect, "", buttonStyle))
 			{
 				Selection.activeObject = settings;
 
-				if (previewSettings != settings || (previewItem != null && previewItem.State == AudioItem.AudioStates.Stopping))
+				if (previewSettings != settings || (previewItem != null && previewItem.State == AudioStates.Stopping))
 					PlayPreview(settings);
 				else if (previewItem != null)
 					previewItem.Stop();
@@ -132,11 +134,11 @@ namespace Pseudo.Internal.Editor
 					StopPreview();
 			}
 
-			bool playing = previewItem == null || previewItem.State == AudioItem.AudioStates.Stopping || previewSettings != settings;
-			GUIStyle labelStyle = new GUIStyle("boldLabel");
+			bool playing = previewItem == null || previewItem.State == AudioStates.Stopping || previewSettings != settings;
+			var labelStyle = new GUIStyle("boldLabel");
 			labelStyle.fixedHeight += 1;
 			labelStyle.fontSize = playing ? 14 : 20;
-			labelStyle.contentOffset = playing ? new Vector2(2f, -1f) : new Vector2(2f, -8f);
+			labelStyle.contentOffset = playing ? new Vector2(2f, -2f) : new Vector2(2f, -7f);
 			labelStyle.clipping = TextClipping.Overflow;
 
 			GUI.Label(rect, playing ? "►" : "■", labelStyle);

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using UnityEditor;
 
 namespace Pseudo
 {
@@ -70,6 +69,7 @@ namespace Pseudo
 		public ArchitectMenus Menu;
 		public ToolbarPanel Toolbar;
 		public TilesetItemsPanel TilesetPanel;
+		public LayerPanel LayerPanel;
 
 		void Awake()
 		{
@@ -102,7 +102,7 @@ namespace Pseudo
 
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "Assets\\Tests\\DesignTools\\Architect\\map.arc");
+			SaveWorld.SaveAll(this, "Assets\\Maps\\map1.arc");
 		}
 
 		public void ResetGridSize()
@@ -119,6 +119,7 @@ namespace Pseudo
 			var layers = WorldOpener.OpenFile(Linker, path);
 			Layers.AddRange(layers);
 			SelectedLayer = layers[0];
+			LayerPanel.RefreshLayers();
 		}
 
 		public void New()
@@ -127,6 +128,7 @@ namespace Pseudo
 			addLayer();
 			SelectedLayer = Layers[0];
 			ResetGridSize();
+			LayerPanel.RefreshLayers();
 		}
 
 		private void clearAllLayer()

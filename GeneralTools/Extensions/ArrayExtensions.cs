@@ -8,6 +8,32 @@ namespace Pseudo
 {
 	public static class ArrayExtensions
 	{
+		public static int IndexOf<T>(this Array array, T value)
+		{
+			return Array.IndexOf(array, value);
+		}
+
+		public static int FindIndex<T>(this Array array, Predicate<T> match)
+		{
+			int index = -1;
+
+			for (int i = 0; i < array.Length; i++)
+			{
+				if (match((T)array.GetValue(i)))
+				{
+					index = i;
+					break;
+				}
+			}
+
+			return index;
+		}
+
+		public static T GetValue<T>(this Array array, int index)
+		{
+			return (T)array.GetValue(index);
+		}
+
 		public static T Get<T>(this T[,] array, Point2 point)
 		{
 			return array[point.X, point.Y];
@@ -97,6 +123,36 @@ namespace Pseudo
 			return slicedArray;
 		}
 
+		public static U[] Convert<T, U>(this Array array, Func<T, U> conversion)
+		{
+			return array.Convert(conversion, 0, array.Length);
+		}
+
+		public static U[] Convert<T, U>(this Array array, Func<T, U> conversion, int startIndex, int count)
+		{
+			var converted = new U[array.Length];
+
+			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Length); i++)
+				converted[i] = conversion((T)array.GetValue(i));
+
+			return converted;
+		}
+
+		public static U[] Convert<T, U>(this T[] array, Func<T, U> conversion)
+		{
+			return array.Convert(conversion, 0, array.Length);
+		}
+
+		public static U[] Convert<T, U>(this T[] array, Func<T, U> conversion, int startIndex, int count)
+		{
+			var converted = new U[array.Length];
+
+			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Length); i++)
+				converted[i] = conversion(array[i]);
+
+			return converted;
+		}
+
 		public static U[] Convert<T, U>(this IList<T> array, Func<T, U> conversion)
 		{
 			return array.Convert(conversion, 0, array.Count);
@@ -104,7 +160,7 @@ namespace Pseudo
 
 		public static U[] Convert<T, U>(this IList<T> array, Func<T, U> conversion, int startIndex, int count)
 		{
-			U[] converted = new U[array.Count];
+			var converted = new U[array.Count];
 
 			for (int i = startIndex; i < Mathf.Min(startIndex + count, array.Count); i++)
 				converted[i] = conversion(array[i]);
@@ -257,26 +313,6 @@ namespace Pseudo
 			{
 				var element = array[i];
 				float distance = (element.CachedTransform.position - position).sqrMagnitude;
-
-				if (distance < closestDistance)
-				{
-					closest = element;
-					closestDistance = distance;
-				}
-			}
-
-			return closest;
-		}
-
-		public static IEntity GetClosest(this IList<IEntity> array, Vector3 position)
-		{
-			var closest = default(IEntity);
-			float closestDistance = float.MaxValue;
-
-			for (int i = 0; i < array.Count; i++)
-			{
-				var element = array[i];
-				float distance = (element.Transform.position - position).sqrMagnitude;
 
 				if (distance < closestDistance)
 				{

@@ -14,6 +14,15 @@ namespace Pseudo.Internal.Editor
 {
 	public static class CustomMenus
 	{
+		[MenuItem("Assets/Create/Mesh")]
+		static void CreateMesh()
+		{
+			var mesh = new Mesh();
+			var path = AssetDatabaseUtility.GenerateUniqueAssetPath("Mesh");
+			AssetDatabase.CreateAsset(mesh, path);
+			Selection.activeObject = mesh;
+		}
+
 		[MenuItem("Pseudo/Create/Sprite", false, -10)]
 		static void CreateSprite()
 		{
@@ -103,21 +112,21 @@ namespace Pseudo.Internal.Editor
 
 		static void SelectGameObjectsOfType<T>() where T : Component
 		{
-			List<GameObject> selected = new List<GameObject>();
+			var selected = new List<GameObject>();
 
 			if (Selection.gameObjects != null && Selection.gameObjects.Length > 0)
 			{
 				for (int i = 0; i < Selection.gameObjects.Length; i++)
 				{
-					GameObject gameObject = Selection.gameObjects[i];
-					GameObject[] children = gameObject.GetChildren(true);
+					var gameObject = Selection.gameObjects[i];
+					var children = gameObject.GetChildren(true);
 
 					if (gameObject.GetComponent<T>() != null)
 						selected.Add(gameObject);
 
 					for (int j = 0; j < children.Length; j++)
 					{
-						GameObject child = children[j];
+						var child = children[j];
 
 						if (child.GetComponent<T>() != null)
 							selected.Add(child);

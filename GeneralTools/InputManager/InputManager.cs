@@ -4,15 +4,36 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Input;
+using UnityEngine.Assertions;
 
 namespace Pseudo
 {
-	public class InputManager : Singleton<InputManager>
+	public class InputManager : MonoBehaviour, IInputManager
 	{
 		public enum ControllerTypes
 		{
+			Mouse,
 			Keyboard,
 			Joystick
+		}
+
+		public enum MouseButtons
+		{
+			LeftClick = KeyCode.Mouse0,
+			RightClick = KeyCode.Mouse1,
+			MiddleClick = KeyCode.Mouse2,
+			Mouse3 = KeyCode.Mouse3,
+			Mouse4 = KeyCode.Mouse4,
+			Mouse5 = KeyCode.Mouse5,
+			Mouse6 = KeyCode.Mouse6,
+		}
+
+		public enum MouseAxes
+		{
+			X,
+			Y,
+			WheelX,
+			WheelY
 		}
 
 		public enum Joysticks
@@ -79,17 +100,15 @@ namespace Pseudo
 
 		public PlayerInput[] Inputs = new PlayerInput[0];
 
-		protected readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
-		protected readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
+		readonly Dictionary<string, PlayerInput> unassignedInputs = new Dictionary<string, PlayerInput>();
+		readonly Dictionary<int, PlayerInput> assignedInputs = new Dictionary<int, PlayerInput>();
 
-		protected override void Awake()
+		void Awake()
 		{
-			base.Awake();
-
 			for (int i = 0; i < Inputs.Length; i++)
 			{
-				PlayerInput playerInput = Instantiate(Inputs[i]);
-				playerInput.CachedTransform.parent = CachedTransform;
+				var playerInput = Instantiate(Inputs[i]);
+				playerInput.CachedTransform.parent = transform;
 				AddInput(playerInput);
 
 				if (playerInput.Player != Players.None)
@@ -97,7 +116,7 @@ namespace Pseudo
 			}
 		}
 
-		public virtual PlayerInput GetInput(string inputName)
+		public PlayerInput GetInput(string inputName)
 		{
 			PlayerInput playerInput;
 
@@ -107,7 +126,7 @@ namespace Pseudo
 			return playerInput;
 		}
 
-		public virtual PlayerInput GetAssignedInput(Players player)
+		public PlayerInput GetAssignedInput(Players player)
 		{
 			PlayerInput playerInput;
 
@@ -117,18 +136,19 @@ namespace Pseudo
 			return playerInput;
 		}
 
-		public virtual void AssignInput(Players player, string inputName)
+		public void AssignInput(Players player, string inputName)
 		{
 			AssignInput(player, GetInput(inputName));
 		}
 
-		public virtual void AssignInput(Players player, PlayerInput input)
+		public void AssignInput(Players player, PlayerInput input)
 		{
+			Assert.IsNotNull(input);
 			input.Player = player;
 			assignedInputs[(int)player] = input;
 		}
 
-		public virtual void UnassignInput(Players player)
+		public void UnassignInput(Players player)
 		{
 			PlayerInput playerInput;
 
@@ -136,34 +156,55 @@ namespace Pseudo
 				playerInput.Player = Players.None;
 		}
 
-		public virtual bool IsAssigned(Players player)
+		public bool IsAssigned(Players player)
 		{
 			return assignedInputs.ContainsKey((int)player);
 		}
 
-		public virtual void AddInput(PlayerInput input)
+		public void AddInput(PlayerInput input)
 		{
+			Assert.IsNotNull(input);
 			unassignedInputs[input.name] = input;
 		}
 
-		public virtual bool GetKeyDown(Players player, string actionName)
+		public bool GetKeyDown(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyDown();
 		}
 
-		public virtual bool GetKeyUp(Players player, string actionName)
+		public bool GetKeyUp(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKeyUp();
 		}
 
-		public virtual bool GetKey(Players player, string actionName)
+		public bool GetKey(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetKey();
 		}
 
-		public virtual float GetAxis(Players player, string actionName)
+		public float GetAxis(Players player, string actionName)
 		{
 			return GetAssignedInput(player).GetAction(actionName).GetAxis();
+		}
+
+		public bool GetKeyDown(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyDown(relativeScreenPosition);
+		}
+
+		public bool GetKeyUp(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKeyUp(relativeScreenPosition);
+		}
+
+		public bool GetKey(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetKey(relativeScreenPosition);
+		}
+
+		public float GetAxis(Players player, string actionName, Vector2 relativeScreenPosition)
+		{
+			return GetAssignedInput(player).GetAction(actionName).GetAxis(relativeScreenPosition);
 		}
 	}
 }

@@ -14,38 +14,30 @@ namespace Pseudo.Internal.Editor
 
 			Begin(position, property, label);
 
-			string arrayName = ((PopupAttribute)attribute).arrayName;
-			string onChangeCallback = ((PopupAttribute)attribute).onChangeCallback;
-			SerializedProperty array = property.serializedObject.FindProperty(arrayName);
+			var arrayName = ((PopupAttribute)attribute).arrayName;
+			var onChangeCallback = ((PopupAttribute)attribute).onChangeCallback;
+			var array = property.serializedObject.FindProperty(arrayName);
 			int selectedIndex = 0;
 
-			List<string> displayedOptions = new List<string>();
+			var displayedOptions = new List<string>();
 			if (array != null && property.GetValue() != null)
 			{
 				for (int i = 0; i < array.arraySize; i++)
 				{
-					object value = array.GetArrayElementAtIndex(i).GetValue();
+					var value = array.GetArrayElementAtIndex(i).GetValue();
 
 					if (property.GetValue().Equals(value))
-					{
 						selectedIndex = i;
-					}
 
 					if (value != null)
 					{
 						if (value as Object != null)
-						{
 							displayedOptions.Add(string.Format("{0} [{1}]", value.GetType().Name, i));
-						}
 						else
-						{
 							displayedOptions.Add(string.Format("{0}", value));
-						}
 					}
 					else
-					{
 						displayedOptions.Add(" ");
-					}
 				}
 			}
 
@@ -53,9 +45,7 @@ namespace Pseudo.Internal.Editor
 			selectedIndex = Mathf.Clamp(EditorGUI.Popup(currentPosition, label, selectedIndex, displayedOptions.ToGUIContents()), 0, array.arraySize - 1);
 
 			if (array != null && array.arraySize != 0 && array.arraySize > selectedIndex)
-			{
 				property.SetValue(array.GetArrayElementAtIndex(selectedIndex).GetValue());
-			}
 
 			if (EditorGUI.EndChangeCheck())
 			{

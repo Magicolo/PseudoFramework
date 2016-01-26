@@ -9,15 +9,15 @@ namespace Pseudo.Internal.Pool
 {
 	public class PoolElementContentSetter : IPoolElementSetter
 	{
-		readonly Type type;
+		readonly Type elementType;
 		readonly List<IPoolSetter> setters;
 		readonly bool isUnityObject;
 
-		public PoolElementContentSetter(Type type, List<IPoolSetter> setters)
+		public PoolElementContentSetter(Type elementType, List<IPoolSetter> setters)
 		{
-			this.type = type;
+			this.elementType = elementType;
 			this.setters = setters;
-			isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(type);
+			isUnityObject = typeof(UnityEngine.Object).IsAssignableFrom(elementType);
 		}
 
 		public void SetValue(IList array, int index)
@@ -31,11 +31,10 @@ namespace Pseudo.Internal.Pool
 					if (isUnityObject)
 						return;
 					else
-						value = (array[index] = TypePoolManager.Create(type));
+						value = array[index] = TypePoolManager.Create(elementType);
 				}
 
-				for (int i = 0; i < setters.Count; i++)
-					setters[i].SetValue(value);
+				PoolUtility.InitializeFields(value, setters);
 			}
 		}
 

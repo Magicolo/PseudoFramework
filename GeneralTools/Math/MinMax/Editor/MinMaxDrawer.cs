@@ -11,6 +11,9 @@ namespace Pseudo.Internal.Editor
 	[CustomPropertyDrawer(typeof(MinMax))]
 	public class MinMaxDrawer : CustomPropertyDrawerBase
 	{
+		bool isEditingMin;
+		bool isEditingMax;
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Begin(position, property, label);
@@ -21,13 +24,29 @@ namespace Pseudo.Internal.Editor
 			BeginIndent(0);
 			BeginLabelWidth(27f);
 
+			if (isEditingMin && !EditorGUIUtility.editingTextField)
+			{
+				property.SetValue("max", Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")));
+				isEditingMin = false;
+			}
+			else if (isEditingMax && !EditorGUIUtility.editingTextField)
+			{
+				property.SetValue("min", Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")));
+				isEditingMax = false;
+			}
+
 			EditorGUI.BeginChangeCheck();
 
 			currentPosition.width = currentPosition.width / 2f;
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("min"));
 
 			if (EditorGUI.EndChangeCheck())
-				property.SetValue("max", Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")));
+			{
+				if (EditorGUIUtility.editingTextField)
+					isEditingMin = true;
+				else
+					property.SetValue("max", Mathf.Max(property.GetValue<float>("max"), property.GetValue<float>("min")));
+			}
 
 			EditorGUI.BeginChangeCheck();
 
@@ -35,7 +54,12 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.PropertyField(currentPosition, property.FindPropertyRelative("max"));
 
 			if (EditorGUI.EndChangeCheck())
-				property.SetValue("min", Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")));
+			{
+				if (EditorGUIUtility.editingTextField)
+					isEditingMax = true;
+				else
+					property.SetValue("min", Mathf.Min(property.GetValue<float>("min"), property.GetValue<float>("max")));
+			}
 
 			EndLabelWidth();
 			EndIndent();

@@ -10,7 +10,7 @@ namespace Pseudo
 	public interface ILateUpdateable
 	{
 		bool Active { get; set; }
-		float LateUpdateRate { get; }
+		float LateUpdateDelay { get; }
 
 		void LateUpdate();
 	}

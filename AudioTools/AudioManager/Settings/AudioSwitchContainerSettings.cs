@@ -15,6 +15,6 @@ namespace Pseudo.Internal.Audio
 		public string SwitchName;
 		public List<int> SwitchValues = new List<int>();
 
-		public override AudioItem.AudioTypes Type { get { return AudioItem.AudioTypes.SwitchContainer; } }
+		public override AudioTypes Type { get { return AudioTypes.SwitchContainer; } }
 	}
 }

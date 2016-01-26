@@ -11,10 +11,10 @@ namespace Pseudo
 {
 	public static class PrefabPoolManager
 	{
-		public static int StartSize = 2;
+		public static int StartSize;
 
-		static readonly Dictionary<object, Pool> pools = new Dictionary<object, Pool>(8);
-		static readonly Dictionary<object, Pool> instancePool = new Dictionary<object, Pool>(64);
+		static readonly Dictionary<object, IPool> pools = new Dictionary<object, IPool>(8);
+		static readonly Dictionary<object, IPool> instancePool = new Dictionary<object, IPool>(64);
 
 		public static T Create<T>(T prefab) where T : class
 		{
@@ -33,7 +33,7 @@ namespace Pseudo
 			if (instance == null)
 				return;
 
-			Pool pool;
+			IPool pool;
 
 			if (instancePool.TryGetValue(instance, out pool))
 				pool.Recycle(instance);
@@ -49,9 +49,9 @@ namespace Pseudo
 			instance = null;
 		}
 
-		public static Pool GetPool(object prefab)
+		public static IPool GetPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (!pools.TryGetValue(prefab, out pool))
 			{
@@ -67,9 +67,14 @@ namespace Pseudo
 			return pools.Count;
 		}
 
+		public static bool HasPool(object prefab)
+		{
+			return pools.ContainsKey(prefab);
+		}
+
 		public static void ClearPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (pools.Pop(prefab, out pool))
 				pool.Clear();
@@ -86,7 +91,7 @@ namespace Pseudo
 
 		public static void ResetPool(object prefab)
 		{
-			Pool pool;
+			IPool pool;
 
 			if (pools.TryGetValue(prefab, out pool))
 				pool.Reset();
@@ -97,5 +102,35 @@ namespace Pseudo
 			foreach (var pool in pools)
 				pool.Value.Reset();
 		}
+
+#if UNITY_EDITOR
+		[UnityEditor.Callbacks.DidReloadScripts]
+		static void OnReloadScripts()
+		{
+			Pseydo.Internal.Editor.InspectorUtility.OnValidate += OnValidate;
+		}
+
+		static void OnValidate(UnityEngine.Object instance)
+		{
+			if (UnityEditor.PrefabUtility.GetPrefabType(instance) != UnityEditor.PrefabType.Prefab)
+				return;
+
+			Transform root = null;
+
+			if (instance is GameObject)
+				root = ((GameObject)instance).transform.root;
+			else if (instance is Component)
+				root = ((Component)instance).transform.root;
+
+			if (root == null)
+				return;
+
+			ResetPool(root.gameObject);
+			var components = root.GetComponents<Component>();
+
+			for (int i = 0; i < components.Length; i++)
+				ResetPool(components[i]);
+		}
+#endif
 	}
 }

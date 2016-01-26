@@ -18,9 +18,9 @@ namespace Pseudo.Internal.Audio
 		public override AudioTypes Type { get { return AudioTypes.MixContainer; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 
-		public void Initialize(AudioMixContainerSettings settings, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioMixContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
@@ -69,7 +69,7 @@ namespace Pseudo.Internal.Audio
 			// Schedule sources
 			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem item = sources[i];
+				IAudioItem item = sources[i];
 				double time = Math.Max(AudioSettings.dspTime, scheduledTime) + delays[i];
 
 				if (state == AudioStates.Playing && item.State == AudioStates.Waiting)

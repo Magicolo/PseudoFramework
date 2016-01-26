@@ -6,31 +6,22 @@ using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
 
-namespace Pseudo.Internal.Pool
+namespace Pseudo
 {
-	public class GameObjectPool : PrefabPool
+	public class GameObjectPool : Pool<GameObject>
 	{
-		public GameObject GameObject { get { return gameObject == null ? (gameObject = new GameObject(((UnityEngine.Object)reference).name + " Pool")) : gameObject; } }
-		public Transform Transform { get { return transform == null ? (transform = GameObject.transform) : transform; } }
+		public readonly Transform Transform;
 
-		protected GameObject gameObject;
-		protected Transform transform;
-
-		public GameObjectPool(GameObject reference, int startSize) : base(reference, startSize) { }
-
-		new public GameObject Create()
+		public GameObjectPool(GameObject reference, Transform transform, int startSize) : base(reference, reference.GetType(), null, null, startSize, false)
 		{
-			var instance = (GameObject)base.Create();
-			instance.transform.Copy(((GameObject)reference).transform);
-
-			return instance;
+			Transform = transform;
+			Initialize();
 		}
 
-		protected override object CreateInstance()
+		public override GameObject Create()
 		{
-			var instance = (GameObject)base.CreateInstance();
-			instance.SetActive(true);
-			instance.transform.parent = Transform;
+			var instance = base.Create();
+			instance.transform.Copy(((GameObject)reference).transform);
 
 			return instance;
 		}
@@ -39,7 +30,8 @@ namespace Pseudo.Internal.Pool
 		{
 			base.Clear();
 
-			Pseudo.ObjectExtensions.Destroy(GameObject);
+			if (Transform != null)
+				Transform.gameObject.Destroy();
 		}
 
 		protected override void Enqueue(object instance, bool initialize)
@@ -48,7 +40,9 @@ namespace Pseudo.Internal.Pool
 
 			var gameObject = (GameObject)instance;
 			gameObject.SetActive(false);
-			gameObject.transform.parent = Transform;
+
+			if (ApplicationUtility.IsPlaying)
+				gameObject.transform.parent = Transform;
 		}
 
 		protected override object Dequeue()
@@ -57,6 +51,23 @@ namespace Pseudo.Internal.Pool
 			instance.SetActive(true);
 
 			return instance;
+		}
+
+		protected override object Construct()
+		{
+			var instance = UnityEngine.Object.Instantiate((GameObject)reference);
+
+			if (ApplicationUtility.IsPlaying)
+				instance.transform.parent = Transform;
+
+			instance.gameObject.SetActive(true);
+
+			return instance;
+		}
+
+		protected override void Destroy(object instance)
+		{
+			((GameObject)instance).Destroy();
 		}
 	}
 }

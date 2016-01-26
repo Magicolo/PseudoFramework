@@ -15,8 +15,15 @@ namespace Pseudo
 			Semitone
 		}
 
+		static int idCounter;
+
+		int id = ++idCounter;
 		string cachedName;
 
+		/// <summary>
+		/// The unique identifier of the AudioSettingsBase.
+		/// </summary>
+		public int Id { get { return id; } }
 		/// <summary>
 		/// The name of the AudioSettingsBase.
 		/// </summary>
@@ -24,7 +31,7 @@ namespace Pseudo
 		/// <summary>
 		/// The type of the AudioSettingsBase.
 		/// </summary>
-		public abstract AudioItem.AudioTypes Type { get; }
+		public abstract AudioTypes Type { get; }
 		/// <summary>
 		/// Toggles the looping behaviour of the AudioSettingsBase.
 		/// </summary>
@@ -93,7 +100,7 @@ namespace Pseudo
 		{
 			for (int i = 0; i < RTPCs.Count; i++)
 			{
-				AudioRTPC rtpc = RTPCs[i];
+				var rtpc = RTPCs[i];
 
 				if (rtpc.Name == name)
 					return rtpc;

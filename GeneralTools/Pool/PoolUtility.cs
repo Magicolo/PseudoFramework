@@ -23,80 +23,115 @@ namespace Pseudo.Internal.Pool
 		public static GameObject GameObject { get { return cachedGameObject; } }
 		public static Transform Transform { get { return cachedTransform; } }
 
-		static readonly CachedValue<GameObject> cachedGameObject = new CachedValue<GameObject>(() =>
+		static readonly Lazy<GameObject> cachedGameObject = new Lazy<GameObject>(() =>
 		{
 			InitializeJanitor();
 			return PoolJanitor.Instance.CachedGameObject;
 		});
-		static readonly CachedValue<Transform> cachedTransform = new CachedValue<Transform>(() => cachedGameObject.Value.transform);
+		static readonly Lazy<Transform> cachedTransform = new Lazy<Transform>(() => cachedGameObject.Value.transform);
 
-		public static Pool CreateTypePool(Type type, int startSize)
+		public static IPool CreateTypePool(Type type, int startSize)
 		{
+			IPool pool;
+
 			if (typeof(Component).IsAssignableFrom(type))
 			{
 				var gameObject = new GameObject(type.Name);
 				var reference = gameObject.AddComponent(type);
 				gameObject.SetActive(false);
-				var pool = new ComponentPool(reference, startSize);
+
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
 				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
+					poolTransform = Transform.AddChild(reference.name + " Pool");
+					reference.transform.parent = poolTransform;
 				}
 
-				return pool;
+				var poolType = typeof(ComponentPool<>).MakeGenericType(type);
+				pool = (IPool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (typeof(GameObject).IsAssignableFrom(type))
 			{
 				var reference = new GameObject(type.Name);
 				reference.SetActive(false);
-				var pool = new GameObjectPool(reference, startSize);
+
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
 				{
-					pool.Transform.parent = Transform;
-					reference.transform.parent = pool.Transform;
+					poolTransform = Transform.AddChild(reference.name + " Pool");
+					reference.transform.parent = poolTransform;
 				}
 
-				return pool;
+				pool = new GameObjectPool(reference, poolTransform, startSize);
 			}
 			else if (typeof(ScriptableObject).IsAssignableFrom(type))
-				return new ScriptablePool(ScriptableObject.CreateInstance(type), startSize);
+			{
+				var poolType = typeof(ScriptablePool<>).MakeGenericType(type);
+				pool = (IPool)Activator.CreateInstance(poolType, startSize);
+			}
 			else
-				return new Pool(Activator.CreateInstance(type), startSize);
+			{
+				var reference = Activator.CreateInstance(type);
+				var poolType = typeof(Pool<>).MakeGenericType(type);
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
+
+			return pool;
 		}
 
-		public static Pool CreatePrefabPool(object reference, int startSize)
+		public static IPool CreatePrefabPool(object reference, int startSize)
 		{
+			IPool pool;
+
 			if (reference is Component)
 			{
-				var pool = new ComponentPool((Component)reference, startSize);
+				var component = (Component)reference;
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+					poolTransform = Transform.AddChild(component.name + " Pool");
 
-				return pool;
+				var poolType = typeof(ComponentPool<>).MakeGenericType(reference.GetType());
+				pool = (IPool)Activator.CreateInstance(poolType, reference, poolTransform, startSize);
 			}
 			else if (reference is GameObject)
 			{
-				var pool = new GameObjectPool((GameObject)reference, startSize);
+				var gameObject = (GameObject)reference;
+				Transform poolTransform = null;
 
 				if (ApplicationUtility.IsPlaying)
-					pool.Transform.parent = Transform;
+					poolTransform = Transform.AddChild(gameObject.name + " Pool");
 
-				return pool;
+				pool = new GameObjectPool(gameObject, poolTransform, startSize);
 			}
 			else if (reference is ScriptableObject)
-				return new ScriptablePool((ScriptableObject)reference, startSize);
+			{
+				var poolType = typeof(ScriptablePool<>).MakeGenericType(reference.GetType());
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
 			else
-				return new Pool(reference, startSize);
+			{
+				var poolType = typeof(Pool<>).MakeGenericType(reference.GetType());
+				pool = (IPool)Activator.CreateInstance(poolType, reference, startSize);
+			}
+
+			return pool;
 		}
 
 		public static void InitializeFields(object instance, List<IPoolSetter> setters)
 		{
+			bool isInitializable = instance is IPoolInitializable;
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPrePoolInitialize();
+
 			for (int i = 0; i < setters.Count; i++)
 				setters[i].SetValue(instance);
+
+			if (isInitializable)
+				((IPoolInitializable)instance).OnPostPoolInitialize();
 		}
 
 		public static void Resize(IList array, int length)
@@ -133,22 +168,29 @@ namespace Pseudo.Internal.Pool
 			var type = instance.GetType();
 			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			var fields = new List<IPoolSetter>(allFields.Length);
+			bool isInitializable = instance is IPoolSettersInitializable;
+
+			if (isInitializable)
+				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
 
 			for (int i = 0; i < allFields.Length; i++)
 			{
-				FieldInfo field = allFields[i];
-				object value = field.GetValue(instance);
+				var field = allFields[i];
+				var value = field.GetValue(instance);
 
-				if (ShouldInitialize(field))
+				if (ShouldInitialize(field, value))
 					fields.Add(GetSetter(value, field, toIgnore));
 			}
+
+			if (isInitializable)
+				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(fields);
 
 			return fields;
 		}
 
 		static IPoolSetter GetSetter(object value, FieldInfo field, List<object> toIgnore)
 		{
-			if (value == null || value.GetType().IsValueType)
+			if (value == null)
 				return new PoolSetter(field, value);
 			else if (toIgnore.Contains(value))
 				throw new InitializationCycleException(field);
@@ -157,7 +199,9 @@ namespace Pseudo.Internal.Pool
 				return new PoolArraySetter(field, value.GetType(), GetElementSetters((IList)value, field, toIgnore));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
-				toIgnore.Add(value);
+				if (!(value is ValueType))
+					toIgnore.Add(value);
+
 				return new PoolContentSetter(field, value.GetType(), GetSetters(value, toIgnore));
 			}
 			else
@@ -176,29 +220,33 @@ namespace Pseudo.Internal.Pool
 
 		static IPoolElementSetter GetElementSetter(object element, FieldInfo field, List<object> toIgnore)
 		{
-			if (element == null || element.GetType().IsValueType)
+			if (element == null)
 				return new PoolElementSetter(element);
 			else if (toIgnore.Contains(element))
 				throw new InitializationCycleException(field);
 
 			if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{
-				toIgnore.Add(element);
+				if (!(element is ValueType))
+					toIgnore.Add(element);
+
 				return new PoolElementContentSetter(element.GetType(), GetSetters(element, toIgnore));
 			}
 			else
 				return new PoolElementSetter(element);
 		}
 
-		static bool ShouldInitialize(FieldInfo field)
+		static bool ShouldInitialize(FieldInfo field, object value)
 		{
-			if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
+			if (value == null)
+				return true;
+			else if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
 				return true;
 			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
 				return false;
 			else if (field.IsInitOnly || field.IsBackingField())
 				return false;
-			else if (typeof(UnityEngine.Object).IsAssignableFrom(field.FieldType) && field.IsPublic && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
+			else if ((value is UnityEngine.Object) && (field.IsPublic || field.IsDefined(typeof(SerializeField), true)) && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
 				return false;
 			else
 				return true;
@@ -210,10 +258,5 @@ namespace Pseudo.Internal.Pool
 		public InitializationCycleException(FieldInfo field) :
 			base(string.Format("Initialization cycle detected on field {0}. You might be initializing the content of a field that references back to the its owner.", field.DeclaringType.Name + "." + field.Name))
 		{ }
-	}
-
-	public class TypeMismatchException : Exception
-	{
-		public TypeMismatchException(string message) : base(message) { }
 	}
 }

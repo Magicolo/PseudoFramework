@@ -10,7 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioSourceItem : AudioItem
+	public class AudioSourceItem : AudioItemBase
 	{
 		AudioSourceSettings originalSettings;
 		AudioSourceSettings settings;
@@ -31,15 +31,15 @@ namespace Pseudo.Internal.Audio
 			setPitchScale = modifier => source.pitch = modifier.Value;
 		}
 
-		public void Initialize(AudioSourceSettings settings, AudioSource audioSource, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(AudioSourceSettings settings, AudioItemManager itemManager, AudioSource audioSource, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.GetHashCode(), settings.Name, spatializer, parent);
+			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
 
 			// General Setup
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
 			source = audioSource;
-			source.transform.parent = AudioManager.Instance.CachedTransform;
+			source.transform.parent = itemManager.AudioManager.Reference.transform.parent;
 			base.spatializer.AddSource(source.transform);
 
 			// Setup the AudioSource
@@ -56,7 +56,7 @@ namespace Pseudo.Internal.Audio
 				ApplyOption(originalSettings.Options[i], false);
 
 			if (this.settings.MaxInstances > 0)
-				AudioManager.Instance.ItemManager.TrimInstances(this, this.settings.MaxInstances);
+				itemManager.TrimInstances(this, this.settings.MaxInstances);
 		}
 
 		protected void InitializeModifiers(AudioSettingsBase settings)
@@ -186,7 +186,10 @@ namespace Pseudo.Internal.Audio
 				RaiseStoppingEvent();
 			}
 			else
+			{
+				RaiseStoppingEvent();
 				StopImmediate();
+			}
 		}
 
 		public override void StopImmediate()
@@ -199,10 +202,9 @@ namespace Pseudo.Internal.Audio
 			RaiseStopEvent();
 
 			if (parent == null)
-				AudioManager.Instance.ItemManager.Deactivate(this);
+				itemManager.Deactivate(this);
 
 			spatializer.RemoveSource(source.transform);
-
 			TypePoolManager.Recycle(this);
 		}
 
@@ -374,15 +376,10 @@ namespace Pseudo.Internal.Audio
 			if (state == AudioStates.Stopped)
 				return;
 
-			AudioRTPC rtpc = settings.GetRTPC(name);
+			var rtpc = settings.GetRTPC(name);
 
 			if (rtpc != null)
 				rtpc.SetValue(value);
-		}
-
-		public override List<AudioItem> GetChildren()
-		{
-			return null;
 		}
 
 		protected override float GetDeltaTime()

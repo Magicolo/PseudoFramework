@@ -5,67 +5,52 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Physics;
 
 namespace Pseudo
 {
-	public class GravityManager : Singleton<GravityManager>
+	public class GravityManager
 	{
 		public enum GravityChannels
 		{
 			Unity,
+			Game,
+			UI,
 			World,
 			Player,
 			Enemy
 		}
 
-		public enum Dimensions
+		public static readonly IGravityChannel Unity = new UnityGravityChannel();
+		public static readonly IGravityChannel Game = new GlobalGravityChannel(GravityChannels.Game);
+		public static readonly IGravityChannel UI = new GlobalGravityChannel(GravityChannels.UI);
+		public static readonly IGravityChannel World = new GlobalGravityChannel(GravityChannels.World);
+		public static readonly IGravityChannel Player = new GlobalGravityChannel(GravityChannels.Player);
+		public static readonly IGravityChannel Enemy = new GlobalGravityChannel(GravityChannels.Enemy);
+
+		static List<IGravityChannel> channels = new List<IGravityChannel>
 		{
-			_2D,
-			_3D
-		}
+			Unity,
+			Game,
+			UI,
+			World,
+			Player,
+			Enemy
+		};
 
-		public static GravityChannel Unity { get { return GetChannel(GravityChannels.Unity); } }
-		public static GravityChannel World { get { return GetChannel(GravityChannels.World); } }
-		public static GravityChannel Player { get { return GetChannel(GravityChannels.Player); } }
-		public static GravityChannel Enemy { get { return GetChannel(GravityChannels.Enemy); } }
-		protected static List<GravityChannel> channels;
-		protected static Vector3 lastGravity;
-		public static Dimensions Mode { get; set; }
-
-		[SerializeField]
-		protected Dimensions mode;
-
-		protected override void Awake()
+		public static IGravityChannel GetChannel(GravityChannels channel)
 		{
-			base.Awake();
-
-			Mode = mode;
-
-			GravityChannels[] channelValues = (GravityChannels[])Enum.GetValues(typeof(GravityChannels));
-			channels = new List<GravityChannel>(channelValues.Length);
-
-			for (int i = 0; i < channelValues.Length; i++)
-			{
-				GravityChannels channelValue = channelValues[i];
-				GravityChannel channel = CreateChannel(channelValue);
-				channels.Add(channel);
-			}
-		}
-
-		public static GravityChannel GetChannel(GravityChannels channel)
-		{
-			if (channels == null)
-			{
-				Debug.LogError("No instance of the GravityManager has been found.");
-				return null;
-			}
-
 			return channels[(int)channel];
 		}
 
 		public static Vector3 GetGravity(GravityChannels channel)
 		{
 			return GetChannel(channel).Gravity;
+		}
+
+		public static Vector2 GetGravity2D(GravityChannels channel)
+		{
+			return GetChannel(channel).Gravity2D;
 		}
 
 		public static float GetGravityScale(GravityChannels channel)
@@ -86,11 +71,6 @@ namespace Pseudo
 		public static void SetRotation(GravityChannels channel, Vector3 rotation)
 		{
 			GetChannel(channel).Rotation = rotation;
-		}
-
-		static GravityChannel CreateChannel(GravityChannels channel)
-		{
-			return instance.CachedGameObject.AddChild(channel.ToString()).AddComponent<GravityChannel>();
 		}
 	}
 }

@@ -306,11 +306,11 @@ namespace Pseudo
 
 		public static Transform[] GetChildren(this Transform parent, bool recursive = false)
 		{
-			List<Transform> children = new List<Transform>(parent.childCount);
+			var children = new List<Transform>(parent.childCount);
 
 			for (int i = 0; i < parent.childCount; i++)
 			{
-				Transform child = parent.GetChild(i);
+				var child = parent.GetChild(i);
 				children.Add(child);
 
 				if (recursive && child.childCount > 0)

@@ -15,6 +15,8 @@ namespace Pseudo
 		string name;
 		public string Name { get { return name; } }
 
+		public List<MouseButton> MouseButtons = new List<MouseButton>();
+		public List<MouseAxis> MouseAxes = new List<MouseAxis>();
 		public List<KeyboardButton> KeyboardButtons = new List<KeyboardButton>();
 		public List<KeyboardAxis> KeyboardAxes = new List<KeyboardAxis>();
 		public List<JoystickButton> JoystickButtons = new List<JoystickButton>();
@@ -27,6 +29,12 @@ namespace Pseudo
 
 		public bool GetKeyDown()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKeyDown())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyDown())
@@ -54,8 +62,25 @@ namespace Pseudo
 			return false;
 		}
 
+		public bool GetKeyDown(Vector2 relativeScreenPosition)
+		{
+			for (int i = 0; i < MouseAxes.Count; i++)
+			{
+				if (MouseAxes[i].GetAxisDown(relativeScreenPosition))
+					return true;
+			}
+
+			return GetKeyDown();
+		}
+
 		public bool GetKeyUp()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKeyUp())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKeyUp())
@@ -83,8 +108,25 @@ namespace Pseudo
 			return false;
 		}
 
+		public bool GetKeyUp(Vector2 relativeScreenPosition)
+		{
+			for (int i = 0; i < MouseAxes.Count; i++)
+			{
+				if (MouseAxes[i].GetAxisUp(relativeScreenPosition))
+					return true;
+			}
+
+			return GetKeyUp();
+		}
+
 		public bool GetKey()
 		{
+			for (int i = 0; i < MouseButtons.Count; i++)
+			{
+				if (MouseButtons[i].GetKey())
+					return true;
+			}
+
 			for (int i = 0; i < KeyboardButtons.Count; i++)
 			{
 				if (KeyboardButtons[i].GetKey())
@@ -112,6 +154,17 @@ namespace Pseudo
 			return false;
 		}
 
+		public bool GetKey(Vector2 relativeScreenPosition)
+		{
+			for (int i = 0; i < MouseAxes.Count; i++)
+			{
+				if (MouseAxes[i].GetAxis(relativeScreenPosition))
+					return true;
+			}
+
+			return GetKey();
+		}
+
 		public float GetAxis()
 		{
 			float value = 0f;
@@ -123,6 +176,16 @@ namespace Pseudo
 				value += JoystickAxes[i].GetValue();
 
 			return value;
+		}
+
+		public float GetAxis(Vector2 relativeScreenPosition)
+		{
+			float value = 0f;
+
+			for (int i = 0; i < MouseAxes.Count; i++)
+				value += MouseAxes[i].GetValue(relativeScreenPosition);
+
+			return value + GetAxis();
 		}
 
 		public override string ToString()

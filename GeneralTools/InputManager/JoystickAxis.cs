@@ -36,7 +36,11 @@ namespace Pseudo.Internal.Input
 				axisName = InputUtility.JoystickInputToAxis(joystick, axis);
 			}
 		}
-		public override float Threshold { get { return threshold; } set { threshold = value; } }
+		public override float Threshold
+		{
+			get { return threshold; }
+			set { threshold = value; }
+		}
 		protected override string AxisName
 		{
 			get

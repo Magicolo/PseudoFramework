@@ -22,6 +22,7 @@ namespace Pseudo
 		public const ulong ROTATION_180_FLAG = 0x40000000 + 0x80000000;
 		public const ulong ROTATION_270_FLAG = 0x20000000 + 0x40000000;
 
+		const float EPSILON = 1;
 
 		public static RotationFlag getRotationFlipFlags(Transform transform)
 		{
@@ -30,9 +31,9 @@ namespace Pseudo
 				flags |= RotationFlag.FlipX;
 			if (transform.localScale.y < 0)
 				flags |= RotationFlag.FlipY;
-			if (transform.localRotation.eulerAngles.z == 90f || transform.localRotation.eulerAngles.z == 270f)
+			if (System.Math.Abs(transform.localRotation.eulerAngles.z - 90f) < EPSILON || System.Math.Abs(transform.localRotation.eulerAngles.z - 270f) < EPSILON)
 				flags |= RotationFlag.Rotation90;
-			else if (transform.localRotation.eulerAngles.z == 180f || transform.localRotation.eulerAngles.z == 270f)
+			if (System.Math.Abs(transform.localRotation.eulerAngles.z - 180f) < EPSILON || System.Math.Abs(transform.localRotation.eulerAngles.z - 270f) < EPSILON)
 				flags |= RotationFlag.Rotation180;
 			return flags;
 		}

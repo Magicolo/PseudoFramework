@@ -26,9 +26,9 @@ namespace Pseudo
 		public override AudioSettingsBase Settings { get { return settings; } }
 		public int CurrentStep { get { return currentStep; } }
 
-		public void Initialize(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, AudioItem parent)
+		public void Initialize(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, spatializer, parent);
+			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, itemManager, spatializer, parent);
 
 			this.getNextSettings = getNextSettings;
 			settings = TypePoolManager.Create<AudioDynamicSettings>();
@@ -87,7 +87,7 @@ namespace Pseudo
 
 			for (int i = 0; i < sources.Count; i++)
 			{
-				AudioItem source = sources[i];
+				IAudioItem source = sources[i];
 				AudioDynamicData data = dynamicData[i];
 
 				// Decrease delay
@@ -163,7 +163,7 @@ namespace Pseudo
 
 		protected void AddSource(AudioSettingsBase settings, AudioDynamicData data)
 		{
-			AudioItem item = base.AddSource(settings, null);
+			IAudioItem item = base.AddSource(settings, null);
 
 			if (item == null)
 				return;

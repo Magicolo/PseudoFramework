@@ -7,7 +7,7 @@ namespace Pseudo
 	[System.Serializable]
 	public class ArchitectTilePositionGetter
 	{
-		Vector3 cursorWorldPosition;
+		//Vector3 cursorWorldPosition;
 		Point2 tilePosition;
 		Vector3 tileWorlPosition;
 		LayerData layer;

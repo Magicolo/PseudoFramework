@@ -7,28 +7,35 @@ using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Audio;
 using Pseudo.Internal.Pool;
+using UnityEngine.Assertions;
 
 namespace Pseudo
 {
 	// TODO Show container types better in container inspectors
 	// TODO Uniformize RTPCValues and SwitchValues
-	// TODO Find a clean way to limit instances of multiple Settings together
+	// TODO Find a clean way to limit instances of multiple Settings together (using the same ids)
 	// TODO AudioSettings editors should all have unique colors/icons
 	// TODO Add random selection types in AudioRandomContainerSettings
 	// FIXME Reordering AudioOption doesn't work
 	// FIXME Minor editor issue: when scrollbar is visible, AudioOption and AudioRTPC are partially under it
-	public class AudioManager : Singleton<AudioManager>
+	public class AudioManager : MonoBehaviour, IAudioManager
 	{
 		[SerializeField]
 		AudioSource reference;
-		AudioItemManager itemManager = new AudioItemManager();
+		[SerializeField]
+		bool useCustomCurves = true;
+		AudioItemManager itemManager;
 
 		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
 
 		/// <summary>
-		/// If you use custom curves in the Reference AudioSource, set this to true.
+		/// If you use custom curves in the Reference AudioSource, set this to true otherwise, leave it to false to save useless memory allocations.
 		/// </summary>
-		public bool UseCustomCurves = true;
+		public bool UseCustomCurves
+		{
+			get { return useCustomCurves; }
+			set { useCustomCurves = value; }
+		}
 
 		/// <summary>
 		/// Default setup for AudioSources.
@@ -44,34 +51,40 @@ namespace Pseudo
 			}
 		}
 
-		/// <summary>
-		/// Used internaly to manager AudioItems
-		/// </summary>
-		public AudioItemManager ItemManager { get { return itemManager; } }
-
-		protected override void Awake()
+		public AudioManager()
 		{
-			base.Awake();
-
-			Initialize();
+			itemManager = new AudioItemManager(this);
 		}
 
-		protected virtual void Reset()
+		void Awake()
 		{
 			Initialize();
 		}
 
-		void Update()
+		void OnDestroy()
 		{
-			itemManager.Update();
+			StopAllItemsImmediate();
+		}
+
+		void Reset()
+		{
+			Initialize();
 		}
 
 		void Initialize()
 		{
-			reference = CachedGameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
+			if (this == null)
+				return;
+
+			reference = gameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
 			reference.gameObject.SetActive(false);
 			reference.playOnAwake = false;
 			reference.spatialBlend = 1f;
+		}
+
+		public void Update()
+		{
+			itemManager.Update();
 		}
 
 		/// <summary>
@@ -79,8 +92,9 @@ namespace Pseudo
 		/// </summary>
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings)
+		public IAudioItem CreateItem(AudioSettingsBase settings)
 		{
+			Assert.IsNotNull(settings);
 			return itemManager.CreateItem(settings);
 		}
 
@@ -90,8 +104,9 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Vector3 position)
 		{
+			Assert.IsNotNull(settings);
 			return itemManager.CreateItem(settings, position);
 		}
 
@@ -102,8 +117,10 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Transform follow)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Transform follow)
 		{
+			Assert.IsNotNull(settings);
+			Assert.IsNotNull(follow);
 			return itemManager.CreateItem(settings, follow);
 		}
 
@@ -113,8 +130,10 @@ namespace Pseudo
 		/// <param name="settings">Settings that will define the behaviour of the AudioItem. </param>
 		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
-		public AudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
+		public IAudioItem CreateItem(AudioSettingsBase settings, Func<Vector3> getPosition)
 		{
+			Assert.IsNotNull(settings);
+			Assert.IsNotNull(getPosition);
 			return itemManager.CreateItem(settings, getPosition);
 		}
 
@@ -125,9 +144,10 @@ namespace Pseudo
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings);
+			Assert.IsNotNull(getNextSettings);
+			return itemManager.CreateDynamicItem(getNextSettings);
 		}
 
 		/// <summary>
@@ -138,9 +158,10 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, position);
+			Assert.IsNotNull(getNextSettings);
+			return itemManager.CreateDynamicItem(getNextSettings, position);
 		}
 
 		/// <summary>
@@ -152,9 +173,11 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, follow);
+			Assert.IsNotNull(getNextSettings);
+			Assert.IsNotNull(follow);
+			return itemManager.CreateDynamicItem(getNextSettings, follow);
 		}
 
 		/// <summary>
@@ -165,17 +188,46 @@ namespace Pseudo
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
-		public AudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
+		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
 		{
-			return ItemManager.CreateDynamicItem(getNextSettings, getPosition);
+			Assert.IsNotNull(getNextSettings);
+			Assert.IsNotNull(getPosition);
+			return itemManager.CreateDynamicItem(getNextSettings, getPosition);
+		}
+
+		public void StopItems(AudioSettingsBase settings)
+		{
+			Assert.IsNotNull(settings);
+			itemManager.StopItemsWithId(settings.Id);
+		}
+
+		public void StopItemsImmediate(AudioSettingsBase settings)
+		{
+			Assert.IsNotNull(settings);
+			itemManager.StopItemsWithIdImmediate(settings.Id);
+		}
+
+		public void StopItems(int id)
+		{
+			itemManager.StopItemsWithId(id);
+		}
+
+		public void StopItemsImmediate(int id)
+		{
+			itemManager.StopItemsWithIdImmediate(id);
 		}
 
 		/// <summary>
 		/// Stops all active AudioItems
 		/// </summary>
-		public void StopAll()
+		public void StopAllItems()
 		{
-			ItemManager.StopAll();
+			itemManager.StopAllItems();
+		}
+
+		public void StopAllItemsImmediate()
+		{
+			itemManager.StopAllItemsImmediate();
 		}
 
 		/// <summary>

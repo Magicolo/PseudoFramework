@@ -539,7 +539,7 @@ namespace Pseudo.Internal
 				else if (firstStateOrLayerIndex > 0)
 				{
 					for (int j = 0; j < i - firstStateOrLayerIndex; j++)
-						ComponentUtility.MoveComponentUp(component);
+						UnityEditorInternal.ComponentUtility.MoveComponentUp(component);
 				}
 			}
 		}

@@ -291,33 +291,46 @@ namespace Pseudo
 		/// If a path is provided, it will use it as a root. 
 		/// If no path is provided, it will look for currently selected item.
 		/// </summary>
-		public static string GenerateUniqueAssetPath(string name, string path = "")
+		/// <param name="name">Name of the asset.</param>
+		/// <param name="extension">Extension of the asset.</param>
+		/// <param name="path">Path of the asset. If none is provided, the selected asset's path will be used.</param>
+		public static string GenerateUniqueAssetPath(string name, string extension = "asset", string path = "")
 		{
 			string uniquePath = "";
+
 #if UNITY_EDITOR
 			string assetDirectory = "";
+
 			if (!string.IsNullOrEmpty(path))
 				assetDirectory = Path.GetDirectoryName(path);
-			if (Selection.activeObject == null)
+			else if (Selection.activeObject == null)
 				assetDirectory = "Assets";
 			else if (Selection.activeObject is DefaultAsset)
 				assetDirectory = AssetDatabase.GetAssetPath(Selection.activeObject);
 			else
 				assetDirectory = Path.GetDirectoryName(AssetDatabase.GetAssetPath(Selection.activeObject));
-			uniquePath = AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + ".asset");
+
+			uniquePath = AssetDatabase.GenerateUniqueAssetPath(assetDirectory + "/" + name + "." + extension);
 #endif
 			return uniquePath;
 		}
 
 		public static string GetSelectedAssetPath()
 		{
+#if UNITY_EDITOR
 			return AssetDatabase.GetAssetPath(Selection.activeObject);
-
+#else
+			return "";
+#endif
 		}
 
 		public static string GetSelectedAssetExtention()
 		{
+#if UNITY_EDITOR
 			return Path.GetExtension(AssetDatabase.GetAssetPath(Selection.activeObject));
+#else
+			return "";
+#endif
 		}
 	}
 }

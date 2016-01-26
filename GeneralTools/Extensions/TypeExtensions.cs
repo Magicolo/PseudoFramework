@@ -56,7 +56,7 @@ namespace Pseudo
 			return types;
 		}
 
-		public static Type[] GetAssignableTypes(this Type baseType)
+		public static Type[] GetAssignableTypes(this Type baseType, bool includeSelf = true)
 		{
 			Type[] types;
 
@@ -66,7 +66,7 @@ namespace Pseudo
 
 				foreach (var type in AllTypes)
 				{
-					if (baseType.IsAssignableFrom(type))
+					if ((type != baseType || includeSelf) && baseType.IsAssignableFrom(type))
 						typeList.Add(type);
 				}
 

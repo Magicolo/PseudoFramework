@@ -11,22 +11,29 @@ namespace Pseudo
 		[DoNotInitialize]
 		bool created;
 
-		readonly CachedValue<GameObject> cachedGameObject;
+		readonly Lazy<GameObject> cachedGameObject;
 		public GameObject CachedGameObject { get { return cachedGameObject; } }
 
-		readonly CachedValue<Transform> cachedTransform;
+		readonly Lazy<Transform> cachedTransform;
 		public Transform CachedTransform { get { return cachedTransform; } }
 
 		protected PMonoBehaviour()
 		{
-			cachedGameObject = new CachedValue<GameObject>(() => gameObject);
-			cachedTransform = new CachedValue<Transform>(() => transform);
+			cachedGameObject = new Lazy<GameObject>(() => gameObject);
+			cachedTransform = new Lazy<Transform>(() => transform);
 		}
 
 		protected virtual void Start()
 		{
 			if (!created)
 				OnCreate();
+		}
+
+		protected virtual void OnValidate()
+		{
+#if UNITY_EDITOR
+			Pseydo.Internal.Editor.InspectorUtility.OnValidate(this);
+#endif
 		}
 
 		public virtual void OnCreate() { created = true; }

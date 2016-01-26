@@ -28,14 +28,33 @@ namespace Pseudo
 		[SerializeField]
 		int f8;
 
-		public static ByteFlag Nothing
+		public static readonly ByteFlag Nothing = new ByteFlag(0, 0, 0, 0, 0, 0, 0, 0);
+		public static readonly ByteFlag Everything = new ByteFlag(-1, -1, -1, -1, -1, -1, -1, -1);
+
+		public ByteFlag(byte flag) : this()
 		{
-			get { return new ByteFlag(0, 0, 0, 0, 0, 0, 0, 0); }
+			Add(flag);
 		}
 
-		public static ByteFlag Everything
+		public ByteFlag(byte flag1, byte flag2) : this(flag1)
 		{
-			get { return new ByteFlag(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue); }
+			Add(flag2);
+		}
+
+		public ByteFlag(byte flag1, byte flag2, byte flag3) : this(flag1, flag2)
+		{
+			Add(flag3);
+		}
+
+		public ByteFlag(byte flag1, byte flag2, byte flag3, byte flag4) : this(flag1, flag2, flag3)
+		{
+			Add(flag4);
+		}
+
+		public ByteFlag(params byte[] flags) : this()
+		{
+			for (int i = 0; i < flags.Length; i++)
+				Add(flags[i]);
 		}
 
 		public ByteFlag(ByteFlag flags)
@@ -48,32 +67,6 @@ namespace Pseudo
 			f6 = flags.f6;
 			f7 = flags.f7;
 			f8 = flags.f8;
-		}
-
-		public ByteFlag(byte value) : this()
-		{
-			Add(value);
-		}
-
-		public ByteFlag(byte value1, byte value2) : this(value1)
-		{
-			Add(value2);
-		}
-
-		public ByteFlag(byte value1, byte value2, byte value3) : this(value1, value2)
-		{
-			Add(value3);
-		}
-
-		public ByteFlag(byte value1, byte value2, byte value3, byte value4) : this(value1, value2, value3)
-		{
-			Add(value4);
-		}
-
-		public ByteFlag(params byte[] values) : this()
-		{
-			for (int i = 0; i < values.Length; i++)
-				Add(values[i]);
 		}
 
 		ByteFlag(int flag1, int flag2, int flag3, int flag4, int flag5, int flag6, int flag7, int flag8)
@@ -94,23 +87,28 @@ namespace Pseudo
 			set { Set(index, value); }
 		}
 
-		public ByteFlag Add(byte value)
+		public ByteFlag Add(ByteFlag flags)
 		{
-			var shift = value % 32;
+			return this | flags;
+		}
 
-			if (value < 32)
+		public ByteFlag Add(byte flag)
+		{
+			var shift = flag % 32;
+
+			if (flag < 32)
 				f1 |= 1 << shift;
-			else if (value < 64)
+			else if (flag < 64)
 				f2 |= 1 << shift;
-			else if (value < 96)
+			else if (flag < 96)
 				f3 |= 1 << shift;
-			else if (value < 128)
+			else if (flag < 128)
 				f4 |= 1 << shift;
-			else if (value < 160)
+			else if (flag < 160)
 				f5 |= 1 << shift;
-			else if (value < 192)
+			else if (flag < 192)
 				f6 |= 1 << shift;
-			else if (value < 224)
+			else if (flag < 224)
 				f7 |= 1 << shift;
 			else
 				f8 |= 1 << shift;
@@ -118,23 +116,28 @@ namespace Pseudo
 			return this;
 		}
 
-		public ByteFlag Remove(byte value)
+		public ByteFlag Remove(ByteFlag flags)
 		{
-			var shift = value % 32;
+			return this & ~flags;
+		}
 
-			if (value < 32)
+		public ByteFlag Remove(byte flag)
+		{
+			var shift = flag % 32;
+
+			if (flag < 32)
 				f1 &= ~(1 << shift);
-			else if (value < 64)
+			else if (flag < 64)
 				f2 &= ~(1 << shift);
-			else if (value < 96)
+			else if (flag < 96)
 				f3 &= ~(1 << shift);
-			else if (value < 128)
+			else if (flag < 128)
 				f4 &= ~(1 << shift);
-			else if (value < 160)
+			else if (flag < 160)
 				f5 &= ~(1 << shift);
-			else if (value < 192)
+			else if (flag < 192)
 				f6 &= ~(1 << shift);
-			else if (value < 224)
+			else if (flag < 224)
 				f7 &= ~(1 << shift);
 			else
 				f8 &= ~(1 << shift);
@@ -142,27 +145,17 @@ namespace Pseudo
 			return this;
 		}
 
-		public byte[] ToByteArray()
+		public byte[] ToArray()
 		{
 			var indices = new List<byte>();
 
-			for (byte i = 0; i < 255; i++)
+			for (int i = 0; i <= byte.MaxValue; i++)
 			{
-				if (Get(i))
-					indices.Add(i);
+				if (Get((byte)i))
+					indices.Add((byte)i);
 			}
 
 			return indices.ToArray();
-		}
-
-		public bool[] ToBoolArray()
-		{
-			var values = new bool[255];
-
-			for (byte i = 0; i < 255; i++)
-				values[i] = Get(i);
-
-			return values;
 		}
 
 		bool Get(byte index)
@@ -218,26 +211,7 @@ namespace Pseudo
 
 		public override string ToString()
 		{
-			var log = new StringBuilder();
-			log.Append(GetType().Name + "(");
-			bool first = true;
-
-			for (byte i = 0; i < 255; i++)
-			{
-				if (Get(i))
-				{
-					if (first)
-						first = false;
-					else
-						log.Append(", ");
-
-					log.Append(i);
-				}
-			}
-
-			log.Append(")");
-
-			return log.ToString();
+			return string.Format("{0}({1})", GetType().Name, PDebug.ToString(ToArray()));
 		}
 
 		public bool Equals(ByteFlag other)
@@ -366,14 +340,28 @@ namespace Pseudo
 			set { flags[index.ToByte(null)] = value; }
 		}
 
-		public void Add(T flag)
+		public ByteFlag<T> Add(T flag)
 		{
 			flags.Add(flag.ToByte(null));
+
+			return this;
 		}
 
-		public void Remove(T flag)
+		public ByteFlag<T> Add(ByteFlag<T> flags)
+		{
+			return this | flags;
+		}
+
+		public ByteFlag<T> Remove(T flag)
 		{
 			flags.Remove(flag.ToByte(null));
+
+			return this;
+		}
+
+		public ByteFlag<T> Remove(ByteFlag<T> flag)
+		{
+			return this & ~flag;
 		}
 
 		public override int GetHashCode()
@@ -394,27 +382,14 @@ namespace Pseudo
 			return Equals((ByteFlag<T>)obj);
 		}
 
+		public T[] ToArray()
+		{
+			return flags.ToArray().Convert(b => (T)Enum.ToObject(typeof(T), b));
+		}
+
 		public override string ToString()
 		{
-			var values = flags.ToByteArray().Convert(b => (T)(object)b);
-			var log = new StringBuilder();
-
-			log.Append(GetType().Name + "(");
-			bool first = true;
-
-			for (byte i = 0; i < values.Length; i++)
-			{
-				if (first)
-					first = false;
-				else
-					log.Append(", ");
-
-				log.Append(values[i]);
-			}
-
-			log.Append(")");
-
-			return log.ToString();
+			return string.Format("{0}({1})", GetType().Name, PDebug.ToString(ToArray()));
 		}
 
 		public static ByteFlag<T> operator ~(ByteFlag<T> a)

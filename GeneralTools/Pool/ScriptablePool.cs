@@ -8,22 +8,20 @@ using Pseudo.Internal;
 
 namespace Pseudo.Internal.Pool
 {
-	public class ScriptablePool<T> : ScriptablePool where T : ScriptableObject
+	public class ScriptablePool<T> : Pool<T> where T : ScriptableObject
 	{
-		public ScriptablePool(int startSize) : base(typeof(T), startSize) { }
+		public ScriptablePool(int startSize) : this(ScriptableObject.CreateInstance<T>(), startSize) { }
 
 		public ScriptablePool(T reference, int startSize) : base(reference, startSize) { }
 
-		new public T Create()
+		protected override object Construct()
 		{
-			return (T)base.Create();
+			return UnityEngine.Object.Instantiate((T)reference);
 		}
-	}
 
-	public class ScriptablePool : PrefabPool
-	{
-		public ScriptablePool(Type type, int startSize) : base(ScriptableObject.CreateInstance(type), startSize) { }
-
-		public ScriptablePool(ScriptableObject reference, int startSize) : base(reference, startSize) { }
+		protected override void Destroy(object instance)
+		{
+			((T)instance).Destroy();
+		}
 	}
 }

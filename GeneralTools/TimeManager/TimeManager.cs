@@ -12,27 +12,31 @@ namespace Pseudo
 		public enum TimeChannels
 		{
 			Unity,
+			Game,
+			UI,
+			World,
+			Player,
+			Enemy,
+		}
+
+		public static readonly ITimeChannel Unity = new UnityTimeChannel();
+		public static readonly ITimeChannel Game = new GlobalTimeChannel(TimeChannels.Game);
+		public static readonly ITimeChannel UI = new GlobalTimeChannel(TimeChannels.UI);
+		public static readonly ITimeChannel World = new GlobalTimeChannel(TimeChannels.World);
+		public static readonly ITimeChannel Player = new GlobalTimeChannel(TimeChannels.Player);
+		public static readonly ITimeChannel Enemy = new GlobalTimeChannel(TimeChannels.Enemy);
+
+		static List<ITimeChannel> channels = new List<ITimeChannel>
+		{
+			Unity,
+			Game,
 			UI,
 			World,
 			Player,
 			Enemy
-		}
-
-		public static TimeChannel Unity { get { return GetChannel(TimeChannels.Unity); } }
-		public static TimeChannel UI { get { return GetChannel(TimeChannels.UI); } }
-		public static TimeChannel World { get { return GetChannel(TimeChannels.World); } }
-		public static TimeChannel Player { get { return GetChannel(TimeChannels.Player); } }
-		public static TimeChannel Enemy { get { return GetChannel(TimeChannels.Enemy); } }
-		static List<TimeChannel> channels = new List<TimeChannel>
-		{
-			CreateChannel(TimeChannels.Unity),
-			CreateChannel(TimeChannels.UI),
-			CreateChannel(TimeChannels.World),
-			CreateChannel(TimeChannels.Player),
-			CreateChannel(TimeChannels.Enemy),
 		};
 
-		public static TimeChannel GetChannel(TimeChannels channel)
+		public static ITimeChannel GetChannel(TimeChannels channel)
 		{
 			return channels[(int)channel];
 		}
@@ -60,14 +64,6 @@ namespace Pseudo
 		public static void SetTimeScale(TimeChannels channel, float timeScale)
 		{
 			GetChannel(channel).TimeScale = timeScale;
-		}
-
-		static TimeChannel CreateChannel(TimeChannels channel)
-		{
-			var timeChannel = TypePoolManager.Create<TimeChannel>();
-			timeChannel.Channel = channel;
-
-			return timeChannel;
 		}
 	}
 }
