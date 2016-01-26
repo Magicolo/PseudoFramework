@@ -18,5 +18,10 @@ namespace Pseudo
 		IEntityGroup Filter(Type componentType, EntityMatches match = EntityMatches.All);
 		IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All);
 		bool Contains(IEntity entity);
+		int IndexOf(IEntity entity);
+		IEntity Find(Predicate<IEntity> match);
+		int FindIndex(Predicate<IEntity> match);
+		IEntity[] ToArray();
+		void CopyTo(IEntity[] array, int index = 0);
 	}
 }
