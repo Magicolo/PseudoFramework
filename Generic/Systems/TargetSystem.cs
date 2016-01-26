@@ -14,26 +14,23 @@ namespace Pseudo
 			get { return 0.5f; }
 		}
 
-		IEntityGroup entities;
 		IEntityGroup targetableEntities;
 
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
+			targetableEntities = EntityManager.Entities.Filter(typeof(TransformComponent));
 
-			entities = EntityManager.Entities.Filter(new[]
+			return EntityManager.Entities.Filter(new[]
 			{
 				typeof(TransformComponent),
 				typeof(TargetComponentBase)
 			});
-			targetableEntities = EntityManager.Entities.Filter(typeof(TransformComponent));
 		}
 
 		public override void OnActivate()
 		{
 			base.OnActivate();
 
-			entities.OnEntityAdded += OnEntityAdded;
 			targetableEntities.OnEntityRemoved += OnEntityTargetRemoved;
 		}
 
@@ -41,14 +38,13 @@ namespace Pseudo
 		{
 			base.OnDeactivate();
 
-			entities.OnEntityAdded -= OnEntityAdded;
 			targetableEntities.OnEntityRemoved -= OnEntityTargetRemoved;
 		}
 
 		public void Update()
 		{
-			for (int i = 0; i < entities.Count; i++)
-				UpdateTargets(entities[i]);
+			for (int i = 0; i < Entities.Count; i++)
+				UpdateTargets(Entities[i]);
 		}
 
 		void UpdateTargets(IEntity entity)
@@ -85,8 +81,10 @@ namespace Pseudo
 			}
 		}
 
-		void OnEntityAdded(IEntity entity)
+		public override void OnEntityAdded(IEntity entity)
 		{
+			base.OnEntityAdded(entity);
+
 			UpdateTargets(entity);
 		}
 

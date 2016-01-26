@@ -19,13 +19,9 @@ namespace Pseudo
 
 	public class StateMachineSystem : SystemBase
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(typeof(StateMachineComponent));
+			return EntityManager.Entities.Filter(typeof(StateMachineComponent));
 		}
 
 		public override void OnActivate()
@@ -34,11 +30,6 @@ namespace Pseudo
 
 			EventManager.SubscribeAll((Action<Events, IEntity>)OnEvent);
 			EventManager.Subscribe(StateMachineEvents.OnStateSwitch, (Action<IEntity, int>)OnStateSwitch);
-			entities.OnEntityAdded += OnEntityAdded;
-			entities.OnEntityRemoved += OnEntityRemove;
-
-			for (int i = 0; i < entities.Count; i++)
-				OnEntityAdded(entities[i]);
 		}
 
 		public override void OnDeactivate()
@@ -47,15 +38,12 @@ namespace Pseudo
 
 			EventManager.UnsubscribeAll((Action<Events, IEntity>)OnEvent);
 			EventManager.Unsubscribe(StateMachineEvents.OnStateSwitch, (Action<IEntity, int>)OnStateSwitch);
-			entities.OnEntityAdded -= OnEntityAdded;
-			entities.OnEntityRemoved -= OnEntityRemove;
-
-			for (int i = 0; i < entities.Count; i++)
-				OnEntityRemove(entities[i]);
 		}
 
-		void OnEntityAdded(IEntity entity)
+		public override void OnEntityAdded(IEntity entity)
 		{
+			base.OnEntityAdded(entity);
+
 			var stateMachine = entity.GetComponent<StateMachineComponent>();
 
 			for (int i = 0; i < stateMachine.States.Length; i++)
@@ -70,14 +58,16 @@ namespace Pseudo
 			EventManager.TriggerImmediate(StateMachineEvents.OnStateSwitch, entity, stateMachine.InitialStateIndex);
 		}
 
-		void OnEntityRemove(IEntity entity)
+		public override void OnEntityRemoved(IEntity entity)
 		{
+			base.OnEntityRemoved(entity);
+
 			EventManager.TriggerImmediate(StateMachineEvents.OnStateSwitch, entity, -1);
 		}
 
 		void OnStateSwitch(IEntity entity, int stateIndex)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var stateMachine = entity.GetComponent<StateMachineComponent>();
@@ -101,7 +91,7 @@ namespace Pseudo
 
 		void OnEvent(Events identifier, IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var stateMachine = entity.GetComponent<StateMachineComponent>();

@@ -269,6 +269,98 @@ namespace Pseudo
 				array.Switch(array.IndexOf(source), array.IndexOf(target));
 		}
 
+		public static int FindSmallestIndex<T>(this IList<T> array) where T : IComparable<T>
+		{
+			if (array.Count == 0)
+				return -1;
+
+			int index = 0;
+
+			for (int i = 1; i < array.Count; i++)
+			{
+				if (array[i].CompareTo(array[index]) < 0)
+					index = i;
+			}
+
+			return index;
+		}
+
+		public static int FindSmallestIndex<T>(this IList<T> array, Comparison<T> comparison)
+		{
+			if (array.Count == 0)
+				return -1;
+
+			int index = 0;
+
+			for (int i = 1; i < array.Count; i++)
+			{
+				if (comparison(array[i], array[index]) < 0)
+					index = i;
+			}
+
+			return index;
+		}
+
+		public static int FindBiggestIndex<T>(this IList<T> array) where T : IComparable<T>
+		{
+			if (array.Count == 0)
+				return -1;
+
+			int index = 0;
+
+			for (int i = 1; i < array.Count; i++)
+			{
+				if (array[i].CompareTo(array[index]) > 0)
+					index = i;
+			}
+
+			return index;
+		}
+
+		public static int FindBiggestIndex<T>(this IList<T> array, Comparison<T> comparison)
+		{
+			if (array.Count == 0)
+				return -1;
+
+			int index = 0;
+
+			for (int i = 1; i < array.Count; i++)
+			{
+				if (comparison(array[i], array[index]) > 0)
+					index = i;
+			}
+
+			return index;
+		}
+
+		public static T FindSmallest<T>(this IList<T> array) where T : IComparable<T>
+		{
+			int index = array.FindSmallestIndex();
+
+			return index < 0 ? default(T) : array[index];
+		}
+
+		public static T FindSmallest<T>(this IList<T> array, Comparison<T> comparison)
+		{
+			int index = array.FindSmallestIndex(comparison);
+
+			return index < 0 ? default(T) : array[index];
+		}
+
+		public static T FindBiggest<T>(this IList<T> array) where T : IComparable<T>
+		{
+			int index = array.FindBiggestIndex();
+
+			return index < 0 ? default(T) : array[index];
+		}
+
+		public static T FindBiggest<T>(this IList<T> array, Comparison<T> comparison)
+		{
+			int index = array.FindBiggestIndex(comparison);
+
+			return index < 0 ? default(T) : array[index];
+		}
+
 		public static bool ContentEquals<T>(this IList<T> array, IList<T> otherArray)
 		{
 			if (array == null && otherArray == null)
