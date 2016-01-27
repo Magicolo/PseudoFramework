@@ -8,26 +8,40 @@ namespace Pseudo
 	public class BrushCommand : ToolCommandBase
 	{
 		public TileType OldTileType;
+		public ArchitectRotationFlip OldRotationFlip;
+		public TileType DoTileType;
+		public ArchitectRotationFlip DoRotationFlip;
 
 		public BrushCommand(Architect architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
 		{
+			DoTileType = architect.SelectedTileType;
+			DoRotationFlip = architect.RotationFlip;
 		}
 
 		public override bool Do()
 		{
 			if (Layer.IsTileEmpty(TilePosition))
 			{
-				architect.AddSelectedTileType(Layer, TileWorldPosition, TilePosition);
+				architect.AddTile(Layer, TileWorldPosition, TilePosition, DoTileType, DoRotationFlip);
 				return true;
 			}
-			//TODO REFACTOR ME PLEASE !!!!!
-			else if (Layer[TilePosition].TileType != architect.SelectedTileType
-				|| Layer[TilePosition].Transform.rotation != architect.PreviewSprite.transform.rotation
-				|| Layer[TilePosition].Transform.localScale != architect.PreviewSprite.transform.localScale)
+			else if (Layer[TilePosition].TileType != architect.SelectedTileType)
 			{
 				OldTileType = Layer[TilePosition].TileType;
+				OldRotationFlip = ArchitectRotationFlip.FromTransform(Layer[TilePosition].Transform);
 				architect.RemoveTile(TilePosition);
 				architect.AddSelectedTileType(Layer, TileWorldPosition, TilePosition);
+				OldRotationFlip.ApplyTo(Layer[TilePosition].Transform);
+				return true;
+			}
+			else if (!architect.RotationFlip.Equals(Layer[TilePosition].Transform))
+			{
+
+				PDebug.Log(Layer[TilePosition].Transform.localScale, Layer[TilePosition].Transform.localRotation.eulerAngles.z, architect.RotationFlip);
+				OldTileType = Layer[TilePosition].TileType;
+
+				OldRotationFlip = ArchitectRotationFlip.FromTransform(Layer[TilePosition].Transform);
+				architect.RotationFlip.ApplyTo(Layer[TilePosition].Transform);
 				return true;
 			}
 			else
@@ -40,6 +54,7 @@ namespace Pseudo
 			if (!OldTileType.IsNullOrIdZero())
 			{
 				architect.AddTile(Layer, TileWorldPosition, TilePosition, OldTileType);
+				OldRotationFlip.ApplyTo(Layer[TilePosition].Transform);
 			}
 		}
 	}

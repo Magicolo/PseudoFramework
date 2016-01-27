@@ -25,6 +25,8 @@ namespace Pseudo
 			set { this.LayerTransform.name = value; }
 		}
 
+		public bool IsActive { get { return LayerTransform.gameObject.activeInHierarchy; } }
+
 		public LayerData(Transform parent, string name, int layerWidth, int layerheight)
 		{
 
@@ -129,6 +131,12 @@ namespace Pseudo
 			if (this[tilePoint.X, tilePoint.Y] == null) return;
 			AddTile(tilePoint, tileType);
 			ArchitectRotationHandler.ApplyFlipFlags(this[tilePoint.X, tilePoint.Y].Transform, rotationFlags);
+		}
+		public void AddTile(Point2 tilePoint, TileType tileType, ArchitectRotationFlip rotationFlip)
+		{
+			if (this[tilePoint.X, tilePoint.Y] == null) return;
+			AddTile(tilePoint, tileType);
+			rotationFlip.ApplyTo(this[tilePoint.X, tilePoint.Y].Transform);
 		}
 		public void AddTile(Point2 tilePoint, TileType tileType, float angle, bool horizontal, bool vertical)
 		{

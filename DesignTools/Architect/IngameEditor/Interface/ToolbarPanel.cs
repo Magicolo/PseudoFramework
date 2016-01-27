@@ -17,6 +17,12 @@ namespace Pseudo
 
 		void Awake()
 		{
+			Architect = GetComponentInParent<Architect>();
+
+		}
+
+		void Start()
+		{
 			SelectedButton = BrushButton;
 			Architect.UISkin.Select(BrushButton);
 		}

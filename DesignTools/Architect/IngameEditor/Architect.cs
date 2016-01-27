@@ -25,9 +25,8 @@ namespace Pseudo
 
 		ArchitectHistory architectHistory = new ArchitectHistory();
 
-		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z, KeyCode.LeftControl);
 
-		public UISkin UISkin;
+		public ArchitectRotationFlip RotationFlip { get { return toolControler.RotationFlip; } }
 
 		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
 
@@ -36,63 +35,69 @@ namespace Pseudo
 
 		public GridScallerTiller Grid;
 
-		public bool NextTileFlipX;
-		public bool NextTileFlipY;
-		public float NextTileRotation;
 
-		[Space()]
-		public ToolFactory.ToolType selectedToolType;
+		public UISkin UISkin { get; private set; }
+
+		ArchitectToolControler toolControler;
+
+		ArchitectMenus Menu;
+		ToolbarPanel Toolbar;
+		TilesetItemsPanel TilesetPanel;
+		LayerPanel LayerPanel;
+
+
 		public ToolFactory.ToolType SelectedToolType
 		{
-			get { return selectedToolType; }
+			get { return toolControler.SelectedToolType; }
 			set
 			{
-				selectedToolType = value;
+				toolControler.SelectedToolType = value;
 				Toolbar.Refresh();
 			}
 		}
-
-		TileType selectedTileType;
 		public TileType SelectedTileType
 		{
-			get { return selectedTileType; }
+			get { return toolControler.SelectedTileType; }
 			set
 			{
-				selectedTileType = value;
+				toolControler.SelectedTileType = value;
 				updatePreviewSprite();
-
+				SelectedToolType = ToolFactory.ToolType.Brush;
 				TilesetPanel.Refresh();
 			}
 		}
 
-		[Space()]
-		public ArchitectMenus Menu;
-		public ToolbarPanel Toolbar;
-		public TilesetItemsPanel TilesetPanel;
-		public LayerPanel LayerPanel;
-
 		void Awake()
 		{
-			SelectedTileType = Linker.Tilesets[0].Tiles[0];
+			Menu = GetComponentInChildren<ArchitectMenus>();
+			Toolbar = GetComponentInChildren<ToolbarPanel>();
+			TilesetPanel = GetComponentInChildren<TilesetItemsPanel>();
+			LayerPanel = GetComponentInChildren<LayerPanel>();
+			UISkin = GetComponentInChildren<UISkin>();
+			toolControler = GetComponentInChildren<ArchitectToolControler>();
+			toolControler.SelectedTileType = Linker.Tilesets[0].Tiles[0];
 		}
 		void Start()
 		{
-			SelectedToolType = ToolFactory.ToolType.Brush;
+			toolControler.SelectedToolType = ToolFactory.ToolType.Brush;
 			New();
 		}
 
 		private void updatePreviewSprite()
 		{
 			PreviewSprite.transform.Reset();
+			PreviewSprite.enabled = SelectedLayer.IsActive;
+			if (!SelectedLayer.IsActive) return;
+
 			if (tilePositionGetter.Valid)
 			{
 				PreviewSprite.enabled = true;
-				if (SelectedTileType == null)
+				if (toolControler.SelectedTileType == null)
 					PreviewSprite.sprite = null;
 				else
-					PreviewSprite.sprite = SelectedTileType.PreviewSprite;
+					PreviewSprite.sprite = toolControler.SelectedTileType.PreviewSprite;
 				PreviewSprite.transform.Translate(tilePositionGetter.TileWorldPosition);
-				ArchitectRotationHandler.ApplyRotationFlip(PreviewSprite.transform, NextTileRotation, NextTileFlipX, NextTileFlipY);
+				toolControler.RotationFlip.ApplyTo(PreviewSprite.transform);
 			}
 			else
 			{
@@ -150,44 +155,25 @@ namespace Pseudo
 			else if (Input.GetMouseButton(1))
 				HandlePipette();
 
-			undoInput.Update();
-			if (undoInput.GetKeyCombinaison())
-				Undo();
-
-			handleKeyboardShortcut();
 			Menu.Refresh();
 		}
 
-		private void handleKeyboardShortcut()
+		public void FlipX()
 		{
-			if (Input.GetKeyDown(KeyCode.E))
-				SelectedToolType = ToolFactory.ToolType.Eraser;
-			else if (Input.GetKeyDown(KeyCode.B))
-				SelectedToolType = ToolFactory.ToolType.Brush;
-			else if (Input.GetKeyDown(KeyCode.R))
-				Rotate();
-			else if (Input.GetKeyDown(KeyCode.X))
-				FlipX();
-			else if (Input.GetKeyDown(KeyCode.Y))
-				FlipY();
-		}
-
-		private void FlipX()
-		{
-			NextTileFlipX = !NextTileFlipX;
+			toolControler.FlipX = !toolControler.FlipX;
 			updatePreviewSprite();
 		}
 
-		private void FlipY()
+		public void FlipY()
 		{
-			NextTileFlipY = !NextTileFlipY;
+			toolControler.FlipY = !toolControler.FlipY;
 			updatePreviewSprite();
 		}
 
-		private void Rotate()
+		public void Rotate()
 		{
-			NextTileRotation -= 90;
-			NextTileRotation %= 360;
+			toolControler.Rotation -= 90;
+			toolControler.Rotation %= 360;
 			updatePreviewSprite();
 		}
 
@@ -201,20 +187,23 @@ namespace Pseudo
 			}
 		}
 
-		private void HandleLeftMouse()
+		public void HandleLeftMouse()
 		{
-			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
+			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition) && SelectedLayer.IsActive)
 			{
-				architectHistory.Do(ToolFactory.Create(selectedToolType, this, tilePositionGetter));
+				architectHistory.Do(ToolFactory.Create(toolControler.SelectedToolType, this, tilePositionGetter));
 			}
 
 
 		}
 
-		private void HandlePipette()
+		public void HandlePipette()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
-				SelectedTileType = SelectedLayer[tilePositionGetter.TilePosition].TileType;
+			{
+				toolControler.SelectedTileType = SelectedLayer[tilePositionGetter.TilePosition].TileType;
+			}
+
 		}
 
 
@@ -239,12 +228,17 @@ namespace Pseudo
 
 		public void AddSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
 		{
-			layer.AddTile(tilePoint, SelectedTileType, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			layer.AddTile(tilePoint, toolControler.SelectedTileType, toolControler.RotationFlip);
 		}
 
 		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
 		{
-			layer.AddTile(tilePoint, tileType, NextTileRotation, NextTileFlipX, NextTileFlipY);
+			layer.AddTile(tilePoint, tileType, toolControler.RotationFlip);
+		}
+
+		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType, ArchitectRotationFlip RotationFlip)
+		{
+			layer.AddTile(tilePoint, tileType, RotationFlip);
 		}
 
 		public void RemoveSelectedLayer()
