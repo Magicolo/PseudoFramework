@@ -72,7 +72,7 @@ namespace Pseudo.Internal.EntityOld
 
 			rect.y += 2f;
 			var prefix = string.IsNullOrEmpty(type.Namespace) ? "" : type.Namespace + ".";
-			EditorGUI.LabelField(rect, prefix + type.Name);
+			EditorGUI.LabelField(rect, prefix + type.Name.Replace("System", ""));
 
 			rect.x += rect.width - 16f;
 			rect.width = 16f;

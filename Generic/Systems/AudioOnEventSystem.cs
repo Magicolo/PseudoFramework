@@ -9,13 +9,9 @@ namespace Pseudo
 {
 	public class AudioOnEventSystem : SystemBase
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(typeof(AudioOnEventComponent));
+			return EntityManager.Entities.Filter(typeof(AudioOnEventComponent));
 		}
 
 		public override void OnActivate()
@@ -34,7 +30,7 @@ namespace Pseudo
 
 		void OnEvent(Events identifier, IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var audio = entity.GetComponent<AudioOnEventComponent>();

@@ -14,6 +14,15 @@ namespace Pseudo.Internal.Editor
 {
 	public static class CustomMenus
 	{
+		[MenuItem("Assets/Create/Mesh")]
+		static void CreateMesh()
+		{
+			var mesh = new Mesh();
+			var path = AssetDatabaseUtility.GenerateUniqueAssetPath("Mesh");
+			AssetDatabase.CreateAsset(mesh, path);
+			Selection.activeObject = mesh;
+		}
+
 		[MenuItem("Pseudo/Create/Sprite", false, -10)]
 		static void CreateSprite()
 		{

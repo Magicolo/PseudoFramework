@@ -9,13 +9,9 @@ namespace Pseudo
 {
 	public class EventRelaySystem : SystemBase
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(typeof(EventRelayComponent));
+			return EntityManager.Entities.Filter(typeof(EventRelayComponent));
 		}
 
 		public override void OnActivate()
@@ -34,7 +30,7 @@ namespace Pseudo
 
 		void OnEvent(Events identifier, IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var relay = entity.GetComponent<EventRelayComponent>();

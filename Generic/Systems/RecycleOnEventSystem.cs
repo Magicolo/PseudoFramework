@@ -9,13 +9,9 @@ namespace Pseudo
 {
 	public class RecycleOnEventSystem : SystemBase
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(typeof(RecycleOnEventComponent));
+			return EntityManager.Entities.Filter(typeof(RecycleOnEventComponent));
 		}
 
 		public override void OnActivate()
@@ -34,7 +30,7 @@ namespace Pseudo
 
 		void OnEvent(Events identifier, IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var recycle = entity.GetComponent<RecycleOnEventComponent>();

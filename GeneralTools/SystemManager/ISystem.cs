@@ -9,13 +9,7 @@ namespace Pseudo
 	{
 		bool Active { get; set; }
 
-		ISystemManager SystemManager { get; }
-		IEntityManager EntityManager { get; }
-		IEventManager EventManager { get; }
-
 		void OnInitialize();
 		void OnDestroy();
-		void OnActivate();
-		void OnDeactivate();
 	}
 }

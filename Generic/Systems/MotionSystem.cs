@@ -9,13 +9,9 @@ namespace Pseudo
 {
 	public class MotionSystem : SystemBase, IUpdateable
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(new[]
+			return EntityManager.Entities.Filter(new[]
 			{
 				typeof(TimeComponent),
 				typeof(MotionComponent)
@@ -24,9 +20,9 @@ namespace Pseudo
 
 		public void Update()
 		{
-			for (int i = 0; i < entities.Count; i++)
+			for (int i = 0; i < Entities.Count; i++)
 			{
-				var entity = entities[i];
+				var entity = Entities[i];
 				var time = entity.GetComponent<TimeComponent>();
 				var motion = entity.GetComponent<MotionComponent>();
 				var transform = motion.Agent.CachedTransform;

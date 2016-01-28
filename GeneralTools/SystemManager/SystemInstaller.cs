@@ -9,6 +9,7 @@ namespace Pseudo
 {
 	public class SystemInstaller : MonoBehaviour, ISerializationCallbackReceiver
 	{
+		// Use a SystemData class to serialize the active state of the system.
 		public ISystemManager SystemManager;
 		public Type[] Systems = new Type[0];
 

@@ -45,15 +45,39 @@ namespace Pseudo
 		public IParticleManager ParticleManager { get; private set; }
 		[InjectOptional]
 		public IInputManager InputManager { get; private set; }
+		public IEntityGroup Entities { get; private set; }
 
 		bool active;
 
-		public virtual void OnInitialize() { }
+		public abstract IEntityGroup GetEntities();
+
+		public virtual void OnInitialize()
+		{
+			Entities = GetEntities();
+		}
 
 		public virtual void OnDestroy() { }
 
-		public virtual void OnActivate() { }
+		public virtual void OnActivate()
+		{
+			Entities.OnEntityAdded += OnEntityAdded;
+			Entities.OnEntityRemoved += OnEntityRemoved;
 
-		public virtual void OnDeactivate() { }
+			for (int i = 0; i < Entities.Count; i++)
+				OnEntityAdded(Entities[i]);
+		}
+
+		public virtual void OnDeactivate()
+		{
+			Entities.OnEntityAdded -= OnEntityAdded;
+			Entities.OnEntityRemoved -= OnEntityRemoved;
+
+			for (int i = 0; i < Entities.Count; i++)
+				OnEntityRemoved(Entities[i]);
+		}
+
+		public virtual void OnEntityAdded(IEntity entity) { }
+
+		public virtual void OnEntityRemoved(IEntity entity) { }
 	}
 }

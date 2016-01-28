@@ -9,16 +9,12 @@ namespace Pseudo
 {
 	public class SwitchStateOnEventSystem : SystemBase
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(new Type[]
+			return EntityManager.Entities.Filter(new Type[]
 			{
-			typeof(StateComponent),
-			typeof(SwitchStateOnEventComponent)
+				typeof(StateComponent),
+				typeof(SwitchStateOnEventComponent)
 			});
 		}
 
@@ -38,7 +34,7 @@ namespace Pseudo
 
 		void OnEvent(Events identifier, IEntity entity)
 		{
-			if (!entities.Contains(entity))
+			if (!Entities.Contains(entity))
 				return;
 
 			var state = entity.GetComponent<StateComponent>();

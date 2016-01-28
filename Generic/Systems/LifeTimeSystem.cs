@@ -9,24 +9,20 @@ namespace Pseudo
 {
 	public class LifeTimeSystem : SystemBase, IUpdateable
 	{
-		IEntityGroup entities;
-
-		public override void OnInitialize()
+		public override IEntityGroup GetEntities()
 		{
-			base.OnInitialize();
-
-			entities = EntityManager.Entities.Filter(new[]
+			return EntityManager.Entities.Filter(new[]
 			{
-			typeof(LifeTimeComponent),
-			typeof(TimeComponent)
-		});
+				typeof(LifeTimeComponent),
+				typeof(TimeComponent)
+			});
 		}
 
 		public void Update()
 		{
-			for (int i = 0; i < entities.Count; i++)
+			for (int i = 0; i < Entities.Count; i++)
 			{
-				var entity = entities[i];
+				var entity = Entities[i];
 				var lifeTime = entity.GetComponent<LifeTimeComponent>();
 				var time = entity.GetComponent<TimeComponent>();
 

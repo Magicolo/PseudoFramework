@@ -15,7 +15,7 @@ namespace Pseudo.Internal.Entity
 		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public int Count
 		{
-			get { return entities.Count; }
+			get { return hashedEntities.Count; }
 		}
 		public IEntity this[int index]
 		{
@@ -49,6 +49,31 @@ namespace Pseudo.Internal.Entity
 		public bool Contains(IEntity entity)
 		{
 			return hashedEntities.Contains(entity);
+		}
+
+		public int IndexOf(IEntity entity)
+		{
+			return entities.IndexOf(entity);
+		}
+
+		public IEntity Find(Predicate<IEntity> match)
+		{
+			return entities.Find(match);
+		}
+
+		public int FindIndex(Predicate<IEntity> match)
+		{
+			return entities.FindIndex(match);
+		}
+
+		public IEntity[] ToArray()
+		{
+			return entities.ToArray();
+		}
+
+		public void CopyTo(IEntity[] array, int index = 0)
+		{
+			entities.CopyTo(array, index);
 		}
 
 		public void Clear()
