@@ -16,9 +16,9 @@ namespace Pseudo
 		bool HasSystem(ISystem system);
 		bool HasSystem<T>() where T : class, ISystem;
 		bool HasSystem(Type type);
-		void AddSystem(ISystem system);
-		void AddSystem<T>() where T : class, ISystem;
-		void AddSystem(Type type);
+		void AddSystem(ISystem system, bool active = true);
+		ISystem AddSystem<T>(bool active = true) where T : class, ISystem;
+		ISystem AddSystem(Type type, bool active = true);
 		void RemoveSystem(ISystem system);
 		void RemoveSystem<T>() where T : class, ISystem;
 		void RemoveSystem(Type type);

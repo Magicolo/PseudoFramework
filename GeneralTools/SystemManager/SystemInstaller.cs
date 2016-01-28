@@ -7,34 +7,40 @@ using Zenject;
 
 namespace Pseudo
 {
-	public class SystemInstaller : MonoBehaviour, ISerializationCallbackReceiver
+	public class SystemInstaller : MonoBehaviour
 	{
-		// Use a SystemData class to serialize the active state of the system.
-		public ISystemManager SystemManager;
-		public Type[] Systems = new Type[0];
+		[Serializable]
+		public class SystemData
+		{
+			public string TypeName;
+			public bool Active;
 
-		[SerializeField]
-		string[] systems = new string[0];
+			public Type Type
+			{
+				get { return type ?? (type = Type.GetType(TypeName)); }
+			}
+
+			Type type;
+		}
+
+		public ISystemManager SystemManager;
+		public SystemData[] Systems = new SystemData[0];
 
 		[PostInject]
 		void Initialize(ISystemManager systemManager)
 		{
 			SystemManager = systemManager;
 
+			if (Systems == null)
+				return;
+
 			for (int i = 0; i < Systems.Length; i++)
 			{
-				var type = Systems[i];
+				var system = Systems[i];
 
-				if (type != null)
-					systemManager.AddSystem(type);
+				if (system != null)
+					systemManager.AddSystem(system.Type, system.Active);
 			}
-		}
-
-		void ISerializationCallbackReceiver.OnBeforeSerialize() { }
-
-		void ISerializationCallbackReceiver.OnAfterDeserialize()
-		{
-			Systems = systems.Convert(typeName => Type.GetType(typeName));
 		}
 	}
 }

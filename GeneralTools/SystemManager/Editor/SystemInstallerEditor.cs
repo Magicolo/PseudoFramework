@@ -26,7 +26,7 @@ namespace Pseudo.Internal.EntityOld
 			base.OnEnable();
 
 			installer = (SystemInstaller)target;
-			systemList = new ReorderableList(serializedObject, serializedObject.FindProperty("systems"))
+			systemList = new ReorderableList(serializedObject, serializedObject.FindProperty("Systems"))
 			{
 				drawHeaderCallback = ShowSystemHeader,
 				drawElementCallback = ShowSystem,
@@ -60,9 +60,9 @@ namespace Pseudo.Internal.EntityOld
 			if (index >= systemList.serializedProperty.arraySize)
 				return;
 
-			var property = systemList.serializedProperty.GetArrayElementAtIndex(index);
-			var typeName = property.GetValue<string>();
-			var type = Type.GetType(typeName);
+			var systemProperty = systemList.serializedProperty.GetArrayElementAtIndex(index);
+			var type = Type.GetType(systemProperty.GetValue<string>("TypeName"));
+			var active = systemProperty.GetValue<bool>("Active");
 
 			if (type == null)
 			{
@@ -77,16 +77,15 @@ namespace Pseudo.Internal.EntityOld
 			rect.x += rect.width - 16f;
 			rect.width = 16f;
 
-			if (installer.SystemManager == null || !installer.SystemManager.HasSystem(type))
-			{
-				EditorGUI.BeginDisabledGroup(true);
-				EditorGUI.Toggle(rect, true);
-				EditorGUI.EndDisabledGroup();
-			}
-			else
+			if (Application.isPlaying && installer.SystemManager != null && installer.SystemManager.HasSystem(type))
 			{
 				var system = installer.SystemManager.GetSystem(type);
 				system.Active = EditorGUI.Toggle(rect, system.Active);
+			}
+			else
+			{
+				active = EditorGUI.Toggle(rect, active);
+				systemProperty.SetValue("Active", active);
 			}
 		}
 
@@ -98,7 +97,7 @@ namespace Pseudo.Internal.EntityOld
 			{
 				var type = systemTypes[i];
 
-				if (!list.serializedProperty.Contains(type.AssemblyQualifiedName))
+				if (list.serializedProperty.Find(property => property.GetValue<string>("TypeName") == type.AssemblyQualifiedName) == null)
 					dropdown.AddItem(systemTypeNames[i].ToGUIContent(), false, OnSystemSelected, type);
 			}
 
@@ -109,7 +108,9 @@ namespace Pseudo.Internal.EntityOld
 		{
 			var type = (Type)data;
 
-			systemList.serializedProperty.Add(type.AssemblyQualifiedName);
+			var systemProperty = systemList.serializedProperty.Add(null);
+			systemProperty.SetValue("TypeName", type.AssemblyQualifiedName);
+			systemProperty.SetValue("Active", true);
 
 			if (installer.SystemManager != null)
 				installer.SystemManager.AddSystem(type);
@@ -117,7 +118,8 @@ namespace Pseudo.Internal.EntityOld
 
 		void OnSystemRemoved(ReorderableList list)
 		{
-			var type = Type.GetType(list.serializedProperty.GetValue<string>(list.index));
+			var typeName = list.serializedProperty.GetArrayElementAtIndex(list.index).GetValue<string>("TypeName");
+			var type = Type.GetType(typeName);
 			list.serializedProperty.RemoveAt(list.index);
 
 			if (installer.SystemManager != null)

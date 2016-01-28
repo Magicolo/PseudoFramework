@@ -9,6 +9,7 @@ using Zenject;
 
 namespace Pseudo
 {
+	// TODO Add System Categories (using namespace or attribute) to rapidly switch from a collection a systems to another (GameSystems, Level1Systems, DebugSystems, etc.)
 	public class SystemManager : ISystemManager, ITickable, IFixedTickable, ILateTickable
 	{
 		public event Action<ISystem> OnSystemAdded = delegate { };
@@ -29,7 +30,7 @@ namespace Pseudo
 		readonly List<IFixedUpdateable> fixedUpdateables;
 
 		[Inject]
-		DiContainer container = null;
+		IInstantiator container = null;
 
 		[Inject]
 		public SystemManager() : this(TimeManager.Unity) { }
@@ -79,7 +80,7 @@ namespace Pseudo
 		/// Registers an ISystem instance to the SystemManager.
 		/// </summary>
 		/// <param name="system">The ISystem instance to register.</param>
-		public void AddSystem(ISystem system)
+		public void AddSystem(ISystem system, bool active = true)
 		{
 			Assert.IsFalse(typeToSystem.ContainsKey(system.GetType()));
 			typeToSystem[system.GetType()] = system;
@@ -107,7 +108,7 @@ namespace Pseudo
 				fixedUpdateables.Add(fixedUpdateable);
 
 			system.OnInitialize();
-			system.Active = true;
+			system.Active = active;
 			OnSystemAdded(system);
 		}
 
@@ -115,15 +116,19 @@ namespace Pseudo
 		/// Registers an ISystem instance of the provided type to the SystemManager.
 		/// </summary>
 		/// <typeparam name="T">The type of the ISystem instance.</typeparam>
-		public void AddSystem<T>() where T : class, ISystem
+		public ISystem AddSystem<T>(bool active = true) where T : class, ISystem
 		{
-			AddSystem(typeof(T));
+			return AddSystem(typeof(T), active);
 		}
 
-		public void AddSystem(Type type)
+		public ISystem AddSystem(Type type, bool active = true)
 		{
 			Assert.IsFalse(typeToSystem.ContainsKey(type));
-			AddSystem((ISystem)container.Instantiate(type));
+
+			var system = (ISystem)container.Instantiate(type);
+			AddSystem(system, active);
+
+			return system;
 		}
 
 		/// <summary>
