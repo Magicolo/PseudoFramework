@@ -5,15 +5,13 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
+	[AddComponentMenu("")]
 	public class StateMachineCollisionStay2DCaller : StateMachineCaller
 	{
-
 		void OnCollisionStay2D(Collision2D collision)
 		{
 			if (machine.IsActive)
-			{
 				machine.CollisionStay2D(collision);
-			}
 		}
 	}
 }

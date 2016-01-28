@@ -5,15 +5,13 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
+	[AddComponentMenu("")]
 	public class StateMachineLateUpdateCaller : StateMachineCaller
 	{
-
 		void LateUpdate()
 		{
 			if (machine.IsActive)
-			{
 				machine.OnLateUpdate();
-			}
 		}
 	}
 }

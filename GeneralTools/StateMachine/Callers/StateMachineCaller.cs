@@ -5,9 +5,8 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public class StateMachineCaller : MonoBehaviour
+	public abstract class StateMachineCaller : MonoBehaviour
 	{
-
 		public StateMachine machine;
 	}
 }

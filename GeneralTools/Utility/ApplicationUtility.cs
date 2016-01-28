@@ -6,49 +6,52 @@ using System.Linq;
 using Pseudo;
 using System.Threading;
 
-public static class ApplicationUtility
+namespace Pseudo
 {
-	public static bool IsPlaying
+	public static class ApplicationUtility
 	{
-		get { return isPlaying; }
-	}
-	public static bool IsMainThread
-	{
-		get { return mainThread != null && Thread.CurrentThread == mainThread; }
-	}
+		public static bool IsPlaying
+		{
+			get { return isPlaying; }
+		}
+		public static bool IsMainThread
+		{
+			get { return mainThread != null && Thread.CurrentThread == mainThread; }
+		}
 
-	static bool isPlaying;
-	static Thread mainThread;
+		static bool isPlaying;
+		static Thread mainThread;
 
-	static void Initialize()
-	{
+		static void Initialize()
+		{
 #if UNITY_EDITOR
-		if (Application.isPlaying != UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
-			isPlaying = false;
-		else
+			if (Application.isPlaying != UnityEditor.EditorApplication.isPlayingOrWillChangePlaymode)
+				isPlaying = false;
+			else
 #endif
-			isPlaying = Application.isPlaying;
+				isPlaying = Application.isPlaying;
 
-		mainThread = Thread.CurrentThread;
-	}
+			mainThread = Thread.CurrentThread;
+		}
 
-	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-	static void InitializeBefore()
-	{
-		Initialize();
-	}
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		static void InitializeBefore()
+		{
+			Initialize();
+		}
 
-	[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
-	static void InitializeAfter()
-	{
-		Initialize();
-	}
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		static void InitializeAfter()
+		{
+			Initialize();
+		}
 
 #if UNITY_EDITOR
-	[UnityEditor.Callbacks.DidReloadScripts]
-	static void OnScriptReload()
-	{
-		UnityEditor.EditorApplication.playmodeStateChanged += Initialize;
-	}
+		[UnityEditor.Callbacks.DidReloadScripts]
+		static void OnScriptReload()
+		{
+			UnityEditor.EditorApplication.playmodeStateChanged += Initialize;
+		}
 #endif
+	}
 }

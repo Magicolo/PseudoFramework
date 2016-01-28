@@ -40,11 +40,11 @@ namespace Pseudo.Internal.Audio
 		public virtual void ShowSource(SerializedProperty arrayProperty, int index, SerializedProperty sourceProperty)
 		{
 			sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
-			AudioSettingsBase settings = sourceSettingsProperty.GetValue<AudioSettingsBase>();
+			var settings = sourceSettingsProperty.GetValue<AudioSettingsBase>();
 
 			Foldout(sourceProperty, string.Format("{0}", settings == null ? "null" : settings.Name).ToGUIContent(), CustomEditorStyles.BoldFoldout);
 
-			Rect rect = EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect());
+			var rect = EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect());
 			rect.width += 6f;
 			rect.height = 15f;
 
@@ -64,7 +64,7 @@ namespace Pseudo.Internal.Audio
 			{
 				for (int i = 0; i < settings.Sources.Count; i++)
 				{
-					AudioContainerSourceData source = settings.Sources[i];
+					var source = settings.Sources[i];
 
 					if (source == null || source.Settings == null || isCycling)
 						continue;
@@ -77,7 +77,7 @@ namespace Pseudo.Internal.Audio
 					else
 					{
 						references.Add(source.Settings);
-						AudioContainerSettings containerSettings = source.Settings as AudioContainerSettings;
+						var containerSettings = source.Settings as AudioContainerSettings;
 
 						if (containerSettings != null)
 							isCycling |= CheckReferenceCycles(containerSettings, references);
@@ -108,7 +108,8 @@ namespace Pseudo.Internal.Audio
 		public virtual void OnSourceDropped(AudioSettingsBase settings)
 		{
 			AddToArray(sourcesProperty);
-			SerializedProperty sourceProperty = sourcesProperty.Last();
+
+			var sourceProperty = sourcesProperty.Last();
 			sourceProperty.SetValue("Settings", settings);
 			sourceProperty.FindPropertyRelative("Options").Clear();
 		}

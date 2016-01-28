@@ -191,10 +191,10 @@ namespace Pseudo.Internal
 #if UNITY_EDITOR
 			layer.hideFlags = HideFlags.HideInInspector;
 
-			UnityEditor.SerializedObject parentSerialized = new UnityEditor.SerializedObject(parent);
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedProperty layersProperty = parentSerialized.FindProperty("stateReferences");
-			UnityEditor.SerializedProperty parentProperty = layerSerialized.FindProperty("parentReference");
+			var parentSerialized = new UnityEditor.SerializedObject(parent);
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var layersProperty = parentSerialized.FindProperty("stateReferences");
+			var parentProperty = layerSerialized.FindProperty("parentReference");
 
 			if (parentProperty.GetValue<UnityEngine.Object>() == null)
 				parentProperty.SetValue(parent);
@@ -215,14 +215,14 @@ namespace Pseudo.Internal
 		public static void RemoveLayer(StateMachine machine, StateLayer layer)
 		{
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedProperty statesProperty = layerSerialized.FindProperty("stateReferences");
-			UnityEngine.Object[] states = statesProperty.GetValues<UnityEngine.Object>();
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var statesProperty = layerSerialized.FindProperty("stateReferences");
+			var states = statesProperty.GetValues<UnityEngine.Object>();
 
 			for (int i = 0; i < states.Length; i++)
 			{
-				UnityEngine.Object state = states[i];
-				StateLayer sublayer = state as StateLayer;
+				var state = states[i];
+				var sublayer = state as StateLayer;
 
 				if (sublayer != null)
 					RemoveLayer(machine, sublayer);
@@ -253,9 +253,9 @@ namespace Pseudo.Internal
 #if UNITY_EDITOR
 			state.hideFlags = HideFlags.HideInInspector;
 
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedObject stateSerialized = new UnityEditor.SerializedObject(state);
-			UnityEditor.SerializedProperty statesProperty = layerSerialized.FindProperty("stateReferences");
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var stateSerialized = new UnityEditor.SerializedObject(state);
+			var statesProperty = layerSerialized.FindProperty("stateReferences");
 
 			stateSerialized.FindProperty("layerReference").SetValue(layer);
 			stateSerialized.FindProperty("machineReference").SetValue(machine);
@@ -271,13 +271,13 @@ namespace Pseudo.Internal
 		public static void AddMissingStates(StateMachine machine, StateLayer layer)
 		{
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedProperty statesProperty = layerSerialized.FindProperty("stateReferences");
-			List<Type> stateTypes = LayerTypeStateTypeDict[layer.GetType()];
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var statesProperty = layerSerialized.FindProperty("stateReferences");
+			var stateTypes = LayerTypeStateTypeDict[layer.GetType()];
 
 			for (int i = 0; i < stateTypes.Count; i++)
 			{
-				Type stateType = stateTypes[i];
+				var stateType = stateTypes[i];
 
 				if (statesProperty != null && !Array.Exists(statesProperty.GetValues<UnityEngine.Object>(), state => state.GetType() == stateType))
 					AddState(machine, layer, stateType);
@@ -288,10 +288,10 @@ namespace Pseudo.Internal
 		public static void MoveLayerTo(StateLayer layer, UnityEngine.Object parent)
 		{
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedObject newParentSerialized = new UnityEditor.SerializedObject(parent);
-			UnityEditor.SerializedProperty oldParentProperty = layerSerialized.FindProperty("parentReference");
-			UnityEditor.SerializedObject oldParentSerialized = new UnityEditor.SerializedObject(oldParentProperty.GetValue<UnityEngine.Object>());
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var newParentSerialized = new UnityEditor.SerializedObject(parent);
+			var oldParentProperty = layerSerialized.FindProperty("parentReference");
+			var oldParentSerialized = new UnityEditor.SerializedObject(oldParentProperty.GetValue<UnityEngine.Object>());
 
 			oldParentProperty.SetValue(parent);
 			oldParentSerialized.FindProperty("stateReferences").Remove(layer);
@@ -309,9 +309,9 @@ namespace Pseudo.Internal
 			if (stateToCopy == null)
 				return;
 
-			UnityEditor.SerializedObject stateSerialized = new UnityEditor.SerializedObject(state);
-			UnityEngine.Object parentReference = stateSerialized.FindProperty("layerReference").GetValue<UnityEngine.Object>();
-			UnityEngine.Object machineReference = stateSerialized.FindProperty("machineReference").GetValue<UnityEngine.Object>();
+			var stateSerialized = new UnityEditor.SerializedObject(state);
+			var parentReference = stateSerialized.FindProperty("layerReference").GetValue<UnityEngine.Object>();
+			var machineReference = stateSerialized.FindProperty("machineReference").GetValue<UnityEngine.Object>();
 
 			UnityEditorInternal.ComponentUtility.CopyComponent(stateToCopy);
 			UnityEditorInternal.ComponentUtility.PasteComponentValues(state);
@@ -328,11 +328,11 @@ namespace Pseudo.Internal
 			if (layerToCopy == null)
 				return;
 
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEngine.Object parentReference = layerSerialized.FindProperty("parentReference").GetValue<UnityEngine.Object>();
-			UnityEngine.Object machineReference = layerSerialized.FindProperty("machineReference").GetValue<UnityEngine.Object>();
-			UnityEngine.Object[] stateReferences = layerSerialized.FindProperty("stateReferences").GetValues<UnityEngine.Object>();
-			UnityEngine.Object[] activeStateReferences = layerSerialized.FindProperty("activeStateReferences").GetValues<UnityEngine.Object>();
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var parentReference = layerSerialized.FindProperty("parentReference").GetValue<UnityEngine.Object>();
+			var machineReference = layerSerialized.FindProperty("machineReference").GetValue<UnityEngine.Object>();
+			var stateReferences = layerSerialized.FindProperty("stateReferences").GetValues<UnityEngine.Object>();
+			var activeStateReferences = layerSerialized.FindProperty("activeStateReferences").GetValues<UnityEngine.Object>();
 
 			UnityEditorInternal.ComponentUtility.CopyComponent(layerToCopy);
 			UnityEditorInternal.ComponentUtility.PasteComponentValues(layer);
@@ -345,13 +345,13 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < stateReferences.Length; i++)
 			{
-				UnityEngine.Object stateReference = stateReferences[i];
-				State state = stateReference as State;
-				StateLayer sublayer = stateReference as StateLayer;
+				var stateReference = stateReferences[i];
+				var state = stateReference as State;
+				var sublayer = stateReference as StateLayer;
 
 				if (copyStates && state != null)
 				{
-					State stateToCopy = layerToCopy.GetState(state.GetType()) as State;
+					var stateToCopy = layerToCopy.GetState(state.GetType()) as State;
 
 					if (stateToCopy != null)
 						CopyState(state, stateToCopy);
@@ -359,7 +359,7 @@ namespace Pseudo.Internal
 
 				if (copySublayers && sublayer != null)
 				{
-					StateLayer sublayerToCopy = layerToCopy.GetState(sublayer.GetType()) as StateLayer;
+					var sublayerToCopy = layerToCopy.GetState(sublayer.GetType()) as StateLayer;
 
 					if (sublayerToCopy != null)
 						CopyLayer(sublayer, sublayerToCopy, copyStates, copySublayers);
@@ -373,7 +373,7 @@ namespace Pseudo.Internal
 			bool isParent = false;
 
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
 			isParent = layerSerialized.FindProperty("parentReference").GetValue<UnityEngine.Object>() == parent;
 #endif
 
@@ -413,10 +413,9 @@ namespace Pseudo.Internal
 
 		public static string FormatLayer(Type layerType)
 		{
-			string formattedLayer = layerType.GetName().SplitWords(2).Concat("/");
-
-			PropertyInfo machineProperty = layerType.GetProperty("Machine", ReflectionExtensions.AllFlags);
-			PropertyInfo layerProperty = layerType.GetProperty("Layer", ReflectionExtensions.AllFlags);
+			var formattedLayer = layerType.GetName().SplitWords(2).Concat("/");
+			var machineProperty = layerType.GetProperty("Machine", ReflectionExtensions.AllFlags);
+			var layerProperty = layerType.GetProperty("Layer", ReflectionExtensions.AllFlags);
 
 			if (machineProperty != null && typeof(IStateMachine).IsAssignableFrom(machineProperty.PropertyType))
 				formattedLayer = string.Format("{0} [M: {1}]", formattedLayer, FormatMachine(machineProperty.PropertyType));
@@ -429,7 +428,7 @@ namespace Pseudo.Internal
 
 		public static string FormatState(Type stateType, string layerTypePrefix)
 		{
-			string formattedState = stateType.GetName();
+			var formattedState = stateType.GetName();
 
 			if (formattedState.StartsWith(layerTypePrefix))
 				formattedState = formattedState.Substring(layerTypePrefix.Length);
@@ -459,15 +458,15 @@ namespace Pseudo.Internal
 
 		public static StateLayer[] GetSubLayersRecursive(StateLayer layer)
 		{
-			List<StateLayer> subLayers = new List<StateLayer>();
+			var subLayers = new List<StateLayer>();
 
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject layerSerialized = new UnityEditor.SerializedObject(layer);
-			UnityEditor.SerializedProperty subLayersProperty = layerSerialized.FindProperty("stateReferences");
+			var layerSerialized = new UnityEditor.SerializedObject(layer);
+			var subLayersProperty = layerSerialized.FindProperty("stateReferences");
 
 			for (int i = 0; i < subLayersProperty.arraySize; i++)
 			{
-				StateLayer subLayer = subLayersProperty.GetValue(i) as StateLayer;
+				var subLayer = subLayersProperty.GetValue(i) as StateLayer;
 
 				if (subLayer != null)
 				{
@@ -482,7 +481,7 @@ namespace Pseudo.Internal
 
 		public static void UpdateLayerStates(StateMachine machine)
 		{
-			StateLayer[] layers = machine.GetComponents<StateLayer>();
+			var layers = machine.GetComponents<StateLayer>();
 
 			for (int i = 0; i < layers.Length; i++)
 				UpdateLayerStates(machine, layers[i]);
@@ -490,7 +489,7 @@ namespace Pseudo.Internal
 
 		public static void UpdateLayerStates(StateMachine machine, StateLayer layer)
 		{
-			List<Type> types = LayerTypeStateTypeDict[layer.GetType()];
+			var types = LayerTypeStateTypeDict[layer.GetType()];
 
 			for (int i = 0; i < types.Count; i++)
 				AddState(machine, layer, types[i]);
@@ -498,23 +497,23 @@ namespace Pseudo.Internal
 
 		public static void UpdateCallbacks(StateMachine machine)
 		{
-			BindingFlags flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
+			var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly;
 			int callerMask = 0;
-			StateLayer[] layers = machine.GetComponents<StateLayer>();
-			State[] states = machine.GetComponents<State>();
+			var layers = machine.GetComponents<StateLayer>();
+			var states = machine.GetComponents<State>();
 
 			for (int i = 0; i < layers.Length; i++)
 			{
-				StateLayer layer = layers[i];
-				Type layerType = layer.GetType();
+				var layer = layers[i];
+				var layerType = layer.GetType();
 
 				while (layerType != typeof(StateLayer) || !typeof(StateLayer).IsAssignableFrom(layerType))
 				{
-					MethodInfo[] methods = layerType.GetMethods(flags);
+					var methods = layerType.GetMethods(flags);
 
 					for (int j = 0; j < methods.Length; j++)
 					{
-						MethodInfo method = methods[j];
+						var method = methods[j];
 						if (CallbackNames.Contains(method.Name))
 							callerMask |= 1 << (Array.IndexOf(CallbackNames, method.Name) + 2);
 					}
@@ -525,16 +524,17 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < states.Length; i++)
 			{
-				State state = states[i];
-				Type stateType = state.GetType();
+				var state = states[i];
+				var stateType = state.GetType();
 
 				while (stateType != typeof(State) || !typeof(State).IsAssignableFrom(stateType))
 				{
-					MethodInfo[] methods = stateType.GetMethods(flags);
+					var methods = stateType.GetMethods(flags);
 
 					for (int j = 0; j < methods.Length; j++)
 					{
-						MethodInfo method = methods[j];
+						var method = methods[j];
+
 						if (CallbackNames.Contains(method.Name))
 							callerMask |= 1 << (Array.IndexOf(CallbackNames, method.Name) + 2);
 					}
@@ -547,14 +547,14 @@ namespace Pseudo.Internal
 			{
 				if ((callerMask & 1 << i + 2) != 0)
 				{
-					StateMachineCaller caller = machine.gameObject.GetOrAddComponent(CallbackTypes[i]) as StateMachineCaller;
+					var caller = machine.gameObject.GetOrAddComponent(CallbackTypes[i]) as StateMachineCaller;
 
 					caller.hideFlags = HideFlags.HideInInspector;
 					caller.machine = machine;
 				}
 				else
 				{
-					StateMachineCaller caller = machine.GetComponent(CallbackTypes[i]) as StateMachineCaller;
+					var caller = machine.GetComponent(CallbackTypes[i]) as StateMachineCaller;
 
 					if (caller != null)
 						caller.Destroy();
@@ -566,11 +566,11 @@ namespace Pseudo.Internal
 		{
 			if (!Application.isPlaying)
 			{
-				StateMachine[] machines = Resources.FindObjectsOfTypeAll<StateMachine>();
+				var machines = Resources.FindObjectsOfTypeAll<StateMachine>();
 
 				for (int i = 0; i < machines.Length; i++)
 				{
-					StateMachine machine = machines[i];
+					var machine = machines[i];
 					UpdateCallbacks(machine);
 					UpdateLayerStates(machine);
 				}
@@ -581,13 +581,13 @@ namespace Pseudo.Internal
 		{
 			if (!Application.isPlaying && gameObject != null)
 			{
-				StateLayer[] layers = gameObject.GetComponents<StateLayer>();
-				State[] states = gameObject.GetComponents<State>();
-				StateMachineCaller[] callers = gameObject.GetComponents<StateMachineCaller>();
+				var layers = gameObject.GetComponents<StateLayer>();
+				var states = gameObject.GetComponents<State>();
+				var callers = gameObject.GetComponents<StateMachineCaller>();
 
 				for (int i = 0; i < layers.Length; i++)
 				{
-					StateLayer layer = layers[i];
+					var layer = layers[i];
 
 					if (machine == null || layer.Machine == null || !object.ReferenceEquals(layer.Machine, machine) || layer.CachedGameObject != gameObject)
 						layer.Destroy();
@@ -595,7 +595,7 @@ namespace Pseudo.Internal
 
 				for (int i = 0; i < states.Length; i++)
 				{
-					State state = states[i];
+					var state = states[i];
 
 					if (machine == null || state.Machine == null || !object.ReferenceEquals(state.Machine, machine) || state.CachedGameObject != gameObject || state.Layer == null)
 						state.Destroy();
@@ -603,7 +603,7 @@ namespace Pseudo.Internal
 
 				for (int i = 0; i < callers.Length; i++)
 				{
-					StateMachineCaller caller = callers[i];
+					var caller = callers[i];
 
 					if (machine == null || caller.machine == null || caller.machine != machine || caller.gameObject != gameObject)
 						caller.Destroy();
@@ -615,18 +615,18 @@ namespace Pseudo.Internal
 		{
 			if (!Application.isPlaying)
 			{
-				StateLayer[] layers = Resources.FindObjectsOfTypeAll<StateLayer>();
-				State[] states = Resources.FindObjectsOfTypeAll<State>();
-				StateMachineCaller[] callers = Resources.FindObjectsOfTypeAll<StateMachineCaller>();
+				var layers = Resources.FindObjectsOfTypeAll<StateLayer>();
+				var states = Resources.FindObjectsOfTypeAll<State>();
+				var callers = Resources.FindObjectsOfTypeAll<StateMachineCaller>();
 
 				for (int i = 0; i < layers.Length; i++)
 				{
-					StateLayer layer = layers[i];
+					var layer = layers[i];
 
 					if (layer.Machine == null)
 					{
-						Type layerType = layer.GetType();
-						StateMachine machine = layer.CachedGameObject.GetOrAddComponent<StateMachine>();
+						var layerType = layer.GetType();
+						var machine = layer.CachedGameObject.GetOrAddComponent<StateMachine>();
 
 						layer.Destroy();
 						AddLayer(machine, layerType, machine);
@@ -635,12 +635,12 @@ namespace Pseudo.Internal
 
 				for (int i = 0; i < states.Length; i++)
 				{
-					State state = states[i];
+					var state = states[i];
 
 					if (state.Machine == null || state.Layer == null)
 					{
-						Type stateType = state.GetType();
-						StateMachine machine = state.CachedGameObject.GetOrAddComponent<StateMachine>();
+						var stateType = state.GetType();
+						var machine = state.CachedGameObject.GetOrAddComponent<StateMachine>();
 
 						state.Destroy();
 						AddLayer(machine, GetLayerTypeFromState(stateType), machine);
@@ -649,7 +649,7 @@ namespace Pseudo.Internal
 
 				for (int i = 0; i < callers.Length; i++)
 				{
-					StateMachineCaller caller = callers[i];
+					var caller = callers[i];
 
 					if (caller.machine == null)
 						caller.Destroy();
@@ -661,11 +661,11 @@ namespace Pseudo.Internal
 		{
 			if (!Application.isPlaying)
 			{
-				StateMachine[] machines = Resources.FindObjectsOfTypeAll<StateMachine>();
+				var machines = Resources.FindObjectsOfTypeAll<StateMachine>();
 
 				for (int i = 0; i < machines.Length; i++)
 				{
-					StateMachine machine = machines[i];
+					var machine = machines[i];
 					UpdateCallbacks(machine);
 					UpdateLayerStates(machine);
 				}
@@ -684,15 +684,15 @@ namespace Pseudo.Internal
 			layerFormattedTypeDict = new Dictionary<string, Type>();
 			stateNameTypeDict = new Dictionary<string, Type>();
 
-			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+			var assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			for (int i = 0; i < assemblies.Length; i++)
 			{
-				Assembly assembly = assemblies[i];
-				Type[] types = assembly.GetTypes();
+				var assembly = assemblies[i];
+				var types = assembly.GetTypes();
 
 				for (int j = 0; j < types.Length; j++)
 				{
-					Type type = types[j];
+					var type = types[j];
 
 					if (type.IsSubclassOf(typeof(StateMachine)))
 						machineTypes.Add(type);
@@ -705,14 +705,14 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < machineTypes.Count; i++)
 			{
-				Type machineType = machineTypes[i];
+				var machineType = machineTypes[i];
 				machineFormattedTypeDict[FormatMachine(machineType)] = machineType;
 			}
 
 			for (int i = 0; i < layerTypes.Count; i++)
 			{
-				Type layerType = layerTypes[i];
-				string layerTypeName = FormatLayer(layerType);
+				var layerType = layerTypes[i];
+				var layerTypeName = FormatLayer(layerType);
 
 				layerTypeStateTypeDict[layerType] = new List<Type>();
 				layerFormattedStateFormattedDict[layerTypeName] = new List<string>();
@@ -722,13 +722,13 @@ namespace Pseudo.Internal
 
 			for (int i = 0; i < stateTypes.Count; i++)
 			{
-				Type stateType = stateTypes[i];
-				PropertyInfo layerProperty = stateType.GetProperty("Layer", ReflectionExtensions.AllFlags);
+				var stateType = stateTypes[i];
+				var layerProperty = stateType.GetProperty("Layer", ReflectionExtensions.AllFlags);
 
 				if (layerProperty != null && typeof(IStateLayer).IsAssignableFrom(layerProperty.PropertyType))
 				{
-					string layerTypeName = FormatLayer(layerProperty.PropertyType);
-					string layerTypePrefix = GetLayerPrefix(layerProperty.PropertyType);
+					var layerTypeName = FormatLayer(layerProperty.PropertyType);
+					var layerTypePrefix = GetLayerPrefix(layerProperty.PropertyType);
 
 					layerTypeStateTypeDict[layerProperty.PropertyType].Add(stateType);
 					layerFormattedStateFormattedDict[layerTypeName].Add(FormatState(stateType, layerTypePrefix));

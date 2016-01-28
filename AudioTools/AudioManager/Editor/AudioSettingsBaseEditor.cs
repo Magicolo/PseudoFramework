@@ -11,6 +11,8 @@ namespace Pseudo.Internal.Audio
 {
 	public abstract class AudioSettingsBaseEditor : CustomEditorBase
 	{
+		UnityEditorInternal.ReorderableList list;
+		PropertyDrawer drawer;
 		AudioSettingsBase settings;
 
 		public override void OnEnable()
@@ -30,7 +32,7 @@ namespace Pseudo.Internal.Audio
 
 		public void ShowType()
 		{
-			GUIStyle style = new GUIStyle("boldLabel");
+			var style = new GUIStyle("boldLabel");
 			style.alignment = TextAnchor.MiddleCenter;
 			EditorGUILayout.LabelField(settings.Type.ToString().ToUpper(), style);
 		}
@@ -67,9 +69,9 @@ namespace Pseudo.Internal.Audio
 
 			EditorGUILayout.BeginHorizontal();
 
-			SerializedProperty pitchScaleModeProperty = serializedObject.FindProperty("PitchScaleMode");
-			AudioSettingsBase.PitchScaleModes pitchScaleMode = pitchScaleModeProperty.GetValue<AudioSettingsBase.PitchScaleModes>();
-			SerializedProperty pitchScaleProperty = serializedObject.FindProperty("PitchScale");
+			var pitchScaleModeProperty = serializedObject.FindProperty("PitchScaleMode");
+			var pitchScaleMode = pitchScaleModeProperty.GetValue<AudioSettingsBase.PitchScaleModes>();
+			var pitchScaleProperty = serializedObject.FindProperty("PitchScale");
 
 			if (pitchScaleMode == AudioSettingsBase.PitchScaleModes.Ratio)
 				EditorGUILayout.PropertyField(pitchScaleProperty);
@@ -88,7 +90,7 @@ namespace Pseudo.Internal.Audio
 
 					for (int i = 0; i < targets.Length; i++)
 					{
-						AudioSettingsBase settings = (AudioSettingsBase)targets[i];
+						var settings = (AudioSettingsBase)targets[i];
 						settings.PitchScale = pitchScale;
 					}
 
@@ -96,8 +98,7 @@ namespace Pseudo.Internal.Audio
 				}
 			}
 
-			GUIStyle style = new GUIStyle("button");
-			style.clipping = TextClipping.Overflow;
+			var style = new GUIStyle("button") { clipping = TextClipping.Overflow };
 
 			EditorGUI.BeginChangeCheck();
 
@@ -107,7 +108,7 @@ namespace Pseudo.Internal.Audio
 			{
 				for (int i = 0; i < targets.Length; i++)
 				{
-					AudioSettingsBase settings = (AudioSettingsBase)targets[i];
+					var settings = (AudioSettingsBase)targets[i];
 					settings.PitchScaleMode = pitchScaleMode;
 				}
 
@@ -115,16 +116,15 @@ namespace Pseudo.Internal.Audio
 			}
 
 			EditorGUILayout.EndHorizontal();
-
 			EditorGUIUtility.fieldWidth += 20f;
 		}
 
 		void ShowFades()
 		{
-			SerializedProperty fadeInProperty = serializedObject.FindProperty("FadeIn");
-			SerializedProperty fadeOutProperty = serializedObject.FindProperty("FadeOut");
-			SerializedProperty fadeInEaseProperty = serializedObject.FindProperty("FadeInEase");
-			SerializedProperty fadeOutEaseProperty = serializedObject.FindProperty("FadeOutEase");
+			var fadeInProperty = serializedObject.FindProperty("FadeIn");
+			var fadeOutProperty = serializedObject.FindProperty("FadeOut");
+			var fadeInEaseProperty = serializedObject.FindProperty("FadeInEase");
+			var fadeOutEaseProperty = serializedObject.FindProperty("FadeOutEase");
 
 			EditorGUI.BeginChangeCheck();
 			EditorGUILayout.BeginHorizontal();
@@ -172,7 +172,7 @@ namespace Pseudo.Internal.Audio
 		{
 			for (int i = 0; i < targets.Length; i++)
 			{
-				AudioSettingsBase settings = (AudioSettingsBase)targets[i];
+				var settings = (AudioSettingsBase)targets[i];
 				settings.FadeIn = Mathf.Clamp(settings.FadeIn, 0f, GetSettingsLength(settings));
 				settings.FadeOut = Mathf.Clamp(settings.FadeOut, 0f, GetSettingsLength(settings));
 			}

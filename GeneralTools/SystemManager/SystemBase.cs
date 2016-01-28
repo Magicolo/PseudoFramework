@@ -60,6 +60,9 @@ namespace Pseudo
 
 		public virtual void OnActivate()
 		{
+			if (Entities == null)
+				return;
+
 			Entities.OnEntityAdded += OnEntityAdded;
 			Entities.OnEntityRemoved += OnEntityRemoved;
 
@@ -69,6 +72,9 @@ namespace Pseudo
 
 		public virtual void OnDeactivate()
 		{
+			if (Entities == null)
+				return;
+
 			Entities.OnEntityAdded -= OnEntityAdded;
 			Entities.OnEntityRemoved -= OnEntityRemoved;
 

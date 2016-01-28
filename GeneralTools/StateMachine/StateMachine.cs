@@ -5,7 +5,8 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	[AddComponentMenu("Pseudo/General/State Machine")]
+	[AddComponentMenu("")]
+	//[AddComponentMenu("Pseudo/General/State Machine")]
 	public class StateMachine : PMonoBehaviour, IStateMachine
 	{
 		bool isActive;
