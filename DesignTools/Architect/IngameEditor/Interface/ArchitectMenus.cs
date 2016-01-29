@@ -20,6 +20,10 @@ namespace Pseudo
 		public OpenFileBrowser OpenFileBrowser;
 		public GameObject NewFile;
 
+		public InputField NewMapName;
+		public InputField NewMapWidth;
+		public InputField NewMapHeight;
+
 		void Awake()
 		{
 			architect = GetComponentInParent<Architect>();
@@ -32,14 +36,27 @@ namespace Pseudo
 
 		public void New()
 		{
-			NewFile.SetActive(!NewFile.activeInHierarchy);
+			if (NewFile.activeInHierarchy)
+			{
+				NewFile.SetActive(false);
+			}
+			else
+			{
+				NewFile.SetActive(true);
+				NewMapName.text = "";
+				NewMapWidth.text = "20";
+				NewMapHeight.text = "20";
+			}
+
 
 		}
 
-		public void NewMap(InputField input)
+		public void MakeNewMap()
 		{
-			architect.New(input.text);
-			input.text = "";
+			int width = int.Parse(NewMapWidth.text);
+			int height = int.Parse(NewMapHeight.text);
+			architect.New(NewMapName.text, width, height);
+
 			NewFile.SetActive(false);
 		}
 

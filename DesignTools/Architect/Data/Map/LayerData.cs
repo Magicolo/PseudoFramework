@@ -152,6 +152,7 @@ namespace Pseudo
 
 			newTile.transform.SetPosition(new Vector3(tilePoint.X, tilePoint.Y, 0));
 			newTile.transform.parent = LayerTransform;
+			newTile.name = tileType.Prefab.name;
 
 			TileData tileData = new TileData(tileType, newTile);
 			this[tilePoint.X, tilePoint.Y] = tileData;

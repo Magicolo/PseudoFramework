@@ -34,7 +34,9 @@ namespace Pseudo.Internal.UI
 				button.transform.SetPosition(Vector3.zero);
 
 				button.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 20f);
+				button.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
 				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, y);
+
 				y += 22;
 			}
 		}

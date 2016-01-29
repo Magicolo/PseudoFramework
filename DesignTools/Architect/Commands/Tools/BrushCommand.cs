@@ -36,8 +36,7 @@ namespace Pseudo
 			}
 			else if (!architect.RotationFlip.Equals(Layer[TilePosition].Transform))
 			{
-
-				PDebug.Log(Layer[TilePosition].Transform.localScale, Layer[TilePosition].Transform.localRotation.eulerAngles.z, architect.RotationFlip);
+				//PDebug.Log(Layer[TilePosition].Transform.localScale, Layer[TilePosition].Transform.localRotation.eulerAngles.z, architect.RotationFlip);
 				OldTileType = Layer[TilePosition].TileType;
 
 				OldRotationFlip = ArchitectRotationFlip.FromTransform(Layer[TilePosition].Transform);

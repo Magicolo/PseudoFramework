@@ -18,10 +18,9 @@ namespace Pseudo
 			addHeader();
 			addMapData();
 
-			//#if !UNITY_WEBGL && !UNITY_WEBPLAYER
-			//System.IO.File.WriteAllText(filename, fileContent);
-			//Debug.Log("toto");
-			//#endif
+#if !UNITY_WEBGL && !UNITY_WEBPLAYER
+			System.IO.File.WriteAllText(filename, fileContent);
+#endif
 		}
 
 		private void addHeader()
@@ -40,6 +39,7 @@ namespace Pseudo
 		private void addLayer(LayerData layer)
 		{
 			fileContent += "Layer:" + layer.LayerTransform.name + "\n";
+			fileContent += "Dimension:" + layer.LayerWidth + "," + layer.LayerHeight + ",\n";
 			for (int y = layer.LayerHeight - 1; y >= 0; y--)
 			{
 				for (int x = 0; x < layer.LayerWidth; x++)

@@ -41,8 +41,8 @@ namespace Pseudo
 
 		ArchitectToolControler toolControler;
 
-		[Disable]
-		public string FileName;
+		string FileName;
+		Point2 mapDimension;
 
 		ArchitectMenus Menu;
 		ToolbarPanel Toolbar;
@@ -51,6 +51,8 @@ namespace Pseudo
 
 
 		public OpenFileBrowser OpenFileBrowser;
+
+		Transform MapParent;
 
 
 		public ToolFactory.ToolType SelectedToolType
@@ -129,10 +131,13 @@ namespace Pseudo
 		{
 			OpenFileBrowser.gameObject.SetActive(false);
 			clearAllLayer();
-			var layers = WorldOpener.OpenFile(Linker, path);
+			var layers = WorldOpener.OpenFile(Linker, path, MapParent);
+			mapDimension = new Point2(layers[0].LayerWidth, layers[0].LayerHeight);
 			Layers.AddRange(layers);
 			SelectedLayer = layers[0];
 			LayerPanel.RefreshLayers();
+			ResetGridSize();
+
 		}
 
 		public void New()
@@ -144,9 +149,10 @@ namespace Pseudo
 			LayerPanel.RefreshLayers();
 		}
 
-		public void New(string text)
+		public void New(string text, int width, int height)
 		{
 			FileName = text;
+			mapDimension = new Point2(width, height);
 			New();
 		}
 
@@ -157,8 +163,11 @@ namespace Pseudo
 				Layers[i].LayerTransform.gameObject.Destroy();
 			}
 			Layers.Clear();
-		}
+			if (MapParent)
+				MapParent.gameObject.Destroy();
 
+			MapParent = new GameObject("Map").transform;
+		}
 
 		void Update()
 		{
@@ -297,11 +306,11 @@ namespace Pseudo
 
 		public LayerData addLayer()
 		{
-			return addLayer(null, "Layer", 1, 1);
+			return addLayer(MapParent, "Layer", 1, 1);
 		}
-		public LayerData addLayer(Transform parent, string name, int tileHeight, int tileWidth)
+		LayerData addLayer(Transform parent, string name, int tileHeight, int tileWidth)
 		{
-			LayerData newLayer = new LayerData(parent, name, 20, 20);
+			LayerData newLayer = new LayerData(parent, name, mapDimension.X, mapDimension.Y);
 			newLayer.TileHeight = tileHeight;
 			newLayer.TileWidth = tileWidth;
 			Layers.Add(newLayer);

@@ -22,7 +22,8 @@ namespace Pseudo
 			else
 			{
 				string path = AssetDatabaseUtility.GetSelectedAssetPath();
-				WorldOpener.OpenFile(linker, path);
+				GameObject map = new GameObject("Map");
+				WorldOpener.OpenFile(linker, path, map.transform);
 			}
 		}
 

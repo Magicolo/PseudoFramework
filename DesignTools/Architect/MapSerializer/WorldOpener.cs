@@ -14,10 +14,12 @@ namespace Pseudo
 		bool isEndOfFile { get { return currentLineIndex >= fileContent.Length; } }
 
 		ArchitectLinker linker;
+		Transform mapParent;
 
-		private WorldOpener(ArchitectLinker linker)
+		private WorldOpener(ArchitectLinker linker, Transform mapParent)
 		{
 			this.linker = linker;
+			this.mapParent = mapParent;
 		}
 
 		private List<LayerData> Load(string[] fileContent)
@@ -36,16 +38,19 @@ namespace Pseudo
 
 		private LayerData readLayer()
 		{
-
 			string name = currentLine.Substring(6);
-			int nbLines = 20;
-			int lineWidth = 20;
-			LayerData layer = new LayerData(null, name, nbLines, lineWidth);
+			nextLine();
+			currentColIndex = indexOfNext(':') + 1;
 
-			for (int y = 0; y < nbLines; y++)
+
+			int mapWidth = readNextInt();
+			int mapHeight = readNextInt();
+			LayerData layer = new LayerData(mapParent, name, mapWidth, mapHeight);
+
+			for (int y = 0; y < mapHeight; y++)
 			{
 				nextLine();
-				readLayerLine(layer, nbLines - y - 1, lineWidth);
+				readLayerLine(layer, mapHeight - y - 1, mapWidth);
 			}
 			return layer;
 		}
@@ -63,6 +68,7 @@ namespace Pseudo
 					continue;
 				tileType = linker.Tilesets[0][id - 1];
 				layer.AddTile(position, tileType, rotationFlags);
+
 			}
 		}
 
@@ -88,9 +94,9 @@ namespace Pseudo
 			currentColIndex = 0;
 		}
 
-		public static List<LayerData> OpenFile(ArchitectLinker linker, string fileName)
+		public static List<LayerData> OpenFile(ArchitectLinker linker, string fileName, Transform mapParent)
 		{
-			WorldOpener wo = new WorldOpener(linker);
+			WorldOpener wo = new WorldOpener(linker, mapParent);
 			string[] fileContent = System.IO.File.ReadAllLines(fileName);
 			return wo.Load(fileContent);
 		}
