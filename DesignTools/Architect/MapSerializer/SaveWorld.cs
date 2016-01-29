@@ -18,9 +18,10 @@ namespace Pseudo
 			addHeader();
 			addMapData();
 
-#if !UNITY_WEBGL && !UNITY_WEBPLAYER
-			System.IO.File.WriteAllText(filename, fileContent);
-#endif
+			//#if !UNITY_WEBGL && !UNITY_WEBPLAYER
+			//System.IO.File.WriteAllText(filename, fileContent);
+			//Debug.Log("toto");
+			//#endif
 		}
 
 		private void addHeader()
