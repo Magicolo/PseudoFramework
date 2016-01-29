@@ -63,6 +63,22 @@ namespace Pseudo
 			return button;
 		}
 
+		public Button CreateButton(Transform parent, Vector3 position, Vector2 dimension, string text, UnityAction action)
+		{
+			GameObject newButton = GameObject.Instantiate(Button);
+
+			RectTransform trans = newButton.GetComponent<RectTransform>();
+			trans.SetParent(parent);
+
+			Text textComponent = newButton.GetComponentInChildren<Text>();
+			textComponent.text = text;
+
+			Button button = newButton.GetComponent<Button>();
+			button.onClick.AddListener(action);
+
+			return button;
+		}
+
 		public Button CreateButton(Transform parent, Vector3 position, Vector2 dimension, string text, Color backgroundColor, UnityAction action)
 		{
 			GameObject newButton = GameObject.Instantiate(Button);

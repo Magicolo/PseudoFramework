@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Pseudo.Internal.Input;
 using UnityEngine.UI;
+using Pseudo.Internal.UI;
 
 namespace Pseudo
 {
@@ -16,6 +17,8 @@ namespace Pseudo
 		public Button UndoButton;
 		public Button RedoButton;
 
+		public OpenFileBrowser OpenFileBrowser;
+		public GameObject NewFile;
 
 		void Awake()
 		{
@@ -29,12 +32,27 @@ namespace Pseudo
 
 		public void New()
 		{
-			architect.New();
+			NewFile.SetActive(!NewFile.activeInHierarchy);
+
+		}
+
+		public void NewMap(InputField input)
+		{
+			architect.New(input.text);
+			input.text = "";
+			NewFile.SetActive(false);
 		}
 
 		public void Open()
 		{
-			architect.Open("Assets\\Maps\\map1.arc");
+			if (OpenFileBrowser.gameObject.activeInHierarchy)
+				OpenFileBrowser.gameObject.SetActive(false);
+			else
+			{
+				OpenFileBrowser.gameObject.SetActive(true);
+				OpenFileBrowser.Refresh();
+			}
+
 		}
 
 		public void Redo()

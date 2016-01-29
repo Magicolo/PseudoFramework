@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
+using Pseudo.Internal.UI;
 
 namespace Pseudo
 {
@@ -40,10 +41,16 @@ namespace Pseudo
 
 		ArchitectToolControler toolControler;
 
+		[Disable]
+		public string FileName;
+
 		ArchitectMenus Menu;
 		ToolbarPanel Toolbar;
 		TilesetItemsPanel TilesetPanel;
 		LayerPanel LayerPanel;
+
+
+		public OpenFileBrowser OpenFileBrowser;
 
 
 		public ToolFactory.ToolType SelectedToolType
@@ -107,7 +114,7 @@ namespace Pseudo
 
 		public void Save()
 		{
-			SaveWorld.SaveAll(this, "Assets\\Maps\\map1.arc");
+			SaveWorld.SaveAll(this, Application.dataPath + "/map/" + FileName + ".arc");
 		}
 
 		public void ResetGridSize()
@@ -120,6 +127,7 @@ namespace Pseudo
 
 		public void Open(string path)
 		{
+			OpenFileBrowser.gameObject.SetActive(false);
 			clearAllLayer();
 			var layers = WorldOpener.OpenFile(Linker, path);
 			Layers.AddRange(layers);
@@ -134,6 +142,12 @@ namespace Pseudo
 			SelectedLayer = Layers[0];
 			ResetGridSize();
 			LayerPanel.RefreshLayers();
+		}
+
+		public void New(string text)
+		{
+			FileName = text;
+			New();
 		}
 
 		private void clearAllLayer()
