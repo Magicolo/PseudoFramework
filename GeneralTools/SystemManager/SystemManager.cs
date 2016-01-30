@@ -76,10 +76,6 @@ namespace Pseudo
 			return typeToSystem.ContainsKey(type);
 		}
 
-		/// <summary>
-		/// Registers an ISystem instance to the SystemManager.
-		/// </summary>
-		/// <param name="system">The ISystem instance to register.</param>
 		public void AddSystem(ISystem system, bool active = true)
 		{
 			Assert.IsFalse(typeToSystem.ContainsKey(system.GetType()));
@@ -112,10 +108,6 @@ namespace Pseudo
 			OnSystemAdded(system);
 		}
 
-		/// <summary>
-		/// Registers an ISystem instance of the provided type to the SystemManager.
-		/// </summary>
-		/// <typeparam name="T">The type of the ISystem instance.</typeparam>
 		public ISystem AddSystem<T>(bool active = true) where T : class, ISystem
 		{
 			return AddSystem(typeof(T), active);
@@ -123,6 +115,7 @@ namespace Pseudo
 
 		public ISystem AddSystem(Type type, bool active = true)
 		{
+			Assert.IsNotNull(type);
 			Assert.IsFalse(typeToSystem.ContainsKey(type));
 
 			var system = (ISystem)container.Instantiate(type);
@@ -131,10 +124,6 @@ namespace Pseudo
 			return system;
 		}
 
-		/// <summary>
-		/// Unregisters an ISystem instance from the SystemManager.
-		/// </summary>
-		/// <param name="system">The ISystem instance to unregister.</param>
 		public void RemoveSystem(ISystem system)
 		{
 			if (systems.Contains(system))
@@ -187,9 +176,6 @@ namespace Pseudo
 			}
 		}
 
-		/// <summary>
-		/// Unregisters all ISystem instances from the SystemManager.
-		/// </summary>
 		public void RemoveAllSystems()
 		{
 			for (int i = 0; i < systems.Count; i++)
