@@ -126,7 +126,7 @@ namespace Pseudo.Internal.EntityOld
 				installer.SystemManager.RemoveSystem(type);
 		}
 
-		[UnityEditor.Callbacks.DidReloadScripts]
+		[InitializeOnLoadMethod, UnityEditor.Callbacks.DidReloadScripts]
 		static void OnScriptReload()
 		{
 			var typeList = new List<Type>(typeof(ISystem).GetAssignableTypes(false));
