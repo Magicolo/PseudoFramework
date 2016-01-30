@@ -38,7 +38,7 @@ namespace Pseudo
 			{
 				var system = Systems[i];
 
-				if (system != null)
+				if (system != null && system.Type != null)
 					systemManager.AddSystem(system.Type, system.Active);
 			}
 		}
