@@ -18,6 +18,10 @@ namespace Pseudo
 			get { return lifeCounter; }
 			set { lifeCounter = value; }
 		}
+		public float TimeRatio
+		{
+			get { return lifeCounter / LifeTime; }
+		}
 		public bool IsAlive
 		{
 			get { return LifeCounter <= LifeTime; }
