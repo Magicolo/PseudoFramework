@@ -14,6 +14,7 @@ namespace Pseudo
 		public static readonly BehaviourEvents OnEnable = new BehaviourEvents(2);
 		public static readonly BehaviourEvents OnDisable = new BehaviourEvents(3);
 		public static readonly BehaviourEvents OnStart = new BehaviourEvents(4);
+		public static readonly BehaviourEvents OnLevelWasLoaded = new BehaviourEvents(5);
 
 		protected BehaviourEvents(params byte[] values) : base(values) { }
 	}

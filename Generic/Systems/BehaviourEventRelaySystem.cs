@@ -19,7 +19,12 @@ namespace Pseudo
 			while (BehaviourEventRelayComponent.QueuedEvents.Count > 0)
 			{
 				var behaviourEvent = BehaviourEventRelayComponent.QueuedEvents.Dequeue();
-				EventManager.Trigger(behaviourEvent.Event, behaviourEvent.Entity);
+
+				if (behaviourEvent.Argument == null)
+					EventManager.Trigger(behaviourEvent.Event, behaviourEvent.Entity);
+				else
+					EventManager.Trigger(behaviourEvent.Event, behaviourEvent.Entity, behaviourEvent.Argument);
+
 				BehaviourEventRelayComponent.EventDataPool.Recycle(behaviourEvent);
 			}
 		}

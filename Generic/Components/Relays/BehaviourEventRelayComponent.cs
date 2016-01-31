@@ -16,17 +16,19 @@ namespace Pseudo
 		{
 			public BehaviourEvents Event;
 			public IEntity Entity;
+			public object Argument;
 		}
 
 		public BehaviourEvents Events;
 
-		public void EnqueueEvent(BehaviourEvents identifier)
+		public void EnqueueEvent(BehaviourEvents identifier, object argument = null)
 		{
 			if (Events.HasAll(identifier))
 			{
 				var behaviourEvent = TypePoolManager.Create<BehaviourEventData>();
 				behaviourEvent.Event = identifier;
 				behaviourEvent.Entity = Entity.Entity;
+				behaviourEvent.Argument = argument;
 
 				QueuedEvents.Enqueue(behaviourEvent);
 			}
@@ -52,6 +54,11 @@ namespace Pseudo
 		void OnDisable()
 		{
 			EnqueueEvent(BehaviourEvents.OnDisable);
+		}
+
+		void OnLevelWasLoaded(int level)
+		{
+			EnqueueEvent(BehaviourEvents.OnLevelWasLoaded, level);
 		}
 	}
 }
