@@ -103,9 +103,7 @@ namespace Pseudo
 			if (fixedUpdateable != null)
 				fixedUpdateables.Add(fixedUpdateable);
 
-			system.OnInitialize();
-			system.Active = active;
-			OnSystemAdded(system);
+			InitializeSystem(system, active);
 		}
 
 		public ISystem AddSystem<T>(bool active = true) where T : class, ISystem
@@ -170,25 +168,34 @@ namespace Pseudo
 				if (fixedUpdateable != null)
 					fixedUpdateables.Remove(fixedUpdateable);
 
-				system.Active = false;
-				system.OnDestroy();
-				OnSystemRemoved(system);
+				FinalizeSystem(system);
 			}
 		}
 
 		public void RemoveAllSystems()
 		{
 			for (int i = 0; i < systems.Count; i++)
-			{
-				var system = systems[i];
-				OnSystemRemoved(system);
-			}
+				FinalizeSystem(systems[i]);
 
 			systems.Clear();
 			typeToSystem.Clear();
 			updateables.Clear();
 			fixedUpdateables.Clear();
 			lateUpdateables.Clear();
+		}
+
+		void InitializeSystem(ISystem system, bool active)
+		{
+			system.OnInitialize();
+			system.Active = active;
+			OnSystemAdded(system);
+		}
+
+		void FinalizeSystem(ISystem system)
+		{
+			system.Active = false;
+			system.OnDestroy();
+			OnSystemRemoved(system);
 		}
 
 		void ITickable.Tick()

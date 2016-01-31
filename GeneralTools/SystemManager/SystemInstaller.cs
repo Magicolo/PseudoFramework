@@ -42,5 +42,10 @@ namespace Pseudo
 					systemManager.AddSystem(system.Type, system.Active);
 			}
 		}
+
+		void OnDestroy()
+		{
+			SystemManager.RemoveAllSystems();
+		}
 	}
 }

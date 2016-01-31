@@ -10,11 +10,22 @@ namespace Pseudo
 {
 	public class AudioOnEventComponent : ComponentBehaviour
 	{
+		public enum SpatializationModes
+		{
+			None,
+			Static,
+			Dynamic
+		}
+
 		[Serializable]
 		public struct EventData
 		{
 			public Events Event;
+			public UIEvents UIEvent;
+			public BehaviourEvents BehaviourEvent;
+			public PhysicsEvents PhysicsEvent;
 			public AudioSettingsBase Audio;
+			public SpatializationModes Spatialization;
 		}
 
 		[InitializeContent]
