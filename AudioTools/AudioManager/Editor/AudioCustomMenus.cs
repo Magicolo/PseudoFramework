@@ -24,14 +24,13 @@ namespace Pseudo.Internal.Editor
 		[MenuItem("Assets/Create/Pseudo/Audio Settings/Source", priority = 9)]
 		static void CreateAudioSourceSettings()
 		{
-			for (int i = 0; i < Selection.objects.Length; i++)
+			var clips = Selection.GetFiltered(typeof(AudioClip), SelectionMode.Assets);
+
+			for (int i = 0; i < clips.Length; i++)
 			{
-				var clip = Selection.objects[i] as AudioClip;
-
-				if (clip == null)
-					continue;
-
+				var clip = (AudioClip)clips[i];
 				var settings = CreateAudioContainerSettings<AudioSourceSettings>(clip.name, AssetDatabase.GetAssetPath(clip));
+
 				settings.name = clip.name;
 				settings.Clip = clip;
 			}
