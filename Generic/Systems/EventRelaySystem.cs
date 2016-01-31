@@ -39,8 +39,8 @@ namespace Pseudo
 			{
 				var relayEvent = relay.Events[i];
 
-				if (relayEvent.Event.HasAll(identifier))
-					EventManager.Trigger(identifier, relayEvent.Relay);
+				if (relayEvent.Event.HasAny(identifier))
+					EventManager.Trigger(identifier, relayEvent.Relay.Entity);
 			}
 		}
 	}
