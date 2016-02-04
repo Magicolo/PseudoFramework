@@ -41,11 +41,11 @@ namespace Pseudo
 
 		public void EnqueueEvent(UIEvents identifier, BaseEventData data)
 		{
-			if (Events.HasAll(identifier))
+			if (Events == identifier)
 			{
 				var uiEvent = TypePoolManager.Create<UIEventData>();
 				uiEvent.Event = identifier;
-				uiEvent.Entity = Entity.Entity;
+				uiEvent.Entity = Entity;
 				uiEvent.Data = data;
 
 				QueuedEvents.Enqueue(uiEvent);

@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public class UIEvents : PEnumFlag<UIEvents>
+	public class UIEvents : PEnum<UIEvents, int>
 	{
 		public static readonly UIEvents OnPointerEnter = new UIEvents(1);
 		public static readonly UIEvents OnPointerExit = new UIEvents(2);
@@ -28,6 +28,6 @@ namespace Pseudo
 		public static readonly UIEvents OnSubmit = new UIEvents(16);
 		public static readonly UIEvents OnCancel = new UIEvents(17);
 
-		protected UIEvents(params byte[] values) : base(values) { }
+		protected UIEvents(int value) : base(value) { }
 	}
 }

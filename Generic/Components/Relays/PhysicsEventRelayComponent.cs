@@ -25,11 +25,11 @@ namespace Pseudo
 
 		public void EnqueueEvent(PhysicsEvents identifier, object data)
 		{
-			if (Events.HasAll(identifier))
+			if (Events == identifier)
 			{
 				var physicsEvent = EventDataPool.Create();
 				physicsEvent.Event = identifier;
-				physicsEvent.Entity = Entity.Entity;
+				physicsEvent.Entity = Entity;
 				physicsEvent.Data = data;
 
 				QueuedEvents.Enqueue(physicsEvent);
@@ -57,7 +57,7 @@ namespace Pseudo
 
 		void TryAddRelay<T>(PhysicsEvents identifier) where T : PhysicsEventRelayBase
 		{
-			if (Events.HasAll(identifier))
+			if (Events == identifier)
 			{
 				var relay = CachedGameObject.GetOrAddComponent<T>();
 				relay.hideFlags = HideFlags.HideInInspector;

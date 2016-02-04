@@ -45,5 +45,10 @@ namespace Pseudo
 
 			time.ResetTime();
 		}
+
+		public static implicit operator TimeChannel(TimeComponent time)
+		{
+			return time.time;
+		}
 	}
 }

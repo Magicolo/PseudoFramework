@@ -23,11 +23,6 @@ namespace Pseudo
 			set { entity.Groups = value; }
 		}
 
-		public IList<IComponent> Components
-		{
-			get { return entity.Components; }
-		}
-
 		[SerializeField]
 		EntityGroups groups = null;
 		[NonSerialized, InitializeContent]
@@ -62,6 +57,11 @@ namespace Pseudo
 				children[i].Initialize(entityManager);
 
 			CreateEntity();
+		}
+
+		public void Recycle()
+		{
+			entityManager.RecycleEntity(this);
 		}
 
 		public override void OnCreate()
@@ -131,7 +131,7 @@ namespace Pseudo
 				return;
 
 			var childList = new List<EntityBehaviour>();
-			FindEntities(CachedTransform, childList);
+			FindChildren(CachedTransform, childList);
 			children = childList.ToArray();
 
 			bool isRoot = CachedGameObject.GetComponentInParent<EntityBehaviour>(true) == null;
@@ -155,7 +155,7 @@ namespace Pseudo
 			componentBehaviours = GetComponents<IComponent>();
 		}
 
-		void FindEntities(Transform parent, List<EntityBehaviour> entities)
+		void FindChildren(Transform parent, List<EntityBehaviour> entities)
 		{
 			for (int i = 0; i < parent.childCount; i++)
 			{
@@ -163,7 +163,7 @@ namespace Pseudo
 				var entity = child.GetComponent<EntityBehaviour>();
 
 				if (entity == null)
-					FindEntities(child, entities);
+					FindChildren(child, entities);
 				else
 					entities.Add(entity);
 			}

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Name: ZenjectGlobalInstallers
   m_EditorClassIdentifier: 
   Installers:
-  - {fileID: 11414370, guid: cab0e64ebcb332b40a94011b1cffe7ef, type: 2}
+  - {fileID: 11416270, guid: cab0e64ebcb332b40a94011b1cffe7ef, type: 2}

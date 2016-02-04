@@ -9,7 +9,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 428360}
   - 114: {fileID: 11472014}
-  - 114: {fileID: 11414370}
+  - 114: {fileID: 11416270}
   m_Layer: 0
   m_Name: GlobalInstaller
   m_TagString: Untagged
@@ -29,7 +29,7 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
---- !u!114 &11414370
+--- !u!114 &11416270
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -37,7 +37,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 169748}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56c4ed663d754b4469e22d8da5f7cbb6, type: 3}
+  m_Script: {fileID: 11500000, guid: ed92fdba586094e49886f46141fa488c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   AudioManager: {fileID: 11493540, guid: 3848034eddc749a41ad66c640cb7bb00, type: 2}

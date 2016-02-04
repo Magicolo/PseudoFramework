@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 using Pseudo.Internal.EntityOld;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public partial class PEntity
 	{

@@ -5,5 +5,9 @@ using System.Text;
 
 namespace Pseudo
 {
-	public interface IComponent { }
+	public interface IComponent
+	{
+		bool Active { get; set; }
+		IEntity Entity { get; set; }
+	}
 }

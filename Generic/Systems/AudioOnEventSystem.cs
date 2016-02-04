@@ -55,7 +55,7 @@ namespace Pseudo
 			{
 				var audioEvent = audio.Events[i];
 
-				if (audioEvent.Event.HasAll(identifier))
+				if (audioEvent.Event == identifier)
 					PlayAudio(audio, audioEvent);
 			}
 		}
@@ -71,7 +71,7 @@ namespace Pseudo
 			{
 				var audioEvent = audio.Events[i];
 
-				if (audioEvent.BehaviourEvent.HasAll(identifier))
+				if (audioEvent.BehaviourEvent == identifier)
 					PlayAudio(audio, audioEvent);
 			}
 		}
@@ -87,7 +87,7 @@ namespace Pseudo
 			{
 				var audioEvent = audio.Events[i];
 
-				if (audioEvent.UIEvent.HasAll(identifier))
+				if (audioEvent.UIEvent == identifier)
 					PlayAudio(audio, audioEvent);
 			}
 		}
@@ -103,7 +103,7 @@ namespace Pseudo
 			{
 				var audioEvent = audio.Events[i];
 
-				if (audioEvent.PhysicsEvent.HasAll(identifier))
+				if (audioEvent.PhysicsEvent == identifier)
 					PlayAudio(audio, audioEvent);
 			}
 		}

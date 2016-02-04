@@ -192,11 +192,12 @@ namespace Pseudo
 		static ByteFlag GetEverything()
 		{
 			Initialize();
+
 			var values = GetValues();
 			var everything = ByteFlag.Nothing;
 
 			for (int i = 0; i < values.Length; i++)
-				everything |= values[i];
+				everything |= values[i].Value;
 
 			return everything;
 		}

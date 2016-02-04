@@ -10,12 +10,30 @@ namespace Pseudo
 	[RequireComponent(typeof(EntityBehaviour))]
 	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent
 	{
-		readonly Lazy<EntityBehaviour> cachedEntity;
-		public EntityBehaviour Entity { get { return cachedEntity.Value; } }
+		public bool Active
+		{
+			get { return active; }
+			set { enabled = value; }
+		}
+		public IEntity Entity { get; set; }
+		public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
+
+		bool active;
+		readonly Lazy<EntityBehaviour> cachedEntityHolder;
 
 		protected ComponentBehaviour()
 		{
-			cachedEntity = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
+			cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
+		}
+
+		protected virtual void OnEnable()
+		{
+			active = true;
+		}
+
+		protected virtual void OnDisable()
+		{
+			active = false;
 		}
 	}
 }

@@ -13,9 +13,9 @@ namespace Pseudo
 	{
 		public static System.Type FindType(string typeName)
 		{
-			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
+			for (int i = 0; i < TypeUtility.AllTypes.Length; i++)
 			{
-				System.Type type = TypeExtensions.AllTypes[i];
+				var type = TypeUtility.AllTypes[i];
 
 				if (type.Name.Contains(typeName))
 					return type;

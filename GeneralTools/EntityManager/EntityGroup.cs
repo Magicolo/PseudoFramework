@@ -9,7 +9,8 @@ namespace Pseudo.Internal.Entity
 {
 	public class EntityGroup : IEntityGroup
 	{
-		readonly static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
+		static readonly EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
+		static readonly IMessageManager messageManager = new MessageManager();
 
 		public event Action<IEntity> OnEntityAdded = delegate { };
 		public event Action<IEntity> OnEntityRemoved = delegate { };
@@ -44,6 +45,30 @@ namespace Pseudo.Internal.Entity
 		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
 		{
 			return GetMatchGroup(match).GetGroupByComponentIndices(ComponentUtility.GetComponentIndices(componentTypes));
+		}
+
+		public void BroadcastMessage<TId>(TId identifier)
+		{
+			for (int i = entities.Count - 1; i >= 0; i--)
+				messageManager.Send(entities[i], identifier);
+		}
+
+		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument)
+		{
+			for (int i = entities.Count - 1; i >= 0; i--)
+				messageManager.Send(entities[i], identifier, argument);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
+		{
+			for (int i = entities.Count - 1; i >= 0; i--)
+				messageManager.Send(entities[i], identifier, argument1, argument2);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		{
+			for (int i = entities.Count - 1; i >= 0; i--)
+				messageManager.Send(entities[i], identifier, argument1, argument2, argument3);
 		}
 
 		public bool Contains(IEntity entity)

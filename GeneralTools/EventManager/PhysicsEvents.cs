@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public class PhysicsEvents : PEnumFlag<PhysicsEvents>
+	public class PhysicsEvents : PEnum<PhysicsEvents, int>
 	{
 		public static readonly PhysicsEvents OnTriggerEnter = new PhysicsEvents(1);
 		public static readonly PhysicsEvents OnTriggerStay = new PhysicsEvents(2);
@@ -23,6 +23,6 @@ namespace Pseudo
 		public static readonly PhysicsEvents OnCollisionStay2D = new PhysicsEvents(11);
 		public static readonly PhysicsEvents OnCollisionExit2D = new PhysicsEvents(12);
 
-		protected PhysicsEvents(params byte[] values) : base(values) { }
+		protected PhysicsEvents(int value) : base(value) { }
 	}
 }

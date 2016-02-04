@@ -11,5 +11,8 @@ namespace Pseudo
 	public class GameObjectComponent : IComponent
 	{
 		public GameObject GameObject;
+
+		public bool Active { get; set; }
+		public IEntity Entity { get; set; }
 	}
 }

@@ -30,6 +30,12 @@ namespace Pseudo
 		void RemoveComponents<T>() where T : IComponent;
 		void RemoveComponents(Type type);
 		void RemoveAllComponents();
-	}
 
+		void SendMessage<TId>(TId identifier);
+		void SendMessage<TId, TArg>(TId identifier, TArg argument);
+		void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2);
+		void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3);
+
+		void Recycle();
+	}
 }

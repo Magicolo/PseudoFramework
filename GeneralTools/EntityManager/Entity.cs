@@ -9,6 +9,8 @@ namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
+		static readonly IMessageManager messageManager = new MessageManager();
+
 		public event Action<IEntity, IComponent> OnComponentAdded = delegate { };
 		public event Action<IEntity, IComponent> OnComponentRemoved = delegate { };
 
@@ -169,12 +171,63 @@ namespace Pseudo.Internal.Entity
 			RemoveAllComponents(true, true);
 		}
 
+		public void SendMessage<TId>(TId identifier)
+		{
+			for (int i = allComponents.Count - 1; i >= 0; i--)
+			{
+				var component = allComponents[i];
+
+				if (component.Active)
+					messageManager.Send(component, identifier);
+			}
+		}
+
+		public void SendMessage<TId, TArg>(TId identifier, TArg argument)
+		{
+			for (int i = allComponents.Count - 1; i >= 0; i--)
+			{
+				var component = allComponents[i];
+
+				if (component.Active)
+					messageManager.Send(component, identifier, argument);
+			}
+		}
+
+		public void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
+		{
+			for (int i = allComponents.Count - 1; i >= 0; i--)
+			{
+				var component = allComponents[i];
+
+				if (component.Active)
+					messageManager.Send(component, identifier, argument1, argument2);
+			}
+		}
+
+		public void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		{
+			for (int i = allComponents.Count - 1; i >= 0; i--)
+			{
+				var component = allComponents[i];
+
+				if (component.Active)
+					messageManager.Send(component, identifier, argument1, argument2, argument3);
+			}
+		}
+
+		public void Recycle()
+		{
+			entityManager.RecycleEntity(this);
+		}
+
 		bool AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
 		{
 			if (HasComponent(component))
 				return false;
 
 			allComponents.Add(component);
+			component.Entity = this;
+
 			var subComponentTypes = ComponentUtility.GetSubComponentTypes(component.GetType());
 			bool isNew = false;
 
@@ -246,6 +299,8 @@ namespace Pseudo.Internal.Entity
 				if (raiseEvent)
 					OnComponentRemoved(this, component);
 
+				component.Entity = null;
+
 				if (updateEntity)
 					entityManager.UpdateEntity(this);
 			}
@@ -310,10 +365,14 @@ namespace Pseudo.Internal.Entity
 					componentGroup.RemoveAll();
 			}
 
-			if (raiseEvent)
+			for (int i = 0; i < allComponents.Count; i++)
 			{
-				for (int i = 0; i < allComponents.Count; i++)
-					OnComponentRemoved(this, allComponents[i]);
+				var component = allComponents[i];
+
+				if (raiseEvent)
+					OnComponentRemoved(this, component);
+
+				component.Entity = null;
 			}
 
 			singleComponents.Clear();

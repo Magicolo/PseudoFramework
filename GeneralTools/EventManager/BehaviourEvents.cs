@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public class BehaviourEvents : PEnumFlag<BehaviourEvents>
+	public class BehaviourEvents : PEnum<BehaviourEvents, int>
 	{
 		public static readonly BehaviourEvents OnAwake = new BehaviourEvents(1);
 		public static readonly BehaviourEvents OnEnable = new BehaviourEvents(2);
@@ -16,6 +16,6 @@ namespace Pseudo
 		public static readonly BehaviourEvents OnStart = new BehaviourEvents(4);
 		public static readonly BehaviourEvents OnLevelWasLoaded = new BehaviourEvents(5);
 
-		protected BehaviourEvents(params byte[] values) : base(values) { }
+		protected BehaviourEvents(int value) : base(value) { }
 	}
 }
