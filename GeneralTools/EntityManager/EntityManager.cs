@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
+using Zenject;
 
-namespace Pseudo
+namespace Pseudo.Internal.Entity
 {
 	public class EntityManager : IEntityManager
 	{
@@ -20,6 +21,14 @@ namespace Pseudo
 
 		readonly EntityGroup entities = new EntityGroup();
 		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
+		readonly IMessageManager messageManager;
+		[Inject]
+		readonly DiContainer container = null;
+
+		public EntityManager(IMessageManager messageManager)
+		{
+			this.messageManager = messageManager;
+		}
 
 		public IEntity CreateEntity()
 		{
@@ -31,7 +40,7 @@ namespace Pseudo
 			Assert.IsNotNull(groups);
 
 			var entity = entityPool.Create();
-			entity.Initialize(this, groups);
+			entity.Initialize(this, messageManager, groups);
 			AddEntity(entity);
 
 			return entity;
@@ -42,7 +51,7 @@ namespace Pseudo
 			Assert.IsNotNull(prefab);
 
 			var entity = PrefabPoolManager.Create(prefab);
-			entity.Initialize(this);
+			entity.Initialize(this, container);
 
 			return entity;
 		}

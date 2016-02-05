@@ -14,5 +14,6 @@ namespace Pseudo
 
 		public bool Active { get; set; }
 		public IEntity Entity { get; set; }
+		public IEntityManager EntityManager { get; set; }
 	}
 }

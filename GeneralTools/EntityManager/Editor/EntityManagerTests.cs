@@ -5,6 +5,8 @@ using NSubstitute;
 using System;
 using Zenject;
 using Pseudo;
+using Pseudo.Internal.Entity;
+using Pseudo.Internal;
 
 namespace Tests
 {
@@ -15,7 +17,7 @@ namespace Tests
 		[SetUp]
 		public void Setup()
 		{
-			entityManager = new EntityManager();
+			entityManager = new EntityManager(new MessageManager());
 		}
 
 		[TearDown]
@@ -506,6 +508,7 @@ namespace Tests
 		{
 			public bool Active { get; set; }
 			public IEntity Entity { get; set; }
+			public IEntityManager EntityManager { get; set; }
 
 			[Message(0)]
 			public void MessageNoArgument() { }
@@ -528,6 +531,7 @@ namespace Tests
 		{
 			public bool Active { get; set; }
 			public IEntity Entity { get; set; }
+			public IEntityManager EntityManager { get; set; }
 
 			[Message(0)]
 			public void MessageNoArgument() { }
@@ -546,6 +550,7 @@ namespace Tests
 		{
 			public bool Active { get; set; }
 			public IEntity Entity { get; set; }
+			public IEntityManager EntityManager { get; set; }
 
 			[Message(0)]
 			public void MessageNoArgument() { }

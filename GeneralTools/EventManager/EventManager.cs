@@ -7,7 +7,7 @@ using System.Text;
 using UnityEngine.Assertions;
 using Zenject;
 
-namespace Pseudo
+namespace Pseudo.Internal
 {
 	public class EventManager : IEventManager, ILateTickable
 	{

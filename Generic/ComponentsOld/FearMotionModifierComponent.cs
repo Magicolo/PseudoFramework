@@ -7,11 +7,11 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class SeekMotionModifierComponent : MotionModifierComponentBase
+	public class FearMotionModifierComponent : MotionModifierComponentBase
 	{
-		public TargetComponentBase Target;
+		public TargetBase Target;
+		[Tooltip("Rate at which the fear progresses over distance.")]
+		public float Ratio = 1f;
 		public float PerceptionDistance = 10f;
-		public float SlowDistance = 3f;
-		public float StopDistance = 1f;
 	}
 }

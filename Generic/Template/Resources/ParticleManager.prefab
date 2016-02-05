@@ -39,7 +39,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72d1419afa7c9304598592263fac317d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParticleEffects: []
+  Effects: []
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1

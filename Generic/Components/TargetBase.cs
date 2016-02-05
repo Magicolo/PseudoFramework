@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public abstract class TargetComponentBase : ComponentBehaviour
+	public abstract class TargetBase : ComponentBehaviour
 	{
 		public abstract Vector3 Target { get; }
 		public abstract bool HasTarget { get; }

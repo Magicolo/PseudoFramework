@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Pseudo;
+using Pseudo.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;

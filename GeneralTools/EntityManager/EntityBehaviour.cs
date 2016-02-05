@@ -34,6 +34,8 @@ namespace Pseudo
 
 		IEntityManager entityManager;
 		IEntity entity;
+		[DoNotInitialize]
+		bool initialized;
 
 		void OnEnable()
 		{
@@ -47,21 +49,17 @@ namespace Pseudo
 		}
 
 		[PostInject]
-		public void Initialize(IEntityManager entityManager)
+		public void Initialize(IEntityManager entityManager, DiContainer container)
 		{
 			this.entityManager = entityManager;
 
 			Initialize();
+			InitializeInjection(container);
 
 			for (int i = 0; i < children.Length; i++)
-				children[i].Initialize(entityManager);
+				children[i].Initialize(entityManager, container);
 
 			CreateEntity();
-		}
-
-		public void Recycle()
-		{
-			entityManager.RecycleEntity(this);
 		}
 
 		public override void OnCreate()
@@ -152,7 +150,19 @@ namespace Pseudo
 				new TransformComponent { Transform = CachedTransform },
 				new GameObjectComponent { GameObject = CachedGameObject }
 			};
+
 			componentBehaviours = GetComponents<IComponent>();
+		}
+
+		void InitializeInjection(DiContainer container)
+		{
+			if (!initialized && container != null)
+			{
+				for (int i = 0; i < componentBehaviours.Length; i++)
+					container.Inject(componentBehaviours[i]);
+
+				initialized = true;
+			}
 		}
 
 		void FindChildren(Transform parent, List<EntityBehaviour> entities)

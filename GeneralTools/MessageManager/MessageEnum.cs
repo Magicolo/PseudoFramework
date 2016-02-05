@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public class MessageEnum : IEquatable<MessageEnum>, IEquatable<Enum>
+	public struct MessageEnum : IEquatable<MessageEnum>, IEquatable<Enum>, ISerializationCallbackReceiver
 	{
 		public Enum Value
 		{
@@ -57,15 +57,16 @@ namespace Pseudo
 
 		public MessageEnum(Enum value)
 		{
-			Value = value;
+			type = value.GetType();
+			typeName = type.AssemblyQualifiedName;
+			this.value = ((IConvertible)value).ToInt32(null);
+			enumValue = value;
 		}
 
 		public bool Equals<T>(T obj)
 		{
-			if (enumValue is T)
-				return TypeUtility.GetEqualityComparer<T>().Equals(obj, (T)(object)enumValue);
-			else if (obj is MessageEnum)
-				return Equals(obj as MessageEnum);
+			if (Value is T)
+				return TypeUtility.GetEqualityComparer<T>().Equals(obj, (T)(object)Value);
 			else
 				return false;
 		}
@@ -77,10 +78,7 @@ namespace Pseudo
 
 		public bool Equals(MessageEnum other)
 		{
-			if (other == null)
-				return false;
-			else
-				return type == other.type && value == other.value;
+			return type == other.type && value == other.value;
 		}
 
 		public override bool Equals(object obj)
@@ -99,6 +97,17 @@ namespace Pseudo
 				return -1;
 			else
 				return type.GetHashCode() ^ value.GetHashCode();
+		}
+
+		void ISerializationCallbackReceiver.OnBeforeSerialize() { }
+
+		void ISerializationCallbackReceiver.OnAfterDeserialize()
+		{
+			if (typeName != null)
+				type = Type.GetType(typeName);
+
+			if (type != null)
+				enumValue = (Enum)Enum.ToObject(type, value);
 		}
 	}
 }

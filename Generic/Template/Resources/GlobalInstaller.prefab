@@ -40,6 +40,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed92fdba586094e49886f46141fa488c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  GameManager: {fileID: 11414662, guid: 2b89ef7bb15128c4badf822542374b01, type: 2}
   AudioManager: {fileID: 11493540, guid: 3848034eddc749a41ad66c640cb7bb00, type: 2}
   ParticleManager: {fileID: 11441752, guid: 97a6532eb5f5f93459feb1724d8547a4, type: 2}
   InputManager: {fileID: 11406708, guid: 9abf81ea36faa0341a5c96c158f1011d, type: 2}
@@ -80,6 +81,11 @@ Prefab:
       propertyPath: ParticleManager
       value: 
       objectReference: {fileID: 11441752, guid: 97a6532eb5f5f93459feb1724d8547a4,
+        type: 2}
+    - target: {fileID: 0}
+      propertyPath: GameManager
+      value: 
+      objectReference: {fileID: 11414662, guid: 2b89ef7bb15128c4badf822542374b01,
         type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

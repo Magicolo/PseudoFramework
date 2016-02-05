@@ -9,8 +9,6 @@ namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
-		static readonly IMessageManager messageManager = new MessageManager();
-
 		public event Action<IEntity, IComponent> OnComponentAdded = delegate { };
 		public event Action<IEntity, IComponent> OnComponentRemoved = delegate { };
 
@@ -27,9 +25,14 @@ namespace Pseudo.Internal.Entity
 		{
 			get { return readonlyComponents; }
 		}
+		public IEntityManager Manager
+		{
+			get { return entityManager; }
+		}
 
+		IEntityManager entityManager = null;
+		IMessageManager messageManager = null;
 		EntityGroups groups;
-		IEntityManager entityManager;
 		[DoNotInitialize]
 		IComponent[] singleComponents;
 		[DoNotInitialize]
@@ -49,9 +52,10 @@ namespace Pseudo.Internal.Entity
 			readonlyComponentIndices = componentIndices.AsReadOnly();
 		}
 
-		public void Initialize(IEntityManager entityManager, EntityGroups groups)
+		public void Initialize(IEntityManager entityManager, IMessageManager messageManager, EntityGroups groups)
 		{
 			this.entityManager = entityManager;
+			this.messageManager = messageManager;
 			this.groups = groups;
 		}
 
@@ -215,11 +219,6 @@ namespace Pseudo.Internal.Entity
 			}
 		}
 
-		public void Recycle()
-		{
-			entityManager.RecycleEntity(this);
-		}
-
 		bool AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
 		{
 			if (HasComponent(component))
@@ -258,6 +257,7 @@ namespace Pseudo.Internal.Entity
 		bool AddSingleComponent(IComponent component, int index)
 		{
 			bool isNew = false;
+
 			if (singleComponents.Length <= index)
 				Array.Resize(ref singleComponents, ComponentUtility.ComponentTypes.Length);
 

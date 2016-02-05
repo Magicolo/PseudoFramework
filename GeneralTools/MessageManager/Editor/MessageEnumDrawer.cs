@@ -15,7 +15,7 @@ namespace Pseudo.Internal.Editor
 		static Enum[] enumValues;
 		static GUIContent[] enumValuesPath;
 
-		MessageEnum dynamicEnum;
+		MessageEnum messageEnum;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
@@ -37,21 +37,27 @@ namespace Pseudo.Internal.Editor
 		{
 			base.GetPropertyHeight(property, label);
 
-			dynamicEnum = property.GetValue<MessageEnum>();
+			messageEnum = property.GetValue<MessageEnum>();
 
 			return EditorGUIUtility.singleLineHeight;
 		}
 
 		void ShowEnums()
 		{
-			int index = Array.IndexOf(enumValues, dynamicEnum.Value);
+			int index = Array.IndexOf(enumValues, messageEnum.Value);
 
 			EditorGUI.BeginChangeCheck();
 
 			index = EditorGUI.Popup(currentPosition, currentLabel, index, enumValuesPath);
 
 			if (EditorGUI.EndChangeCheck())
-				dynamicEnum.Value = enumValues[index];
+			{
+				var enumValue = enumValues[index];
+				var typeName = enumValue.GetType().AssemblyQualifiedName;
+				var value = ((IConvertible)enumValue).ToInt32(null);
+				currentProperty.SetValue("value", value);
+				currentProperty.SetValue("typeName", typeName);
+			}
 		}
 
 		[UnityEditor.Callbacks.DidReloadScripts]
