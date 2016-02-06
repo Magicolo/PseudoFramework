@@ -55,7 +55,7 @@ namespace Pseudo.Internal.EntityOld
 
 				for (int i = 0; i < count; i++)
 				{
-					var type = Type.GetType(reader.ReadLine());
+					var type = TypeUtility.GetType(reader.ReadLine());
 					var line = reader.ReadLine();
 
 					if (type != null)

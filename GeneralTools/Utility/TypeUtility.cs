@@ -11,10 +11,11 @@ namespace Pseudo
 {
 	public static class TypeUtility
 	{
-		static Dictionary<Type, Type[]> typeToAssignableTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, Type[]> typeToSubclassTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, Type[]> typeToDefinedTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, FieldInfo[]> typeToFields = new Dictionary<Type, FieldInfo[]>();
+		static readonly Dictionary<Type, Type[]> typeToAssignableTypes = new Dictionary<Type, Type[]>();
+		static readonly Dictionary<Type, Type[]> typeToSubclassTypes = new Dictionary<Type, Type[]>();
+		static readonly Dictionary<Type, Type[]> typeToDefinedTypes = new Dictionary<Type, Type[]>();
+		static readonly Dictionary<Type, FieldInfo[]> typeToFields = new Dictionary<Type, FieldInfo[]>();
+		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
 
 		static Type[] allTypes;
 		public static Type[] AllTypes
@@ -110,6 +111,19 @@ namespace Pseudo
 			}
 
 			return fields;
+		}
+
+		public static Type GetType(string typeName)
+		{
+			Type type;
+
+			if (!typeNameToType.TryGetValue(typeName, out type))
+			{
+				type = Type.GetType(typeName);
+				typeNameToType[typeName] = type;
+			}
+
+			return type;
 		}
 
 		public static IEqualityComparer<T> GetEqualityComparer<T>()

@@ -61,7 +61,7 @@ namespace Pseudo.Internal.EntityOld
 				return;
 
 			var systemProperty = systemList.serializedProperty.GetArrayElementAtIndex(index);
-			var type = Type.GetType(systemProperty.GetValue<string>("TypeName"));
+			var type = TypeUtility.GetType(systemProperty.GetValue<string>("TypeName"));
 			var active = systemProperty.GetValue<bool>("Active");
 
 			if (type == null)
@@ -119,7 +119,7 @@ namespace Pseudo.Internal.EntityOld
 		void OnSystemRemoved(ReorderableList list)
 		{
 			var typeName = list.serializedProperty.GetArrayElementAtIndex(list.index).GetValue<string>("TypeName");
-			var type = Type.GetType(typeName);
+			var type = TypeUtility.GetType(typeName);
 			list.serializedProperty.RemoveAt(list.index);
 
 			if (installer.SystemManager != null)

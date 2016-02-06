@@ -8,6 +8,7 @@ using Pseudo;
 [RequireComponent(typeof(TimeComponent))]
 public class LifeTime : ComponentBehaviour
 {
+	[Min]
 	public float Duration = 5f;
 	public EntityMessage OnDie;
 

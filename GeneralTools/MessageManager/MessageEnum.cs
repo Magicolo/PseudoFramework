@@ -42,7 +42,7 @@ namespace Pseudo
 			get
 			{
 				if (type == null && typeName != null)
-					type = Type.GetType(typeName);
+					type = TypeUtility.GetType(typeName);
 
 				return type;
 			}
@@ -104,7 +104,7 @@ namespace Pseudo
 		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
 			if (typeName != null)
-				type = Type.GetType(typeName);
+				type = TypeUtility.GetType(typeName);
 
 			if (type != null)
 				enumValue = (Enum)Enum.ToObject(type, value);

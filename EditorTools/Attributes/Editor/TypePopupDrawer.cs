@@ -16,7 +16,7 @@ namespace Pseudo.Internal.Editor
 			var types = ((TypePopupAttribute)attribute).Types;
 			var typeNames = types.Convert(type => type.Name);
 			var typeName = property.GetValue<string>();
-			var typeIndex = Array.IndexOf(types, Type.GetType(typeName));
+			var typeIndex = Array.IndexOf(types, TypeUtility.GetType(typeName));
 
 			EditorGUI.BeginChangeCheck();
 			BeginIndent(0);

@@ -533,7 +533,7 @@ namespace Pseudo.Internal
 
 		public static Type ReadType(this BinaryReader reader)
 		{
-			return Type.GetType(reader.ReadString());
+			return TypeUtility.GetType(reader.ReadString());
 		}
 
 		public static Vector2 ReadVector2(this BinaryReader reader)
