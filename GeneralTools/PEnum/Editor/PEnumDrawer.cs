@@ -52,39 +52,32 @@ namespace Pseudo.Internal
 				options[i] = new FlagsOption(enumNames[i].ToGUIContent(), flags, enumFlagValue.HasAll(flags));
 			}
 
-			Flags(currentPosition, currentProperty, options, OnEnumSelected, currentLabel);
+			Flags(currentPosition, currentProperty, options, OnEnumFlagSelected, currentLabel);
 		}
 
-		void OnEnumSelected(FlagsOption option, SerializedProperty property)
+		void OnEnumFlagSelected(FlagsOption option, SerializedProperty property)
 		{
-			var flagsProperty = property.FindPropertyRelative("value");
-			var flags = property.GetValue<IEnumFlag>().Value;
+			var flags = property.GetValue<IEnumFlag>();
 
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
 					foreach (IEnumFlag value in enumValues)
-						flags = flags.Add(value.Value);
+						flags = flags.Add(value);
 					break;
 				case FlagsOption.OptionTypes.Nothing:
-					flags = ByteFlag.Nothing;
+					foreach (IEnumFlag value in enumValues)
+						flags = flags.Remove(value);
 					break;
 				case FlagsOption.OptionTypes.Custom:
 					if (option.IsSelected)
-						flags = flags.Remove(((IEnumFlag)option.Value).Value);
+						flags = flags.Remove((IEnumFlag)option.Value);
 					else
-						flags = flags.Add(((IEnumFlag)option.Value).Value);
+						flags = flags.Add((IEnumFlag)option.Value);
 					break;
 			}
 
-			for (int i = 1; i <= 8; i++)
-			{
-				var flagName = "f" + i;
-				flagsProperty.FindPropertyRelative(flagName).intValue = flags.GetValueFromMember<int>(flagName);
-			}
-
-			property.serializedObject.ApplyModifiedProperties();
-			EditorUtility.SetDirty(target);
+			property.SetValue(flags);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

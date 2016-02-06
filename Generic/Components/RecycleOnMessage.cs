@@ -12,10 +12,12 @@ public class RecycleOnMessage : ComponentBehaviour, IMessageable
 
 	bool recycle;
 
-	[PostInject]
-	void Initialize()
+	public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
+	readonly Lazy<EntityBehaviour> cachedEntityHolder;
+
+	protected RecycleOnMessage()
 	{
-		PDebug.LogMethod(this);
+		cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
 	}
 
 	void LateUpdate()

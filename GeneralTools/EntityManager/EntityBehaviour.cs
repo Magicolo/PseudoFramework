@@ -27,7 +27,7 @@ namespace Pseudo
 		EntityGroups groups = null;
 		[NonSerialized, InitializeContent]
 		EntityBehaviour[] children;
-		[InitializeContent]
+		[DoNotInitialize]
 		IComponent[] components;
 		[InitializeContent]
 		IComponent[] componentBehaviours;
@@ -39,13 +39,14 @@ namespace Pseudo
 
 		void OnEnable()
 		{
-			Initialize();
-			CreateEntity();
+			if (entity != null)
+				entity.Active = true;
 		}
 
 		void OnDisable()
 		{
-			RecycleEntity();
+			if (entity != null)
+				entity.Active = false;
 		}
 
 		[PostInject]
@@ -54,12 +55,12 @@ namespace Pseudo
 			this.entityManager = entityManager;
 
 			Initialize();
-			InitializeInjection(container);
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].Initialize(entityManager, container);
 
 			CreateEntity();
+			InitializeInjection(container);
 		}
 
 		public override void OnCreate()
@@ -100,19 +101,16 @@ namespace Pseudo
 
 		void CreateEntity()
 		{
-			if (entityManager == null || entity != null || !CachedGameObject.activeInHierarchy || !enabled)
-				return;
-
-			entity = entityManager.CreateEntity(groups);
+			entity = entityManager.CreateEntity(groups, enabled);
 			entity.AddComponents(components);
 			entity.AddComponents(componentBehaviours);
+
+			for (int i = 0; i < children.Length; i++)
+				entity.AddChild(children[i].Entity);
 		}
 
 		void RecycleEntity()
 		{
-			if (entityManager == null || entity == null)
-				return;
-
 			entityManager.RecycleEntity(entity);
 			entity = null;
 		}
@@ -131,13 +129,6 @@ namespace Pseudo
 			var childList = new List<EntityBehaviour>();
 			FindChildren(CachedTransform, childList);
 			children = childList.ToArray();
-
-			bool isRoot = CachedGameObject.GetComponentInParent<EntityBehaviour>(true) == null;
-
-			if (isRoot)
-				children = CachedGameObject.GetComponentsInChildren<EntityBehaviour>(true, true);
-			else
-				children = new EntityBehaviour[0];
 		}
 
 		void InitializeComponents()

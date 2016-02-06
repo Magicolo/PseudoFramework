@@ -21,7 +21,6 @@ namespace Pseudo.Internal.Editor
 			Begin(position, property, label);
 
 			currentPosition.height = 16f;
-			EditorGUI.BeginProperty(currentPosition, label, property);
 
 			if (typeof(Enum).IsAssignableFrom(fieldInfo.FieldType))
 				DrawEnumFlag();
@@ -32,7 +31,6 @@ namespace Pseudo.Internal.Editor
 			else if (fieldInfo.FieldType == typeof(BigFlag))
 				DrawBigFlag();
 
-			EditorGUI.EndProperty();
 			End();
 		}
 
@@ -158,11 +156,7 @@ namespace Pseudo.Internal.Editor
 					break;
 			}
 
-			for (int i = 1; i <= 8; i++)
-				property.FindPropertyRelative("f" + i).intValue = byteFlag.GetValueFromMember<int>("f" + i);
-
-			property.serializedObject.ApplyModifiedProperties();
-			EditorUtility.SetDirty(target);
+			property.SetValue(byteFlag);
 		}
 
 		void OnBigFlagSelected(FlagsOption option, SerializedProperty property)
@@ -180,17 +174,7 @@ namespace Pseudo.Internal.Editor
 					break;
 			}
 
-			for (int i = 1; i <= 8; i++)
-			{
-				var flag = bigFlag.GetValueFromMember<ByteFlag>("f" + i);
-				var flagProperty = property.FindPropertyRelative("f" + i);
-
-				for (int j = 1; j <= 8; j++)
-					flagProperty.FindPropertyRelative("f" + j).intValue = flag.GetValueFromMember<int>("f" + j);
-			}
-
-			property.serializedObject.ApplyModifiedProperties();
-			EditorUtility.SetDirty(target);
+			property.SetValue(bigFlag);
 		}
 	}
 }

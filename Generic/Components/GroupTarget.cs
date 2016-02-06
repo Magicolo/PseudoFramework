@@ -39,6 +39,7 @@ namespace Pseudo
 			get { return target != null; }
 		}
 
+		[DoNotInitialize]
 		IEntityGroup targetables;
 		IEntity target;
 		float counter;
@@ -47,7 +48,7 @@ namespace Pseudo
 		void Initialize()
 		{
 			targetables = Entity.Manager.Entities.Filter(typeof(TransformComponent));
-			targetables.OnEntityRemoved += OnTargetRemoved;
+			targetables.OnEntityRemoved += entity => { if (Entity != null) OnTargetRemoved(entity); };
 		}
 
 		void Update()

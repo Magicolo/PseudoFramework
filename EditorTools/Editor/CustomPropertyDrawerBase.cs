@@ -54,6 +54,7 @@ namespace Pseudo.Internal.Editor
 			target = serializedObject.targetObject;
 			targets = serializedObject.targetObjects;
 
+			EditorGUI.BeginProperty(position, label, property);
 			EditorGUI.BeginChangeCheck();
 		}
 
@@ -63,6 +64,7 @@ namespace Pseudo.Internal.Editor
 
 			if (EditorGUI.EndChangeCheck())
 				EditorUtility.SetDirty(serializedObject.targetObject);
+			EditorGUI.EndProperty();
 
 			if (indentStack.Count > 0)
 				Debug.LogWarning("BeginIndent groups do not match EndIndent goups.");
@@ -149,11 +151,7 @@ namespace Pseudo.Internal.Editor
 
 		public static void Flags(Rect position, SerializedProperty property, FlagsOption[] options, Action<FlagsOption, SerializedProperty> onSelected, GUIContent label = null)
 		{
-			EditorGUI.BeginProperty(position, label, property);
-
 			Flags(position, options, onSelected, label, property);
-
-			EditorGUI.EndProperty();
 		}
 
 		public static void Flags(Rect position, FlagsOption[] options, Action<FlagsOption, SerializedProperty> onSelected, GUIContent label = null, SerializedProperty property = null)
@@ -193,12 +191,10 @@ namespace Pseudo.Internal.Editor
 
 			int indent = EditorGUI.indentLevel;
 			EditorGUI.indentLevel = 0;
-			bool pressed = false;
 			GenericMenu.MenuFunction2 callback = data => onSelected((FlagsOption)data, property);
 
 			if (GUI.Button(position, GUIContent.none, new GUIStyle()))
 			{
-				pressed = true;
 				var menu = new GenericMenu();
 
 				menu.AddItem(FlagsOption.GetNothing(nothing), callback);
@@ -214,13 +210,6 @@ namespace Pseudo.Internal.Editor
 			}
 
 			EditorGUI.LabelField(position, popupName, EditorStyles.popup);
-
-			if (pressed)
-			{
-				GUIUtility.hotControl = GUIUtility.GetControlID(FocusType.Native, position);
-				GUIUtility.keyboardControl = GUIUtility.GetControlID(FocusType.Native, position);
-			}
-
 			EditorGUI.indentLevel = indent;
 		}
 

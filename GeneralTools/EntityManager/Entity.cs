@@ -9,9 +9,16 @@ namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
+		public event Action<IEntity> OnActivated = delegate { };
+		public event Action<IEntity> OnDeactivated = delegate { };
 		public event Action<IEntity, IComponent> OnComponentAdded = delegate { };
 		public event Action<IEntity, IComponent> OnComponentRemoved = delegate { };
 
+		public bool Active
+		{
+			get { return active; }
+			set { SetActive(value); }
+		}
 		public EntityGroups Groups
 		{
 			get { return groups; }
@@ -21,22 +28,34 @@ namespace Pseudo.Internal.Entity
 				entityManager.UpdateEntity(this);
 			}
 		}
-		public IList<IComponent> Components
+		public IEntity Parent
 		{
-			get { return readonlyComponents; }
+			get { return parent; }
+		}
+		public IList<IEntity> Children
+		{
+			get { return readonlyChildren; }
 		}
 		public IEntityManager Manager
 		{
 			get { return entityManager; }
 		}
+		public IList<IComponent> Components
+		{
+			get { return readonlyComponents; }
+		}
 
+		bool active;
+		EntityGroups groups;
+		IEntity parent;
 		IEntityManager entityManager = null;
 		IMessageManager messageManager = null;
-		EntityGroups groups;
 		[DoNotInitialize]
 		IComponent[] singleComponents;
 		[DoNotInitialize]
 		ComponentGroup[] componentGroups;
+		readonly List<IEntity> children;
+		readonly IList<IEntity> readonlyChildren;
 		readonly List<IComponent> allComponents;
 		readonly IList<IComponent> readonlyComponents;
 		readonly List<int> componentIndices;
@@ -44,6 +63,8 @@ namespace Pseudo.Internal.Entity
 
 		public Entity()
 		{
+			children = new List<IEntity>();
+			readonlyChildren = children.AsReadOnly();
 			singleComponents = new IComponent[ComponentUtility.ComponentTypes.Length];
 			componentGroups = new ComponentGroup[ComponentUtility.ComponentTypes.Length];
 			allComponents = new List<IComponent>();
@@ -52,11 +73,12 @@ namespace Pseudo.Internal.Entity
 			readonlyComponentIndices = componentIndices.AsReadOnly();
 		}
 
-		public void Initialize(IEntityManager entityManager, IMessageManager messageManager, EntityGroups groups)
+		public void Initialize(IEntityManager entityManager, IMessageManager messageManager, EntityGroups groups, bool active)
 		{
 			this.entityManager = entityManager;
 			this.messageManager = messageManager;
 			this.groups = groups;
+			this.active = active;
 		}
 
 		public IList<int> GetComponentIndices()
@@ -175,47 +197,156 @@ namespace Pseudo.Internal.Entity
 			RemoveAllComponents(true, true);
 		}
 
+		public void SendMessage(EntityMessage message)
+		{
+			SendMessage(message.Message.Value, (object)null, (object)null, (object)null, message.Propagation);
+		}
+
+		public void SendMessage<TArg>(EntityMessage message, TArg argument)
+		{
+			SendMessage(message.Message.Value, argument, (object)null, (object)null, message.Propagation);
+		}
+
+		public void SendMessage<TArg1, TArg2>(EntityMessage message, TArg1 argument1, TArg2 argument2)
+		{
+			SendMessage(message.Message.Value, argument1, argument2, (object)null, message.Propagation);
+		}
+
+		public void SendMessage<TArg1, TArg2, TArg3>(EntityMessage message, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		{
+			SendMessage(message.Message.Value, argument1, argument2, argument3, message.Propagation);
+		}
+
 		public void SendMessage<TId>(TId identifier)
 		{
-			for (int i = allComponents.Count - 1; i >= 0; i--)
-			{
-				var component = allComponents[i];
+			SendMessage(identifier, (object)null, (object)null, (object)null, MessagePropagation.Local);
+		}
 
-				if (component.Active)
-					messageManager.Send(component, identifier);
-			}
+		public void SendMessage<TId>(TId identifier, MessagePropagation propagation)
+		{
+			SendMessage(identifier, (object)null, (object)null, (object)null, propagation);
 		}
 
 		public void SendMessage<TId, TArg>(TId identifier, TArg argument)
 		{
-			for (int i = allComponents.Count - 1; i >= 0; i--)
-			{
-				var component = allComponents[i];
+			SendMessage(identifier, argument, (object)null, (object)null, MessagePropagation.Local);
+		}
 
-				if (component.Active)
-					messageManager.Send(component, identifier, argument);
-			}
+		public void SendMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation)
+		{
+			SendMessage(identifier, argument, (object)null, (object)null, propagation);
 		}
 
 		public void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
 		{
-			for (int i = allComponents.Count - 1; i >= 0; i--)
-			{
-				var component = allComponents[i];
+			SendMessage(identifier, argument1, argument2, (object)null, MessagePropagation.Local);
+		}
 
-				if (component.Active)
-					messageManager.Send(component, identifier, argument1, argument2);
-			}
+		public void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2, MessagePropagation propagation)
+		{
+			SendMessage(identifier, argument1, argument2, (object)null, propagation);
 		}
 
 		public void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
 		{
-			for (int i = allComponents.Count - 1; i >= 0; i--)
-			{
-				var component = allComponents[i];
+			SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+		}
 
-				if (component.Active)
-					messageManager.Send(component, identifier, argument1, argument2, argument3);
+		public void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, MessagePropagation propagation)
+		{
+			if (!Active)
+				return;
+
+			switch (propagation)
+			{
+				case MessagePropagation.Local:
+					for (int i = allComponents.Count - 1; i >= 0; i--)
+					{
+						var component = allComponents[i];
+
+						if (component.Active)
+							messageManager.Send(component, identifier, argument1, argument2, argument3);
+					}
+					break;
+				case MessagePropagation.Global:
+					entityManager.Entities.BroadcastMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+					break;
+				case MessagePropagation.UpwardsInclusive:
+					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.UpwardsExclusive);
+					break;
+				case MessagePropagation.UpwardsExclusive:
+					if (parent != null)
+						parent.SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.UpwardsInclusive);
+					break;
+				case MessagePropagation.DownwardsInclusive:
+					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.DownwardsExclusive);
+					break;
+				case MessagePropagation.DownwardsExclusive:
+					for (int i = 0; i < children.Count; i++)
+						children[i].SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.DownwardsInclusive);
+					break;
+			}
+		}
+
+		public void SetParent(IEntity entity)
+		{
+			if (parent == entity)
+				return;
+
+			if (parent != null)
+				parent.RemoveChild(this);
+
+			parent = entity;
+
+			if (parent != null)
+				parent.AddChild(this);
+		}
+
+		public bool HasChild(IEntity entity)
+		{
+			return children.Contains(entity);
+		}
+
+		public void AddChild(IEntity entity)
+		{
+			Assert.IsNotNull(entity);
+
+			if (!HasChild(entity))
+			{
+				children.Add(entity);
+				entity.SetParent(this);
+			}
+		}
+
+		public void RemoveChild(IEntity entity)
+		{
+			Assert.IsNotNull(entity);
+
+			if (HasChild(entity))
+			{
+				children.Remove(entity);
+				entity.SetParent(null);
+			}
+		}
+
+		public void RemoveAllChildren()
+		{
+			for (int i = children.Count - 1; i >= 0; i--)
+				RemoveChild(children[i]);
+		}
+
+		void SetActive(bool active)
+		{
+			if (this.active != active)
+			{
+				this.active = active;
+
+				if (this.active)
+					OnActivated(this);
+				else
+					OnDeactivated(this);
 			}
 		}
 
@@ -349,7 +480,7 @@ namespace Pseudo.Internal.Entity
 
 		void RemoveComponents(IList<IComponent> components, bool raiseEvent)
 		{
-			for (int i = 0; i < components.Count; i++)
+			for (int i = components.Count - 1; i >= 0; i--)
 				RemoveComponent(components[i], raiseEvent, false);
 
 			entityManager.UpdateEntity(this);
@@ -357,7 +488,7 @@ namespace Pseudo.Internal.Entity
 
 		void RemoveAllComponents(bool raiseEvent, bool updateEntity)
 		{
-			for (int i = 0; i < componentGroups.Length; i++)
+			for (int i = componentGroups.Length - 1; i >= 0; i--)
 			{
 				var componentGroup = componentGroups[i];
 
@@ -365,7 +496,7 @@ namespace Pseudo.Internal.Entity
 					componentGroup.RemoveAll();
 			}
 
-			for (int i = 0; i < allComponents.Count; i++)
+			for (int i = allComponents.Count - 1; i >= 0; i--)
 			{
 				var component = allComponents[i];
 
@@ -452,6 +583,7 @@ namespace Pseudo.Internal.Entity
 		void IPoolable.OnRecycle()
 		{
 			RemoveAllComponents(false, false);
+			RemoveAllChildren();
 			TypePoolManager.RecycleElements(componentGroups);
 		}
 	}

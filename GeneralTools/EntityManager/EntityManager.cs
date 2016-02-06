@@ -12,8 +12,6 @@ namespace Pseudo.Internal.Entity
 {
 	public class EntityManager : IEntityManager
 	{
-		public event Action<IEntity> OnEntityAdded = delegate { };
-		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public IEntityGroup Entities
 		{
 			get { return entities; }
@@ -32,15 +30,20 @@ namespace Pseudo.Internal.Entity
 
 		public IEntity CreateEntity()
 		{
-			return CreateEntity(EntityGroups.Nothing);
+			return CreateEntity(EntityGroups.Nothing, true);
 		}
 
 		public IEntity CreateEntity(EntityGroups groups)
 		{
+			return CreateEntity(groups, true);
+		}
+
+		public IEntity CreateEntity(EntityGroups groups, bool active)
+		{
 			Assert.IsNotNull(groups);
 
 			var entity = entityPool.Create();
-			entity.Initialize(this, messageManager, groups);
+			entity.Initialize(this, messageManager, groups, active);
 			AddEntity(entity);
 
 			return entity;
@@ -73,10 +76,7 @@ namespace Pseudo.Internal.Entity
 
 		public void AddEntity(IEntity entity)
 		{
-			Assert.IsNotNull(entity);
-
-			entities.UpdateEntity(entity, true);
-			OnEntityAdded(entity);
+			UpdateEntity(entity);
 		}
 
 		public void RemoveEntity(IEntity entity)
@@ -84,14 +84,10 @@ namespace Pseudo.Internal.Entity
 			Assert.IsNotNull(entity);
 
 			entities.UpdateEntity(entity, false);
-			OnEntityRemoved(entity);
 		}
 
 		public void RemoveAllEntities()
 		{
-			for (int i = 0; i < entities.Count; i++)
-				OnEntityRemoved(entities[i]);
-
 			entities.Clear();
 		}
 

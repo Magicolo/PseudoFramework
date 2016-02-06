@@ -12,28 +12,9 @@ namespace Pseudo
 	{
 		public bool Active
 		{
-			get { return active; }
+			get { return enabled; }
 			set { enabled = value; }
 		}
 		public IEntity Entity { get; set; }
-		public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
-
-		bool active;
-		readonly Lazy<EntityBehaviour> cachedEntityHolder;
-
-		protected ComponentBehaviour()
-		{
-			cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
-		}
-
-		protected virtual void OnEnable()
-		{
-			active = true;
-		}
-
-		protected virtual void OnDisable()
-		{
-			active = false;
-		}
 	}
 }

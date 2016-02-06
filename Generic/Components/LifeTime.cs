@@ -9,7 +9,7 @@ using Pseudo;
 public class LifeTime : ComponentBehaviour
 {
 	public float Duration = 5f;
-	public MessageEnum OnDieMessage;
+	public EntityMessage OnDie;
 
 	float counter;
 
@@ -18,6 +18,6 @@ public class LifeTime : ComponentBehaviour
 		counter += Entity.GetTime().DeltaTime;
 
 		if (counter >= Duration)
-			Entity.SendMessage(OnDieMessage.Value);
+			Entity.SendMessage(OnDie);
 	}
 }

@@ -46,17 +46,13 @@ namespace Pseudo
 			EnqueueEvent(BehaviourEvents.OnStart);
 		}
 
-		protected override void OnEnable()
+		void OnEnable()
 		{
-			base.OnEnable();
-
 			EnqueueEvent(BehaviourEvents.OnEnable);
 		}
 
-		protected override void OnDisable()
+		void OnDisable()
 		{
-			base.OnDisable();
-
 			EnqueueEvent(BehaviourEvents.OnDisable);
 		}
 
