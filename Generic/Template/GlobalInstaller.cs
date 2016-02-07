@@ -20,23 +20,10 @@ namespace Pseudo
 
 		public override void InstallBindings()
 		{
-			BindPrefabOrInstance<IGameManager, GameManager>(GameManager);
-			BindPrefabOrInstance<IAudioManager, AudioManager>(AudioManager);
-			BindPrefabOrInstance<IParticleManager, ParticleManager>(ParticleManager);
-			BindPrefabOrInstance<IInputManager, InputManager>(InputManager);
-		}
-
-		void BindPrefabOrInstance<TContract, TConcrete>(TConcrete prefab) where TConcrete : Component, TContract
-		{
-			var instance = FindObjectOfType<TConcrete>();
-
-			if (instance != null)
-			{
-				Container.Bind<TContract>().ToSingleMonoBehaviour<TConcrete>(instance.gameObject);
-				instance.transform.parent = Container.DefaultParent;
-			}
-			else if (prefab != null)
-				Container.Bind<TContract>().ToSinglePrefab<TConcrete>(prefab.gameObject);
+			Container.BindSinglePrefabOrInstance<IGameManager, GameManager>(GameManager);
+			Container.BindSinglePrefabOrInstance<IAudioManager, AudioManager>(AudioManager);
+			Container.BindSinglePrefabOrInstance<IParticleManager, ParticleManager>(ParticleManager);
+			Container.BindSinglePrefabOrInstance<IInputManager, InputManager>(InputManager);
 		}
 	}
 }

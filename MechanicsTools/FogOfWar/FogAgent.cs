@@ -219,7 +219,7 @@ namespace Pseudo
 					Vector3 currentRelativePosition = fogOfWar.CachedTransform.position - position;
 					relativePositionsDict[fogOfWar] = currentRelativePosition;
 
-					if (HasChanged || (lastRelativePosition != currentRelativePosition && rect.Intersects(fogOfWar.Area)))
+					if (HasChanged || (lastRelativePosition != currentRelativePosition && rect.Overlaps(fogOfWar.Area)))
 						fogOfWar.UpdateFogOfWar = true;
 				}
 			}

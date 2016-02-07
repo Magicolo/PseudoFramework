@@ -137,7 +137,7 @@ namespace Pseudo
 
 			static IEqualityComparer<T> CreateComparer()
 			{
-				var comparerType = Array.Find(GetAssignableTypes(typeof(IEqualityComparer<T>), false), t => !t.IsInterface && !t.IsAbstract);
+				var comparerType = Array.Find(GetAssignableTypes(typeof(IEqualityComparer<T>), false), t => !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
 
 				if (comparerType == null)
 					return EqualityComparer<T>.Default;

@@ -214,6 +214,14 @@ namespace Pseudo
 			return color.Round(1f, Channels.RGBA);
 		}
 
+		public static Color HueShift(this Color color, float amount)
+		{
+			var hsv = color.ToHsv();
+			hsv.r = (hsv.r + amount) % 1f;
+
+			return hsv.ToRgb();
+		}
+
 		public static Color ToHsv(this Color RgbColor)
 		{
 			float hue = 0f;

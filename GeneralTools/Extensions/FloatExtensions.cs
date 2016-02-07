@@ -6,11 +6,6 @@ namespace Pseudo
 {
 	public static class FloatExtensions
 	{
-		public static float Scale(this float f, float currentMin, float currentMax, float targetMin, float targetMax)
-		{
-			return (f - currentMin) / (currentMax - currentMin) * (targetMax - targetMin) + targetMin;
-		}
-
 		public static float PowSign(this float f, float power)
 		{
 			return Mathf.Abs(f).Pow(power) * f.Sign();
@@ -55,13 +50,27 @@ namespace Pseudo
 			return f.Round(1f);
 		}
 
-		public static bool IsBetweenExclusive(this float f, float min, float max)
+		public static bool IsBetween(this float f, float min, float max)
 		{
-			return f > min && f < max;
+			return f.IsBetween(min, max, false);
 		}
-		public static bool IsBetweenInclusive(this float f, float min, float max)
+
+		public static bool IsBetween(this float f, float min, float max, bool exclusive)
 		{
-			return f >= min && f <= max;
+			if (exclusive)
+				return f >= min && f < max;
+			else
+				return f >= min && f <= max;
+		}
+
+		public static bool IsBetween(this float f, MinMax range)
+		{
+			return f.IsBetween(range.Min, range.Max, false);
+		}
+
+		public static bool IsBetween(this float f, MinMax range, bool exclusive)
+		{
+			return f.IsBetween(range.Min, range.Max, exclusive);
 		}
 
 		public static float Wrap(this float f, float min, float max)
@@ -77,9 +86,29 @@ namespace Pseudo
 			return f;
 		}
 
+		public static float Wrap(this float f, MinMax range)
+		{
+			return f.Wrap(range.Min, range.Max);
+		}
+
 		public static float Clamp(this float f, float min, float max)
 		{
 			return Mathf.Clamp(f, min, max);
+		}
+
+		public static float Clamp(this float f, MinMax range)
+		{
+			return f.Clamp(range.Min, range.Max);
+		}
+
+		public static float Scale(this float f, float currentMin, float currentMax, float targetMin, float targetMax)
+		{
+			return (f - currentMin) / (currentMax - currentMin) * (targetMax - targetMin) + targetMin;
+		}
+
+		public static float Scale(this float f, MinMax currentRange, MinMax targetRange)
+		{
+			return f.Scale(currentRange.Min, currentRange.Max, targetRange.Min, targetRange.Max);
 		}
 
 		public static int Sign(this float f)

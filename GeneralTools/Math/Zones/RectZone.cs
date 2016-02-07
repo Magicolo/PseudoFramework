@@ -31,16 +31,67 @@ namespace Pseudo
 
 		void OnDrawGizmos()
 		{
+#if UNITY_EDITOR
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
 			var position = CachedTransform.position + rect.position.ToVector3();
 			Vector3 size = rect.size;
-
 			Gizmos.color = color;
 			Gizmos.DrawWireCube(position, size);
 			Gizmos.color = color.SetValues(color.a / 4f, Channels.A);
 			Gizmos.DrawCube(position, size);
+#endif
+		}
+
+		public override bool Contains(Vector3 point)
+		{
+			return WorldRect.Contains(point);
+		}
+
+		public override bool Contains(Rect rect)
+		{
+			return rect.IsContained(WorldRect);
+		}
+
+		public override bool Contains(IShape2D shape)
+		{
+			return shape.IsContained(WorldRect);
+		}
+
+		public override bool Contains(Zone2DBase zone)
+		{
+			return zone.IsContained(WorldRect);
+		}
+
+		public override bool IsContained(Rect rect)
+		{
+			return rect.Contains(WorldRect);
+		}
+
+		public override bool IsContained(IShape2D shape)
+		{
+			return shape.Contains(WorldRect);
+		}
+
+		public override bool IsContained(Zone2DBase zone)
+		{
+			return zone.Contains(WorldRect);
+		}
+
+		public override bool Overlaps(Rect rect)
+		{
+			return rect.Overlaps(WorldRect);
+		}
+
+		public override bool Overlaps(IShape2D shape)
+		{
+			return shape.Overlaps(WorldRect);
+		}
+
+		public override bool Overlaps(Zone2DBase zone)
+		{
+			return zone.Overlaps(WorldRect);
 		}
 
 		public override Vector2 GetRandomLocalPoint()
@@ -48,9 +99,12 @@ namespace Pseudo
 			return LocalRect.GetRandomPoint();
 		}
 
-		public override Vector2 GetRandomWorldPoint()
+		public override Vector3 GetRandomWorldPoint()
 		{
-			return WorldRect.GetRandomPoint();
+			Vector3 randomPosition = WorldRect.GetRandomPoint();
+			randomPosition.z = CachedTransform.position.z;
+
+			return randomPosition;
 		}
 	}
 }

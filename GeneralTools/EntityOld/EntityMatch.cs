@@ -7,7 +7,7 @@ using Pseudo;
 using Pseudo.Internal.EntityOld;
 using Pseudo.Internal;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public enum EntityMatchesOld
 	{

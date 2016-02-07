@@ -16,11 +16,11 @@ namespace Pseudo
 		public enum ValueTypes : byte
 		{
 			Null = 0,
-			Bool = 2,
-			Int = 7,
-			Float = 11,
-			Char = 14,
-			String = 15,
+			Bool = 1,
+			Int = 2,
+			Float = 3,
+			Char = 4,
+			String = 5,
 			Vector2 = 100,
 			Vector3 = 101,
 			Vector4 = 102,

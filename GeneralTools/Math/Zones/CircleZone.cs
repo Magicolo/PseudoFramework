@@ -14,22 +14,74 @@ namespace Pseudo
 		Circle circle = new Circle(0f, 0f, 1f);
 		[SerializeField]
 		bool draw = true;
+		[SerializeField]
+		Color color = new Color(1f, 0f, 0f, 0.5f);
 
 		public Circle LocalCircle { get { return circle; } set { circle = value; } }
 		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
 
 		void OnDrawGizmos()
 		{
+#if UNITY_EDITOR
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-#if UNITY_EDITOR
 			var position = CachedTransform.position + circle.Position.ToVector3();
-			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.75f);
+			UnityEditor.Handles.color = color;
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
-			UnityEditor.Handles.color = new Color(1f, 0f, 0f, 0.1f);
+			UnityEditor.Handles.color = color.SetValues(color.a / 4f, Channels.A);
 			UnityEditor.Handles.DrawSolidDisc(position, Vector3.back, circle.Radius);
 #endif
+		}
+
+		public override bool Contains(Vector3 point)
+		{
+			return WorldCircle.Contains(point);
+		}
+
+		public override bool Contains(Rect rect)
+		{
+			return rect.IsContained(WorldCircle);
+		}
+
+		public override bool Contains(IShape2D shape)
+		{
+			return shape.IsContained(WorldCircle);
+		}
+
+		public override bool Contains(Zone2DBase zone)
+		{
+			return zone.IsContained(WorldCircle);
+		}
+
+		public override bool IsContained(Rect rect)
+		{
+			return rect.Contains(WorldCircle);
+		}
+
+		public override bool IsContained(IShape2D shape)
+		{
+			return shape.Contains(WorldCircle);
+		}
+
+		public override bool IsContained(Zone2DBase zone)
+		{
+			return zone.Contains(WorldCircle);
+		}
+
+		public override bool Overlaps(Rect rect)
+		{
+			return rect.Overlaps(WorldCircle);
+		}
+
+		public override bool Overlaps(IShape2D shape)
+		{
+			return shape.Overlaps(WorldCircle);
+		}
+
+		public override bool Overlaps(Zone2DBase zone)
+		{
+			return zone.Overlaps(WorldCircle);
 		}
 
 		public override Vector2 GetRandomLocalPoint()
@@ -37,9 +89,12 @@ namespace Pseudo
 			return LocalCircle.GetRandomPoint();
 		}
 
-		public override Vector2 GetRandomWorldPoint()
+		public override Vector3 GetRandomWorldPoint()
 		{
-			return WorldCircle.GetRandomPoint();
+			Vector3 randomPosition = WorldCircle.GetRandomPoint();
+			randomPosition.z = CachedTransform.position.z;
+
+			return randomPosition;
 		}
 	}
 }

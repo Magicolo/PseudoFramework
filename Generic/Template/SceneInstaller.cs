@@ -15,7 +15,7 @@ namespace Pseudo
 			BindManagers();
 		}
 
-		void BindManagers()
+		protected virtual void BindManagers()
 		{
 			Container.BindAllInterfacesToSingle<EntityManager>();
 			Container.BindAllInterfacesToSingle<MessageManager>();

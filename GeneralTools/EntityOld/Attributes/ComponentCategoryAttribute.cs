@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public sealed class ComponentCategoryAttribute : Attribute
 	{
