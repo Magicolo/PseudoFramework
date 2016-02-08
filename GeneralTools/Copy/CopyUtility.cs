@@ -10,7 +10,7 @@ namespace Pseudo
 {
 	public static class CopyUtility
 	{
-		static readonly Dictionary<Type, ICopyer> typeToCopyer = new Dictionary<Type, ICopyer>();
+		static readonly Dictionary<Type, ICopier> typeToCopyer = new Dictionary<Type, ICopier>();
 
 		public static void CopyTo<T>(T[] source, ref T[] target)
 		{
@@ -35,42 +35,42 @@ namespace Pseudo
 			}
 		}
 
-		public static ICopyer GetCopyer(Type type)
+		public static ICopier GetCopier(Type type)
 		{
-			ICopyer copyer;
+			ICopier copier;
 
-			if (!typeToCopyer.TryGetValue(type, out copyer))
+			if (!typeToCopyer.TryGetValue(type, out copier))
 			{
-				copyer = CreateCopier(type);
-				typeToCopyer[type] = copyer;
+				copier = CreateCopier(type);
+				typeToCopyer[type] = copier;
 			}
 
-			return copyer;
+			return copier;
 		}
 
-		public static ICopyer<T> GetCopyer<T>()
+		public static ICopier<T> GetCopier<T>()
 		{
-			return CopyerHolder<T>.Copyer;
+			return CopierHolder<T>.Copier;
 		}
 
-		static ICopyer CreateCopier(Type type)
+		static ICopier CreateCopier(Type type)
 		{
-			Type copyerType;
+			Type copierType;
 
 			if (typeof(ICopyable<>).MakeGenericType(type).IsAssignableFrom(type))
-				copyerType = typeof(GenericCopyer<>).MakeGenericType(type);
+				copierType = typeof(GenericCopier<>).MakeGenericType(type);
 			else
-				copyerType = Array.Find(TypeUtility.GetAssignableTypes(typeof(ICopyer<>).MakeGenericType(type), false), t => !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
+				copierType = Array.Find(TypeUtility.GetAssignableTypes(typeof(ICopier<>).MakeGenericType(type), false), t => !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
 
-			if (copyerType == null)
+			if (copierType == null)
 				return null;
 			else
-				return (ICopyer)Activator.CreateInstance(copyerType);
+				return (ICopier)Activator.CreateInstance(copierType);
 		}
 
-		static class CopyerHolder<T>
+		static class CopierHolder<T>
 		{
-			public static ICopyer<T> Copyer = (ICopyer<T>)GetCopyer(typeof(T));
+			public static ICopier<T> Copier = (ICopier<T>)GetCopier(typeof(T));
 		}
 	}
 }

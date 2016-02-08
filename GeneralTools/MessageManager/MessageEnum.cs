@@ -109,5 +109,10 @@ namespace Pseudo
 			if (type != null)
 				enumValue = (Enum)Enum.ToObject(type, value);
 		}
+
+		public static implicit operator MessageEnum(Enum enumValue)
+		{
+			return new MessageEnum(enumValue);
+		}
 	}
 }

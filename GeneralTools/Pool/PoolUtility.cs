@@ -120,27 +120,29 @@ namespace Pseudo.Internal.Pool
 			return pool;
 		}
 
-		public static void InitializeFields(object instance, List<IPoolSetter> setters)
+		public static void InitializeFields(object instance, IPoolSetter[] setters)
 		{
 			bool isInitializable = instance is IPoolInitializable;
 
 			if (isInitializable)
 				((IPoolInitializable)instance).OnPrePoolInitialize();
 
-			for (int i = 0; i < setters.Count; i++)
+			for (int i = 0; i < setters.Length; i++)
 				setters[i].SetValue(instance);
 
 			if (isInitializable)
 				((IPoolInitializable)instance).OnPostPoolInitialize();
 		}
 
-		public static void Resize(IList array, int length)
+		public static void Resize(IList array, Type elementType, int length)
 		{
+			var defaultValue = TypeUtility.GetDefaultValue(elementType);
+
 			while (array.Count > length)
 				array.RemoveAt(array.Count - 1);
 
 			while (array.Count < length)
-				array.Add(null);
+				array.Add(defaultValue);
 		}
 
 		public static void ClearAllPools()
@@ -158,41 +160,39 @@ namespace Pseudo.Internal.Pool
 				new GameObject("Pool Manager").AddComponent<PoolJanitor>();
 		}
 
-		public static List<IPoolSetter> GetSetters(object instance)
+		public static IPoolInitializer GetInitializer(object instance)
 		{
-			return GetSetters(instance, new List<object>());
+			var copier = CopyUtility.GetCopier(instance.GetType());
+
+			if (copier == null)
+				return new PoolInitializer(GetSetters(instance, new List<object> { instance }));
+			else
+				return new PoolCopierInitializer(copier, instance);
 		}
 
-		static List<IPoolSetter> GetSetters(object instance, List<object> toIgnore)
+		static IPoolSetter[] GetSetters(object instance, List<object> toIgnore)
 		{
 			var type = instance.GetType();
 			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			var fields = new List<IPoolSetter>(allFields.Length);
+			var setters = new List<IPoolSetter>(allFields.Length);
 			bool isInitializable = instance is IPoolSettersInitializable;
 
 			if (isInitializable)
 				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
 
-			var copyer = CopyUtility.GetCopyer(type);
-
-			if (copyer != null)
-				fields.Add(new PoolCopyerSetter(copyer, instance));
-			else
+			for (int i = 0; i < allFields.Length; i++)
 			{
-				for (int i = 0; i < allFields.Length; i++)
-				{
-					var field = allFields[i];
-					var value = field.GetValue(instance);
+				var field = allFields[i];
+				var value = field.GetValue(instance);
 
-					if (ShouldInitialize(field, value))
-						fields.Add(GetSetter(value, field, toIgnore));
-				}
+				if (ShouldInitialize(field, value))
+					setters.Add(GetSetter(value, field, toIgnore));
 			}
 
 			if (isInitializable)
-				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(fields);
+				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(setters);
 
-			return fields;
+			return setters.ToArray();
 		}
 
 		static IPoolSetter GetSetter(object value, FieldInfo field, List<object> toIgnore)
@@ -202,7 +202,11 @@ namespace Pseudo.Internal.Pool
 			else if (toIgnore.Contains(value))
 				throw new InitializationCycleException(field);
 
-			if (value is IList)
+			var copier = CopyUtility.GetCopier(value.GetType());
+
+			if (copier != null)
+				return new PoolCopierSetter(copier, field, value);
+			else if (value is IList)
 				return new PoolArraySetter(field, value.GetType(), GetElementSetters((IList)value, field, toIgnore));
 			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
 			{

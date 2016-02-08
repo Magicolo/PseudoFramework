@@ -13,6 +13,18 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/General/Entity")]
 	public class EntityBehaviour : PMonoBehaviour, IPoolInitializable, IPoolSettersInitializable
 	{
+		class EntityState
+		{
+			public bool Active;
+			public bool Enabled;
+		}
+
+		class ComponentState
+		{
+			public ComponentBehaviour Component;
+			public bool Enabled;
+		}
+
 		public IEntity Entity
 		{
 			get { return entity; }
@@ -27,10 +39,14 @@ namespace Pseudo
 		EntityGroups groups = null;
 		[NonSerialized, InitializeContent]
 		EntityBehaviour[] children;
-		[DoNotInitialize]
+		[InitializeContent]
 		IComponent[] components;
 		[InitializeContent]
-		IComponent[] componentBehaviours;
+		ComponentBehaviour[] componentBehaviours;
+		[DoNotInitialize]
+		EntityState entityState;
+		[DoNotInitialize]
+		ComponentState[] componentStates;
 
 		IEntityManager entityManager;
 		IEntity entity;
@@ -54,29 +70,31 @@ namespace Pseudo
 		{
 			this.entityManager = entityManager;
 
-			Initialize();
+			GatherChildren();
+			GatherComponents();
 
-			for (int i = 0; i < children.Length; i++)
-				children[i].Initialize(entityManager, container);
-
+			InitializeChildren(entityManager, container);
 			CreateEntity();
-			InitializeInjection(container);
+			InitializeComponents(container);
 		}
 
 		public override void OnCreate()
 		{
 			base.OnCreate();
 
-			Initialize();
+			GatherChildren();
+			GatherComponents();
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].OnCreate();
 
+			// Create components bottom to top
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
-				var poolable = componentBehaviours[i] as IPoolable;
+				var component = componentBehaviours[i];
+				var poolable = component as IPoolable;
 
-				if (poolable != null)
+				if (poolable != null && component.Entity != null)
 					poolable.OnCreate();
 			}
 		}
@@ -85,53 +103,70 @@ namespace Pseudo
 		{
 			base.OnRecycle();
 
-			for (int i = 0; i < children.Length; i++)
-				children[i].OnRecycle();
-
+			// Recycle components top to bottom
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
-				var poolable = componentBehaviours[i] as IPoolable;
+				var component = componentBehaviours[i];
+				var poolable = component as IPoolable;
 
-				if (poolable != null)
+				if (poolable != null && component.Entity != null)
 					poolable.OnRecycle();
 			}
 
+			for (int i = 0; i < children.Length; i++)
+				children[i].OnRecycle();
+
 			RecycleEntity();
+			ResetStates();
 		}
 
 		void CreateEntity()
 		{
 			entity = entityManager.CreateEntity(groups, enabled);
-			entity.AddComponents(components);
-			entity.AddComponents(componentBehaviours);
 
 			for (int i = 0; i < children.Length; i++)
 				entity.AddChild(children[i].Entity);
+
+			entity.AddComponents(components);
+			entity.AddComponents(componentBehaviours);
+
+			// Activate components
+			for (int i = 0; i < componentBehaviours.Length; i++)
+			{
+				var component = componentBehaviours[i];
+
+				if (component.Active && component.Entity != null)
+					component.OnActivated();
+			}
 		}
 
 		void RecycleEntity()
 		{
+			// Deactivate components
+			for (int i = 0; i < componentBehaviours.Length; i++)
+			{
+				var component = componentBehaviours[i];
+
+				if (component.Active && component.Entity != null)
+					component.OnDeactivated();
+			}
+
 			entityManager.RecycleEntity(entity);
 			entity = null;
 		}
 
-		void Initialize()
-		{
-			InitializeChildren();
-			InitializeComponents();
-		}
-
-		void InitializeChildren()
+		void GatherChildren()
 		{
 			if (children != null)
 				return;
 
 			var childList = new List<EntityBehaviour>();
-			FindChildren(CachedTransform, childList);
+			PopulateChildren(CachedTransform, childList);
 			children = childList.ToArray();
+			entityState = new EntityState { Active = CachedGameObject.activeSelf, Enabled = enabled };
 		}
 
-		void InitializeComponents()
+		void GatherComponents()
 		{
 			if (components != null && componentBehaviours != null)
 				return;
@@ -142,10 +177,23 @@ namespace Pseudo
 				new GameObjectComponent { GameObject = CachedGameObject }
 			};
 
-			componentBehaviours = GetComponents<IComponent>();
+			componentBehaviours = GetComponents<ComponentBehaviour>();
+			componentStates = new ComponentState[componentBehaviours.Length];
+
+			for (int i = 0; i < componentBehaviours.Length; i++)
+			{
+				var component = componentBehaviours[i];
+				componentStates[i] = new ComponentState { Component = component, Enabled = component.enabled };
+			}
 		}
 
-		void InitializeInjection(DiContainer container)
+		void InitializeChildren(IEntityManager entityManager, DiContainer container)
+		{
+			for (int i = 0; i < children.Length; i++)
+				children[i].Initialize(entityManager, container);
+		}
+
+		void InitializeComponents(DiContainer container)
 		{
 			if (!initialized && container != null)
 			{
@@ -156,7 +204,19 @@ namespace Pseudo
 			}
 		}
 
-		void FindChildren(Transform parent, List<EntityBehaviour> entities)
+		void ResetStates()
+		{
+			CachedGameObject.SetActive(entityState.Active);
+			enabled = entityState.Enabled;
+
+			for (int i = 0; i < componentStates.Length; i++)
+			{
+				var componentState = componentStates[i];
+				componentState.Component.enabled = componentState.Enabled;
+			}
+		}
+
+		void PopulateChildren(Transform parent, List<EntityBehaviour> entities)
 		{
 			for (int i = 0; i < parent.childCount; i++)
 			{
@@ -164,7 +224,7 @@ namespace Pseudo
 				var entity = child.GetComponent<EntityBehaviour>();
 
 				if (entity == null)
-					FindChildren(child, entities);
+					PopulateChildren(child, entities);
 				else
 					entities.Add(entity);
 			}
@@ -172,14 +232,16 @@ namespace Pseudo
 
 		void IPoolInitializable.OnPrePoolInitialize()
 		{
-			Initialize();
+			GatherChildren();
+			GatherComponents();
 		}
 
 		void IPoolInitializable.OnPostPoolInitialize() { }
 
 		void IPoolSettersInitializable.OnPrePoolSettersInitialize()
 		{
-			Initialize();
+			GatherChildren();
+			GatherComponents();
 		}
 
 		void IPoolSettersInitializable.OnPostPoolSettersInitialize(List<IPoolSetter> setters) { }

@@ -9,11 +9,6 @@ namespace Pseudo.Internal.Entity
 {
 	public class Entity : IEntity
 	{
-		public event Action<IEntity> OnActivated = delegate { };
-		public event Action<IEntity> OnDeactivated = delegate { };
-		public event Action<IEntity, IComponent> OnComponentAdded = delegate { };
-		public event Action<IEntity, IComponent> OnComponentRemoved = delegate { };
-
 		public bool Active
 		{
 			get { return active; }
@@ -344,9 +339,9 @@ namespace Pseudo.Internal.Entity
 				this.active = active;
 
 				if (this.active)
-					OnActivated(this);
+					SendMessage(ComponentMessages.OnEntityActivated);
 				else
-					OnDeactivated(this);
+					SendMessage(ComponentMessages.OnEntityDeactivated);
 			}
 		}
 
@@ -368,11 +363,10 @@ namespace Pseudo.Internal.Entity
 				isNew |= AddSingleComponent(component, index);
 			}
 
-			if (raiseEvent)
-				OnComponentAdded(this, component);
-
 			if (isNew && updateEntity)
 				entityManager.UpdateEntity(this);
+
+			messageManager.Send(component, ComponentMessages.OnAdded);
 
 			return isNew;
 		}
@@ -417,6 +411,8 @@ namespace Pseudo.Internal.Entity
 		{
 			if (allComponents.Remove(component))
 			{
+				messageManager.Send(component, ComponentMessages.OnRemoved);
+
 				var subComponentTypes = ComponentUtility.GetSubComponentTypes(component.GetType());
 
 				for (int i = 0; i < subComponentTypes.Length; i++)
@@ -426,9 +422,6 @@ namespace Pseudo.Internal.Entity
 					bool isEmpty = RemoveComponentFromGroup(component, index);
 					RemoveSingleComponent(component, type, index, isEmpty);
 				}
-
-				if (raiseEvent)
-					OnComponentRemoved(this, component);
 
 				component.Entity = null;
 
@@ -500,9 +493,7 @@ namespace Pseudo.Internal.Entity
 			{
 				var component = allComponents[i];
 
-				if (raiseEvent)
-					OnComponentRemoved(this, component);
-
+				messageManager.Send(component, ComponentMessages.OnRemoved);
 				component.Entity = null;
 			}
 
@@ -516,10 +507,22 @@ namespace Pseudo.Internal.Entity
 
 		void AddComponentIndex(int index)
 		{
-			if (!componentIndices.Contains(index))
-			{
+			if (componentIndices.Count == 0 || componentIndices.Last() < index)
 				componentIndices.Add(index);
-				componentIndices.Sort();
+			else
+			{
+				for (int i = 0; i < componentIndices.Count; i++)
+				{
+					int componentIndex = componentIndices[i];
+
+					if (componentIndex == index)
+						break;
+					else if (componentIndex > index)
+					{
+						componentIndices.Insert(i, index);
+						break;
+					}
+				}
 			}
 		}
 

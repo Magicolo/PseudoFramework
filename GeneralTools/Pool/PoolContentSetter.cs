@@ -12,10 +12,10 @@ namespace Pseudo.Internal.Pool
 	{
 		readonly FieldInfo field;
 		readonly Type type;
-		readonly List<IPoolSetter> setters;
+		readonly IPoolSetter[] setters;
 		readonly bool isUnityObject;
 
-		public PoolContentSetter(FieldInfo field, Type type, List<IPoolSetter> setters)
+		public PoolContentSetter(FieldInfo field, Type type, IPoolSetter[] setters)
 		{
 			this.field = field;
 			this.type = type;

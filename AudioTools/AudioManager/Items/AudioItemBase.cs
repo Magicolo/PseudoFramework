@@ -518,7 +518,7 @@ namespace Pseudo.Internal.Audio
 			pausedState = castedReference.pausedState;
 			hasFaded = castedReference.hasFaded;
 			hasBreak = castedReference.hasBreak;
-			CopyUtility.GetCopyer<AudioDelayedOption>().CopyTo(castedReference.delayedOptions, delayedOptions);
+			CopyUtility.GetCopier<AudioDelayedOption>().CopyTo(castedReference.delayedOptions, delayedOptions);
 			OnPlay = castedReference.OnPlay;
 			OnPause = castedReference.OnPause;
 			OnResume = castedReference.OnResume;

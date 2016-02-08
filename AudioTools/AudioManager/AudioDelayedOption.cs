@@ -8,7 +8,7 @@ using UnityEngine.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioDelayedOption : IPoolable, ICopyable
+	public class AudioDelayedOption : IPoolable, ICopyable<AudioDelayedOption>, ICopyable
 	{
 		AudioOption option;
 		bool recycle;
@@ -40,13 +40,17 @@ namespace Pseudo.Internal.Audio
 				TypePoolManager.Recycle(ref option);
 		}
 
+		public void Copy(AudioDelayedOption reference)
+		{
+			option = reference.option;
+			recycle = reference.recycle;
+			getDeltaTime = reference.getDeltaTime;
+			delayCounter = reference.delayCounter;
+		}
+
 		public void Copy(object reference)
 		{
-			var castedReference = (AudioDelayedOption)reference;
-			option = castedReference.option;
-			recycle = castedReference.recycle;
-			getDeltaTime = castedReference.getDeltaTime;
-			delayCounter = castedReference.delayCounter;
+			Copy((AudioDelayedOption)reference);
 		}
 	}
 }

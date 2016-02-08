@@ -12,12 +12,14 @@ namespace Pseudo.Internal.Pool
 	{
 		readonly FieldInfo field;
 		readonly Type type;
+		readonly Type elementType;
 		readonly List<IPoolElementSetter> setters;
 
 		public PoolArraySetter(FieldInfo field, Type type, List<IPoolElementSetter> setters)
 		{
 			this.field = field;
 			this.type = type;
+			this.elementType = type.IsArray ? type.GetElementType() : type.GetGenericArguments().First();
 			this.setters = setters;
 		}
 
@@ -31,7 +33,7 @@ namespace Pseudo.Internal.Pool
 			if (array == null)
 			{
 				if (type.IsArray)
-					array = Array.CreateInstance(type.GetElementType(), setters.Count);
+					array = Array.CreateInstance(elementType, setters.Count);
 				else
 					array = (IList)Activator.CreateInstance(type);
 
@@ -42,11 +44,11 @@ namespace Pseudo.Internal.Pool
 			{
 				if (type.IsArray)
 				{
-					array = Array.CreateInstance(type.GetElementType(), setters.Count);
+					array = Array.CreateInstance(elementType, setters.Count);
 					field.SetValue(instance, array);
 				}
 				else if (!array.IsFixedSize)
-					PoolUtility.Resize(array, setters.Count);
+					PoolUtility.Resize(array, elementType, setters.Count);
 				else
 					return;
 			}

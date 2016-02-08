@@ -9,7 +9,7 @@ using Zenject;
 
 namespace Pseudo
 {
-	public class AudioActionOnMessage : ComponentBehaviour, IMessageable, ICopyable<AudioActionOnMessage>
+	public class AudioActionOnMessage : ComponentBehaviour, IMessageable
 	{
 		public enum SpatializationModes
 		{
@@ -61,11 +61,6 @@ namespace Pseudo
 				if (data.Message.Equals(data))
 					PlayAudio(data);
 			}
-		}
-
-		public void Copy(AudioActionOnMessage reference)
-		{
-			CopyUtility.CopyTo(reference.Actions, ref Actions);
 		}
 	}
 }

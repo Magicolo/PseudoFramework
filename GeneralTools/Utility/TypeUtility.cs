@@ -16,6 +16,7 @@ namespace Pseudo
 		static readonly Dictionary<Type, Type[]> typeToDefinedTypes = new Dictionary<Type, Type[]>();
 		static readonly Dictionary<Type, FieldInfo[]> typeToFields = new Dictionary<Type, FieldInfo[]>();
 		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
+		static readonly Dictionary<Type, object> typeToDefaultValue = new Dictionary<Type, object>();
 
 		static Type[] allTypes;
 		public static Type[] AllTypes
@@ -111,6 +112,24 @@ namespace Pseudo
 			}
 
 			return fields;
+		}
+
+		public static object GetDefaultValue(Type type)
+		{
+			object defaultValue;
+
+			if (!typeToDefaultValue.TryGetValue(type, out defaultValue))
+			{
+				if (type.IsValueType)
+					defaultValue = Activator.CreateInstance(type);
+				else
+					defaultValue = null;
+
+				typeToDefaultValue[type] = defaultValue;
+			}
+
+			return defaultValue;
+
 		}
 
 		public static Type GetType(string typeName)

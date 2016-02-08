@@ -57,7 +57,7 @@ namespace Pseudo
 			protected readonly HashSet<object> hashedInstances;
 			protected readonly Queue<object> instances;
 			protected readonly Queue<object> toInitialize;
-			protected List<IPoolSetter> setters;
+			protected IPoolInitializer initializer;
 			protected bool updating;
 
 			protected Pool(object reference, Type type, Constructor<object> constructor, Destructor destructor, int startSize, bool initialize)
@@ -155,10 +155,10 @@ namespace Pseudo
 
 			protected void Initialize()
 			{
-				if (setters == null)
-					setters = PoolUtility.GetSetters(reference);
+				if (initializer == null)
+					initializer = PoolUtility.GetInitializer(reference);
 				else
-					lock (setters) setters = PoolUtility.GetSetters(reference);
+					lock (initializer) initializer = PoolUtility.GetInitializer(reference);
 
 				while (Size < startSize)
 					Enqueue(CreateInstance(), false);
@@ -195,7 +195,7 @@ namespace Pseudo
 			protected virtual object CreateInstance()
 			{
 				var instance = constructor();
-				PoolUtility.InitializeFields(instance, setters);
+				initializer.Initialize(instance);
 
 				return instance;
 			}
@@ -205,7 +205,7 @@ namespace Pseudo
 				if (!hashedInstances.Add(instance))
 					return;
 
-				if (initialize && setters.Count > 0)
+				if (initialize)
 					lock (toInitialize) { toInitialize.Enqueue(instance); }
 				else
 					lock (instances) { instances.Enqueue(instance); }
@@ -311,7 +311,7 @@ namespace Pseudo
 						}
 					}
 
-					lock (pool.setters) PoolUtility.InitializeFields(instance, pool.setters);
+					lock (pool.initializer) pool.initializer.Initialize(instance);
 					lock (pool.instances) pool.instances.Enqueue(instance);
 				}
 			}
