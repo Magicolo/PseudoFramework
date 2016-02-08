@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 
 [RequireComponent(typeof(TimeComponent))]
-public class LifeTime : ComponentBehaviour
+public class LifeTime : ComponentBehaviour, ICopyable<LifeTime>
 {
 	[Min]
 	public float Duration = 5f;
@@ -20,5 +20,14 @@ public class LifeTime : ComponentBehaviour
 
 		if (counter >= Duration)
 			Entity.SendMessage(OnDie);
+	}
+
+	public void Copy(LifeTime reference)
+	{
+		base.Copy(reference);
+
+		Duration = reference.Duration;
+		OnDie = reference.OnDie;
+		counter = reference.counter;
 	}
 }

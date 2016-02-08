@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 using Zenject;
 
-public class RecycleOnMessage : ComponentBehaviour, IMessageable
+public class RecycleOnMessage : ComponentBehaviour, IMessageable, ICopyable<RecycleOnMessage>
 {
 	public MessageEnum RecycleMessage;
 
@@ -29,5 +29,11 @@ public class RecycleOnMessage : ComponentBehaviour, IMessageable
 	void IMessageable.OnMessage<TId>(TId message)
 	{
 		recycle |= RecycleMessage.Equals(message);
+	}
+
+	public void Copy(RecycleOnMessage reference)
+	{
+		RecycleMessage = reference.RecycleMessage;
+		recycle = reference.recycle;
 	}
 }

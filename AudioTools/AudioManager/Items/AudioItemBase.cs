@@ -9,7 +9,7 @@ using Pseudo.Internal.Audio;
 namespace Pseudo.Internal.Audio
 {
 	[Serializable]
-	public abstract class AudioItemBase : IPoolable, ICopyable, IAudioItem
+	public abstract class AudioItemBase : IAudioItem, IPoolable, ICopyable
 	{
 		protected int id;
 		protected string name;
@@ -29,8 +29,8 @@ namespace Pseudo.Internal.Audio
 		protected AudioStates pausedState;
 		protected bool hasFaded;
 		protected bool hasBreak;
-		protected List<AudioDelayedOption> delayedOptions = new List<AudioDelayedOption>();
 
+		protected readonly List<AudioDelayedOption> delayedOptions = new List<AudioDelayedOption>();
 		protected readonly Action stopImmediate;
 		protected readonly Func<float> getDeltaTime;
 		protected readonly Action<float> setVolumeRampModifier;
@@ -518,7 +518,7 @@ namespace Pseudo.Internal.Audio
 			pausedState = castedReference.pausedState;
 			hasFaded = castedReference.hasFaded;
 			hasBreak = castedReference.hasBreak;
-			TypePoolManager.CreateCopies(delayedOptions, castedReference.delayedOptions);
+			CopyUtility.GetCopyer<AudioDelayedOption>().CopyTo(castedReference.delayedOptions, delayedOptions);
 			OnPlay = castedReference.OnPlay;
 			OnPause = castedReference.OnPause;
 			OnResume = castedReference.OnResume;

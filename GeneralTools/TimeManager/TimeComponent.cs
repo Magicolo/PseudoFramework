@@ -8,7 +8,7 @@ using Pseudo.Internal.Entity;
 
 namespace Pseudo
 {
-	public class TimeComponent : ComponentBehaviour, ITimeChannel
+	public class TimeComponent : ComponentBehaviour, ITimeChannel, ICopyable<TimeComponent>
 	{
 		public TimeManager.TimeChannels Channel
 		{
@@ -36,7 +36,7 @@ namespace Pseudo
 			get { return time.FixedDeltaTime; }
 		}
 
-		[SerializeField, InitializeContent]
+		[SerializeField]
 		TimeChannel time = new TimeChannel();
 
 		public override void OnCreate()
@@ -44,6 +44,11 @@ namespace Pseudo
 			base.OnCreate();
 
 			time.ResetTime();
+		}
+
+		public void Copy(TimeComponent reference)
+		{
+			time.Copy(reference.time);
 		}
 
 		public static implicit operator TimeChannel(TimeComponent time)
