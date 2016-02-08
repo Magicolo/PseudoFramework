@@ -6,9 +6,9 @@ namespace Pseudo
 {
 	public abstract class ArchitectCommand
 	{
-		protected Architect architect;
+		protected ArchitectOld architect;
 
-		protected ArchitectCommand(Architect architect)
+		protected ArchitectCommand(ArchitectOld architect)
 		{
 			this.architect = architect;
 		}

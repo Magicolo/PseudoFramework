@@ -8,7 +8,7 @@ namespace Pseudo
 	public class ToolFactory
 	{
 
-		public static ToolCommandBase Create(ToolType tool, Architect architect, ArchitectTilePositionGetter getter)
+		public static ToolCommandBase Create(ToolType tool, ArchitectOld architect, ArchitectTilePositionGetter getter)
 		{
 			switch (tool)
 			{

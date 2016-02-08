@@ -5,7 +5,7 @@ using Pseudo.Internal.UI;
 
 namespace Pseudo
 {
-	public class Architect : MonoBehaviour
+	public class ArchitectOld : MonoBehaviour
 	{
 
 		public ArchitectLinker Linker;
@@ -178,7 +178,7 @@ namespace Pseudo
 			else if (Input.GetMouseButton(1))
 				HandlePipette();
 
-			Menu.Refresh();
+			//Menu.Refresh();
 		}
 
 		public void FlipX()

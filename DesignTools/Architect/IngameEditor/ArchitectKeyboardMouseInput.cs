@@ -8,13 +8,13 @@ namespace Pseudo
 	public class ArchitectKeyboardMouseInput : MonoBehaviour
 	{
 
-		Architect architect;
+		ArchitectOld architect;
 
 		InputCombinaisonChecker undoInput = new InputCombinaisonChecker(true, KeyCode.Z, KeyCode.LeftControl);
 
 		public void Awake()
 		{
-			architect = GetComponent<Architect>();
+			architect = GetComponent<ArchitectOld>();
 		}
 
 		void Update()

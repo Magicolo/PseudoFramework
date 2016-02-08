@@ -13,7 +13,7 @@ namespace Pseudo
 		protected Point2 TilePosition { get { return tilePositionGetter.TilePosition; } }
 		protected Vector3 TileWorldPosition { get { return tilePositionGetter.TileWorldPosition; } }
 
-		protected ToolCommandBase(Architect architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect)
+		protected ToolCommandBase(ArchitectOld architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect)
 		{
 			this.tilePositionGetter = tilePositionGetter;
 		}

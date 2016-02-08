@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Pseudo.Internal.Input;
 using UnityEngine.UI;
 using Pseudo.Internal.UI;
+using Pseudo.UI;
 
 namespace Pseudo
 {
@@ -11,7 +12,6 @@ namespace Pseudo
 
 		private Architect architect;
 
-		public Button NewButton;
 		public Button SaveButton;
 		public Button OpenButton;
 		public Button UndoButton;
@@ -26,15 +26,15 @@ namespace Pseudo
 
 		void Awake()
 		{
-			architect = GetComponentInParent<Architect>();
+			architect = GetComponentInParent<ArchitectBehavior>().Architect;
 		}
 
 		public void Save()
 		{
-			architect.Save();
+			//architect.Save();
 		}
 
-		public void New()
+		public void OpenNewPanel()
 		{
 			if (NewFile.activeInHierarchy)
 			{
@@ -43,19 +43,16 @@ namespace Pseudo
 			else
 			{
 				NewFile.SetActive(true);
-				NewMapName.text = "";
-				NewMapWidth.text = "20";
-				NewMapHeight.text = "20";
+				NewFile.GetComponent<FieldsGroupControler>().ResetToDefault();
 			}
-
-
 		}
 
-		public void MakeNewMap()
+		public void CreateNewMap()
 		{
-			int width = int.Parse(NewMapWidth.text);
-			int height = int.Parse(NewMapHeight.text);
-			architect.New(NewMapName.text, width, height);
+			int width = InputFieldUtility.GetInt(NewMapWidth);
+			int height = InputFieldUtility.GetInt(NewMapHeight);
+
+			architect.CreateNewMap(NewMapName.text, width, height);
 
 			NewFile.SetActive(false);
 		}
@@ -74,19 +71,20 @@ namespace Pseudo
 
 		public void Redo()
 		{
-			architect.Redo();
+			//architect.Redo();
 		}
 
 		public void Undo()
 		{
-			architect.Undo();
+			//architect.Undo();
 		}
 
 		public void Refresh()
 		{
-			architect.UISkin.SetEnabled(UndoButton, architect.HasHistory);
-			architect.UISkin.SetEnabled(RedoButton, architect.HasRedoHistory);
+			//architect.UISkin.SetEnabled(UndoButton, architect.HasHistory);
+			//architect.UISkin.SetEnabled(RedoButton, architect.HasRedoHistory);
 		}
 	}
 
 }
+

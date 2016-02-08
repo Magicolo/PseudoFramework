@@ -10,10 +10,10 @@ namespace Pseudo.Internal.UI
 	[System.Serializable]
 	public class OpenFileBrowser : MonoBehaviour
 	{
-		public Transform DrawArea;
-		public UIFactory factory;
+		public Transform ContentArea;
+		public GameObject RowPrefab;
 
-		public Architect architect;
+		//public ArchitectOld architect;
 
 
 		[Button("Refresh", "Refresh")]
@@ -24,31 +24,29 @@ namespace Pseudo.Internal.UI
 
 			string[] files = Directory.GetFiles(Application.dataPath + "/map", "*.arc");
 
-			int y = 0;
+			Debug.Log(files.Length);
 			foreach (var file in files)
 			{
 				string filename = Path.GetFileName(file);
-				Button button = factory.CreateButton(DrawArea, Vector3.zero, new Vector2(100, 10), filename, () => OpenFile(file));
-				button.SetAnchors(Vector2.zero, new Vector2(0f, 0.5f), new Vector2(1f, 0.5f));
-				button.transform.SetLocalScale(Vector3.one);
-				button.transform.SetPosition(Vector3.zero);
+				GameObject rowPrefabGo = UnityEngine.Object.Instantiate(RowPrefab);
+				Toggle toggle = rowPrefabGo.GetComponent<Toggle>();
+				toggle.GetComponentInChildren<Text>().text = filename;
+				var rect = rowPrefabGo.GetComponent<RectTransform>();
+				rect.SetParent(ContentArea, false);
 
-				button.GetComponent<RectTransform>().sizeDelta = new Vector2(0, 20f);
-				button.GetComponent<RectTransform>().position = new Vector3(0, 0, 0);
-				button.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, y);
+				//filename, () => OpenFile(file));
 
-				y += 22;
 			}
 		}
 
 		void OpenFile(string path)
 		{
-			architect.Open(path);
+			//architect.Open(path);
 		}
 
 		private void DestroyChilds()
 		{
-			foreach (var item in DrawArea.gameObject.GetChildren())
+			foreach (var item in ContentArea.gameObject.GetChildren())
 			{
 				item.Destroy();
 			}
