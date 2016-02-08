@@ -9,7 +9,7 @@ namespace Pseudo
 	[System.Serializable]
 	public class LayerPanel : MonoBehaviour
 	{
-		private Architect architect;
+		private ArchitectOld architect;
 
 		public GameObject LayerLinePrefab;
 
@@ -34,7 +34,7 @@ namespace Pseudo
 
 		void Awake()
 		{
-			architect = GetComponentInParent<Architect>();
+			architect = GetComponentInParent<ArchitectOld>();
 		}
 
 		void Start()

@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public class TilesetItemsPanel : MonoBehaviour
 {
-	private Architect architect;
+	private ArchitectOld architect;
 
 	private List<Button> tilesetButtons = new List<Button>();
 
@@ -17,7 +17,7 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	void Awake()
 	{
-		architect = GetComponentInParent<Architect>();
+		architect = GetComponentInParent<ArchitectOld>();
 	}
 
 	void Start()

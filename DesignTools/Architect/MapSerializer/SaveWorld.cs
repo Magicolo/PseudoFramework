@@ -7,12 +7,12 @@ namespace Pseudo
 	[System.Serializable]
 	public class SaveWorld
 	{
-		Architect architect;
+		ArchitectOld architect;
 
 		string fileContent = "";
 
 
-		void Save(Architect architect, string filename)
+		void Save(ArchitectOld architect, string filename)
 		{
 			this.architect = architect;
 			addHeader();
@@ -58,7 +58,7 @@ namespace Pseudo
 			}
 		}
 
-		public static void SaveAll(Architect architect, string filename)
+		public static void SaveAll(ArchitectOld architect, string filename)
 		{
 			SaveWorld save = new SaveWorld();
 			save.Save(architect, filename);

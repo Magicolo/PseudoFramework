@@ -8,7 +8,7 @@ namespace Pseudo
 	public class ArchitectToolControler : MonoBehaviour
 	{
 
-		Architect architect;
+		ArchitectOld architect;
 
 		[Disable]
 		public ArchitectRotationFlip RotationFlip;

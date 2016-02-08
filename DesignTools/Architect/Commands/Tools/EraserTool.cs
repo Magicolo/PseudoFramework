@@ -10,7 +10,7 @@ namespace Pseudo
 
 		public TileType OldTileType;
 
-		public EraserTool(Architect architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
+		public EraserTool(ArchitectOld architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
 		{
 
 		}

@@ -8,7 +8,7 @@ namespace Pseudo
 	[System.Serializable]
 	public class ToolbarPanel : MonoBehaviour
 	{
-		public Architect Architect;
+		public ArchitectOld Architect;
 
 		public Button BrushButton;
 		public Button EraserButton;
@@ -17,7 +17,7 @@ namespace Pseudo
 
 		void Awake()
 		{
-			Architect = GetComponentInParent<Architect>();
+			Architect = GetComponentInParent<ArchitectOld>();
 
 		}
 

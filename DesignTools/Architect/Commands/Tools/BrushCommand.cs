@@ -12,7 +12,7 @@ namespace Pseudo
 		public TileType DoTileType;
 		public ArchitectRotationFlip DoRotationFlip;
 
-		public BrushCommand(Architect architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
+		public BrushCommand(ArchitectOld architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
 		{
 			DoTileType = architect.SelectedTileType;
 			DoRotationFlip = architect.RotationFlip;
