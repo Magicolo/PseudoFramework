@@ -21,7 +21,7 @@ namespace Pseudo
 		void Unsubscribe<TId, TArg>(TId identifier, Action<TArg> receiver);
 		void Unsubscribe<TId, TArg1, TArg2>(TId identifier, Action<TArg1, TArg2> receiver);
 		void Unsubscribe<TId, TArg1, TArg2, TArg3>(TId identifier, Action<TArg1, TArg2, TArg3> receiver);
-		void Trigger(IEvent eventData);
+		void Trigger(IEvent eventData, float delay = 0f);
 		void Trigger<TId>(TId identifier);
 		void Trigger<TId, TArg>(TId identifier, TArg argument);
 		void Trigger<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2);

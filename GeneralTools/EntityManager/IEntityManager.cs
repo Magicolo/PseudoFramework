@@ -7,12 +7,11 @@ namespace Pseudo
 {
 	public interface IEntityManager
 	{
-		event Action<IEntity> OnEntityAdded;
-		event Action<IEntity> OnEntityRemoved;
 		IEntityGroup Entities { get; }
 
 		IEntity CreateEntity();
 		IEntity CreateEntity(EntityGroups groups);
+		IEntity CreateEntity(EntityGroups groups, bool active);
 		EntityBehaviour CreateEntity(EntityBehaviour prefab);
 		void RecycleEntity(IEntity entity);
 		void RecycleEntity(EntityBehaviour instance);

@@ -7,6 +7,6 @@ namespace Pseudo.Internal
 {
 	public interface IEvent
 	{
-		void Resolve();
+		bool Resolve();
 	}
 }

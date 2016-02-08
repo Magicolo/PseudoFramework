@@ -5,8 +5,10 @@ using System.Collections.Generic;
 using Pseudo;
 using UnityEditor;
 using System.Reflection;
+using Pseudo.Internal.EntityOld;
+using Pseudo.Internal.Editor;
 
-namespace Pseudo.Internal.Editor
+namespace Pseudo.Internal.EntityOld
 {
 	[CustomPropertyDrawer(typeof(EntityGroupsAttribute))]
 	public class EntityGroupsDrawer : CustomAttributePropertyDrawerBase

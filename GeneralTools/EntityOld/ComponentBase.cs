@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public abstract class ComponentBaseOld : IComponentOld, IPoolable
 	{

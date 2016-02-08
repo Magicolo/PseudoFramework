@@ -6,41 +6,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
+using Zenject;
 
-namespace Pseudo
+namespace Pseudo.Internal.Entity
 {
 	public class EntityManager : IEntityManager
 	{
-		public event Action<IEntity> OnEntityAdded = delegate { };
-		public event Action<IEntity> OnEntityRemoved = delegate { };
 		public IEntityGroup Entities
 		{
 			get { return entities; }
 		}
 
 		readonly EntityGroup entities = new EntityGroup();
-		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 16);
+		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
+		readonly IMessageManager messageManager;
+		[Inject]
+		readonly DiContainer container = null;
 
-		/// <summary>
-		/// Creates a new IEntity instance and adds it to the SystemManager.
-		/// </summary>
-		/// <returns>The IEntity instance.</returns>
-		public IEntity CreateEntity()
+		public EntityManager(IMessageManager messageManager)
 		{
-			return CreateEntity(EntityGroups.Nothing);
+			this.messageManager = messageManager;
 		}
 
-		/// <summary>
-		/// Creates a new IEntity instance and adds it to the SystemManager.
-		/// </summary>
-		/// <param name="groups">The groups that the IEntity instance should be placed in.</param>
-		/// <returns>The IEntity instance.</returns>
+		public IEntity CreateEntity()
+		{
+			return CreateEntity(EntityGroups.Nothing, true);
+		}
+
 		public IEntity CreateEntity(EntityGroups groups)
+		{
+			return CreateEntity(groups, true);
+		}
+
+		public IEntity CreateEntity(EntityGroups groups, bool active)
 		{
 			Assert.IsNotNull(groups);
 
 			var entity = entityPool.Create();
-			entity.Initialize(this, groups);
+			entity.Initialize(this, messageManager, groups, active);
 			AddEntity(entity);
 
 			return entity;
@@ -51,7 +54,7 @@ namespace Pseudo
 			Assert.IsNotNull(prefab);
 
 			var entity = PrefabPoolManager.Create(prefab);
-			entity.Initialize(this);
+			entity.Initialize(this, container);
 
 			return entity;
 		}
@@ -71,38 +74,20 @@ namespace Pseudo
 			PrefabPoolManager.Recycle(instance);
 		}
 
-		/// <summary>
-		/// Registers an IEntity instance to the SystemManager.
-		/// </summary>
-		/// <param name="entity">The IEntity instance to register.</param>
 		public void AddEntity(IEntity entity)
 		{
-			Assert.IsNotNull(entity);
-
-			entities.UpdateEntity(entity, true);
-			OnEntityAdded(entity);
+			UpdateEntity(entity);
 		}
 
-		/// <summary>
-		/// Unregisters an IEntity instance from the SystemManager.
-		/// </summary>
-		/// <param name="entity">The IEntity instance to unregister.</param>
 		public void RemoveEntity(IEntity entity)
 		{
 			Assert.IsNotNull(entity);
 
 			entities.UpdateEntity(entity, false);
-			OnEntityRemoved(entity);
 		}
 
-		/// <summary>
-		/// Unregisters all IEntity instances from the SystemManager.
-		/// </summary>
 		public void RemoveAllEntities()
 		{
-			for (int i = 0; i < entities.Count; i++)
-				OnEntityRemoved(entities[i]);
-
 			entities.Clear();
 		}
 

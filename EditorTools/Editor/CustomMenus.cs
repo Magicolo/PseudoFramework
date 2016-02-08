@@ -148,9 +148,9 @@ namespace Pseudo.Internal.Editor
 		{
 			bool refresh = false;
 
-			for (int i = 0; i < TypeExtensions.AllTypes.Length; i++)
+			for (int i = 0; i < TypeUtility.AllTypes.Length; i++)
 			{
-				Type type = TypeExtensions.AllTypes[i];
+				Type type = TypeUtility.AllTypes[i];
 
 				bool copyClass = false;
 				bool isCopyable = Array.Exists(type.GetInterfaces(), interfaceType => interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == typeof(ICopyable<>));

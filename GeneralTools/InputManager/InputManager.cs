@@ -6,7 +6,7 @@ using Pseudo.Internal;
 using Pseudo.Internal.Input;
 using UnityEngine.Assertions;
 
-namespace Pseudo
+namespace Pseudo.Internal
 {
 	public class InputManager : MonoBehaviour, IInputManager
 	{

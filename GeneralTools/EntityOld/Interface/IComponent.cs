@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public interface IComponentOld
 	{

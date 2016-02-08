@@ -173,13 +173,20 @@ namespace Pseudo.Internal.Pool
 			if (isInitializable)
 				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
 
-			for (int i = 0; i < allFields.Length; i++)
-			{
-				var field = allFields[i];
-				var value = field.GetValue(instance);
+			var copyer = CopyUtility.GetCopyer(type);
 
-				if (ShouldInitialize(field, value))
-					fields.Add(GetSetter(value, field, toIgnore));
+			if (copyer != null)
+				fields.Add(new PoolCopyerSetter(copyer, instance));
+			else
+			{
+				for (int i = 0; i < allFields.Length; i++)
+				{
+					var field = allFields[i];
+					var value = field.GetValue(instance);
+
+					if (ShouldInitialize(field, value))
+						fields.Add(GetSetter(value, field, toIgnore));
+				}
 			}
 
 			if (isInitializable)

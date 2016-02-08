@@ -7,7 +7,7 @@ namespace Pseudo.Internal
 {
 	public class EventGroup<TId> : IEventGroup
 	{
-		static readonly EqualityComparer<TId> comparer = EqualityComparer<TId>.Default;
+		static readonly IEqualityComparer<TId> comparer = TypeUtility.GetEqualityComparer<TId>();
 
 		IEventDispatcher allDispatcher0;
 		IEventDispatcher allDispatcher1;

@@ -17,7 +17,7 @@ namespace Pseudo
 
 			public Type Type
 			{
-				get { return type ?? (type = Type.GetType(TypeName)); }
+				get { return type ?? (type = TypeUtility.GetType(TypeName)); }
 			}
 
 			Type type;

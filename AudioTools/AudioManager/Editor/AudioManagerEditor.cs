@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Pseudo;
+using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Editor
 {

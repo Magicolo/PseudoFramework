@@ -86,7 +86,7 @@ namespace Pseudo
 
 		public bool IsInLayerBound(int x, int y)
 		{
-			return x.IsBetweenInclusive(0, LayerWidth - 1) && y.IsBetweenInclusive(0, LayerHeight - 1);
+			return x.IsBetween(0, LayerWidth - 1) && y.IsBetween(0, LayerHeight - 1);
 		}
 
 		public bool IsInArrayBound(Vector2 vector2)

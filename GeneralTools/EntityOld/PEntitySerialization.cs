@@ -7,7 +7,7 @@ using Pseudo;
 using Pseudo.Internal.EntityOld;
 using Pseudo.Internal.Pool;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public partial class PEntity : IPoolInitializable, IPoolSettersInitializable, ISerializationCallbackReceiver
 	{

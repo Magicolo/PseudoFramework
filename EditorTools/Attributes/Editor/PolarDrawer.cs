@@ -36,9 +36,9 @@ namespace Pseudo.Internal.Editor
 
 		void ShowPolar2D(SerializedProperty property)
 		{
-			SerializedProperty xProperty = property.FindPropertyRelative("x");
-			SerializedProperty yProperty = property.FindPropertyRelative("y");
-			Vector2 vector = property.GetValue<Vector2>().ToPolar().Round(0.0001f);
+			var xProperty = property.FindPropertyRelative("x");
+			var yProperty = property.FindPropertyRelative("y");
+			var vector = property.GetValue<Vector2>().ToPolar().Round(0.0001f);
 			currentPosition.width = currentPosition.width / 2f - 1f;
 
 			EditorGUI.BeginChangeCheck();
@@ -60,10 +60,10 @@ namespace Pseudo.Internal.Editor
 
 		void ShowPolar3D(SerializedProperty property)
 		{
-			SerializedProperty xProperty = property.FindPropertyRelative("x");
-			SerializedProperty yProperty = property.FindPropertyRelative("y");
-			SerializedProperty zProperty = property.FindPropertyRelative("z");
-			Vector3 vector = property.GetValue<Vector3>().ToPolar().Round(0.0001f);
+			var xProperty = property.FindPropertyRelative("x");
+			var yProperty = property.FindPropertyRelative("y");
+			var zProperty = property.FindPropertyRelative("z");
+			var vector = property.GetValue<Vector3>().ToPolar().Round(0.0001f);
 			currentPosition.width = currentPosition.width / 3f - 1f;
 
 			EditorGUI.BeginChangeCheck();

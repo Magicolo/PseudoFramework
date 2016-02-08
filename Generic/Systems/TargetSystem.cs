@@ -23,7 +23,7 @@ namespace Pseudo
 			return EntityManager.Entities.Filter(new[]
 			{
 				typeof(TransformComponent),
-				typeof(TargetComponentBase)
+				typeof(TargetBase)
 			});
 		}
 
@@ -49,36 +49,36 @@ namespace Pseudo
 
 		void UpdateTargets(IEntity entity)
 		{
-			var targets = entity.GetComponents<TargetComponentBase>();
+			var targets = entity.GetComponents<TargetBase>();
 
 			for (int i = 0; i < targets.Count; i++)
 			{
 				var target = targets[i];
 
-				if (target is GroupTargetComponent)
-					UpdateTarget((GroupTargetComponent)target);
+				if (target is GroupTarget)
+					UpdateTarget((GroupTarget)target);
 			}
 		}
 
-		void UpdateTarget(GroupTargetComponent groupTarget)
+		void UpdateTarget(GroupTarget groupTarget)
 		{
-			var targets = targetableEntities.Filter(groupTarget.Group);
+			//var targets = targetableEntities.Filter(groupTarget.Group);
 
-			switch (groupTarget.Prefer)
-			{
-				case GroupTargetComponent.TargetPreferences.Closest:
-					groupTarget.EntityTarget = GetClosest(targets, groupTarget.CachedTransform.position);
-					break;
-				case GroupTargetComponent.TargetPreferences.Farthest:
-					groupTarget.EntityTarget = GetFarthest(targets, groupTarget.CachedTransform.position);
-					break;
-				case GroupTargetComponent.TargetPreferences.First:
-					groupTarget.EntityTarget = targets.First();
-					break;
-				case GroupTargetComponent.TargetPreferences.Last:
-					groupTarget.EntityTarget = targets.Last();
-					break;
-			}
+			//switch (groupTarget.Prefer)
+			//{
+			//case GroupTarget.TargetPreferences.Closest:
+			//	groupTarget.EntityTarget = GetClosest(targets, groupTarget.CachedTransform.position);
+			//	break;
+			//case GroupTarget.TargetPreferences.Farthest:
+			//	groupTarget.EntityTarget = GetFarthest(targets, groupTarget.CachedTransform.position);
+			//	break;
+			//case GroupTarget.TargetPreferences.First:
+			//	groupTarget.EntityTarget = targets.First();
+			//	break;
+			//case GroupTarget.TargetPreferences.Last:
+			//	groupTarget.EntityTarget = targets.Last();
+			//	break;
+			//}
 		}
 
 		public override void OnEntityAdded(IEntity entity)

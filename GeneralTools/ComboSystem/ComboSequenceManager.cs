@@ -37,7 +37,7 @@ namespace Pseudo.Internal
 		{
 			BuildComboDict();
 
-			inputEnumType = Type.GetType(inputEnumTypeName);
+			inputEnumType = TypeUtility.GetType(inputEnumTypeName);
 			inputEnumValues = inputEnumType == null ? new object[0] : Enum.GetValues(inputEnumType);
 		}
 

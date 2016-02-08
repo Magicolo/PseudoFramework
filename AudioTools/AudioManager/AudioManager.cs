@@ -9,7 +9,7 @@ using Pseudo.Internal.Audio;
 using Pseudo.Internal.Pool;
 using UnityEngine.Assertions;
 
-namespace Pseudo
+namespace Pseudo.Internal.Audio
 {
 	// TODO Show container types better in container inspectors
 	// TODO Uniformize RTPCValues and SwitchValues

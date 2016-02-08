@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using Pseudo.Internal.EntityOld;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public partial class PEntity : IEntityUpdateable
 	{

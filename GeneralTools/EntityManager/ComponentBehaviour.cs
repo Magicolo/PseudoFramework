@@ -8,14 +8,18 @@ using Pseudo;
 namespace Pseudo
 {
 	[RequireComponent(typeof(EntityBehaviour))]
-	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent
+	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent, ICopyable<ComponentBehaviour>
 	{
-		readonly Lazy<EntityBehaviour> cachedEntity;
-		public EntityBehaviour Entity { get { return cachedEntity.Value; } }
-
-		protected ComponentBehaviour()
+		public bool Active
 		{
-			cachedEntity = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
+			get { return enabled; }
+			set { enabled = value; }
+		}
+		public IEntity Entity { get; set; }
+
+		public void Copy(ComponentBehaviour reference)
+		{
+			Entity = reference.Entity;
 		}
 	}
 }

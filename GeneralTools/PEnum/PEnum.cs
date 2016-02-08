@@ -176,11 +176,6 @@ namespace Pseudo
 			initialized = true;
 		}
 
-		public static implicit operator TValue(PEnum<TEnum, TValue> obj)
-		{
-			return obj.value;
-		}
-
 		public static implicit operator PEnum<TEnum, TValue>(TValue obj)
 		{
 			return GetValue(obj);

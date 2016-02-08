@@ -9,7 +9,7 @@ namespace Pseudo.Internal.Entity
 {
 	public class EntityGroup : IEntityGroup
 	{
-		readonly static EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
+		static readonly EntityMatches[] matchValues = (EntityMatches[])Enum.GetValues(typeof(EntityMatches));
 
 		public event Action<IEntity> OnEntityAdded = delegate { };
 		public event Action<IEntity> OnEntityRemoved = delegate { };
@@ -44,6 +44,67 @@ namespace Pseudo.Internal.Entity
 		public IEntityGroup Filter(Type[] componentTypes, EntityMatches match = EntityMatches.All)
 		{
 			return GetMatchGroup(match).GetGroupByComponentIndices(ComponentUtility.GetComponentIndices(componentTypes));
+		}
+
+		public void BroadcastMessage(EntityMessage message)
+		{
+			BroadcastMessage(message.Message.Value, (object)null, (object)null, (object)null, message.Propagation);
+		}
+
+		public void BroadcastMessage<TArg>(EntityMessage message, TArg argument)
+		{
+			BroadcastMessage(message.Message.Value, argument, (object)null, (object)null, message.Propagation);
+		}
+
+		public void BroadcastMessage<TArg1, TArg2>(EntityMessage message, TArg1 argument1, TArg2 argument2)
+		{
+			BroadcastMessage(message.Message.Value, argument1, argument2, (object)null, message.Propagation);
+		}
+
+		public void BroadcastMessage<TArg1, TArg2, TArg3>(EntityMessage message, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		{
+			BroadcastMessage(message.Message.Value, argument1, argument2, argument3, message.Propagation);
+		}
+
+		public void BroadcastMessage<TId>(TId identifier)
+		{
+			BroadcastMessage(identifier, (object)null, (object)null, (object)null, MessagePropagation.Local);
+		}
+
+		public void BroadcastMessage<TId>(TId identifier, MessagePropagation propagation)
+		{
+			BroadcastMessage(identifier, (object)null, (object)null, (object)null, propagation);
+		}
+
+		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument)
+		{
+			BroadcastMessage(identifier, argument, (object)null, (object)null, MessagePropagation.Local);
+		}
+
+		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation)
+		{
+			BroadcastMessage(identifier, argument, (object)null, (object)null, propagation);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
+		{
+			BroadcastMessage(identifier, argument1, argument2, (object)null, MessagePropagation.Local);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2, MessagePropagation propagation)
+		{
+			BroadcastMessage(identifier, argument1, argument2, (object)null, propagation);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
+		{
+			BroadcastMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+		}
+
+		public void BroadcastMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, MessagePropagation propagation)
+		{
+			for (int i = entities.Count - 1; i >= 0; i--)
+				entities[i].SendMessage(identifier, argument1, argument2, argument3, propagation);
 		}
 
 		public bool Contains(IEntity entity)

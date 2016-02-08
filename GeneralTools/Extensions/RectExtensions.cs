@@ -33,9 +33,54 @@ namespace Pseudo
 			return Rect.MinMaxRect(Mathf.Max(otherRect.xMin, rect.xMin), Mathf.Max(otherRect.yMin, rect.yMin), Mathf.Min(otherRect.xMax, rect.xMax), Mathf.Min(otherRect.yMax, rect.yMax));
 		}
 
-		public static bool Intersects(this Rect rect, Rect otherRect)
+		public static bool Contains(this Rect rect, Rect otherRect)
 		{
-			return !((rect.xMin > otherRect.xMax) || (rect.xMax < otherRect.xMin) || (rect.yMin > otherRect.yMax) || (rect.yMax < otherRect.yMin));
+			return
+				rect.xMin < otherRect.xMin &&
+				rect.xMax > otherRect.xMax &&
+				rect.yMin < otherRect.yMin &&
+				rect.yMax > otherRect.yMax;
+		}
+
+		public static bool Contains(this Rect rect, Circle circle)
+		{
+			return rect.Contains(circle.Bounds);
+		}
+
+		public static bool Contains(this Rect rect, Disk disk)
+		{
+			return rect.Contains(disk.Bounds);
+		}
+
+		public static bool IsContained(this Rect rect, Rect otherRect)
+		{
+			return otherRect.Contains(rect);
+		}
+
+		public static bool IsContained(this Rect rect, Circle circle)
+		{
+			return circle.Contains(rect);
+		}
+
+		public static bool IsContained(this Rect rect, Disk disk)
+		{
+			return disk.Contains(rect);
+		}
+
+		public static bool Overlaps(this Rect rect, Circle circle)
+		{
+			if (!rect.Overlaps(circle.Bounds))
+				return false;
+
+			var clamped = rect.Clamp(circle.Position);
+			float distance = (circle.Position - clamped).sqrMagnitude;
+
+			return distance < circle.Radius * circle.Radius;
+		}
+
+		public static bool Overlaps(this Rect rect, Disk disk)
+		{
+			return rect.Overlaps(disk.OuterCircle) && !disk.InnerCircle.Contains(rect);
 		}
 
 		public static Vector2 TopLeft(this Rect rect)

@@ -29,7 +29,7 @@ namespace Pseudo
 
 		public static bool WorldRectInView(this Camera camera, Rect worldRect, float depth = 0f)
 		{
-			return worldRect.Intersects(camera.GetWorldRect(depth));
+			return worldRect.Overlaps(camera.GetWorldRect(depth));
 		}
 
 		public static Rect GetWorldRect(this Camera camera, float depth = 0f)

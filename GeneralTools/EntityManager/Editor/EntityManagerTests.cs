@@ -5,6 +5,8 @@ using NSubstitute;
 using System;
 using Zenject;
 using Pseudo;
+using Pseudo.Internal.Entity;
+using Pseudo.Internal;
 
 namespace Tests
 {
@@ -15,7 +17,7 @@ namespace Tests
 		[SetUp]
 		public void Setup()
 		{
-			entityManager = new EntityManager();
+			entityManager = new EntityManager(new MessageManager());
 		}
 
 		[TearDown]
@@ -24,7 +26,7 @@ namespace Tests
 			entityManager = null;
 		}
 
-		#region Entity General
+		#region Component
 		[Test]
 		public void AddComponent()
 		{
@@ -32,7 +34,7 @@ namespace Tests
 			var component = new DummyComponent1();
 
 			entity.AddComponent(component);
-			Assert.That(entity.Components.Count == 1);
+			Assert.That(entity.Components.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -42,9 +44,9 @@ namespace Tests
 			var component = new DummyComponent1();
 
 			entity.AddComponent(component);
-			Assert.That(entity.Components.Count == 1);
+			Assert.That(entity.Components.Count, Is.EqualTo(1));
 			entity.RemoveComponent(component);
-			Assert.That(entity.Components.Count == 0);
+			Assert.That(entity.Components.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -58,16 +60,16 @@ namespace Tests
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.Components.Count == 3);
+			Assert.That(entity.Components.Count, Is.EqualTo(3));
 			entity.RemoveComponents<DummyComponent1>();
-			Assert.That(entity.Components.Count == 0);
+			Assert.That(entity.Components.Count, Is.EqualTo(0));
 
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.Components.Count == 3);
+			Assert.That(entity.Components.Count, Is.EqualTo(3));
 			entity.RemoveComponents(typeof(DummyComponent1));
-			Assert.That(entity.Components.Count == 0);
+			Assert.That(entity.Components.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -81,9 +83,9 @@ namespace Tests
 			entity.AddComponent(component1);
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
-			Assert.That(entity.Components.Count == 3);
+			Assert.That(entity.Components.Count, Is.EqualTo(3));
 			entity.RemoveAllComponents();
-			Assert.That(entity.Components.Count == 0);
+			Assert.That(entity.Components.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -93,8 +95,8 @@ namespace Tests
 			var component = new DummyComponent1();
 
 			entity.AddComponent(component);
-			Assert.That(entity.GetComponent<DummyComponent1>() == component);
-			Assert.That(entity.GetComponent(typeof(DummyComponent1)) == component);
+			Assert.That(entity.GetComponent<DummyComponent1>(), Is.EqualTo(component));
+			Assert.That(entity.GetComponent(typeof(DummyComponent1)), Is.EqualTo(component));
 		}
 
 		[Test]
@@ -109,8 +111,8 @@ namespace Tests
 			entity.AddComponent(component2);
 			entity.AddComponent(component3);
 
-			Assert.That(entity.GetComponents<DummyComponent1>().Count == 2);
-			Assert.That(entity.GetComponents(typeof(DummyComponent2)).Count == 1);
+			Assert.That(entity.GetComponents<DummyComponent1>().Count, Is.EqualTo(2));
+			Assert.That(entity.GetComponents(typeof(DummyComponent2)).Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -135,12 +137,12 @@ namespace Tests
 			entity.AddComponent(component);
 			entity.AddComponent(component);
 
-			Assert.That(entity.Components.Count == 1);
-			Assert.That(entity.GetComponents(component.GetType()).Count == 1);
+			Assert.That(entity.Components.Count, Is.EqualTo(1));
+			Assert.That(entity.GetComponents(component.GetType()).Count, Is.EqualTo(1));
 		}
 		#endregion
 
-		#region Entity Group Match
+		#region Group Match
 		void GroupMatchSetup()
 		{
 			entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1)));
@@ -156,7 +158,7 @@ namespace Tests
 			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1)), EntityMatches.All);
-			Assert.That(entityGroup.Count == 2);
+			Assert.That(entityGroup.Count, Is.EqualTo(2));
 		}
 
 		[Test]
@@ -165,7 +167,7 @@ namespace Tests
 			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.Any);
-			Assert.That(entityGroup.Count == 4);
+			Assert.That(entityGroup.Count, Is.EqualTo(4));
 		}
 
 		[Test]
@@ -174,7 +176,7 @@ namespace Tests
 			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.None);
-			Assert.That(entityGroup.Count == 1);
+			Assert.That(entityGroup.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -183,7 +185,7 @@ namespace Tests
 			GroupMatchSetup();
 
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.Exact);
-			Assert.That(entityGroup.Count == 1);
+			Assert.That(entityGroup.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -192,15 +194,15 @@ namespace Tests
 			var entity = entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2, 3)));
 			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
 
-			Assert.That(entityGroup.Count == 1);
+			Assert.That(entityGroup.Count, Is.EqualTo(1));
 
 			entity.Groups = EntityGroups.Nothing;
 
-			Assert.That(entityGroup.Count == 0);
+			Assert.That(entityGroup.Count, Is.EqualTo(0));
 		}
 		#endregion
 
-		#region Entity Component Group Match
+		#region Component Group Match
 		void ComponentGroupMatchSetup()
 		{
 			entityManager.CreateEntity().AddComponent(new DummyComponent1());
@@ -226,10 +228,10 @@ namespace Tests
 			var entityGroup3 = entityManager.Entities.Filter(typeof(DummyComponent3), EntityMatches.All);
 			var entityGroup4 = entityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.All);
 
-			Assert.That(entityGroup1.Count == 2);
-			Assert.That(entityGroup2.Count == 3);
-			Assert.That(entityGroup3.Count == 4);
-			Assert.That(entityGroup4.Count == 1);
+			Assert.That(entityGroup1.Count, Is.EqualTo(2));
+			Assert.That(entityGroup2.Count, Is.EqualTo(3));
+			Assert.That(entityGroup3.Count, Is.EqualTo(4));
+			Assert.That(entityGroup4.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -242,10 +244,10 @@ namespace Tests
 			var entityGroup3 = entityManager.Entities.Filter(typeof(DummyComponent3), EntityMatches.Any);
 			var entityGroup4 = entityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.Any);
 
-			Assert.That(entityGroup1.Count == 2);
-			Assert.That(entityGroup2.Count == 3);
-			Assert.That(entityGroup3.Count == 4);
-			Assert.That(entityGroup4.Count == 7);
+			Assert.That(entityGroup1.Count, Is.EqualTo(2));
+			Assert.That(entityGroup2.Count, Is.EqualTo(3));
+			Assert.That(entityGroup3.Count, Is.EqualTo(4));
+			Assert.That(entityGroup4.Count, Is.EqualTo(7));
 		}
 
 		[Test]
@@ -258,10 +260,10 @@ namespace Tests
 			var entityGroup3 = entityManager.Entities.Filter(typeof(DummyComponent3), EntityMatches.None);
 			var entityGroup4 = entityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.None);
 
-			Assert.That(entityGroup1.Count == 5);
-			Assert.That(entityGroup2.Count == 4);
-			Assert.That(entityGroup3.Count == 3);
-			Assert.That(entityGroup4.Count == 0);
+			Assert.That(entityGroup1.Count, Is.EqualTo(5));
+			Assert.That(entityGroup2.Count, Is.EqualTo(4));
+			Assert.That(entityGroup3.Count, Is.EqualTo(3));
+			Assert.That(entityGroup4.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -274,10 +276,10 @@ namespace Tests
 			var entityGroup3 = entityManager.Entities.Filter(typeof(DummyComponent3), EntityMatches.Exact);
 			var entityGroup4 = entityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.Exact);
 
-			Assert.That(entityGroup1.Count == 1);
-			Assert.That(entityGroup2.Count == 2);
-			Assert.That(entityGroup3.Count == 3);
-			Assert.That(entityGroup4.Count == 1);
+			Assert.That(entityGroup1.Count, Is.EqualTo(1));
+			Assert.That(entityGroup2.Count, Is.EqualTo(2));
+			Assert.That(entityGroup3.Count, Is.EqualTo(3));
+			Assert.That(entityGroup4.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -289,9 +291,9 @@ namespace Tests
 			entity.AddComponent(new DummyComponent3());
 
 			var entityGroup = entityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.Any);
-			Assert.That(entityGroup.Count == 1);
+			Assert.That(entityGroup.Count, Is.EqualTo(1));
 			entity.RemoveAllComponents();
-			Assert.That(entityGroup.Count == 0);
+			Assert.That(entityGroup.Count, Is.EqualTo(0));
 		}
 
 		[Test]
@@ -301,12 +303,533 @@ namespace Tests
 			entity.AddComponent(Substitute.For<DummyComponent1>());
 
 			var entityGroup = entityManager.Entities.Filter(typeof(DummyComponent1), EntityMatches.All);
-			Assert.That(entityGroup.Count == 1);
+			Assert.That(entityGroup.Count, Is.EqualTo(1));
 		}
 		#endregion
 
-		public class DummyComponent1 : IComponent { }
-		public class DummyComponent2 : IComponent { }
-		public class DummyComponent3 : IComponent { }
+		#region Messages
+		[Test]
+		public void MessageNoArgument()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.SendMessage(0);
+
+			component1.Received(1).MessageNoArgument();
+			component2.Received(1).MessageNoArgument();
+			component3.Received(1).MessageNoArgument();
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(1).OnMessage(0);
+			component1.Received(0).OnMessage("");
+		}
+
+		[Test]
+		public void MessageOneArgument()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.SendMessage(1, 1);
+
+			component1.Received(1).MessageOneArgument(1);
+			component2.Received(1).MessageOneArgument(1);
+			component3.Received(1).MessageOneArgument(1);
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(1).OnMessage(1);
+			component1.Received(0).OnMessage("");
+		}
+
+		[Test]
+		public void MessageTwoArgument()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.SendMessage(2, 1, 2);
+
+			component1.Received(1).MessageTwoArguments(1, 2);
+			component2.Received(1).MessageTwoArguments(1, 2);
+			component3.Received(1).MessageTwoArguments(1, 2);
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(1).OnMessage(2);
+			component1.Received(0).OnMessage("");
+		}
+
+		[Test]
+		public void MessageThreeArgument()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.SendMessage(3, 1, 2, 3);
+
+			component1.Received(1).MessageThreeArguments(1, 2, 3);
+			component2.Received(1).MessageThreeArguments(1, 2, 3);
+			component3.Received(1).MessageThreeArguments(1, 2, 3);
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(1).OnMessage(3);
+			component1.Received(0).OnMessage("");
+		}
+
+		[Test]
+		public void MessageInheritance()
+		{
+			var entity = entityManager.CreateEntity();
+			var component = Substitute.For<DummyComponent1>();
+
+			entity.AddComponent(component);
+			entity.SendMessage("Boba", component);
+
+			component.Received(1).MessageInheritance(component);
+			component.Received(1).OnMessage("Boba");
+		}
+
+		[Test]
+		public void MessageWrongArgumentNumber()
+		{
+			var entity = entityManager.CreateEntity();
+			var component = Substitute.For<DummyComponent1>();
+
+			entity.AddComponent(component);
+			entity.SendMessage(0);
+			entity.SendMessage(0, 1);
+			entity.SendMessage(0, 1, 2);
+			entity.SendMessage(0, 1, 2, 3);
+
+			entity.SendMessage(1);
+			entity.SendMessage(1, 1);
+			entity.SendMessage(1, 1, 2);
+			entity.SendMessage(1, 1, 2, 3);
+
+			entity.SendMessage(2);
+			entity.SendMessage(2, 1);
+			entity.SendMessage(2, 1, 2);
+			entity.SendMessage(2, 1, 2, 3);
+
+			entity.SendMessage(3);
+			entity.SendMessage(3, 1);
+			entity.SendMessage(3, 1, 2);
+			entity.SendMessage(3, 1, 2, 3);
+
+			component.Received(4).MessageNoArgument();
+			component.Received(4).MessageOneArgument(1);
+			component.Received(4).MessageTwoArguments(1, 2);
+			component.Received(4).MessageThreeArguments(1, 2, 3);
+			component.Received(0).MessageInheritance(null);
+			component.Received(12).OnMessage(0);
+			component.Received(0).OnMessage("");
+		}
+
+		[Test]
+		public void MessageConflictingArguments()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.SendMessage("Fett");
+
+			component1.Received(1).MessageConflict();
+			component2.Received(1).MessageConflict(1);
+			component3.Received(1).MessageConflict("", true);
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(0).OnMessage(0);
+			component1.Received(1).OnMessage("Fett");
+		}
+
+		[Test]
+		public void MessageInactiveComponent()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+
+			component1.Active = false;
+			component2.Active = false;
+			entity.SendMessage(0);
+
+			component1.Received(0).MessageNoArgument();
+			component2.Received(0).MessageNoArgument();
+			component3.Received(1).MessageNoArgument();
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(0).OnMessage(0);
+			component1.Received(0).OnMessage("Fett");
+		}
+
+		[Test]
+		public void MessageInactiveEntity()
+		{
+			var entity = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.AddComponent(component3);
+			entity.Active = false;
+			entity.SendMessage(0);
+
+			component1.Received(0).MessageNoArgument();
+			component2.Received(0).MessageNoArgument();
+			component3.Received(0).MessageNoArgument();
+			component1.Received(0).MessageInheritance(null);
+			component1.Received(0).OnMessage(0);
+			component1.Received(0).OnMessage("Fett");
+		}
+
+		[Test]
+		public void MessageReceiveAll()
+		{
+			var entity = entityManager.CreateEntity();
+			var component = Substitute.For<DummyComponent2>();
+
+			entity.AddComponent(component);
+			entity.SendMessage(0);
+			entity.SendMessage(0f);
+			entity.SendMessage(0u);
+			entity.SendMessage(true);
+			entity.SendMessage("Jango");
+
+			component.Received(5).OnMessage(0);
+		}
+
+		[Test]
+		public void MessagePropagateDownwards()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+
+			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
+			entity2.SendMessage(1, 1, MessagePropagation.DownwardsExclusive);
+			entity3.SendMessage(2, 1, 2, MessagePropagation.DownwardsInclusive);
+
+			component1.Received(1).MessageNoArgument();
+			component1.Received(0).MessageOneArgument(1);
+			component1.Received(0).MessageTwoArguments(1, 2);
+			component1.Received(1).OnMessage(0);
+
+			component2.Received(1).MessageNoArgument();
+			component2.Received(0).MessageOneArgument(1);
+			component2.Received(0).MessageTwoArguments(1, 2);
+			component2.Received(2).OnMessage(0);
+
+			component3.Received(1).MessageNoArgument();
+			component3.Received(1).MessageOneArgument(1);
+			component3.Received(1).MessageTwoArguments(1, 2);
+		}
+
+		[Test]
+		public void MessagePropagateDownwardsInactive()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+
+			component1.Active = false;
+			entity2.Active = false;
+
+			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
+			entity2.SendMessage(1, 1, MessagePropagation.DownwardsInclusive);
+			entity3.SendMessage(2, 1, 2, MessagePropagation.DownwardsInclusive);
+
+			component1.Received(0).MessageNoArgument();
+			component1.Received(0).MessageOneArgument(1);
+			component1.Received(0).MessageTwoArguments(1, 2);
+			component1.Received(0).OnMessage(0);
+
+			component2.Received(0).MessageNoArgument();
+			component2.Received(0).MessageOneArgument(1);
+			component2.Received(0).MessageTwoArguments(1, 2);
+			component2.Received(0).OnMessage(0);
+
+			component3.Received(1).MessageNoArgument();
+			component3.Received(1).MessageOneArgument(1);
+			component3.Received(1).MessageTwoArguments(1, 2);
+		}
+
+		[Test]
+		public void MessagePropagateUpwards()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+
+			entity1.SendMessage(0, MessagePropagation.UpwardsInclusive);
+			entity2.SendMessage(1, 1, MessagePropagation.UpwardsExclusive);
+			entity3.SendMessage(2, 1, 2, MessagePropagation.UpwardsInclusive);
+
+			component1.Received(1).MessageNoArgument();
+			component1.Received(1).MessageOneArgument(1);
+			component1.Received(1).MessageTwoArguments(1, 2);
+			component1.Received(3).OnMessage(0);
+
+			component2.Received(0).MessageNoArgument();
+			component2.Received(0).MessageOneArgument(1);
+			component2.Received(1).MessageTwoArguments(1, 2);
+			component2.Received(2).OnMessage(0);
+
+			component3.Received(0).MessageNoArgument();
+			component3.Received(0).MessageOneArgument(1);
+			component3.Received(1).MessageTwoArguments(1, 2);
+		}
+
+		[Test]
+		public void MessagePropagateGlobal()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+
+			entity1.SendMessage(0, MessagePropagation.Global);
+			entity2.SendMessage(1, 1, MessagePropagation.Global);
+			entity3.SendMessage(2, 1, 2, MessagePropagation.Global);
+
+			component1.Received(1).MessageNoArgument();
+			component1.Received(1).MessageOneArgument(1);
+			component1.Received(1).MessageTwoArguments(1, 2);
+			component1.Received(3).OnMessage(0);
+
+			component2.Received(1).MessageNoArgument();
+			component2.Received(1).MessageOneArgument(1);
+			component2.Received(1).MessageTwoArguments(1, 2);
+			component2.Received(3).OnMessage(0);
+
+			component3.Received(1).MessageNoArgument();
+			component3.Received(1).MessageOneArgument(1);
+			component3.Received(1).MessageTwoArguments(1, 2);
+		}
+		#endregion
+
+		#region Group Messages
+		[Test]
+		public void GroupSendMessage()
+		{
+			var entity = entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2, 3)));
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entityGroup.BroadcastMessage(0);
+
+			component1.Received(1).MessageNoArgument();
+			component1.Received(1).OnMessage(0);
+			component2.Received(1).MessageNoArgument();
+			component2.Received(1).OnMessage(0);
+		}
+
+		[Test]
+		public void GroupSendMessageInactive()
+		{
+			var entity = entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2, 3)));
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			entity.Active = false;
+			entityGroup.BroadcastMessage(0);
+
+			component1.Received(0).MessageNoArgument();
+			component1.Received(0).OnMessage(0);
+			component2.Received(0).MessageNoArgument();
+			component2.Received(0).OnMessage(0);
+		}
+
+		[Test]
+		public void GroupSendMessageComponentInactive()
+		{
+			var entity = entityManager.CreateEntity(EntityGroups.GetValue(new ByteFlag(1, 2, 3)));
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var entityGroup = entityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
+
+			entity.AddComponent(component1);
+			entity.AddComponent(component2);
+			component2.Active = false;
+			entityGroup.BroadcastMessage(0);
+
+			component1.Received(1).MessageNoArgument();
+			component1.Received(1).OnMessage(0);
+			component2.Received(0).MessageNoArgument();
+			component2.Received(0).OnMessage(0);
+		}
+		#endregion
+
+		#region Hierarchy
+		[Test]
+		public void HierarchyAddChild()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			Assert.That(entity1.Parent, Is.Null);
+			Assert.That(entity2.Parent, Is.EqualTo(entity1));
+			Assert.That(entity3.Parent, Is.EqualTo(entity2));
+
+			Assert.That(entity1.Children.First(), Is.EqualTo(entity2));
+			Assert.That(entity2.Children.First(), Is.EqualTo(entity3));
+			Assert.That(entity3.Children.First(), Is.Null);
+		}
+
+		[Test]
+		public void HierarchyRemoveChild()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity2);
+
+			entity1.RemoveAllChildren();
+			entity2.RemoveChild(entity3);
+
+			Assert.That(entity1.Parent, Is.Null);
+			Assert.That(entity2.Parent, Is.Null);
+			Assert.That(entity3.Parent, Is.Null);
+
+			Assert.That(entity1.Children.Count, Is.EqualTo(0));
+			Assert.That(entity2.Children.Count, Is.EqualTo(0));
+			Assert.That(entity3.Children.Count, Is.EqualTo(0));
+		}
+		#endregion
+
+		public class DummyComponent1 : IComponent, IMessageable<int>, IMessageable<string>
+		{
+			public bool Active { get; set; }
+			public IEntity Entity { get; set; }
+
+			[Message(0)]
+			public void MessageNoArgument() { }
+			[Message(1)]
+			public void MessageOneArgument(int arg) { }
+			[Message(2)]
+			public void MessageTwoArguments(int arg1, int arg2) { }
+			[Message(3)]
+			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
+			[Message("Boba")]
+			public void MessageInheritance(IComponent component) { }
+			[Message("Fett")]
+			public void MessageConflict() { }
+
+			public void OnMessage(int message) { }
+
+			public void OnMessage(string message) { }
+		}
+
+		public class DummyComponent2 : IComponent, IMessageable
+		{
+			public bool Active { get; set; }
+			public IEntity Entity { get; set; }
+
+			[Message(0)]
+			public void MessageNoArgument() { }
+			[Message(1)]
+			public void MessageOneArgument(int arg) { }
+			[Message(2)]
+			public void MessageTwoArguments(int arg1, int arg2) { }
+			[Message(3)]
+			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
+			[Message("Fett")]
+			public void MessageConflict(int arg) { }
+
+			public void OnMessage<TId>(TId message) { }
+		}
+
+		public class DummyComponent3 : IComponent
+		{
+			public bool Active { get; set; }
+			public IEntity Entity { get; set; }
+
+			[Message(0)]
+			public void MessageNoArgument() { }
+			[Message(1)]
+			public void MessageOneArgument(int arg) { }
+			[Message(2)]
+			public void MessageTwoArguments(int arg1, int arg2) { }
+			[Message(3)]
+			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
+			[Message("Fett")]
+			public void MessageConflict(string arg1, bool arg2) { }
+		}
 	}
 }

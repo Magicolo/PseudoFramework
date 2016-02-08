@@ -7,10 +7,12 @@ using System.Text;
 using UnityEngine.Assertions;
 using Zenject;
 
-namespace Pseudo
+namespace Pseudo.Internal
 {
 	public class EventManager : IEventManager, ILateTickable
 	{
+		static readonly Pool<DelayedEvent> delayedEventPool = new Pool<DelayedEvent>(new DelayedEvent(), () => new DelayedEvent(), 0);
+
 		readonly Dictionary<Type, IEventGroup> typeToEventGroups = new Dictionary<Type, IEventGroup>();
 		Queue<IEvent> queuedEvents = new Queue<IEvent>();
 		Queue<IEvent> resolvingEvents = new Queue<IEvent>();
@@ -111,10 +113,19 @@ namespace Pseudo
 			GetEventGroup<TId>().Unsubscribe(identifier, receiver);
 		}
 
-		public void Trigger(IEvent eventData)
+		public void Trigger(IEvent eventData, float delay = 0f)
 		{
 			Assert.IsNotNull(eventData);
-			queuedEvents.Enqueue(eventData);
+
+			if (delay <= 0f)
+				queuedEvents.Enqueue(eventData);
+			else
+			{
+				var delayedEvent = delayedEventPool.Create();
+				delayedEvent.Delay = delay;
+				delayedEvent.Event = eventData;
+				queuedEvents.Enqueue(delayedEvent);
+			}
 		}
 
 		public void Trigger<TId>(TId identifier)
@@ -136,12 +147,14 @@ namespace Pseudo
 		{
 			var eventGroup = GetEventGroup<TId>();
 			var eventData = TypePoolManager.Create<TriggerEvent<TId, TArg1, TArg2, TArg3>>();
+
 			eventData.EventGroup = eventGroup;
 			eventData.Identifier = identifier;
 			eventData.Argument1 = argument1;
 			eventData.Argument2 = argument2;
 			eventData.Argument3 = argument3;
-			Trigger((IEvent)eventData);
+
+			Trigger((IEvent)eventData, 0f);
 		}
 
 		public void TriggerImmediate<TId>(TId identifier)
@@ -171,8 +184,11 @@ namespace Pseudo
 			while (resolvingEvents.Count > 0)
 			{
 				var eventData = resolvingEvents.Dequeue();
-				eventData.Resolve();
-				TypePoolManager.Recycle(eventData);
+
+				if (eventData.Resolve())
+					TypePoolManager.Recycle(eventData);
+				else
+					Trigger(eventData, 0f);
 			}
 		}
 

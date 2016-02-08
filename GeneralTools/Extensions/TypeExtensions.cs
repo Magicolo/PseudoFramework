@@ -10,105 +10,24 @@ namespace Pseudo
 {
 	public static class TypeExtensions
 	{
-		static Dictionary<Type, Type[]> AssignableTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, Type[]> SubclassTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, Type[]> DefinedTypes = new Dictionary<Type, Type[]>();
-		static Dictionary<Type, FieldInfo[]> TypeFields = new Dictionary<Type, FieldInfo[]>();
-
-		static Type[] allTypes;
-		public static Type[] AllTypes
-		{
-			get
-			{
-				if (allTypes == null)
-				{
-					var types = new List<Type>(512);
-					var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-					foreach (var assembly in assemblies)
-						types.AddRange(assembly.GetTypes());
-
-					allTypes = types.ToArray();
-				}
-
-				return allTypes;
-			}
-		}
-
 		public static Type[] GetSubclasses(this Type baseType)
 		{
-			Type[] types;
-
-			if (!SubclassTypes.TryGetValue(baseType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if (type.IsSubclassOf(baseType))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				SubclassTypes[baseType] = types;
-			}
-
-			return types;
+			return TypeUtility.GetAssignableTypes(baseType);
 		}
 
 		public static Type[] GetAssignableTypes(this Type baseType, bool includeSelf = true)
 		{
-			Type[] types;
-
-			if (!AssignableTypes.TryGetValue(baseType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if ((type != baseType || includeSelf) && baseType.IsAssignableFrom(type))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				AssignableTypes[baseType] = types;
-			}
-
-			return types;
+			return TypeUtility.GetAssignableTypes(baseType, includeSelf);
 		}
 
 		public static Type[] GetDefinedTypes(this Type attributeType)
 		{
-			Type[] types;
-
-			if (!DefinedTypes.TryGetValue(attributeType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if (type.IsDefined(attributeType, true))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				DefinedTypes[attributeType] = types;
-			}
-
-			return types;
+			return TypeUtility.GetDefinedTypes(attributeType);
 		}
 
 		public static FieldInfo[] GetAllFields(this Type type)
 		{
-			FieldInfo[] fields;
-
-			if (!TypeFields.TryGetValue(type, out fields))
-			{
-				fields = type.GetFields(ReflectionExtensions.AllFlags);
-				TypeFields[type] = fields;
-			}
-
-			return fields;
+			return TypeUtility.GetAllFields(type);
 		}
 
 		public static object CreateDefaultInstance(this Type type)
@@ -194,14 +113,5 @@ namespace Pseudo
 		{
 			return type.Name.Split('.').Last().GetRange('`');
 		}
-
-#if UNITY_EDITOR
-		[UnityEditor.Callbacks.DidReloadScripts]
-		static void OnScriptReload()
-		{
-			AssignableTypes = new Dictionary<Type, Type[]>();
-			SubclassTypes = new Dictionary<Type, Type[]>();
-		}
-#endif
 	}
 }

@@ -11,5 +11,8 @@ namespace Pseudo
 	public class TransformComponent : IComponent
 	{
 		public Transform Transform;
+
+		public bool Active { get; set; }
+		public IEntity Entity { get; set; }
 	}
 }

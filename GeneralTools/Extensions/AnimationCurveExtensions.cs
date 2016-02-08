@@ -6,7 +6,7 @@ namespace Pseudo
 	{
 		public static void Copy(this AnimationCurve target, AnimationCurve source)
 		{
-			if (target.length != target.length)
+			if (target.length != source.length)
 				target.keys = source.keys;
 			else
 			{

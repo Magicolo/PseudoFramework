@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Pseudo
+namespace Pseudo.Internal.EntityOld
 {
 	public interface IEntityGroupOld
 	{
