@@ -65,22 +65,22 @@ namespace Pseudo
 			return Create(Types.Output, mixerGroup, delay);
 		}
 
-		public static AudioOption FadeIn(float fadeIn, Tweening.Ease ease = Tweening.Ease.OutQuad, float delay = 0f)
+		public static AudioOption FadeIn(float fadeIn, TweenUtility.Ease ease = TweenUtility.Ease.OutQuad, float delay = 0f)
 		{
 			return Create(Types.FadeIn, new[] { fadeIn, (float)ease }, delay);
 		}
 
-		public static AudioOption FadeOut(float fadeOut, Tweening.Ease ease = Tweening.Ease.InQuad, float delay = 0f)
+		public static AudioOption FadeOut(float fadeOut, TweenUtility.Ease ease = TweenUtility.Ease.InQuad, float delay = 0f)
 		{
 			return Create(Types.FadeOut, new[] { fadeOut, (float)ease }, delay);
 		}
 
-		public static AudioOption VolumeScale(float volume, float time = 0f, Tweening.Ease ease = Tweening.Ease.Linear, float delay = 0f)
+		public static AudioOption VolumeScale(float volume, float time = 0f, TweenUtility.Ease ease = TweenUtility.Ease.Linear, float delay = 0f)
 		{
 			return Create(Types.VolumeScale, new[] { volume, time, (float)ease }, delay);
 		}
 
-		public static AudioOption PitchScale(float pitch, float time = 0f, Tweening.Ease ease = Tweening.Ease.Linear, float delay = 0f)
+		public static AudioOption PitchScale(float pitch, float time = 0f, TweenUtility.Ease ease = TweenUtility.Ease.Linear, float delay = 0f)
 		{
 			return Create(Types.PitchScale, new[] { pitch, time, (float)ease }, delay);
 		}

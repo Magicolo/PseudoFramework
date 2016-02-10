@@ -31,7 +31,7 @@ namespace Pseudo
 
 		public static float Triangle(float phase, float ratio = 0.5f)
 		{
-			phase %= 1f;
+			phase = phase % 1f;
 
 			if (phase < ratio)
 				return (phase / ratio) * 2f - 1f;

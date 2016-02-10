@@ -205,7 +205,6 @@ namespace Pseudo.Internal.Oscillation
 					PropertyField(amplitudeProperty);
 					PropertyField(centerProperty);
 					PropertyField(offsetProperty);
-					offsetProperty.Clamp(0f, 1f);
 					break;
 				case WaveShapes.Triangle:
 					PropertyField(frequencyProperty);
@@ -213,15 +212,6 @@ namespace Pseudo.Internal.Oscillation
 					PropertyField(centerProperty);
 					PropertyField(offsetProperty);
 					PropertyField(ratioProperty);
-					offsetProperty.Clamp(0f, 1f);
-					ratioProperty.Clamp(0f, 1f);
-					break;
-				case WaveShapes.Sawtooth:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					offsetProperty.Clamp(0f, 1f);
 					break;
 				case WaveShapes.Square:
 					PropertyField(frequencyProperty);
@@ -229,8 +219,41 @@ namespace Pseudo.Internal.Oscillation
 					PropertyField(centerProperty);
 					PropertyField(offsetProperty);
 					PropertyField(ratioProperty);
-					offsetProperty.Clamp(0f, 1f);
-					ratioProperty.Clamp(0f, 1f);
+					break;
+				case WaveShapes.InCubic:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
+					break;
+				case WaveShapes.OutCubic:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
+					break;
+				case WaveShapes.InOutCubic:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
+					break;
+				case WaveShapes.OutInCubic:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
+					break;
+				case WaveShapes.SmoothStep:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
 					break;
 				case WaveShapes.WhiteNoise:
 					PropertyField(amplitudeProperty);
@@ -241,9 +264,12 @@ namespace Pseudo.Internal.Oscillation
 					PropertyField(amplitudeProperty);
 					PropertyField(centerProperty);
 					PropertyField(offsetProperty);
-					offsetProperty.Clamp(0f, 1f);
 					break;
 			}
+
+			frequencyProperty.Max(0f);
+			offsetProperty.Clamp(0f, 100f);
+			ratioProperty.Clamp(0f, 1f);
 		}
 
 		void ShowSettingsFoldout(SerializedProperty settingsProperty, GUIContent label)

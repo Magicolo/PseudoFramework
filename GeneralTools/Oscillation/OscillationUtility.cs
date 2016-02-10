@@ -12,6 +12,19 @@ namespace Pseudo.Internal.Oscillation
 	public static class OscillationUtility
 	{
 		static readonly Dictionary<PropertyInfo, IOscillator> propertyToOscillator = new Dictionary<PropertyInfo, IOscillator>();
+		static readonly Func<OscillationSettings, float, float>[] waveFunctions =
+		{
+			Sine,
+			Triangle,
+			Square,
+			InCubic,
+			OutCubic,
+			InOutCubic,
+			OutInCubic,
+			SmoothStep,
+			WhiteNoise,
+			PerlinNoise,
+		};
 
 		public static bool IsValid(PropertyInfo property)
 		{
@@ -25,21 +38,7 @@ namespace Pseudo.Internal.Oscillation
 
 		public static float Oscillate(OscillationSettings settings, float time)
 		{
-			switch (settings.WaveShape)
-			{
-				default:
-					return Sine(settings.Frequency, settings.Amplitude, settings.Center, settings.Offset, time);
-				case WaveShapes.Sawtooth:
-					return Sawtooth(settings.Frequency, settings.Amplitude, settings.Center, settings.Offset, time);
-				case WaveShapes.Triangle:
-					return Triangle(settings.Frequency, settings.Amplitude, settings.Center, settings.Offset, settings.Ratio, time);
-				case WaveShapes.Square:
-					return Square(settings.Frequency, settings.Amplitude, settings.Center, settings.Offset, settings.Ratio, time);
-				case WaveShapes.WhiteNoise:
-					return WhiteNoise(settings.Amplitude, settings.Center);
-				case WaveShapes.PerlinNoise:
-					return PerlinNoise(settings.Frequency, settings.Amplitude, settings.Center, settings.Offset, time);
-			}
+			return GetWaveFunction(settings.WaveShape)(settings, time);
 		}
 
 		public static IOscillator GetOscillator(PropertyInfo property)
@@ -76,34 +75,117 @@ namespace Pseudo.Internal.Oscillation
 				return (IOscillator)Activator.CreateInstance(oscillatorType, property);
 		}
 
-		public static float Sine(float frequency, float amplitude, float center, float offset, float time)
+		public static float Sine(OscillationSettings settings, float time)
 		{
-			return amplitude * Mathf.Sin(frequency * time + offset) + center;
+			return settings.Amplitude * Mathf.Sin(settings.Frequency * 2f * Mathf.PI * time + settings.Offset) + settings.Center;
 		}
 
-		public static float Sawtooth(float frequency, float amplitude, float center, float offset, float time)
+		public static float Sawtooth(OscillationSettings settings, float time)
 		{
-			return amplitude * PMath.Triangle(frequency * time + offset, 1f) + center;
+			return settings.Amplitude * PMath.Triangle(settings.Frequency * time + settings.Offset, 1f) + settings.Center;
 		}
 
-		public static float Triangle(float frequency, float amplitude, float center, float offset, float ratio, float time)
+		public static float Triangle(OscillationSettings settings, float time)
 		{
-			return amplitude * PMath.Triangle(frequency * time + offset, ratio) + center;
+			return settings.Amplitude * PMath.Triangle(settings.Frequency * time + settings.Offset, settings.Ratio) + settings.Center;
 		}
 
-		public static float Square(float frequency, float amplitude, float center, float offset, float ratio, float time)
+		public static float Square(OscillationSettings settings, float time)
 		{
-			return amplitude * PMath.Square(frequency * time + offset, ratio) + center;
+			return settings.Amplitude * PMath.Square(settings.Frequency * time + settings.Offset, settings.Ratio) + settings.Center;
 		}
 
-		public static float WhiteNoise(float amplitude, float center)
+		public static float InCubic(OscillationSettings settings, float time)
 		{
-			return amplitude * ((float)PRandom.Generator.NextDouble() * 2f - 1f) + center;
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.InCubic(phase / settings.Ratio);
+			else
+				value = TweenUtility.InCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * value * 2f - 1f + settings.Center;
 		}
 
-		public static float PerlinNoise(float frequency, float amplitude, float center, float offset, float time)
+		public static float OutCubic(OscillationSettings settings, float time)
 		{
-			return amplitude * (Mathf.Clamp01(Mathf.PerlinNoise(time * frequency, offset)) * 2f - 1f) + center;
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.OutCubic(phase / settings.Ratio);
+			else
+				value = TweenUtility.OutCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * value * 2f - 1f + settings.Center;
+		}
+
+		public static float InOutCubic(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.InOutCubic(phase / settings.Ratio);
+			else
+				value = TweenUtility.InOutCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * value * 2f - 1f + settings.Center;
+		}
+
+		public static float OutInCubic(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.OutInCubic(phase / settings.Ratio);
+			else
+				value = TweenUtility.OutInCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * value * 2f - 1f + settings.Center;
+		}
+
+		public static float SmoothStep(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.SmoothStep(phase / settings.Ratio);
+			else
+				value = TweenUtility.SmoothStep(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * value * 2f - 1f + settings.Center;
+		}
+
+		public static float WhiteNoise(OscillationSettings settings, float time)
+		{
+			return settings.Amplitude * ((float)PRandom.Generator.NextDouble() * 2f - 1f) + settings.Center;
+		}
+
+		public static float PerlinNoise(OscillationSettings settings, float time)
+		{
+			return settings.Amplitude * (Mathf.Clamp01(Mathf.PerlinNoise(time * settings.Frequency, settings.Offset)) * 2f - 1f) + settings.Center;
+		}
+
+		public static Func<OscillationSettings, float, float> GetWaveFunction(WaveShapes waveShape)
+		{
+			return waveFunctions[(int)waveShape];
+		}
+
+		public static AnimationCurve ToAnimationCurve(OscillationSettings settings, int definition)
+		{
+			var keys = new Keyframe[definition];
+
+			for (int i = 0; i < definition; i++)
+			{
+				float ratio = (float)i / definition;
+				keys[i] = new Keyframe(ratio, Oscillate(settings, ratio));
+			}
+
+			return new AnimationCurve(keys);
 		}
 	}
 }

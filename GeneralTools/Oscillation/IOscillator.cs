@@ -11,10 +11,14 @@ namespace Pseudo
 	{
 		Sine,
 		Triangle,
-		Sawtooth,
 		Square,
+		InCubic,
+		OutCubic,
+		InOutCubic,
+		OutInCubic,
+		SmoothStep,
 		WhiteNoise,
-		PerlinNoise
+		PerlinNoise,
 	}
 
 	public interface IOscillator

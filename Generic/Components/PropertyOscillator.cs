@@ -19,7 +19,7 @@ namespace Pseudo
 			public MinMax Frequency = new MinMax(1f, 2f);
 			public MinMax Amplitude = new MinMax(0f, 1f);
 			public MinMax Center = new MinMax(0f, 0f);
-			public MinMax Offset = new MinMax(0f, 1f);
+			public MinMax Offset = new MinMax(0f, 100f);
 			public MinMax Ratio = new MinMax(0.5f, 0.5f);
 
 			public static implicit operator OscillationSettings(OscillationRangeSettings settings)

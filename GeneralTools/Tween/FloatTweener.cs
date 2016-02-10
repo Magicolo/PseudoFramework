@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class FloatTweener : IPoolable, ICopyable
+	public class FloatTweener : ICopyable
 	{
 		public enum TweenStates
 		{
@@ -71,17 +71,17 @@ namespace Pseudo
 			SetState(TweenStates.Stopped);
 		}
 
-		public void Ramp(float start, float end, float time, Action<float> setValue, Tweening.Ease ease = Tweening.Ease.Linear, Func<float> getDeltaTime = null, float delay = 0f, Action startCallback = null, Action endCallback = null)
+		public void Ramp(float start, float end, float time, Action<float> setValue, TweenUtility.Ease ease = TweenUtility.Ease.Linear, Func<float> getDeltaTime = null, float delay = 0f, Action startCallback = null, Action endCallback = null)
 		{
 			this.start = start;
 			this.end = end;
 			this.time = time;
-			this.setValue = setValue ?? Tweening.EmptyFloatAction;
-			this.easeFunction = Tweening.ToEaseFunction(ease);
-			this.getDeltaTime = getDeltaTime ?? (ApplicationUtility.IsPlaying ? Tweening.DefaultGetDeltaTime : Tweening.DefaultEditorGetDeltaTime);
+			this.setValue = setValue ?? TweenUtility.EmptyFloatAction;
+			this.easeFunction = TweenUtility.GetEaseFunction(ease);
+			this.getDeltaTime = getDeltaTime ?? (ApplicationUtility.IsPlaying ? TweenUtility.DefaultGetDeltaTime : TweenUtility.DefaultEditorGetDeltaTime);
 			this.delay = delay;
-			this.startCallback = startCallback ?? Tweening.EmptyAction;
-			this.endCallback = endCallback ?? Tweening.EmptyAction;
+			this.startCallback = startCallback ?? TweenUtility.EmptyAction;
+			this.endCallback = endCallback ?? TweenUtility.EmptyAction;
 
 			SetState(TweenStates.Waiting);
 			Update();
@@ -108,14 +108,6 @@ namespace Pseudo
 					endCallback();
 					break;
 			}
-		}
-
-		public virtual void OnCreate()
-		{
-		}
-
-		public virtual void OnRecycle()
-		{
 		}
 
 		public void Copy(object reference)

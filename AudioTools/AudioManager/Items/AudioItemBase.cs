@@ -370,7 +370,7 @@ namespace Pseudo.Internal.Audio
 
 			return volumeModifier.Value;
 		}
-		protected virtual void SetVolumeScale(float volume, float time, Tweening.Ease ease, bool fromSelf)
+		protected virtual void SetVolumeScale(float volume, float time, TweenUtility.Ease ease, bool fromSelf)
 		{
 			if (state == AudioStates.Stopped)
 				return;
@@ -401,13 +401,13 @@ namespace Pseudo.Internal.Audio
 		/// <param name="volume"> The target volume at which the AudioItem should be ramped to. </param>
 		/// <param name="time"> The duration of the ramping. </param>
 		/// <param name="ease"> The curve of the interpolation. </param>
-		public virtual void SetVolumeScale(float volume, float time, Tweening.Ease ease = Tweening.Ease.Linear) { SetVolumeScale(volume, time, ease, false); }
+		public virtual void SetVolumeScale(float volume, float time, TweenUtility.Ease ease = TweenUtility.Ease.Linear) { SetVolumeScale(volume, time, ease, false); }
 		/// <summary>
 		/// Sets the volume scale of the AudioItem and its hierarchy.
 		/// Other volume modifiers such as fades remain unaffected.
 		/// </summary>
 		/// <param name="volume"> The target volume at which the AudioItem should be set to. </param>
-		public virtual void SetVolumeScale(float volume) { SetVolumeScale(volume, 0f, Tweening.Ease.Linear, false); }
+		public virtual void SetVolumeScale(float volume) { SetVolumeScale(volume, 0f, TweenUtility.Ease.Linear, false); }
 
 		/// <summary>
 		/// </summary>
@@ -419,7 +419,7 @@ namespace Pseudo.Internal.Audio
 
 			return pitchModifier.Value;
 		}
-		protected virtual void SetPitchScale(float pitch, float time, Tweening.Ease ease, bool fromSelf)
+		protected virtual void SetPitchScale(float pitch, float time, TweenUtility.Ease ease, bool fromSelf)
 		{
 			if (state == AudioStates.Stopped)
 				return;
@@ -450,13 +450,13 @@ namespace Pseudo.Internal.Audio
 		/// <param name="pitch"> The target pitch at which the AudioItem should be ramped to. </param>
 		/// <param name="time"> The duration of the ramping. </param>
 		/// <param name="ease"> The curve of the interpolation. </param>
-		public virtual void SetPitchScale(float pitch, float time, Tweening.Ease ease = Tweening.Ease.Linear) { SetPitchScale(pitch, time, ease, false); }
+		public virtual void SetPitchScale(float pitch, float time, TweenUtility.Ease ease = TweenUtility.Ease.Linear) { SetPitchScale(pitch, time, ease, false); }
 		/// <summary>
 		/// Sets the pitch scale of the AudioItem and its hierarchy.
 		/// Other pitch modifiers such as fades remain unaffected.
 		/// </summary>
 		/// <param name="pitch"> The target pitch at which the AudioItem should be set to. </param>
-		public virtual void SetPitchScale(float pitch) { SetPitchScale(pitch, 0f, Tweening.Ease.Linear, false); }
+		public virtual void SetPitchScale(float pitch) { SetPitchScale(pitch, 0f, TweenUtility.Ease.Linear, false); }
 
 		/// <summary>
 		/// Internaly used by the pooling system.
