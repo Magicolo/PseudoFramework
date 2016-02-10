@@ -94,7 +94,7 @@ namespace Pseudo
 				var component = componentBehaviours[i];
 				var poolable = component as IPoolable;
 
-				if (poolable != null && component.Entity != null)
+				if (poolable != null)
 					poolable.OnCreate();
 			}
 		}
@@ -109,7 +109,7 @@ namespace Pseudo
 				var component = componentBehaviours[i];
 				var poolable = component as IPoolable;
 
-				if (poolable != null && component.Entity != null)
+				if (poolable != null)
 					poolable.OnRecycle();
 			}
 

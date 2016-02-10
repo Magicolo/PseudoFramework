@@ -29,9 +29,9 @@ namespace Tests
 		{
 			var reference = new DummyPoolable { Value1 = 1f, Value2 = "Boba" };
 			var instance = new DummyPoolable();
-			var initializer = PoolUtility.GetInitializer(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
 
-			initializer.Initialize(instance);
+			initializer.InitializeFields(instance);
 
 			Assert.That(instance.Value1, Is.EqualTo(reference.Value1));
 			Assert.That(instance.Value2, Is.EqualTo(reference.Value2));
@@ -42,9 +42,9 @@ namespace Tests
 		{
 			var reference = new DummyPoolable { Value3 = true, Value4 = ScriptableObject.CreateInstance<DummyScriptable>() };
 			var instance = new DummyPoolable();
-			var initializer = PoolUtility.GetInitializer(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
 
-			initializer.Initialize(instance);
+			initializer.InitializeFields(instance);
 
 			Assert.That(instance.Value3, Is.False);
 			Assert.That(instance.Value4, Is.Null);
@@ -55,9 +55,9 @@ namespace Tests
 		{
 			var reference = new DummyPoolable { Value5 = new DummyContent { Value1 = 1f, Value2 = "Boba" } };
 			var instance = new DummyPoolable();
-			var initializer = PoolUtility.GetInitializer(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
 
-			initializer.Initialize(instance);
+			initializer.InitializeFields(instance);
 
 			Assert.That(instance.Value5.Equals(reference.Value5));
 		}
@@ -67,9 +67,9 @@ namespace Tests
 		{
 			var reference = new DummyPoolable { Value6 = new[] { 0, 1, 2 }, Value7 = new List<char> { 'a', 'b', 'c' } };
 			var instance = new DummyPoolable();
-			var initializer = PoolUtility.GetInitializer(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
 
-			initializer.Initialize(instance);
+			initializer.InitializeFields(instance);
 
 			Assert.That(instance.Value6.ContentEquals(reference.Value6));
 			Assert.That(instance.Value7.ContentEquals(reference.Value7));
@@ -85,9 +85,9 @@ namespace Tests
 			};
 
 			var instance = new DummyPoolable();
-			var initializer = PoolUtility.GetInitializer(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
 
-			initializer.Initialize(instance);
+			initializer.InitializeFields(instance);
 
 			Assert.That(instance.Value8.ContentEquals(reference.Value8));
 			Assert.That(instance.Value9.ContentEquals(reference.Value9));
@@ -99,15 +99,15 @@ namespace Tests
 			var reference = new DummyPoolable();
 			reference.Value10 = reference;
 
-			PoolUtility.GetInitializer(reference);
+			PoolUtility.GetPoolInitializer(reference);
 		}
 
 		[Test]
 		public void PoolableCalls()
 		{
 			var reference = Substitute.For<DummyPoolable>();
-			var initializer = PoolUtility.GetInitializer(reference);
-			initializer.Initialize(reference);
+			var initializer = PoolUtility.GetPoolInitializer(reference);
+			initializer.InitializeFields(reference);
 
 			Received.InOrder(() =>
 			{

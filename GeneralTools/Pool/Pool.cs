@@ -156,9 +156,9 @@ namespace Pseudo
 			protected void Initialize()
 			{
 				if (initializer == null)
-					initializer = PoolUtility.GetInitializer(reference);
+					initializer = PoolUtility.GetPoolInitializer(reference);
 				else
-					lock (initializer) initializer = PoolUtility.GetInitializer(reference);
+					lock (initializer) initializer = PoolUtility.GetPoolInitializer(reference);
 
 				while (Size < startSize)
 					Enqueue(CreateInstance(), false);
@@ -195,7 +195,7 @@ namespace Pseudo
 			protected virtual object CreateInstance()
 			{
 				var instance = constructor();
-				initializer.Initialize(instance);
+				initializer.InitializeFields(instance);
 
 				return instance;
 			}
@@ -311,7 +311,7 @@ namespace Pseudo
 						}
 					}
 
-					lock (pool.initializer) pool.initializer.Initialize(instance);
+					lock (pool.initializer) pool.initializer.InitializeFields(instance);
 					lock (pool.instances) pool.instances.Enqueue(instance);
 				}
 			}

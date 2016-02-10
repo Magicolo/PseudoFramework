@@ -330,6 +330,17 @@ namespace Pseudo.Internal.Editor
 				case SerializedPropertyType.Bounds:
 					property.boundsValue = new Bounds(new Vector3(Mathf.Clamp(property.boundsValue.center.x, min, max), Mathf.Clamp(property.boundsValue.center.y, min, max), Mathf.Clamp(property.boundsValue.center.z, min, max)), new Vector3(Mathf.Clamp(property.boundsValue.size.x, min, max), Mathf.Clamp(property.boundsValue.size.y, min, max), Mathf.Clamp(property.boundsValue.size.z, min, max)));
 					break;
+				case SerializedPropertyType.Generic:
+					var value = property.GetValue();
+
+					if (value is MinMax)
+					{
+						var minMax = (MinMax)value;
+						minMax.Min = minMax.Min.Clamp(min, max);
+						minMax.Max = minMax.Max.Clamp(min, max);
+						property.SetValue(minMax);
+					}
+					break;
 			}
 		}
 
@@ -624,6 +635,14 @@ namespace Pseudo.Internal.Editor
 			}
 
 			return property;
+		}
+
+		public static void EnsureCapacity(this SerializedProperty arrayProperty, int capacity, System.Func<object> getDefaultValue = null)
+		{
+			getDefaultValue = getDefaultValue ?? delegate { return null; };
+
+			while (arrayProperty.arraySize < capacity)
+				arrayProperty.Add(getDefaultValue());
 		}
 	}
 }

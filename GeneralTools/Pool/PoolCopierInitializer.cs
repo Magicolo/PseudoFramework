@@ -18,7 +18,7 @@ namespace Pseudo.Internal.Pool
 			this.source = source;
 		}
 
-		public void Initialize(object instance)
+		public void InitializeFields(object instance)
 		{
 			copier.CopyTo(source, instance);
 		}

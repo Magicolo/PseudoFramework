@@ -9,6 +9,6 @@ namespace Pseudo.Internal.Pool
 {
 	public interface IPoolInitializer
 	{
-		void Initialize(object instance);
+		void InitializeFields(object instance);
 	}
 }

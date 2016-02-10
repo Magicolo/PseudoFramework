@@ -22,6 +22,9 @@ namespace Pseudo.Internal.Pool
 
 		public void SetValue(IList array, int index)
 		{
+			if (array == null)
+				return;
+
 			if (array.Count > index)
 			{
 				var value = array[index];

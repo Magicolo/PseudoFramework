@@ -77,7 +77,7 @@ namespace Pseudo.Internal.Editor
 		{
 			base.GetPropertyHeight(property, label);
 
-			return EditorGUIUtility.singleLineHeight + (beforeSeparator ? 16 : 0) + (afterSeparator ? 16 : 0); ;
+			return lineHeight + (beforeSeparator ? 16 : 0) + (afterSeparator ? 16 : 0); ;
 		}
 	}
 }
