@@ -54,11 +54,11 @@ namespace Pseudo
 		double RemainingTime();
 		void Resume();
 		void SetPitchScale(float pitch);
-		void SetPitchScale(float pitch, float time, Tweening.Ease ease = Tweening.Ease.Linear);
+		void SetPitchScale(float pitch, float time, TweenUtility.Ease ease = TweenUtility.Ease.Linear);
 		void SetRTPCValue(string name, float value);
 		void SetScheduledTime(double time);
 		void SetVolumeScale(float volume);
-		void SetVolumeScale(float volume, float time, Tweening.Ease ease = Tweening.Ease.Linear);
+		void SetVolumeScale(float volume, float time, TweenUtility.Ease ease = TweenUtility.Ease.Linear);
 		void Stop();
 		void StopImmediate();
 	}

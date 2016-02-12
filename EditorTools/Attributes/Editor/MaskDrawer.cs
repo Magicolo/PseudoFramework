@@ -16,9 +16,9 @@ namespace Pseudo.Internal.Editor
 
 			EditorGUI.BeginChangeCheck();
 
-			Array enumValues = Enum.GetValues(fieldInfo.FieldType);
+			var enumValues = Enum.GetValues(fieldInfo.FieldType);
 			int value = (int)enumValues.GetValue(property.GetValue<int>());
-			string[] options = GetDisplayOptions();
+			var options = GetDisplayOptions();
 			value = EditorGUI.MaskField(currentPosition, label, value, options);
 
 			if (EditorGUI.EndChangeCheck())
@@ -33,18 +33,16 @@ namespace Pseudo.Internal.Editor
 		string[] GetDisplayOptions()
 		{
 			int filter = ((MaskAttribute)attribute).Filter;
-			Array values = Enum.GetValues(fieldInfo.FieldType);
-			string[] names = Enum.GetNames(fieldInfo.FieldType);
-			List<string> options = new List<string>();
+			var values = Enum.GetValues(fieldInfo.FieldType);
+			var names = Enum.GetNames(fieldInfo.FieldType);
+			var options = new List<string>();
 
 			for (int i = 0; i < values.Length; i++)
 			{
 				int value = (int)values.GetValue(i);
 
 				if (((filter & value) != 0) && (value != 0) && ((value & (value - 1)) == 0))
-				{
 					options.Add(names[i]);
-				}
 			}
 
 			return options.ToArray();
@@ -55,9 +53,7 @@ namespace Pseudo.Internal.Editor
 			int sum = 0;
 
 			foreach (string option in options)
-			{
 				sum += (int)Enum.Parse(fieldInfo.FieldType, option);
-			}
 
 			return sum;
 		}

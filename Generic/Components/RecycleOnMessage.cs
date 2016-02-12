@@ -4,36 +4,43 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Zenject;
 
-public class RecycleOnMessage : ComponentBehaviour, IMessageable, ICopyable<RecycleOnMessage>
+namespace Pseudo
 {
-	public MessageEnum RecycleMessage;
-
-	bool recycle;
-
-	public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
-	readonly Lazy<EntityBehaviour> cachedEntityHolder;
-
-	protected RecycleOnMessage()
+	public class RecycleOnMessage : ComponentBehaviour, IMessageable, ICopyable<RecycleOnMessage>
 	{
-		cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
-	}
+		public MessageEnum RecycleMessage;
 
-	void LateUpdate()
-	{
-		if (recycle)
-			Entity.Manager.RecycleEntity(EntityHolder);
-	}
+		bool recycle;
 
-	void IMessageable.OnMessage<TId>(TId message)
-	{
-		recycle |= RecycleMessage.Equals(message);
-	}
+		public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
+		readonly Lazy<EntityBehaviour> cachedEntityHolder;
 
-	public void Copy(RecycleOnMessage reference)
-	{
-		RecycleMessage = reference.RecycleMessage;
-		recycle = reference.recycle;
+		protected RecycleOnMessage()
+		{
+			cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
+		}
+
+		void LateUpdate()
+		{
+			if (recycle)
+			{
+				recycle = false;
+				Entity.Manager.RecycleEntity(EntityHolder);
+			}
+		}
+
+		void IMessageable.OnMessage<TId>(TId message)
+		{
+			recycle |= RecycleMessage.Equals(message);
+		}
+
+		public void Copy(RecycleOnMessage reference)
+		{
+			base.Copy(reference);
+
+			RecycleMessage = reference.RecycleMessage;
+			recycle = reference.recycle;
+		}
 	}
 }

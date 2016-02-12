@@ -15,11 +15,11 @@ namespace Pseudo.Internal.Editor
 			float max = ((MaxAttribute)attribute).max;
 
 			EditorGUI.BeginChangeCheck();
+
 			EditorGUI.PropertyField(currentPosition, property, label, true);
+
 			if (EditorGUI.EndChangeCheck())
-			{
-				property.Max(max);
-			}
+				property.Min(max);
 
 			End();
 		}

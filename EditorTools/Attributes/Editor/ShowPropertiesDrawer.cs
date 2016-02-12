@@ -11,12 +11,12 @@ namespace Pseudo.Internal.Editor
 	{
 		SerializedObject serialized;
 		SerializedProperty iterator;
-		float totalHeight;
+		float height;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			drawPrefixLabel = false;
-			totalHeight = 0;
+			height = 0;
 
 			Begin(position, property, label);
 
@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Editor
 			if (property.GetValue() != null)
 				property.isExpanded = EditorGUI.Foldout(position, property.isExpanded, GUIContent.none);
 
-			totalHeight += position.height;
+			height += position.height;
 			position.y += position.height;
 
 			if (property.isExpanded && serialized != null)
@@ -43,7 +43,7 @@ namespace Pseudo.Internal.Editor
 				{
 					position.height = EditorGUI.GetPropertyHeight(iterator, iterator.displayName.ToGUIContent(), false);
 
-					totalHeight += position.height;
+					height += position.height;
 
 					EditorGUI.indentLevel = currentIndent + iterator.depth;
 					EditorGUI.PropertyField(position, iterator);
@@ -71,15 +71,15 @@ namespace Pseudo.Internal.Editor
 
 			serialized = property.objectReferenceValue == null ? null : new SerializedObject(property.objectReferenceValue);
 
-			if (totalHeight <= 0f)
+			if (height <= 0f)
 				InitializeHeight(property, label);
 
-			return totalHeight + (beforeSeparator ? 16f : 0f) + (afterSeparator ? 16f : 0f);
+			return height + (beforeSeparator ? 16f : 0f) + (afterSeparator ? 16f : 0f);
 		}
 
 		public void InitializeHeight(SerializedProperty property, GUIContent label)
 		{
-			totalHeight = EditorGUI.GetPropertyHeight(property, label, true);
+			height = EditorGUI.GetPropertyHeight(property, label, true);
 
 			if (property.isExpanded && serialized != null)
 			{
@@ -89,7 +89,7 @@ namespace Pseudo.Internal.Editor
 
 				while (true)
 				{
-					totalHeight += EditorGUI.GetPropertyHeight(iterator, iterator.displayName.ToGUIContent(), false);
+					height += EditorGUI.GetPropertyHeight(iterator, iterator.displayName.ToGUIContent(), false);
 
 					if (!iterator.NextVisible(iterator.isExpanded))
 					{

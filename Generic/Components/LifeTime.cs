@@ -5,29 +5,32 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-[RequireComponent(typeof(TimeComponent))]
-public class LifeTime : ComponentBehaviour, ICopyable<LifeTime>
+namespace Pseudo
 {
-	[Min]
-	public float Duration = 5f;
-	public EntityMessage OnDie;
-
-	float counter;
-
-	void Update()
+	public class LifeTime : ComponentBehaviour, ICopyable<LifeTime>
 	{
-		counter += Entity.GetTime().DeltaTime;
+		[Min]
+		public float Duration = 5f;
+		public EntityMessage OnDie;
+		public TimeComponent Time;
 
-		if (counter >= Duration)
-			Entity.SendMessage(OnDie);
-	}
+		float counter;
 
-	public void Copy(LifeTime reference)
-	{
-		base.Copy(reference);
+		void Update()
+		{
+			counter += Time.DeltaTime;
 
-		Duration = reference.Duration;
-		OnDie = reference.OnDie;
-		counter = reference.counter;
+			if (counter >= Duration)
+				Entity.SendMessage(OnDie);
+		}
+
+		public void Copy(LifeTime reference)
+		{
+			base.Copy(reference);
+
+			Duration = reference.Duration;
+			OnDie = reference.OnDie;
+			counter = reference.counter;
+		}
 	}
 }

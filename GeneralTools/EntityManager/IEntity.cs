@@ -17,9 +17,6 @@ namespace Pseudo
 
 	public interface IEntity : IPoolable
 	{
-		event Action<IEntity, IComponent> OnComponentAdded;
-		event Action<IEntity, IComponent> OnComponentRemoved;
-
 		bool Active { get; set; }
 		EntityGroups Groups { get; set; }
 		IList<IComponent> Components { get; }

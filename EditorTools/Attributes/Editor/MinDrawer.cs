@@ -19,9 +19,7 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.PropertyField(currentPosition, property, label, true);
 
 			if (EditorGUI.EndChangeCheck())
-			{
-				property.Min(min);
-			}
+				property.Max(min);
 
 			End();
 		}

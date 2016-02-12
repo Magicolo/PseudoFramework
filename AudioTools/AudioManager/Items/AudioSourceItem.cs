@@ -216,11 +216,11 @@ namespace Pseudo.Internal.Audio
 				{
 					case AudioOption.Types.VolumeScale:
 						float[] volumeData = option.GetValue<float[]>();
-						SetVolumeScale(volumeData[0], volumeData[1], (Tweening.Ease)volumeData[2], true);
+						SetVolumeScale(volumeData[0], volumeData[1], (TweenUtility.Ease)volumeData[2], true);
 						break;
 					case AudioOption.Types.PitchScale:
 						float[] pitchData = option.GetValue<float[]>();
-						SetPitchScale(pitchData[0], pitchData[1], (Tweening.Ease)pitchData[2], true);
+						SetPitchScale(pitchData[0], pitchData[1], (TweenUtility.Ease)pitchData[2], true);
 						break;
 					case AudioOption.Types.RandomVolume:
 						float randomVolume = option.GetValue<float>();
@@ -235,12 +235,12 @@ namespace Pseudo.Internal.Audio
 					case AudioOption.Types.FadeIn:
 						float[] fadeInData = option.GetValue<float[]>();
 						settings.FadeIn = fadeInData[0];
-						settings.FadeInEase = (Tweening.Ease)fadeInData[1];
+						settings.FadeInEase = (TweenUtility.Ease)fadeInData[1];
 						break;
 					case AudioOption.Types.FadeOut:
 						float[] fadeOutData = option.GetValue<float[]>();
 						settings.FadeIn = fadeOutData[0];
-						settings.FadeInEase = (Tweening.Ease)fadeOutData[1];
+						settings.FadeInEase = (TweenUtility.Ease)fadeOutData[1];
 						break;
 					case AudioOption.Types.Loop:
 						bool loop = option.GetValue<bool>();

@@ -188,7 +188,7 @@ namespace Pseudo.Internal.Audio
 
 				valueProperty.SetValue(data[0]);
 				timeProperty.SetValue(data[1]);
-				easeProperty.SetValue((Tweening.Ease)data[2]);
+				easeProperty.SetValue((TweenUtility.Ease)data[2]);
 			}
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
 			{
@@ -196,7 +196,7 @@ namespace Pseudo.Internal.Audio
 				data = data == null || data.Length != 2 ? AudioOption.GetDefaultValue(type) as float[] : data;
 
 				valueProperty.SetValue(data[0]);
-				easeProperty.SetValue((Tweening.Ease)data[1]);
+				easeProperty.SetValue((TweenUtility.Ease)data[1]);
 			}
 			else
 				valueProperty.SetValue(dynamicValue.GetValue());
@@ -213,9 +213,9 @@ namespace Pseudo.Internal.Audio
 			dynamicValue.SetValueType(valueType, isArray);
 
 			if (type == AudioOption.Types.VolumeScale || type == AudioOption.Types.PitchScale)
-				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), timeProperty.GetValue<float>(), (float)easeProperty.GetValue<Tweening.Ease>() });
+				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), timeProperty.GetValue<float>(), (float)easeProperty.GetValue<TweenUtility.Ease>() });
 			else if (type == AudioOption.Types.FadeIn || type == AudioOption.Types.FadeOut)
-				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), (float)easeProperty.GetValue<Tweening.Ease>() });
+				dynamicValue.SetValue(new float[] { valueProperty.GetValue<float>(), (float)easeProperty.GetValue<TweenUtility.Ease>() });
 			else
 				dynamicValue.SetValue(valueProperty.GetValue());
 

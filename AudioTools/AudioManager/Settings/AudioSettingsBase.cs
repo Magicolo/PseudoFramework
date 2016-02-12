@@ -44,7 +44,7 @@ namespace Pseudo
 		/// <summary>
 		/// Sets the fade in curve of the AudioSettingsBase.
 		/// </summary>
-		public Tweening.Ease FadeInEase = Tweening.Ease.InQuad;
+		public TweenUtility.Ease FadeInEase = TweenUtility.Ease.InQuad;
 		/// <summary>
 		/// Sets the duration of the fade out of the AudioSettingsBase.
 		/// </summary>
@@ -53,7 +53,7 @@ namespace Pseudo
 		/// <summary>
 		/// Sets the fade out curve of the AudioSettingsBase.
 		/// </summary>
-		public Tweening.Ease FadeOutEase = Tweening.Ease.OutQuad;
+		public TweenUtility.Ease FadeOutEase = TweenUtility.Ease.OutQuad;
 		/// <summary>
 		/// Sets the volume scale of the AudioSettingsBase.
 		/// </summary>

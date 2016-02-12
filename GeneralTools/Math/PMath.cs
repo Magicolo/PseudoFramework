@@ -28,5 +28,25 @@ namespace Pseudo
 		{
 			return Mathf.Sqrt(Mathf.Pow(a, 2f) + Mathf.Pow(b, 2f));
 		}
+
+		public static float Triangle(float phase, float ratio = 0.5f)
+		{
+			phase = phase % 1f;
+
+			if (phase < ratio)
+				return (phase / ratio) * 2f - 1f;
+			else
+				return (1f - ((phase - ratio) / (1f - ratio))) * 2f - 1f;
+		}
+
+		public static float Square(float phase, float ratio = 0.5f)
+		{
+			phase %= 1f;
+
+			if (phase < ratio)
+				return -1f;
+			else
+				return 1f;
+		}
 	}
 }

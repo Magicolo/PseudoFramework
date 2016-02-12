@@ -8,7 +8,6 @@ using Zenject;
 
 namespace Pseudo
 {
-	[RequireComponent(typeof(TimeComponent))]
 	public class GroupTarget : TargetBase, ICopyable<GroupTarget>
 	{
 		public enum TargetPreferences
@@ -23,6 +22,7 @@ namespace Pseudo
 		public TargetPreferences Prefer;
 		[Range(0.001f, 100)]
 		public float UpdateFrequency = 2f;
+		public TimeComponent Time;
 
 		public override Vector3 Target
 		{
@@ -52,7 +52,7 @@ namespace Pseudo
 
 		void Update()
 		{
-			counter += Entity.GetTime().DeltaTime;
+			counter += Time.DeltaTime;
 
 			if (counter >= 1f / UpdateFrequency)
 			{
@@ -93,9 +93,12 @@ namespace Pseudo
 
 		public void Copy(GroupTarget reference)
 		{
+			base.Copy(reference);
+
 			Group = reference.Group;
 			Prefer = reference.Prefer;
 			UpdateFrequency = reference.UpdateFrequency;
+			//Time = reference.Time;
 			//targetables = reference.targetables;
 			target = reference.target;
 			counter = reference.counter;

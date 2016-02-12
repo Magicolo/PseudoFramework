@@ -7,9 +7,6 @@ namespace Pseudo
 	[System.Serializable]
 	public class ArchitectToolControler : MonoBehaviour
 	{
-
-		ArchitectOld architect;
-
 		[Disable]
 		public ArchitectRotationFlip RotationFlip;
 		public bool FlipY { get { return RotationFlip.FlipY; } set { RotationFlip.FlipY = value; } }

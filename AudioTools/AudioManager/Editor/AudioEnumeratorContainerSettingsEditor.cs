@@ -37,7 +37,7 @@ namespace Pseudo.Internal.Audio
 
 				EditorGUILayout.PropertyField(sourceSettingsProperty);
 				EditorGUILayout.PropertyField(repeats.GetArrayElementAtIndex(index), "Repeat".ToGUIContent());
-				repeats.GetArrayElementAtIndex(index).Min(1f);
+				repeats.GetArrayElementAtIndex(index).Max(1f);
 				ArrayFoldout(sourceProperty.FindPropertyRelative("Options"), disableOnPlay: false);
 
 				EditorGUI.indentLevel--;

@@ -120,27 +120,29 @@ namespace Pseudo.Internal.Pool
 			return pool;
 		}
 
-		public static void InitializeFields(object instance, List<IPoolSetter> setters)
+		public static void InitializeFields(object instance, IPoolSetter[] setters)
 		{
 			bool isInitializable = instance is IPoolInitializable;
 
 			if (isInitializable)
 				((IPoolInitializable)instance).OnPrePoolInitialize();
 
-			for (int i = 0; i < setters.Count; i++)
+			for (int i = 0; i < setters.Length; i++)
 				setters[i].SetValue(instance);
 
 			if (isInitializable)
 				((IPoolInitializable)instance).OnPostPoolInitialize();
 		}
 
-		public static void Resize(IList array, int length)
+		public static void Resize(IList array, Type elementType, int length)
 		{
+			var defaultValue = TypeUtility.GetDefaultValue(elementType);
+
 			while (array.Count > length)
 				array.RemoveAt(array.Count - 1);
 
 			while (array.Count < length)
-				array.Add(null);
+				array.Add(defaultValue);
 		}
 
 		public static void ClearAllPools()
@@ -158,105 +160,14 @@ namespace Pseudo.Internal.Pool
 				new GameObject("Pool Manager").AddComponent<PoolJanitor>();
 		}
 
-		public static List<IPoolSetter> GetSetters(object instance)
+		public static IPoolInitializer GetPoolInitializer(object instance)
 		{
-			return GetSetters(instance, new List<object>());
-		}
+			var copier = CopyUtility.GetCopier(instance.GetType());
 
-		static List<IPoolSetter> GetSetters(object instance, List<object> toIgnore)
-		{
-			var type = instance.GetType();
-			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			var fields = new List<IPoolSetter>(allFields.Length);
-			bool isInitializable = instance is IPoolSettersInitializable;
-
-			if (isInitializable)
-				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
-
-			var copyer = CopyUtility.GetCopyer(type);
-
-			if (copyer != null)
-				fields.Add(new PoolCopyerSetter(copyer, instance));
+			if (copier == null)
+				return new PoolInitializer(instance);
 			else
-			{
-				for (int i = 0; i < allFields.Length; i++)
-				{
-					var field = allFields[i];
-					var value = field.GetValue(instance);
-
-					if (ShouldInitialize(field, value))
-						fields.Add(GetSetter(value, field, toIgnore));
-				}
-			}
-
-			if (isInitializable)
-				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(fields);
-
-			return fields;
-		}
-
-		static IPoolSetter GetSetter(object value, FieldInfo field, List<object> toIgnore)
-		{
-			if (value == null)
-				return new PoolSetter(field, value);
-			else if (toIgnore.Contains(value))
-				throw new InitializationCycleException(field);
-
-			if (value is IList)
-				return new PoolArraySetter(field, value.GetType(), GetElementSetters((IList)value, field, toIgnore));
-			else if (field.IsDefined(typeof(InitializeContentAttribute), true))
-			{
-				if (!(value is ValueType))
-					toIgnore.Add(value);
-
-				return new PoolContentSetter(field, value.GetType(), GetSetters(value, toIgnore));
-			}
-			else
-				return new PoolSetter(field, value);
-		}
-
-		static List<IPoolElementSetter> GetElementSetters(IList array, FieldInfo field, List<object> toIgnore)
-		{
-			var setters = new List<IPoolElementSetter>(array.Count);
-
-			for (int i = 0; i < array.Count; i++)
-				setters.Add(GetElementSetter(array[i], field, toIgnore));
-
-			return setters;
-		}
-
-		static IPoolElementSetter GetElementSetter(object element, FieldInfo field, List<object> toIgnore)
-		{
-			if (element == null)
-				return new PoolElementSetter(element);
-			else if (toIgnore.Contains(element))
-				throw new InitializationCycleException(field);
-
-			if (field.IsDefined(typeof(InitializeContentAttribute), true))
-			{
-				if (!(element is ValueType))
-					toIgnore.Add(element);
-
-				return new PoolElementContentSetter(element.GetType(), GetSetters(element, toIgnore));
-			}
-			else
-				return new PoolElementSetter(element);
-		}
-
-		static bool ShouldInitialize(FieldInfo field, object value)
-		{
-			if (value == null)
-				return true;
-			else if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
-				return true;
-			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
-				return false;
-			else if (field.IsInitOnly || field.IsBackingField())
-				return false;
-			else if ((value is UnityEngine.Object) && (field.IsPublic || field.IsDefined(typeof(SerializeField), true)) && field.DeclaringType.IsDefined(typeof(SerializableAttribute), true))
-				return false;
-			else
-				return true;
+				return new PoolCopierInitializer(copier, instance);
 		}
 	}
 

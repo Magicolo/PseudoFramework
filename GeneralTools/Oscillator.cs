@@ -7,7 +7,7 @@ using System;
 namespace Pseudo
 {
 	[Serializable]
-	public class Oscillator : IPoolable, ICopyable
+	public class OscillatorOld : IPoolable, ICopyable
 	{
 		public float Frequency = 1;
 		public float Amplitude = 1;
@@ -30,7 +30,7 @@ namespace Pseudo
 
 		public void Copy(object reference)
 		{
-			var castedReference = (Oscillator)reference;
+			var castedReference = (OscillatorOld)reference;
 			Frequency = castedReference.Frequency;
 			Amplitude = castedReference.Amplitude;
 			Center = castedReference.Center;

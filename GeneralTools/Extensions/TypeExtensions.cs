@@ -88,7 +88,7 @@ namespace Pseudo
 				return otherType.IsAssignableFrom(type);
 		}
 
-		public static bool IsNumeric(this Type type)
+		public static bool IsNumerical(this Type type)
 		{
 			return
 				type == typeof(sbyte) ||

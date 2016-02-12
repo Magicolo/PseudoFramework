@@ -13,9 +13,23 @@ namespace Pseudo
 		public bool Active
 		{
 			get { return enabled; }
-			set { enabled = value; }
+			set
+			{
+				if (Entity != null && enabled != value)
+				{
+					enabled = value;
+
+					if (enabled)
+						OnActivated();
+					else
+						OnDeactivated();
+				}
+			}
 		}
 		public IEntity Entity { get; set; }
+
+		public virtual void OnActivated() { }
+		public virtual void OnDeactivated() { }
 
 		public void Copy(ComponentBehaviour reference)
 		{

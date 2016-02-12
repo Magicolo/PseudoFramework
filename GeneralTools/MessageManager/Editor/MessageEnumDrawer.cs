@@ -39,7 +39,7 @@ namespace Pseudo.Internal.Editor
 
 			messageEnum = property.GetValue<MessageEnum>();
 
-			return EditorGUIUtility.singleLineHeight;
+			return lineHeight;
 		}
 
 		void ShowEnums()

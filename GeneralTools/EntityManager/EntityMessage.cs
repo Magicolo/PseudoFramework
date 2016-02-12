@@ -13,7 +13,7 @@ namespace Pseudo
 		public MessageEnum Message;
 		public MessagePropagation Propagation;
 
-		public EntityMessage(MessageEnum message, MessagePropagation propagation)
+		public EntityMessage(MessageEnum message, MessagePropagation propagation = MessagePropagation.Local)
 		{
 			Message = message;
 			Propagation = propagation;

@@ -10,10 +10,10 @@ namespace Pseudo.Internal.Pool
 	public class PoolElementContentSetter : IPoolElementSetter
 	{
 		readonly Type elementType;
-		readonly List<IPoolSetter> setters;
+		readonly IPoolSetter[] setters;
 		readonly bool isUnityObject;
 
-		public PoolElementContentSetter(Type elementType, List<IPoolSetter> setters)
+		public PoolElementContentSetter(Type elementType, IPoolSetter[] setters)
 		{
 			this.elementType = elementType;
 			this.setters = setters;
@@ -22,6 +22,9 @@ namespace Pseudo.Internal.Pool
 
 		public void SetValue(IList array, int index)
 		{
+			if (array == null)
+				return;
+
 			if (array.Count > index)
 			{
 				var value = array[index];

@@ -11,19 +11,19 @@ namespace Tests.Design.ArchitectTests
 {
 	public class ArchitectTest
 	{
+		//Architect architect;
 
-		Architect architect;
+		//[SetUp]
+		//public void Setup()
+		//{
+		//	architect = new Architect();
+		//}
 
-		[SetUp]
-		public void Setup()
-		{
-			architect = new Architect();
-		}
-
-		[TearDown]
-		public void TearDown()
-		{
-		}
+		//[TearDown]
+		//public void TearDown()
+		//{
+		//	architect = null;
+		//}
 
 		[Test]
 		public void OnNewMaptheMapIsEmpty()

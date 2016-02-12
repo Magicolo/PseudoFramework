@@ -330,6 +330,17 @@ namespace Pseudo.Internal.Editor
 				case SerializedPropertyType.Bounds:
 					property.boundsValue = new Bounds(new Vector3(Mathf.Clamp(property.boundsValue.center.x, min, max), Mathf.Clamp(property.boundsValue.center.y, min, max), Mathf.Clamp(property.boundsValue.center.z, min, max)), new Vector3(Mathf.Clamp(property.boundsValue.size.x, min, max), Mathf.Clamp(property.boundsValue.size.y, min, max), Mathf.Clamp(property.boundsValue.size.z, min, max)));
 					break;
+				case SerializedPropertyType.Generic:
+					var value = property.GetValue();
+
+					if (value is MinMax)
+					{
+						var minMax = (MinMax)value;
+						minMax.Min = minMax.Min.Clamp(min, max);
+						minMax.Max = minMax.Max.Clamp(min, max);
+						property.SetValue(minMax);
+					}
+					break;
 			}
 		}
 
@@ -353,88 +364,12 @@ namespace Pseudo.Internal.Editor
 
 		public static void Min(this SerializedProperty property, float min)
 		{
-			switch (property.propertyType)
-			{
-				case SerializedPropertyType.Integer:
-					property.intValue = (int)Mathf.Max(property.intValue, min);
-					break;
-				case SerializedPropertyType.Float:
-					property.floatValue = Mathf.Max(property.floatValue, min);
-					break;
-				case SerializedPropertyType.Color:
-					property.colorValue = new Color(Mathf.Max(property.colorValue.r, min), Mathf.Max(property.colorValue.g, min), Mathf.Max(property.colorValue.b, min), Mathf.Max(property.colorValue.a, min));
-					break;
-				case SerializedPropertyType.Enum:
-					property.enumValueIndex = (int)Mathf.Max(property.enumValueIndex, min);
-					break;
-				case SerializedPropertyType.Vector2:
-					property.vector2Value = new Vector2(Mathf.Max(property.vector2Value.x, min), Mathf.Max(property.vector2Value.y, min));
-					break;
-				case SerializedPropertyType.Vector3:
-					property.vector3Value = new Vector3(Mathf.Max(property.vector3Value.x, min), Mathf.Max(property.vector3Value.y, min), Mathf.Max(property.vector3Value.z, min));
-					break;
-				case SerializedPropertyType.Vector4:
-					property.vector4Value = new Vector4(Mathf.Max(property.vector4Value.x, min), Mathf.Max(property.vector4Value.y, min), Mathf.Max(property.vector4Value.z, min), Mathf.Max(property.vector4Value.w, min));
-					break;
-				case SerializedPropertyType.Quaternion:
-					property.quaternionValue = new Quaternion(Mathf.Max(property.quaternionValue.x, min), Mathf.Max(property.quaternionValue.y, min), Mathf.Max(property.quaternionValue.z, min), Mathf.Max(property.quaternionValue.w, min));
-					break;
-				case SerializedPropertyType.Rect:
-					property.rectValue = new Rect(Mathf.Max(property.rectValue.x, min), Mathf.Max(property.rectValue.y, min), Mathf.Max(property.rectValue.width, min), Mathf.Max(property.rectValue.height, min));
-					break;
-				case SerializedPropertyType.ArraySize:
-					property.intValue = (int)Mathf.Max(property.intValue, min);
-					break;
-				case SerializedPropertyType.AnimationCurve:
-					property.animationCurveValue = new AnimationCurve(property.animationCurveValue.Clamp(Mathf.Infinity, min, Mathf.Infinity, min).keys);
-					break;
-				case SerializedPropertyType.Bounds:
-					property.boundsValue = new Bounds(new Vector3(Mathf.Max(property.boundsValue.center.x, min), Mathf.Max(property.boundsValue.center.y, min), Mathf.Max(property.boundsValue.center.z, min)), new Vector3(Mathf.Max(property.boundsValue.size.x, min), Mathf.Max(property.boundsValue.size.y, min), Mathf.Max(property.boundsValue.size.z, min)));
-					break;
-			}
+			property.Clamp(float.MinValue, min);
 		}
 
 		public static void Max(this SerializedProperty property, float max)
 		{
-			switch (property.propertyType)
-			{
-				case SerializedPropertyType.Integer:
-					property.intValue = (int)Mathf.Min(property.intValue, max);
-					break;
-				case SerializedPropertyType.Float:
-					property.floatValue = Mathf.Min(property.floatValue, max);
-					break;
-				case SerializedPropertyType.Color:
-					property.colorValue = new Color(Mathf.Min(property.colorValue.r, max), Mathf.Min(property.colorValue.g, max), Mathf.Min(property.colorValue.b, max), Mathf.Min(property.colorValue.a, max));
-					break;
-				case SerializedPropertyType.Enum:
-					property.enumValueIndex = (int)Mathf.Min(property.enumValueIndex, max);
-					break;
-				case SerializedPropertyType.Vector2:
-					property.vector2Value = new Vector2(Mathf.Min(property.vector2Value.x, max), Mathf.Min(property.vector2Value.y, max));
-					break;
-				case SerializedPropertyType.Vector3:
-					property.vector3Value = new Vector3(Mathf.Min(property.vector3Value.x, max), Mathf.Min(property.vector3Value.y, max), Mathf.Min(property.vector3Value.z, max));
-					break;
-				case SerializedPropertyType.Vector4:
-					property.vector4Value = new Vector4(Mathf.Min(property.vector4Value.x, max), Mathf.Min(property.vector4Value.y, max), Mathf.Min(property.vector4Value.z, max), Mathf.Min(property.vector4Value.w, max));
-					break;
-				case SerializedPropertyType.Quaternion:
-					property.quaternionValue = new Quaternion(Mathf.Min(property.quaternionValue.x, max), Mathf.Min(property.quaternionValue.y, max), Mathf.Min(property.quaternionValue.z, max), Mathf.Min(property.quaternionValue.w, max));
-					break;
-				case SerializedPropertyType.Rect:
-					property.rectValue = new Rect(Mathf.Min(property.rectValue.x, max), Mathf.Min(property.rectValue.y, max), Mathf.Min(property.rectValue.width, max), Mathf.Min(property.rectValue.height, max));
-					break;
-				case SerializedPropertyType.ArraySize:
-					property.intValue = (int)Mathf.Min(property.intValue, max);
-					break;
-				case SerializedPropertyType.AnimationCurve:
-					property.animationCurveValue = new AnimationCurve(property.animationCurveValue.Clamp(Mathf.Infinity, max, Mathf.Infinity, max).keys);
-					break;
-				case SerializedPropertyType.Bounds:
-					property.boundsValue = new Bounds(new Vector3(Mathf.Min(property.boundsValue.center.x, max), Mathf.Min(property.boundsValue.center.y, max), Mathf.Min(property.boundsValue.center.z, max)), new Vector3(Mathf.Min(property.boundsValue.size.x, max), Mathf.Min(property.boundsValue.size.y, max), Mathf.Min(property.boundsValue.size.z, max)));
-					break;
-			}
+			property.Clamp(max, float.MaxValue);
 		}
 
 		public static SerializedProperty First(this SerializedProperty arrayProperty)
@@ -624,6 +559,14 @@ namespace Pseudo.Internal.Editor
 			}
 
 			return property;
+		}
+
+		public static void EnsureCapacity(this SerializedProperty arrayProperty, int capacity, System.Func<object> getDefaultValue = null)
+		{
+			getDefaultValue = getDefaultValue ?? delegate { return null; };
+
+			while (arrayProperty.arraySize < capacity)
+				arrayProperty.Add(getDefaultValue());
 		}
 	}
 }

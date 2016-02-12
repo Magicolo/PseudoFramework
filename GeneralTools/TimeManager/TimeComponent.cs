@@ -39,15 +39,16 @@ namespace Pseudo
 		[SerializeField]
 		TimeChannel time = new TimeChannel();
 
-		public override void OnCreate()
+		[Message(ComponentMessages.OnAdded)]
+		void OnAdd()
 		{
-			base.OnCreate();
-
 			time.ResetTime();
 		}
 
 		public void Copy(TimeComponent reference)
 		{
+			base.Copy(reference);
+
 			time.Copy(reference.time);
 		}
 

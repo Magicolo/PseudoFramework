@@ -24,7 +24,7 @@ namespace Pseudo.Internal.Editor
 
 			if (typeof(Enum).IsAssignableFrom(fieldInfo.FieldType))
 				DrawEnumFlag();
-			if (fieldInfo.FieldType.IsNumeric())
+			if (fieldInfo.FieldType.IsNumerical())
 				DrawNumericalFlag();
 			else if (fieldInfo.FieldType == typeof(ByteFlag))
 				DrawByteFlag();

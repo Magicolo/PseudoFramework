@@ -24,13 +24,14 @@ namespace Pseudo.Internal.Editor
 		protected SerializedProperty arrayProperty;
 
 		bool initialized;
-		Stack<int> indentStack = new Stack<int>();
-		Stack<float> labelWidthStack = new Stack<float>();
-		Stack<float> fieldWidthStack = new Stack<float>();
+		readonly Stack<int> indentStack = new Stack<int>();
+		readonly Stack<float> labelWidthStack = new Stack<float>();
+		readonly Stack<float> fieldWidthStack = new Stack<float>();
 
 		public virtual void Initialize(SerializedProperty property, GUIContent label)
 		{
 			initialized = true;
+			InitializeProperty(property, label);
 			isArray = fieldInfo == null ? false : typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
 			lineHeight = EditorGUIUtility.singleLineHeight;
 
@@ -48,11 +49,7 @@ namespace Pseudo.Internal.Editor
 
 			initPosition = position;
 			currentPosition = position;
-			currentProperty = property;
-			currentLabel = label;
-			serializedObject = property.serializedObject;
-			target = serializedObject.targetObject;
-			targets = serializedObject.targetObjects;
+			InitializeProperty(property, label);
 
 			EditorGUI.BeginProperty(position, label, property);
 			EditorGUI.BeginChangeCheck();
@@ -111,6 +108,12 @@ namespace Pseudo.Internal.Editor
 			PropertyField(property, property.displayName.ToGUIContent(), true);
 		}
 
+		public void BeginIndent(int indent)
+		{
+			indentStack.Push(EditorGUI.indentLevel);
+			EditorGUI.indentLevel = indent;
+		}
+
 		public void EndIndent()
 		{
 			EditorGUI.indentLevel = indentStack.Pop();
@@ -136,6 +139,15 @@ namespace Pseudo.Internal.Editor
 		public void EndFieldWidth()
 		{
 			EditorGUIUtility.fieldWidth = fieldWidthStack.Pop();
+		}
+
+		void InitializeProperty(SerializedProperty property, GUIContent label)
+		{
+			currentProperty = property;
+			currentLabel = label;
+			serializedObject = property.serializedObject;
+			target = serializedObject.targetObject;
+			targets = serializedObject.targetObjects;
 		}
 
 		public static object ObjectField(Rect position, object value, GUIContent label)
@@ -213,6 +225,48 @@ namespace Pseudo.Internal.Editor
 			EditorGUI.indentLevel = indent;
 		}
 
+		public static bool EnumFlag<T>(Rect position, SerializedProperty property, GUIContent label, params T[] values) where T : struct, IConvertible
+		{
+			bool changed = false;
+			var value = (T)Enum.ToObject(typeof(T), property.GetValue());
+
+			EditorGUI.BeginProperty(position, label, property);
+			EditorGUI.BeginChangeCheck();
+
+			value = EnumFlag(position, label, value, values);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				property.SetValue(value);
+				changed = true;
+			}
+			EditorGUI.EndProperty();
+
+			return changed;
+		}
+
+		public static void EnumFlag<T>(Rect position, SerializedProperty property, params T[] values) where T : struct, IConvertible
+		{
+			EnumFlag(position, property, property.ToGUIContent(), values);
+		}
+
+		public static T EnumFlag<T>(Rect position, GUIContent label, T value, params T[] values) where T : struct, IConvertible
+		{
+			values = values.Length == 0 ? (T[])Enum.GetValues(typeof(T)) : values;
+			label = label ?? GUIContent.none;
+			int mask = value.ToInt32(null);
+			var options = values.Convert(v => v.ToString());
+
+			mask = EditorGUI.MaskField(position, label, mask, options);
+
+			return (T)Enum.ToObject(typeof(T), mask);
+		}
+
+		public static T EnumFlag<T>(Rect position, T value, params T[] values) where T : struct, IConvertible
+		{
+			return EnumFlag(position, null, value, values);
+		}
+
 		public static bool ToggleButton(Rect position, bool value, GUIContent trueLabel, GUIContent falseLabel)
 		{
 			Rect labelPosition = new Rect(position.x - EditorGUI.indentLevel * 8f, position.y, position.width, position.height);
@@ -230,12 +284,6 @@ namespace Pseudo.Internal.Editor
 				EditorGUI.LabelField(labelPosition, falseLabel, style);
 
 			return value;
-		}
-
-		public void BeginIndent(int indent)
-		{
-			indentStack.Push(EditorGUI.indentLevel);
-			EditorGUI.indentLevel = indent;
 		}
 
 		public static int GetIndexFromLabel(GUIContent label)
