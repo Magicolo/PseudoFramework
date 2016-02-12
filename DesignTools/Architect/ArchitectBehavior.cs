@@ -14,18 +14,16 @@ namespace Pseudo
 		public Architect Architect;
 		public GUISkin skin;
 
+		public GameObject BaseMapRoot;
+
 		public ArchitectBehavior()
 		{
 			Architect = new Architect();
 		}
 
-		public void NewMap()
+		void Awake()
 		{
-
+			BaseMapRoot = new GameObject("MapRoot");
 		}
-
-		///
-		public void Test(string go, string go1)
-		{ }
 	}
 }
