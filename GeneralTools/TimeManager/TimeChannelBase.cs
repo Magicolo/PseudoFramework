@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal
 {
-	public abstract class TimeChannelBase : ITimeChannel, ICopyable<TimeChannelBase>
+	public abstract class TimeChannelBase : ITimeChannel
 	{
 		public TimeManager.TimeChannels Channel
 		{
@@ -57,13 +57,5 @@ namespace Pseudo.Internal
 		protected abstract float GetTime();
 		protected abstract float GetDeltaTime();
 		protected abstract float GetFixedDeltaTime();
-
-		public void Copy(TimeChannelBase reference)
-		{
-			channel = reference.channel;
-			timeScale = reference.timeScale;
-			time = reference.time;
-			lastTime = reference.lastTime;
-		}
 	}
 }

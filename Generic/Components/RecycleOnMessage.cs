@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class RecycleOnMessage : ComponentBehaviour, IMessageable, ICopyable<RecycleOnMessage>
+	public class RecycleOnMessage : ComponentBehaviour, IMessageable
 	{
 		public MessageEnum RecycleMessage;
 
@@ -33,14 +33,6 @@ namespace Pseudo
 		void IMessageable.OnMessage<TId>(TId message)
 		{
 			recycle |= RecycleMessage.Equals(message);
-		}
-
-		public void Copy(RecycleOnMessage reference)
-		{
-			base.Copy(reference);
-
-			RecycleMessage = reference.RecycleMessage;
-			recycle = reference.recycle;
 		}
 	}
 }

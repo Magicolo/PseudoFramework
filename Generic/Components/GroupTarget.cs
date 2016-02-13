@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Pseudo
 {
-	public class GroupTarget : TargetBase, ICopyable<GroupTarget>
+	public class GroupTarget : TargetBase
 	{
 		public enum TargetPreferences
 		{
@@ -39,6 +39,7 @@ namespace Pseudo
 			get { return target != null; }
 		}
 
+		[DoNotInitialize]
 		IEntityGroup targetables;
 		IEntity target;
 		float counter;
@@ -89,19 +90,6 @@ namespace Pseudo
 				target = null;
 				UpdateTarget();
 			}
-		}
-
-		public void Copy(GroupTarget reference)
-		{
-			base.Copy(reference);
-
-			Group = reference.Group;
-			Prefer = reference.Prefer;
-			UpdateFrequency = reference.UpdateFrequency;
-			//Time = reference.Time;
-			//targetables = reference.targetables;
-			target = reference.target;
-			counter = reference.counter;
 		}
 	}
 }

@@ -13,14 +13,24 @@ namespace Pseudo
 	public class PropertyOscillator : ComponentBehaviour
 	{
 		[Serializable]
-		public class OscillationRangeSettings
+		public struct OscillationRangeSettings
 		{
 			public WaveShapes WaveShape;
-			public MinMax Frequency = new MinMax(1f, 2f);
-			public MinMax Amplitude = new MinMax(0f, 1f);
-			public MinMax Center = new MinMax(0f, 0f);
-			public MinMax Offset = new MinMax(0f, 100f);
-			public MinMax Ratio = new MinMax(0.5f, 0.5f);
+			public MinMax Frequency;
+			public MinMax Amplitude;
+			public MinMax Center;
+			public MinMax Offset;
+			public MinMax Ratio;
+
+			public OscillationRangeSettings(WaveShapes waveShape)
+			{
+				WaveShape = waveShape;
+				Frequency = new MinMax(1f, 2f);
+				Amplitude = new MinMax(0f, 1f);
+				Center = new MinMax(0f, 0f);
+				Offset = new MinMax(0f, 100f);
+				Ratio = new MinMax(0.5f, 0.5f);
+			}
 
 			public static implicit operator OscillationSettings(OscillationRangeSettings settings)
 			{
@@ -100,7 +110,7 @@ namespace Pseudo
 		public TimeComponent Time;
 
 		[Message(ComponentMessages.OnAdded)]
-		void OnAdd()
+		void OnAdded()
 		{
 			Initialize();
 		}

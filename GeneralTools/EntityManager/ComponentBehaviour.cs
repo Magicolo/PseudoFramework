@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[RequireComponent(typeof(EntityBehaviour))]
-	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent, ICopyable<ComponentBehaviour>
+	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent
 	{
 		public bool Active
 		{
@@ -30,10 +30,5 @@ namespace Pseudo
 
 		public virtual void OnActivated() { }
 		public virtual void OnDeactivated() { }
-
-		public void Copy(ComponentBehaviour reference)
-		{
-			Entity = reference.Entity;
-		}
 	}
 }

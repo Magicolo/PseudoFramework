@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Pseudo
 {
-	public class LoadSceneOnMessage : ComponentBehaviour, IMessageable, ICopyable<LoadSceneOnMessage>
+	public class LoadSceneOnMessage : ComponentBehaviour, IMessageable
 	{
 		public MessageEnum LoadMessage;
 		public string Scene;
@@ -30,15 +30,6 @@ namespace Pseudo
 		public void OnMessage<TId>(TId message)
 		{
 			load |= LoadMessage.Equals(message);
-		}
-
-		public void Copy(LoadSceneOnMessage reference)
-		{
-			base.Copy(reference);
-
-			LoadMessage = reference.LoadMessage;
-			Scene = reference.Scene;
-			load = reference.load;
 		}
 	}
 }

@@ -180,6 +180,7 @@ namespace Pseudo.Internal.Editor
 					property.boundsValue = value == null ? default(Bounds) : (Bounds)value;
 					break;
 				case SerializedPropertyType.Generic:
+					property.serializedObject.ApplyModifiedProperties();
 					var path = property.GetAdjustedPath();
 					property.serializedObject.targetObject.SetValueToFieldAtPath(path, value);
 					property.serializedObject.Update();

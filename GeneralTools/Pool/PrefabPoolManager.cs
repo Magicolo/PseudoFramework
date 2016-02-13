@@ -51,6 +51,9 @@ namespace Pseudo
 
 		public static IPool GetPool(object prefab)
 		{
+			if (prefab == null)
+				return null;
+
 			IPool pool;
 
 			if (!pools.TryGetValue(prefab, out pool))
@@ -74,6 +77,9 @@ namespace Pseudo
 
 		public static void ClearPool(object prefab)
 		{
+			if (prefab == null)
+				return;
+
 			IPool pool;
 
 			if (pools.Pop(prefab, out pool))
@@ -91,6 +97,9 @@ namespace Pseudo
 
 		public static void ResetPool(object prefab)
 		{
+			if (prefab == null)
+				return;
+
 			IPool pool;
 
 			if (pools.TryGetValue(prefab, out pool))
@@ -112,7 +121,7 @@ namespace Pseudo
 
 		static void OnValidate(UnityEngine.Object instance)
 		{
-			if (UnityEditor.PrefabUtility.GetPrefabType(instance) != UnityEditor.PrefabType.Prefab)
+			if (!ApplicationUtility.IsPlaying || UnityEditor.PrefabUtility.GetPrefabType(instance) != UnityEditor.PrefabType.Prefab)
 				return;
 
 			Transform root = null;

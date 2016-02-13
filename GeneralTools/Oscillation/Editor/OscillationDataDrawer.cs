@@ -128,12 +128,12 @@ namespace Pseudo.Internal.Oscillation
 
 			if (data.Property.PropertyType == typeof(float))
 			{
-				dataProperty.EnsureCapacity(1, () => new PropertyOscillator.OscillationRangeSettings());
+				dataProperty.EnsureCapacity(1, () => new PropertyOscillator.OscillationRangeSettings(WaveShapes.Sine));
 				ShowSettings(dataProperty.GetArrayElementAtIndex(0));
 			}
 			else if (data.Property.PropertyType == typeof(Vector2))
 			{
-				dataProperty.EnsureCapacity(2, () => new PropertyOscillator.OscillationRangeSettings());
+				dataProperty.EnsureCapacity(2, () => new PropertyOscillator.OscillationRangeSettings(WaveShapes.Sine));
 				EnumFlag(currentPosition, flagsProperty, "Axes".ToGUIContent(), Axes.X, Axes.Y);
 				currentPosition.y += currentPosition.height + 2f;
 
@@ -144,7 +144,7 @@ namespace Pseudo.Internal.Oscillation
 			}
 			else if (data.Property.PropertyType == typeof(Vector3))
 			{
-				dataProperty.EnsureCapacity(3, () => new PropertyOscillator.OscillationRangeSettings());
+				dataProperty.EnsureCapacity(3, () => new PropertyOscillator.OscillationRangeSettings(WaveShapes.Sine));
 				EnumFlag(currentPosition, flagsProperty, "Axes".ToGUIContent(), Axes.X, Axes.Y, Axes.Z);
 				currentPosition.y += currentPosition.height + 2f;
 
@@ -157,7 +157,7 @@ namespace Pseudo.Internal.Oscillation
 			}
 			else if (data.Property.PropertyType == typeof(Vector4))
 			{
-				dataProperty.EnsureCapacity(4, () => new PropertyOscillator.OscillationRangeSettings());
+				dataProperty.EnsureCapacity(4, () => new PropertyOscillator.OscillationRangeSettings(WaveShapes.Sine));
 				EnumFlag(currentPosition, flagsProperty, "Axes".ToGUIContent(), Axes.X, Axes.Y, Axes.Z, Axes.W);
 				currentPosition.y += currentPosition.height + 2f;
 
@@ -172,7 +172,7 @@ namespace Pseudo.Internal.Oscillation
 			}
 			else if (data.Property.PropertyType == typeof(Color))
 			{
-				dataProperty.EnsureCapacity(4, () => new PropertyOscillator.OscillationRangeSettings());
+				dataProperty.EnsureCapacity(4, () => new PropertyOscillator.OscillationRangeSettings(WaveShapes.Sine));
 				EnumFlag(currentPosition, flagsProperty, "Channels".ToGUIContent(), Channels.R, Channels.G, Channels.B, Channels.A);
 				currentPosition.y += currentPosition.height + 2f;
 
