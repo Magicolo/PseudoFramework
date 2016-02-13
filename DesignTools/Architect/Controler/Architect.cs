@@ -10,9 +10,16 @@ namespace Pseudo
 	[Serializable]
 	public class Architect
 	{
-		public void CreateNewMap(string text, int width, int height)
+		public MapData MapData;
+		public void CreateNewMap(Transform parent, string mapName, int width, int height)
 		{
-			PDebug.Log(text, width, height);
+			MapData = new MapData(parent, mapName, width, height);
 		}
+
+		public LayerData AddLayerData(string layerName)
+		{
+			return MapData.AddLayer(layerName);
+		}
+
 	}
 }

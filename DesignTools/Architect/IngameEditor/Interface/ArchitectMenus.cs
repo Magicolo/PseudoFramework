@@ -10,7 +10,7 @@ namespace Pseudo
 	public class ArchitectMenus : MonoBehaviour
 	{
 
-		private Architect architect;
+		private ArchitectBehavior architect;
 
 		public Button SaveButton;
 		public Button OpenButton;
@@ -18,15 +18,15 @@ namespace Pseudo
 		public Button RedoButton;
 
 		public OpenFileBrowser OpenFileBrowser;
-		public GameObject NewFile;
 
+		public GameObject NewFile;
 		public InputField NewMapName;
 		public InputField NewMapWidth;
 		public InputField NewMapHeight;
 
 		void Awake()
 		{
-			architect = GetComponentInParent<ArchitectBehavior>().Architect;
+			architect = GetComponentInParent<ArchitectBehavior>();
 		}
 
 		public void Save()
@@ -52,7 +52,7 @@ namespace Pseudo
 			int width = InputFieldUtility.GetInt(NewMapWidth);
 			int height = InputFieldUtility.GetInt(NewMapHeight);
 
-			architect.CreateNewMap(NewMapName.text, width, height);
+			architect.Architect.CreateNewMap(architect.BaseMapRoot.transform, NewMapName.text, width, height);
 
 			NewFile.SetActive(false);
 		}

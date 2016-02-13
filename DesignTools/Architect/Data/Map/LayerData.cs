@@ -29,7 +29,6 @@ namespace Pseudo
 
 		public LayerData(Transform parent, string name, int layerWidth, int layerheight)
 		{
-
 			LayerWidth = layerWidth;
 			LayerHeight = layerheight;
 			tiles = new TileData[LayerWidth * LayerHeight];
