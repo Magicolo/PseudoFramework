@@ -43,9 +43,9 @@ namespace Pseudo
 			base.Enqueue(instance, initialize);
 		}
 
-		protected override object Dequeue()
+		protected override object GetInstance()
 		{
-			var instance = (T)base.Dequeue();
+			var instance = (T)base.GetInstance();
 			instance.gameObject.SetActive(true);
 
 			return instance;

@@ -13,10 +13,6 @@ namespace Pseudo
 	{
 		[SerializeField]
 		Rect rect = new Rect(0f, 0f, 1f, 1f);
-		[SerializeField]
-		bool draw = true;
-		[SerializeField]
-		Color color = new Color(1f, 0f, 0f, 0.5f);
 
 		public Rect LocalRect { get { return new Rect(rect.position - rect.size / 2f, rect.size); } set { rect = new Rect(value.center, value.size); } }
 		public Rect WorldRect
@@ -29,9 +25,14 @@ namespace Pseudo
 			}
 		}
 
+#if UNITY_EDITOR
+		[SerializeField]
+		bool draw = true;
+		[SerializeField]
+		Color color = new Color(1f, 0f, 0f, 0.5f);
+
 		void OnDrawGizmos()
 		{
-#if UNITY_EDITOR
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
@@ -41,8 +42,8 @@ namespace Pseudo
 			Gizmos.DrawWireCube(position, size);
 			Gizmos.color = color.SetValues(color.a / 4f, Channels.A);
 			Gizmos.DrawCube(position, size);
-#endif
 		}
+#endif
 
 		public override bool Contains(Vector3 point)
 		{

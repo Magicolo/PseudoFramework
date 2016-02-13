@@ -6,31 +6,38 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
 using UnityEngine.Assertions;
+using Pseudo.Internal.Communication;
 
-namespace Pseudo.Internal
+namespace Pseudo
 {
-	public class MessageManager : IMessageManager
+	public class MessageManager
 	{
+		readonly Dictionary<Type, object> typeToDispatcherGroup = new Dictionary<Type, object>();
+
 		public void Send<TId>(object target, TId identifier)
 		{
-			MessageGroup<TId>.Send(target, identifier, (object)null, (object)null, (object)null);
+			Send(target, identifier, (object)null);
 		}
 
 		public void Send<TId, TArg>(object target, TId identifier, TArg argument)
 		{
-			MessageGroup<TId>.Send(target, identifier, argument, (object)null, (object)null);
-		}
-
-		public void Send<TId, TArg1, TArg2>(object target, TId identifier, TArg1 argument1, TArg2 argument2)
-		{
-			MessageGroup<TId>.Send(target, identifier, argument1, argument2, (object)null);
-		}
-
-		public void Send<TId, TArg1, TArg2, TArg3>(object target, TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
 			Assert.IsNotNull(target);
 
-			MessageGroup<TId>.Send(target, identifier, argument1, argument2, argument3);
+			GetDispatcherGroup<TId>().Send(target, identifier, argument);
+		}
+
+		MessageDispatcherGroup<TId> GetDispatcherGroup<TId>()
+		{
+			var type = typeof(TId);
+			object dispatcherGroup;
+
+			if (!typeToDispatcherGroup.TryGetValue(type, out dispatcherGroup))
+			{
+				dispatcherGroup = new MessageDispatcherGroup<TId>();
+				typeToDispatcherGroup[type] = dispatcherGroup;
+			}
+
+			return (MessageDispatcherGroup<TId>)dispatcherGroup;
 		}
 	}
 }

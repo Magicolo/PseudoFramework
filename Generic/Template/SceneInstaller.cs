@@ -5,6 +5,7 @@ using System;
 using Pseudo;
 using Pseudo.Internal;
 using Pseudo.Internal.Entity;
+using Pseudo.Internal.Communication;
 
 namespace Pseudo
 {
@@ -18,7 +19,7 @@ namespace Pseudo
 		protected virtual void BindManagers()
 		{
 			Container.BindAllInterfacesToSingle<EntityManager>();
-			Container.BindAllInterfacesToSingle<MessageManager>();
+			Container.Bind<MessageManager>().ToSingle();
 			Container.BindAllInterfacesToSingle<EventManager>();
 			Container.BindLateTickablePriority<EventManager>(100);
 		}

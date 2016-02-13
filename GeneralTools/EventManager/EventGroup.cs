@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Communication
 {
 	public class EventGroup<TId> : IEventGroup
 	{
-		static readonly IEqualityComparer<TId> comparer = TypeUtility.GetEqualityComparer<TId>();
+		static readonly IEqualityComparer<TId> comparer = PEqualityComparer<TId>.Default;
 
 		IEventDispatcher allDispatcher0;
 		IEventDispatcher allDispatcher1;

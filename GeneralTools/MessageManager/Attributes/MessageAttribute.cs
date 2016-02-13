@@ -4,13 +4,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Scripting;
 
 namespace Pseudo
 {
 	[AttributeUsage(AttributeTargets.Method, Inherited = true, AllowMultiple = true)]
-	public sealed class MessageAttribute : Attribute
+	public sealed class MessageAttribute : PreserveAttribute
 	{
-		public object Identifier;
+		public readonly object Identifier;
 
 		public MessageAttribute(object identifier)
 		{

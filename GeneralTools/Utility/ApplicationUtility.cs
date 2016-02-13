@@ -19,6 +19,29 @@ namespace Pseudo
 			get { return mainThread != null && Thread.CurrentThread == mainThread; }
 		}
 
+		public static bool IsAOT
+		{
+			get
+			{
+#if UNITY_WEBGL || UNITY_IOS
+				return true;
+#else
+				return false;
+#endif
+			}
+		}
+		public static bool IsMultiThreaded
+		{
+			get
+			{
+#if UNITY_WEBGL
+				return false;
+#else
+				return true;
+#endif
+			}
+		}
+
 		static bool isPlaying;
 		static Thread mainThread;
 

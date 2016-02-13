@@ -6,8 +6,6 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
-using System.Runtime.Serialization;
-using System.Threading;
 
 namespace Pseudo.Internal.Pool
 {
@@ -20,15 +18,16 @@ namespace Pseudo.Internal.Pool
 			List
 		}
 
-		public static GameObject GameObject { get { return cachedGameObject; } }
-		public static Transform Transform { get { return cachedTransform; } }
+		public static readonly List<Action> ToUpdate = new List<Action>();
+		public static PoolJanitor Janitor { get { return cachedJanitor.Value; } }
+		public static GameObject GameObject { get { return Janitor.CachedGameObject; } }
+		public static Transform Transform { get { return Janitor.CachedTransform; } }
 
-		static readonly Lazy<GameObject> cachedGameObject = new Lazy<GameObject>(() =>
+		static readonly Lazy<PoolJanitor> cachedJanitor = new Lazy<PoolJanitor>(() =>
 		{
 			InitializeJanitor();
-			return PoolJanitor.Instance.CachedGameObject;
+			return PoolJanitor.Instance;
 		});
-		static readonly Lazy<Transform> cachedTransform = new Lazy<Transform>(() => cachedGameObject.Value.transform);
 
 		public static IPool CreateTypePool(Type type, int startSize)
 		{
@@ -147,10 +146,10 @@ namespace Pseudo.Internal.Pool
 
 		public static void ClearAllPools()
 		{
+			ToUpdate.Clear();
 			TypePoolManager.ClearPools();
 			PrefabPoolManager.ClearPools();
-			cachedGameObject.Reset();
-			cachedTransform.Reset();
+			cachedJanitor.Reset();
 			GC.Collect();
 		}
 
@@ -160,14 +159,14 @@ namespace Pseudo.Internal.Pool
 				new GameObject("Pool Manager").AddComponent<PoolJanitor>();
 		}
 
-		public static IPoolInitializer GetPoolInitializer(object instance)
+		public static IFieldInitializer GetPoolInitializer(object instance)
 		{
 			var copier = CopyUtility.GetCopier(instance.GetType());
 
 			if (copier == null)
-				return new PoolInitializer(instance);
+				return new FieldInitializer(instance);
 			else
-				return new PoolCopierInitializer(copier, instance);
+				return new CopierFieldInitializer(copier, instance);
 		}
 	}
 

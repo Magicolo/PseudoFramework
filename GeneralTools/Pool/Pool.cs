@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using System.Threading;
 using Pseudo.Internal;
 using System;
 using Pseudo.Internal.Pool;
 
 namespace Pseudo
 {
+	public delegate T Constructor<out T>();
+	public delegate void Destructor(object instance);
+
 	public class Pool<T> : Pool where T : class
 	{
 		public Pool(T reference, int startSize) : base(reference, reference.GetType(), null, null, startSize, true) { }
@@ -35,30 +37,21 @@ namespace Pseudo
 	{
 		public abstract class Pool : IPool
 		{
-			public delegate T Constructor<out T>();
-			public delegate void Destructor(object instance);
-
-			static readonly List<Pool> toUpdate = new List<Pool>(4);
-			static Thread updadeThread;
-
-			public Type Type { get; protected set; }
+			public Type Type { get; private set; }
 			public int Size
 			{
 				get { return hashedInstances.Count; }
 			}
 
 			protected readonly object reference;
-			protected readonly Constructor<object> constructor;
-			protected readonly Destructor destructor;
-			protected readonly int startSize;
-			protected readonly bool isPoolable;
-			protected readonly bool isInitializable;
-			protected readonly bool isSettersInitializable;
-			protected readonly HashSet<object> hashedInstances;
-			protected readonly Queue<object> instances;
-			protected readonly Queue<object> toInitialize;
-			protected IPoolInitializer initializer;
-			protected bool updating;
+
+			readonly Constructor<object> constructor;
+			readonly Destructor destructor;
+			readonly int startSize;
+			readonly bool isPoolable;
+			readonly HashSet<object> hashedInstances;
+			IPoolUpdater updater;
+			bool updating;
 
 			protected Pool(object reference, Type type, Constructor<object> constructor, Destructor destructor, int startSize, bool initialize)
 			{
@@ -71,11 +64,12 @@ namespace Pseudo
 
 				Type = type;
 				isPoolable = reference is IPoolable;
-				isInitializable = reference is IPoolInitializable;
-				isSettersInitializable = reference is IPoolSettersInitializable;
 				hashedInstances = new HashSet<object>();
-				instances = new Queue<object>(startSize);
-				toInitialize = new Queue<object>(startSize);
+
+				if (ApplicationUtility.IsMultiThreaded)
+					updater = new AsyncPoolUpdater();
+				else
+					updater = new SyncPoolUpdater();
 
 				if (initialize)
 					Initialize();
@@ -104,7 +98,7 @@ namespace Pseudo
 					((IPoolable)instance).OnRecycle();
 
 				Enqueue(instance, true);
-				Subscribe(this);
+				updater.Update();
 			}
 
 			public virtual void RecycleElements<T>(T elements) where T : class, IList
@@ -125,8 +119,7 @@ namespace Pseudo
 
 			public virtual void Clear()
 			{
-				lock (instances) instances.Clear();
-				lock (toInitialize) toInitialize.Clear();
+				updater.Clear();
 
 				var enumerator = hashedInstances.GetEnumerator();
 
@@ -136,29 +129,17 @@ namespace Pseudo
 				enumerator.Dispose();
 
 				hashedInstances.Clear();
-				Unsubscribe(this);
 			}
 
 			public virtual void Reset()
 			{
 				Initialize();
-
-				lock (toInitialize)
-				{
-					lock (instances)
-					{
-						while (instances.Count > 0)
-							toInitialize.Enqueue(instances.Dequeue());
-					}
-				}
+				updater.Reset();
 			}
 
 			protected void Initialize()
 			{
-				if (initializer == null)
-					initializer = PoolUtility.GetPoolInitializer(reference);
-				else
-					lock (initializer) initializer = PoolUtility.GetPoolInitializer(reference);
+				updater.Initializer = PoolUtility.GetPoolInitializer(reference);
 
 				while (Size < startSize)
 					Enqueue(CreateInstance(), false);
@@ -171,23 +152,17 @@ namespace Pseudo
 				if (isPoolable)
 					((IPoolable)instance).OnCreate();
 
-				Subscribe(this);
+				updater.Update();
 
 				return instance;
 			}
 
 			protected virtual object GetInstance()
 			{
-				object instance;
+				var instance = Dequeue();
 
-				do
-				{
-					if (instances.Count > 0)
-						instance = Dequeue();
-					else
-						instance = CreateInstance();
-				}
-				while (instance == null);
+				if (instance == null)
+					instance = CreateInstance();
 
 				return instance;
 			}
@@ -195,26 +170,20 @@ namespace Pseudo
 			protected virtual object CreateInstance()
 			{
 				var instance = constructor();
-				initializer.InitializeFields(instance);
+				updater.Initializer.InitializeFields(instance);
 
 				return instance;
 			}
 
 			protected virtual void Enqueue(object instance, bool initialize)
 			{
-				if (!hashedInstances.Add(instance))
-					return;
-
-				if (initialize)
-					lock (toInitialize) { toInitialize.Enqueue(instance); }
-				else
-					lock (instances) { instances.Enqueue(instance); }
+				if (hashedInstances.Add(instance))
+					updater.Enqueue(instance, initialize);
 			}
 
 			protected virtual object Dequeue()
 			{
-				object instance;
-				lock (instances) { instance = instances.Dequeue(); }
+				var instance = updater.Dequeue();
 				hashedInstances.Remove(instance);
 
 				return instance;
@@ -230,90 +199,6 @@ namespace Pseudo
 			object IPool.Create()
 			{
 				return CreateObject();
-			}
-
-			protected static void Subscribe(Pool pool)
-			{
-				InitializeUpdateThread();
-
-				if (pool.updating)
-					return;
-
-				pool.updating = true;
-				toUpdate.Add(pool);
-			}
-
-			protected static void Unsubscribe(Pool pool)
-			{
-				pool.updating = false;
-			}
-
-			static void InitializeUpdateThread()
-			{
-				if (updadeThread == null || updadeThread.ThreadState == ThreadState.Stopped)
-				{
-					updadeThread = new Thread(UpdateAsync);
-					updadeThread.Start();
-				}
-			}
-
-			static void UpdateAsync()
-			{
-				try
-				{
-					while (ApplicationUtility.IsPlaying)
-					{
-						for (int i = toUpdate.Count - 1; i >= 0; i--)
-						{
-							Pool pool;
-
-							lock (toUpdate)
-							{
-								if (toUpdate.Count > i)
-								{
-									pool = toUpdate[i];
-
-									if (pool == null || !pool.updating)
-									{
-										toUpdate.RemoveAt(i);
-										continue;
-									}
-								}
-								else
-									break;
-							}
-
-							UpdatePoolAsync(pool);
-						}
-
-						Thread.Sleep(100);
-					}
-				}
-				catch (Exception e) { Debug.LogError(e); }
-			}
-
-			static void UpdatePoolAsync(Pool pool)
-			{
-				int count = Mathf.Max(pool.Size / 2, 1);
-
-				for (int i = 0; i < count; i++)
-				{
-					object instance;
-
-					lock (pool.toInitialize)
-					{
-						if (pool.toInitialize.Count > 0)
-							instance = pool.toInitialize.Dequeue();
-						else
-						{
-							Unsubscribe(pool);
-							return;
-						}
-					}
-
-					lock (pool.initializer) pool.initializer.InitializeFields(instance);
-					lock (pool.instances) pool.instances.Enqueue(instance);
-				}
 			}
 		}
 	}

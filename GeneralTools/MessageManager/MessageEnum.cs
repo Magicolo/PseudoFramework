@@ -66,7 +66,7 @@ namespace Pseudo
 		public bool Equals<T>(T obj)
 		{
 			if (Value is T)
-				return TypeUtility.GetEqualityComparer<T>().Equals(obj, (T)(object)Value);
+				return PEqualityComparer<T>.Default.Equals(obj, (T)(object)Value);
 			else
 				return false;
 		}

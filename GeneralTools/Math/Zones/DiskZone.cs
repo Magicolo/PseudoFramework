@@ -12,17 +12,18 @@ namespace Pseudo
 	{
 		[SerializeField]
 		Disk disk = new Disk(0f, 0f, 0.5f, 1f);
+
+		public Disk LocalDisk { get { return disk; } set { disk = value; } }
+		public Disk WorldDisk { get { return new Disk(disk.Position.ToVector3() + CachedTransform.position, disk.InnerRadius, disk.OuterRadius); } }
+
+#if UNITY_EDITOR
 		[SerializeField]
 		bool draw = true;
 		[SerializeField]
 		Color color = new Color(1f, 0f, 0f, 0.5f);
 
-		public Disk LocalDisk { get { return disk; } set { disk = value; } }
-		public Disk WorldDisk { get { return new Disk(disk.Position.ToVector3() + CachedTransform.position, disk.InnerRadius, disk.OuterRadius); } }
-
 		void OnDrawGizmos()
 		{
-#if UNITY_EDITOR
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
@@ -36,8 +37,8 @@ namespace Pseudo
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, disk.InnerRadius);
 			UnityEditor.Handles.color = color.HueShift(0.5f).SetValues(color.a / 4f, Channels.A);
 			UnityEditor.Handles.DrawSolidDisc(position, Vector3.back, disk.InnerRadius);
-#endif
 		}
+#endif
 
 		public override bool Contains(Vector3 point)
 		{

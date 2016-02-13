@@ -4,66 +4,50 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using System.Reflection;
+using UnityEngine.Assertions;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Communication
 {
-	public class MessageDispatcher<T> : MessageDispatcherBase
+	public class MessageDispatcher<TId>
 	{
-		Action<T> message = delegate { };
+		readonly TId identifier;
+		readonly Dictionary<object, Delegate> targetToMethod = new Dictionary<object, Delegate>();
 
-		public MessageDispatcher(Action<T> message)
+		public MessageDispatcher(TId identifier)
 		{
-			this.message = message;
+			this.identifier = identifier;
 		}
 
-		public override void Send(object target)
+		public void Send<TArg>(object target, TArg argument)
 		{
-			message((T)target);
-		}
-	}
+			var dispatcher = GetMethod(target);
 
-	public class MessageDispatcher<T, TArg> : MessageDispatcherBase<TArg>
-	{
-		Action<T, TArg> message = delegate { };
+			if (dispatcher is Action<TArg>)
+				((Action<TArg>)dispatcher)(argument);
+			else if (dispatcher is Action)
+				((Action)dispatcher)();
+			else if (dispatcher != null)
+				throw new ArgumentException(string.Format("Argument signature does not exactly match target method's signature. Inheritance is not supported for AOT compiling readons."));
 
-		public MessageDispatcher(Action<T, TArg> message)
-		{
-			this.message = message;
-		}
+			if (target is IMessageable)
+				((IMessageable)target).OnMessage(identifier);
 
-		public override void Send(object target, TArg argument)
-		{
-			message((T)target, argument);
-		}
-	}
-
-	public class MessageDispatcher<T, TArg1, TArg2> : MessageDispatcherBase<TArg1, TArg2>
-	{
-		Action<T, TArg1, TArg2> message = delegate { };
-
-		public MessageDispatcher(Action<T, TArg1, TArg2> message)
-		{
-			this.message = message;
+			if (target is IMessageable<TId>)
+				((IMessageable<TId>)target).OnMessage(identifier);
 		}
 
-		public override void Send(object target, TArg1 argument1, TArg2 argument2)
+		Delegate GetMethod(object target)
 		{
-			message((T)target, argument1, argument2);
-		}
-	}
+			Delegate method;
 
-	public class MessageDispatcher<T, TArg1, TArg2, TArg3> : MessageDispatcherBase<TArg1, TArg2, TArg3>
-	{
-		Action<T, TArg1, TArg2, TArg3> message = delegate { };
+			if (!targetToMethod.TryGetValue(target, out method))
+			{
+				method = MessageUtility.CreateMethod(target, identifier);
+				targetToMethod[target] = method;
+			}
 
-		public MessageDispatcher(Action<T, TArg1, TArg2, TArg3> message)
-		{
-			this.message = message;
-		}
-
-		public override void Send(object target, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
-			message((T)target, argument1, argument2, argument3);
+			return method;
 		}
 	}
 }

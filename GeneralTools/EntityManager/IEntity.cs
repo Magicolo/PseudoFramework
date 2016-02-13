@@ -44,16 +44,10 @@ namespace Pseudo
 
 		void SendMessage(EntityMessage message);
 		void SendMessage<TArg>(EntityMessage message, TArg argument);
-		void SendMessage<TArg1, TArg2>(EntityMessage message, TArg1 argument1, TArg2 argument2);
-		void SendMessage<TArg1, TArg2, TArg3>(EntityMessage message, TArg1 argument1, TArg2 argument2, TArg3 argument3);
 		void SendMessage<TId>(TId identifier);
 		void SendMessage<TId>(TId identifier, MessagePropagation propagation);
 		void SendMessage<TId, TArg>(TId identifier, TArg argument);
 		void SendMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation);
-		void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2);
-		void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2, MessagePropagation propagation);
-		void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3);
-		void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, MessagePropagation propagation);
 
 		void SetParent(IEntity entity);
 		bool HasChild(IEntity entity);

@@ -48,63 +48,33 @@ namespace Pseudo.Internal.Entity
 
 		public void BroadcastMessage(EntityMessage message)
 		{
-			BroadcastMessage(message.Message.Value, (object)null, (object)null, (object)null, message.Propagation);
+			BroadcastMessage(message.Message.Value, (object)null, message.Propagation);
 		}
 
 		public void BroadcastMessage<TArg>(EntityMessage message, TArg argument)
 		{
-			BroadcastMessage(message.Message.Value, argument, (object)null, (object)null, message.Propagation);
-		}
-
-		public void BroadcastMessage<TArg1, TArg2>(EntityMessage message, TArg1 argument1, TArg2 argument2)
-		{
-			BroadcastMessage(message.Message.Value, argument1, argument2, (object)null, message.Propagation);
-		}
-
-		public void BroadcastMessage<TArg1, TArg2, TArg3>(EntityMessage message, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
-			BroadcastMessage(message.Message.Value, argument1, argument2, argument3, message.Propagation);
+			BroadcastMessage(message.Message.Value, argument, message.Propagation);
 		}
 
 		public void BroadcastMessage<TId>(TId identifier)
 		{
-			BroadcastMessage(identifier, (object)null, (object)null, (object)null, MessagePropagation.Local);
+			BroadcastMessage(identifier, (object)null, MessagePropagation.Local);
 		}
 
 		public void BroadcastMessage<TId>(TId identifier, MessagePropagation propagation)
 		{
-			BroadcastMessage(identifier, (object)null, (object)null, (object)null, propagation);
+			BroadcastMessage(identifier, (object)null, propagation);
 		}
 
 		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument)
 		{
-			BroadcastMessage(identifier, argument, (object)null, (object)null, MessagePropagation.Local);
+			BroadcastMessage(identifier, argument, MessagePropagation.Local);
 		}
 
 		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation)
 		{
-			BroadcastMessage(identifier, argument, (object)null, (object)null, propagation);
-		}
-
-		public void BroadcastMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
-		{
-			BroadcastMessage(identifier, argument1, argument2, (object)null, MessagePropagation.Local);
-		}
-
-		public void BroadcastMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2, MessagePropagation propagation)
-		{
-			BroadcastMessage(identifier, argument1, argument2, (object)null, propagation);
-		}
-
-		public void BroadcastMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
-			BroadcastMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
-		}
-
-		public void BroadcastMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, MessagePropagation propagation)
-		{
 			for (int i = entities.Count - 1; i >= 0; i--)
-				entities[i].SendMessage(identifier, argument1, argument2, argument3, propagation);
+				entities[i].SendMessage(identifier, argument, propagation);
 		}
 
 		public bool Contains(IEntity entity)

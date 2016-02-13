@@ -1,5 +1,6 @@
 ﻿using Pseudo;
 using Pseudo.Internal.Entity;
+using Pseudo.Internal.Communication;
 using Pseudo.Internal.Pool;
 using System;
 using System.Collections.Generic;
@@ -19,11 +20,11 @@ namespace Pseudo.Internal.Entity
 
 		readonly EntityGroup entities = new EntityGroup();
 		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
-		readonly IMessageManager messageManager;
+		readonly MessageManager messageManager;
 		[Inject]
 		readonly DiContainer container = null;
 
-		public EntityManager(IMessageManager messageManager)
+		public EntityManager(MessageManager messageManager)
 		{
 			this.messageManager = messageManager;
 		}
@@ -49,14 +50,14 @@ namespace Pseudo.Internal.Entity
 			return entity;
 		}
 
-		public EntityBehaviour CreateEntity(EntityBehaviour prefab)
+		public IEntity CreateEntity(EntityBehaviour prefab)
 		{
 			Assert.IsNotNull(prefab);
 
 			var entity = PrefabPoolManager.Create(prefab);
 			entity.Initialize(this, container);
 
-			return entity;
+			return entity.Entity;
 		}
 
 		public void RecycleEntity(IEntity entity)

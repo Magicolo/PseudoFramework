@@ -6,17 +6,32 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Communication
 {
 	public static class MessageUtility
 	{
-		static readonly Dictionary<Type, MethodInfo[]> typeToMethods = new Dictionary<Type, MethodInfo[]>();
-		static readonly Dictionary<MethodInfo, Type[]> methodToParameterTypes = new Dictionary<MethodInfo, Type[]>();
+		static readonly Dictionary<Type, MethodInfo[]> typeToMessageMethods = new Dictionary<Type, MethodInfo[]>();
 		static readonly Dictionary<MethodInfo, object[]> methodToAttributes = new Dictionary<MethodInfo, object[]>();
+		static readonly Dictionary<MethodInfo, Type> methodToActionType = new Dictionary<MethodInfo, Type>();
 
-		public static MethodInfo GetValidMethod<TId>(Type type, TId identifier)
+		public static Delegate CreateMethod<TId>(object dispatcher, TId identifier)
 		{
-			var methods = GetMethods(type);
+			var method = GetValidMethod(dispatcher.GetType(), identifier);
+
+			if (method == null)
+				return null;
+
+			var actionType = GetActionType(method);
+
+			if (actionType == null)
+				return null;
+
+			return Delegate.CreateDelegate(actionType, dispatcher, method);
+		}
+
+		static MethodInfo GetValidMethod<TId>(Type type, TId identifier)
+		{
+			var methods = GetMessageMethods(type);
 
 			for (int i = 0; i < methods.Length; i++)
 			{
@@ -26,11 +41,8 @@ namespace Pseudo.Internal
 				for (int j = 0; j < attributes.Length; j++)
 				{
 					var attribute = (MessageAttribute)attributes[j];
-					var comparer = TypeUtility.GetEqualityComparer<TId>();
 
-					if (attribute.Identifier != null &&
-						typeof(TId).IsAssignableFrom(attribute.Identifier.GetType()) &&
-						comparer.Equals(identifier, (TId)attribute.Identifier))
+					if (attribute.Identifier is TId && PEqualityComparer<TId>.Default.Equals(identifier, (TId)attribute.Identifier))
 						return method;
 				}
 			}
@@ -38,20 +50,7 @@ namespace Pseudo.Internal
 			return null;
 		}
 
-		public static Type[] GetParameterTypes(MethodInfo method)
-		{
-			Type[] parameterTypes;
-
-			if (!methodToParameterTypes.TryGetValue(method, out parameterTypes))
-			{
-				parameterTypes = new[] { method.DeclaringType }.Concat(method.GetParameters().Convert(p => p.ParameterType)).ToArray();
-				methodToParameterTypes[method] = parameterTypes;
-			}
-
-			return parameterTypes;
-		}
-
-		public static object[] GetAttributes(MethodInfo method)
+		static object[] GetAttributes(MethodInfo method)
 		{
 			object[] attributes;
 
@@ -64,17 +63,43 @@ namespace Pseudo.Internal
 			return attributes;
 		}
 
-		static MethodInfo[] GetMethods(Type type)
+		static MethodInfo[] GetMessageMethods(Type type)
 		{
 			MethodInfo[] methods;
 
-			if (!typeToMethods.TryGetValue(type, out methods))
+			if (!typeToMessageMethods.TryGetValue(type, out methods))
 			{
-				methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-				typeToMethods[type] = methods;
+				methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
+					.Where(m => !m.IsGenericMethod && m.IsDefined(typeof(MessageAttribute), true))
+					.ToArray();
+				typeToMessageMethods[type] = methods;
 			}
 
 			return methods;
+		}
+
+		static Type GetActionType(MethodInfo method)
+		{
+			Type actionType;
+
+			if (!methodToActionType.TryGetValue(method, out actionType))
+			{
+				var parameterTypes = method.GetParameters().Convert(p => p.ParameterType);
+
+				switch (parameterTypes.Length)
+				{
+					case 0:
+						actionType = typeof(Action);
+						break;
+					case 1:
+						actionType = typeof(Action<>).MakeGenericType(parameterTypes);
+						break;
+				}
+
+				methodToActionType[method] = actionType;
+			}
+
+			return actionType;
 		}
 	}
 }

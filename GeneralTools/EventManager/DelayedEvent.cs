@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Communication
 {
 	[Serializable]
 	public class DelayedEvent : IEvent, IPoolable

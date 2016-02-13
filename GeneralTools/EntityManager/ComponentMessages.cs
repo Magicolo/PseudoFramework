@@ -15,17 +15,4 @@ namespace Pseudo
 		OnAdded,
 		OnRemoved,
 	}
-
-	public class EntityMessagesComparer : IEqualityComparer<ComponentMessages>
-	{
-		public bool Equals(ComponentMessages x, ComponentMessages y)
-		{
-			return x == y;
-		}
-
-		public int GetHashCode(ComponentMessages obj)
-		{
-			return (int)obj;
-		}
-	}
 }

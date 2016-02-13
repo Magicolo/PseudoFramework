@@ -12,17 +12,18 @@ namespace Pseudo
 	{
 		[SerializeField]
 		Circle circle = new Circle(0f, 0f, 1f);
+
+		public Circle LocalCircle { get { return circle; } set { circle = value; } }
+		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
+
+#if UNITY_EDITOR
 		[SerializeField]
 		bool draw = true;
 		[SerializeField]
 		Color color = new Color(1f, 0f, 0f, 0.5f);
 
-		public Circle LocalCircle { get { return circle; } set { circle = value; } }
-		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
-
 		void OnDrawGizmos()
 		{
-#if UNITY_EDITOR
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
@@ -31,8 +32,8 @@ namespace Pseudo
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
 			UnityEditor.Handles.color = color.SetValues(color.a / 4f, Channels.A);
 			UnityEditor.Handles.DrawSolidDisc(position, Vector3.back, circle.Radius);
-#endif
 		}
+#endif
 
 		public override bool Contains(Vector3 point)
 		{

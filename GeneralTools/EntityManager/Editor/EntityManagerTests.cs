@@ -7,6 +7,7 @@ using Zenject;
 using Pseudo;
 using Pseudo.Internal.Entity;
 using Pseudo.Internal;
+using Pseudo.Internal.Communication;
 
 namespace Tests
 {
@@ -351,48 +352,6 @@ namespace Tests
 		}
 
 		[Test]
-		public void MessageTwoArgument()
-		{
-			var entity = entityManager.CreateEntity();
-			var component1 = Substitute.For<DummyComponent1>();
-			var component2 = Substitute.For<DummyComponent2>();
-			var component3 = Substitute.For<DummyComponent3>();
-
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
-			entity.SendMessage(2, 1, 2);
-
-			component1.Received(1).MessageTwoArguments(1, 2);
-			component2.Received(1).MessageTwoArguments(1, 2);
-			component3.Received(1).MessageTwoArguments(1, 2);
-			component1.Received(0).MessageInheritance(null);
-			component1.Received(1).OnMessage(2);
-			component1.Received(0).OnMessage("");
-		}
-
-		[Test]
-		public void MessageThreeArgument()
-		{
-			var entity = entityManager.CreateEntity();
-			var component1 = Substitute.For<DummyComponent1>();
-			var component2 = Substitute.For<DummyComponent2>();
-			var component3 = Substitute.For<DummyComponent3>();
-
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
-			entity.SendMessage(3, 1, 2, 3);
-
-			component1.Received(1).MessageThreeArguments(1, 2, 3);
-			component2.Received(1).MessageThreeArguments(1, 2, 3);
-			component3.Received(1).MessageThreeArguments(1, 2, 3);
-			component1.Received(0).MessageInheritance(null);
-			component1.Received(1).OnMessage(3);
-			component1.Received(0).OnMessage("");
-		}
-
-		[Test]
 		public void MessageInheritance()
 		{
 			var entity = entityManager.CreateEntity();
@@ -414,28 +373,12 @@ namespace Tests
 			entity.AddComponent(component);
 			entity.SendMessage(0);
 			entity.SendMessage(0, 1);
-			entity.SendMessage(0, 1, 2);
-			entity.SendMessage(0, 1, 2, 3);
 
 			entity.SendMessage(1);
 			entity.SendMessage(1, 1);
-			entity.SendMessage(1, 1, 2);
-			entity.SendMessage(1, 1, 2, 3);
-
-			entity.SendMessage(2);
-			entity.SendMessage(2, 1);
-			entity.SendMessage(2, 1, 2);
-			entity.SendMessage(2, 1, 2, 3);
-
-			entity.SendMessage(3);
-			entity.SendMessage(3, 1);
-			entity.SendMessage(3, 1, 2);
-			entity.SendMessage(3, 1, 2, 3);
 
 			component.Received(4).MessageNoArgument();
 			component.Received(4).MessageOneArgument(1);
-			component.Received(4).MessageTwoArguments(1, 2);
-			component.Received(4).MessageThreeArguments(1, 2, 3);
 			component.Received(0).MessageInheritance(null);
 			component.Received(12).OnMessage(0);
 			component.Received(0).OnMessage("");
@@ -456,7 +399,7 @@ namespace Tests
 
 			component1.Received(1).MessageConflict();
 			component2.Received(1).MessageConflict(1);
-			component3.Received(1).MessageConflict("", true);
+			component3.Received(1).MessageConflict("");
 			component1.Received(0).MessageInheritance(null);
 			component1.Received(0).OnMessage(0);
 			component1.Received(1).OnMessage("Fett");
@@ -543,21 +486,17 @@ namespace Tests
 
 			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
 			entity2.SendMessage(1, 1, MessagePropagation.DownwardsExclusive);
-			entity3.SendMessage(2, 1, 2, MessagePropagation.DownwardsInclusive);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
-			component1.Received(0).MessageTwoArguments(1, 2);
 			component1.Received(1).OnMessage(0);
 
 			component2.Received(1).MessageNoArgument();
 			component2.Received(0).MessageOneArgument(1);
-			component2.Received(0).MessageTwoArguments(1, 2);
 			component2.Received(2).OnMessage(0);
 
 			component3.Received(1).MessageNoArgument();
 			component3.Received(1).MessageOneArgument(1);
-			component3.Received(1).MessageTwoArguments(1, 2);
 		}
 
 		[Test]
@@ -582,21 +521,17 @@ namespace Tests
 
 			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
 			entity2.SendMessage(1, 1, MessagePropagation.DownwardsInclusive);
-			entity3.SendMessage(2, 1, 2, MessagePropagation.DownwardsInclusive);
 
 			component1.Received(0).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
-			component1.Received(0).MessageTwoArguments(1, 2);
 			component1.Received(0).OnMessage(0);
 
 			component2.Received(0).MessageNoArgument();
 			component2.Received(0).MessageOneArgument(1);
-			component2.Received(0).MessageTwoArguments(1, 2);
 			component2.Received(0).OnMessage(0);
 
 			component3.Received(1).MessageNoArgument();
 			component3.Received(1).MessageOneArgument(1);
-			component3.Received(1).MessageTwoArguments(1, 2);
 		}
 
 		[Test]
@@ -618,21 +553,17 @@ namespace Tests
 
 			entity1.SendMessage(0, MessagePropagation.UpwardsInclusive);
 			entity2.SendMessage(1, 1, MessagePropagation.UpwardsExclusive);
-			entity3.SendMessage(2, 1, 2, MessagePropagation.UpwardsInclusive);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);
-			component1.Received(1).MessageTwoArguments(1, 2);
 			component1.Received(3).OnMessage(0);
 
 			component2.Received(0).MessageNoArgument();
 			component2.Received(0).MessageOneArgument(1);
-			component2.Received(1).MessageTwoArguments(1, 2);
 			component2.Received(2).OnMessage(0);
 
 			component3.Received(0).MessageNoArgument();
 			component3.Received(0).MessageOneArgument(1);
-			component3.Received(1).MessageTwoArguments(1, 2);
 		}
 
 		[Test]
@@ -654,21 +585,17 @@ namespace Tests
 
 			entity1.SendMessage(0, MessagePropagation.Global);
 			entity2.SendMessage(1, 1, MessagePropagation.Global);
-			entity3.SendMessage(2, 1, 2, MessagePropagation.Global);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);
-			component1.Received(1).MessageTwoArguments(1, 2);
 			component1.Received(3).OnMessage(0);
 
 			component2.Received(1).MessageNoArgument();
 			component2.Received(1).MessageOneArgument(1);
-			component2.Received(1).MessageTwoArguments(1, 2);
 			component2.Received(3).OnMessage(0);
 
 			component3.Received(1).MessageNoArgument();
 			component3.Received(1).MessageOneArgument(1);
-			component3.Received(1).MessageTwoArguments(1, 2);
 		}
 		#endregion
 
@@ -782,10 +709,6 @@ namespace Tests
 			public void MessageNoArgument() { }
 			[Message(1)]
 			public void MessageOneArgument(int arg) { }
-			[Message(2)]
-			public void MessageTwoArguments(int arg1, int arg2) { }
-			[Message(3)]
-			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
 			[Message("Boba")]
 			public void MessageInheritance(IComponent component) { }
 			[Message("Fett")]
@@ -805,10 +728,6 @@ namespace Tests
 			public void MessageNoArgument() { }
 			[Message(1)]
 			public void MessageOneArgument(int arg) { }
-			[Message(2)]
-			public void MessageTwoArguments(int arg1, int arg2) { }
-			[Message(3)]
-			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
 			[Message("Fett")]
 			public void MessageConflict(int arg) { }
 
@@ -824,12 +743,8 @@ namespace Tests
 			public void MessageNoArgument() { }
 			[Message(1)]
 			public void MessageOneArgument(int arg) { }
-			[Message(2)]
-			public void MessageTwoArguments(int arg1, int arg2) { }
-			[Message(3)]
-			public void MessageThreeArguments(int arg1, int arg2, int arg3) { }
 			[Message("Fett")]
-			public void MessageConflict(string arg1, bool arg2) { }
+			public void MessageConflict(string arg) { }
 		}
 	}
 }

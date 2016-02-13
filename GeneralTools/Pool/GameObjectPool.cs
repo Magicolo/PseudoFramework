@@ -45,9 +45,9 @@ namespace Pseudo
 				gameObject.transform.parent = Transform;
 		}
 
-		protected override object Dequeue()
+		protected override object GetInstance()
 		{
-			var instance = (GameObject)base.Dequeue();
+			var instance = (GameObject)base.GetInstance();
 			instance.SetActive(true);
 
 			return instance;

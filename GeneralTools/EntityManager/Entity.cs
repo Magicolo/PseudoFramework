@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Pseudo.Internal.Communication;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -44,7 +45,7 @@ namespace Pseudo.Internal.Entity
 		EntityGroups groups;
 		IEntity parent;
 		IEntityManager entityManager = null;
-		IMessageManager messageManager = null;
+		MessageManager messageManager = null;
 		[DoNotInitialize]
 		IComponent[] singleComponents;
 		[DoNotInitialize]
@@ -68,7 +69,7 @@ namespace Pseudo.Internal.Entity
 			readonlyComponentIndices = componentIndices.AsReadOnly();
 		}
 
-		public void Initialize(IEntityManager entityManager, IMessageManager messageManager, EntityGroups groups, bool active)
+		public void Initialize(IEntityManager entityManager, MessageManager messageManager, EntityGroups groups, bool active)
 		{
 			this.entityManager = entityManager;
 			this.messageManager = messageManager;
@@ -194,60 +195,30 @@ namespace Pseudo.Internal.Entity
 
 		public void SendMessage(EntityMessage message)
 		{
-			SendMessage(message.Message.Value, (object)null, (object)null, (object)null, message.Propagation);
+			SendMessage(message.Message.Value, (object)null, message.Propagation);
 		}
 
 		public void SendMessage<TArg>(EntityMessage message, TArg argument)
 		{
-			SendMessage(message.Message.Value, argument, (object)null, (object)null, message.Propagation);
-		}
-
-		public void SendMessage<TArg1, TArg2>(EntityMessage message, TArg1 argument1, TArg2 argument2)
-		{
-			SendMessage(message.Message.Value, argument1, argument2, (object)null, message.Propagation);
-		}
-
-		public void SendMessage<TArg1, TArg2, TArg3>(EntityMessage message, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
-			SendMessage(message.Message.Value, argument1, argument2, argument3, message.Propagation);
+			SendMessage(message.Message.Value, argument, message.Propagation);
 		}
 
 		public void SendMessage<TId>(TId identifier)
 		{
-			SendMessage(identifier, (object)null, (object)null, (object)null, MessagePropagation.Local);
+			SendMessage(identifier, (object)null, MessagePropagation.Local);
 		}
 
 		public void SendMessage<TId>(TId identifier, MessagePropagation propagation)
 		{
-			SendMessage(identifier, (object)null, (object)null, (object)null, propagation);
+			SendMessage(identifier, (object)null, propagation);
 		}
 
 		public void SendMessage<TId, TArg>(TId identifier, TArg argument)
 		{
-			SendMessage(identifier, argument, (object)null, (object)null, MessagePropagation.Local);
+			SendMessage(identifier, argument, MessagePropagation.Local);
 		}
 
 		public void SendMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation)
-		{
-			SendMessage(identifier, argument, (object)null, (object)null, propagation);
-		}
-
-		public void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2)
-		{
-			SendMessage(identifier, argument1, argument2, (object)null, MessagePropagation.Local);
-		}
-
-		public void SendMessage<TId, TArg1, TArg2>(TId identifier, TArg1 argument1, TArg2 argument2, MessagePropagation propagation)
-		{
-			SendMessage(identifier, argument1, argument2, (object)null, propagation);
-		}
-
-		public void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3)
-		{
-			SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
-		}
-
-		public void SendMessage<TId, TArg1, TArg2, TArg3>(TId identifier, TArg1 argument1, TArg2 argument2, TArg3 argument3, MessagePropagation propagation)
 		{
 			if (!Active)
 				return;
@@ -260,27 +231,27 @@ namespace Pseudo.Internal.Entity
 						var component = allComponents[i];
 
 						if (component.Active)
-							messageManager.Send(component, identifier, argument1, argument2, argument3);
+							messageManager.Send(component, identifier, argument);
 					}
 					break;
 				case MessagePropagation.Global:
-					entityManager.Entities.BroadcastMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
+					entityManager.Entities.BroadcastMessage(identifier, argument, MessagePropagation.Local);
 					break;
 				case MessagePropagation.UpwardsInclusive:
-					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
-					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.UpwardsExclusive);
+					SendMessage(identifier, argument, MessagePropagation.Local);
+					SendMessage(identifier, argument, MessagePropagation.UpwardsExclusive);
 					break;
 				case MessagePropagation.UpwardsExclusive:
 					if (parent != null)
-						parent.SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.UpwardsInclusive);
+						parent.SendMessage(identifier, argument, MessagePropagation.UpwardsInclusive);
 					break;
 				case MessagePropagation.DownwardsInclusive:
-					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.Local);
-					SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.DownwardsExclusive);
+					SendMessage(identifier, argument, MessagePropagation.Local);
+					SendMessage(identifier, argument, MessagePropagation.DownwardsExclusive);
 					break;
 				case MessagePropagation.DownwardsExclusive:
 					for (int i = 0; i < children.Count; i++)
-						children[i].SendMessage(identifier, argument1, argument2, argument3, MessagePropagation.DownwardsInclusive);
+						children[i].SendMessage(identifier, argument, MessagePropagation.DownwardsInclusive);
 					break;
 			}
 		}

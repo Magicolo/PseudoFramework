@@ -15,8 +15,8 @@ namespace Pseudo
 		static readonly Dictionary<Type, Type[]> typeToSubclassTypes = new Dictionary<Type, Type[]>();
 		static readonly Dictionary<Type, Type[]> typeToDefinedTypes = new Dictionary<Type, Type[]>();
 		static readonly Dictionary<Type, FieldInfo[]> typeToFields = new Dictionary<Type, FieldInfo[]>();
-		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
 		static readonly Dictionary<Type, object> typeToDefaultValue = new Dictionary<Type, object>();
+		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
 
 		static Type[] allTypes;
 		public static Type[] AllTypes
@@ -143,26 +143,6 @@ namespace Pseudo
 			}
 
 			return type;
-		}
-
-		public static IEqualityComparer<T> GetEqualityComparer<T>()
-		{
-			return EqualityComparerHolder<T>.Comparer;
-		}
-
-		static class EqualityComparerHolder<T>
-		{
-			public static IEqualityComparer<T> Comparer = CreateComparer();
-
-			static IEqualityComparer<T> CreateComparer()
-			{
-				var comparerType = Array.Find(GetAssignableTypes(typeof(IEqualityComparer<T>), false), t => !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
-
-				if (comparerType == null)
-					return EqualityComparer<T>.Default;
-				else
-					return (IEqualityComparer<T>)Activator.CreateInstance(comparerType);
-			}
 		}
 	}
 }

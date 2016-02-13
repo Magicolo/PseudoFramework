@@ -12,7 +12,7 @@ namespace Pseudo
 		IEntity CreateEntity();
 		IEntity CreateEntity(EntityGroups groups);
 		IEntity CreateEntity(EntityGroups groups, bool active);
-		EntityBehaviour CreateEntity(EntityBehaviour prefab);
+		IEntity CreateEntity(EntityBehaviour prefab);
 		void RecycleEntity(IEntity entity);
 		void RecycleEntity(EntityBehaviour instance);
 		void AddEntity(IEntity entity);
