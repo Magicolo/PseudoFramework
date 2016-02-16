@@ -11,10 +11,6 @@ namespace Pseudo
 {
 	public static class TypeUtility
 	{
-		static readonly Dictionary<Type, Type[]> typeToAssignableTypes = new Dictionary<Type, Type[]>();
-		static readonly Dictionary<Type, Type[]> typeToSubclassTypes = new Dictionary<Type, Type[]>();
-		static readonly Dictionary<Type, Type[]> typeToDefinedTypes = new Dictionary<Type, Type[]>();
-		static readonly Dictionary<Type, FieldInfo[]> typeToFields = new Dictionary<Type, FieldInfo[]>();
 		static readonly Dictionary<Type, object> typeToDefaultValue = new Dictionary<Type, object>();
 		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
 
@@ -24,15 +20,7 @@ namespace Pseudo
 			get
 			{
 				if (allTypes == null)
-				{
-					var types = new List<Type>(512);
-					var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-
-					foreach (var assembly in assemblies)
-						types.AddRange(assembly.GetTypes());
-
-					allTypes = types.ToArray();
-				}
+					allTypes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(a => a.GetTypes()).ToArray();
 
 				return allTypes;
 			}
@@ -40,91 +28,29 @@ namespace Pseudo
 
 		public static Type[] GetSubclasses(Type baseType)
 		{
-			Type[] types;
-
-			if (!typeToSubclassTypes.TryGetValue(baseType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if (type.IsSubclassOf(baseType))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				typeToSubclassTypes[baseType] = types;
-			}
-
-			return types;
+			return AllTypes.Where(t => t.IsSubclassOf(baseType)).ToArray();
 		}
 
 		public static Type[] GetAssignableTypes(Type baseType, bool includeSelf = true)
 		{
-			Type[] types;
-
-			if (!typeToAssignableTypes.TryGetValue(baseType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if ((type != baseType || includeSelf) && baseType.IsAssignableFrom(type))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				typeToAssignableTypes[baseType] = types;
-			}
-
-			return types;
+			return AllTypes.Where(t => (includeSelf || t != baseType) && baseType.IsAssignableFrom(t)).ToArray();
 		}
 
 		public static Type[] GetDefinedTypes(Type attributeType)
 		{
-			Type[] types;
-
-			if (!typeToDefinedTypes.TryGetValue(attributeType, out types))
-			{
-				var typeList = new List<Type>();
-
-				foreach (var type in AllTypes)
-				{
-					if (type.IsDefined(attributeType, true))
-						typeList.Add(type);
-				}
-
-				types = typeList.ToArray();
-				typeToDefinedTypes[attributeType] = types;
-			}
-
-			return types;
-		}
-
-		public static FieldInfo[] GetAllFields(Type type)
-		{
-			FieldInfo[] fields;
-
-			if (!typeToFields.TryGetValue(type, out fields))
-			{
-				fields = type.GetFields(ReflectionExtensions.AllFlags);
-				typeToFields[type] = fields;
-			}
-
-			return fields;
+			return AllTypes.Where(t => t.IsDefined(attributeType, true)).ToArray();
 		}
 
 		public static object GetDefaultValue(Type type)
 		{
+			if (type.IsClass)
+				return null;
+
 			object defaultValue;
 
 			if (!typeToDefaultValue.TryGetValue(type, out defaultValue))
 			{
-				if (type.IsValueType)
-					defaultValue = Activator.CreateInstance(type);
-				else
-					defaultValue = null;
-
+				defaultValue = Activator.CreateInstance(type);
 				typeToDefaultValue[type] = defaultValue;
 			}
 

@@ -247,7 +247,7 @@ namespace Pseudo.Internal
 			typeSerializers = new Dictionary<Type, IBinarySerializer>();
 			idSerializers = new Dictionary<ushort, IBinarySerializer>();
 
-			var types = typeof(IBinarySerializer).GetAssignableTypes();
+			var types = TypeUtility.GetAssignableTypes(typeof(IBinarySerializer));
 
 			for (int i = 0; i < types.Length; i++)
 			{

@@ -37,13 +37,13 @@ namespace Pseudo.Internal
 		{
 			BuildComboDict();
 
-			inputEnumType = TypeUtility.GetType(inputEnumTypeName);
+			inputEnumType = Type.GetType(inputEnumTypeName);
 			inputEnumValues = inputEnumType == null ? new object[0] : Enum.GetValues(inputEnumType);
 		}
 
 		public ComboSequence[] GetCombos()
 		{
-			ComboSequence[] combosCopy = new ComboSequence[combos.Length];
+			var combosCopy = new ComboSequence[combos.Length];
 			combos.CopyTo(combosCopy, 0);
 
 			return combosCopy;

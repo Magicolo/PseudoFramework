@@ -16,7 +16,7 @@ namespace Pseudo
 
 		public TypePopupAttribute(Type baseType, bool includeSelf, params Type[] excluding)
 		{
-			var types = new List<Type>(baseType.GetAssignableTypes(includeSelf));
+			var types = new List<Type>(TypeUtility.GetAssignableTypes(baseType, includeSelf));
 			types.RemoveRange(excluding);
 			Types = types.ToArray();
 		}

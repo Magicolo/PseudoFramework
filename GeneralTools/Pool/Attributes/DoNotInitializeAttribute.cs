@@ -7,6 +7,6 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event, AllowMultiple = true)]
+	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
 	public sealed class DoNotInitializeAttribute : Attribute { }
 }
