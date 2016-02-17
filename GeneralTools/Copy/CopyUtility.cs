@@ -50,7 +50,7 @@ namespace Pseudo
 
 		public static ICopier<T> GetCopier<T>()
 		{
-			return CopierHolder<T>.Copier;
+			return (ICopier<T>)GetCopier(typeof(T));
 		}
 
 		static ICopier CreateCopier(Type type)
@@ -66,11 +66,6 @@ namespace Pseudo
 				return null;
 			else
 				return (ICopier)Activator.CreateInstance(copierType);
-		}
-
-		static class CopierHolder<T>
-		{
-			public static ICopier<T> Copier = (ICopier<T>)GetCopier(typeof(T));
 		}
 	}
 }

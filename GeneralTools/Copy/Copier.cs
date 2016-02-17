@@ -11,6 +11,15 @@ namespace Pseudo
 {
 	public abstract class Copier<T> : ICopier<T>
 	{
+		public static ICopier<T> Default
+		{
+			get { return defaultCopier; }
+		}
+
+		protected static readonly bool isValueType = typeof(T).IsValueType;
+
+		static readonly ICopier<T> defaultCopier = CopyUtility.GetCopier<T>();
+
 		public abstract void CopyTo(T source, T target);
 
 		public virtual void CopyTo(IList<T> source, IList<T> target)
@@ -21,7 +30,6 @@ namespace Pseudo
 
 		void ICopier.CopyTo(object source, object target)
 		{
-			PDebug.Log(source, target);
 			CopyTo((T)source, (T)target);
 		}
 

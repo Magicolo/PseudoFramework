@@ -11,6 +11,9 @@ namespace Pseudo.Internal
 	{
 		public override void CopyTo(AnimationCurve source, AnimationCurve target)
 		{
+			if (source == null || target == null)
+				return;
+
 			target.Copy(source);
 		}
 	}

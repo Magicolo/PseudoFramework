@@ -25,8 +25,7 @@ namespace Pseudo
 			public SpatializationModes Spatialization;
 		}
 
-		[InitializeContent]
-		public List<AudioData> Actions = new List<AudioData>();
+		public AudioData[] Actions = new AudioData[0];
 
 		[Inject]
 		readonly IAudioManager audioManager = null;
@@ -53,7 +52,7 @@ namespace Pseudo
 
 		void IMessageable.OnMessage<TId>(TId message)
 		{
-			for (int i = 0; i < Actions.Count; i++)
+			for (int i = 0; i < Actions.Length; i++)
 			{
 				var data = Actions[i];
 

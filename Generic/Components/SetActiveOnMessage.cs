@@ -7,19 +7,19 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class SetEnabledOnMessage : ComponentBehaviour, IMessageable
+	public class SetActiveOnMessage : ComponentBehaviour, IMessageable
 	{
 		[Serializable]
-		public struct EnableAction
+		public struct ActiveAction
 		{
 			public MessageEnum Message;
-			public MonoBehaviour Target;
-			public bool Enabled;
+			public GameObject Target;
+			public bool Active;
 		}
 
 		[InitializeContent]
-		public EnableAction[] Actions = new EnableAction[0];
-		
+		public ActiveAction[] Actions = new ActiveAction[0];
+
 		void IMessageable.OnMessage<TId>(TId message)
 		{
 			for (int i = 0; i < Actions.Length; i++)
@@ -27,7 +27,7 @@ namespace Pseudo
 				var action = Actions[i];
 
 				if (action.Message.Equals(message) && action.Target != null)
-					action.Target.enabled = action.Enabled;
+					action.Target.SetActive(action.Active);
 			}
 		}
 	}
