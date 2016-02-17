@@ -221,6 +221,30 @@ namespace Pseudo.Tests
 			Assert.That(instance.Dummy2, Is.TypeOf<Dummy2>());
 		}
 
+		[Test]
+		public void ResolveAll()
+		{
+			binder.Bind<IDummy>().ToSingle<Dummy1>();
+			binder.Bind<IDummy>().ToSingle<Dummy1>();
+			binder.Bind<IDummy>().ToSingle<Dummy1>();
+			binder.Bind<IDummy>().ToSingle<Dummy2>();
+			binder.Bind<IDummy>().ToSingle<Dummy3>();
+			binder.Bind<IDummy>().ToSingle<Dummy4>();
+			binder.Bind<DummyField>().ToSingle();
+			binder.Bind<DummyProperty>().ToSingle();
+			binder.Bind<DummySubField>().ToSingle();
+			binder.Bind<DummySubProperty>().ToSingle();
+
+			var dummies1 = binder.Resolver.ResolveAll<IDummy>();
+			var dummies2 = binder.Resolver.ResolveAll<IDummy>();
+
+			Assert.IsNotNull(dummies1);
+			Assert.IsNotNull(dummies2);
+			Assert.That(dummies1.Length, Is.EqualTo(6));
+			Assert.That(dummies2.Length, Is.EqualTo(6));
+			Assert.That(dummies1.ContentEquals(dummies2));
+		}
+
 		public class Dummy1 : IDummy
 		{
 			[Inject(optional: true)]

@@ -76,7 +76,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   FadeSettings:
-    Duration: 1
+    Duration: 0.5
     Canvas: {fileID: 22369740}
     Image: {fileID: 11437786}
 --- !u!114 &11432894

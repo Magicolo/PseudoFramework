@@ -150,7 +150,6 @@ namespace Pseudo.Internal.Pool
 			TypePoolManager.ClearPools();
 			PrefabPoolManager.ClearPools();
 			cachedJanitor.Reset();
-			GC.Collect();
 		}
 
 		public static void InitializeJanitor()

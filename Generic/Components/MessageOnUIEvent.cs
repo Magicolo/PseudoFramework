@@ -1,0 +1,141 @@
+﻿using UnityEngine;
+using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using Pseudo;
+using UnityEngine.EventSystems;
+
+namespace Pseudo
+{
+	[Flags]
+	public enum UIEvents
+	{
+		OnPointerClick = 1 << 0,
+		OnPointerDown = 1 << 1,
+		OnPointerUp = 1 << 2,
+		OnPointerEnter = 1 << 3,
+		OnPointerExit = 1 << 4,
+		OnBeginDrag = 1 << 5,
+		OnEndDrag = 1 << 6,
+		OnDrag = 1 << 7,
+		OnDrop = 1 << 8,
+		OnInitializePotentialDrag = 1 << 9,
+		OnSelect = 1 << 10,
+		OnDeselect = 1 << 11,
+		OnMove = 1 << 12,
+		OnScroll = 1 << 13,
+		OnSubmit = 1 << 14,
+		OnCancel = 1 << 15,
+		OnUpdateSelected = 1 << 16,
+	}
+
+	public class MessageOnUIEvent : ComponentBehaviour, IUIEventHandler
+	{
+		[Serializable]
+		public struct UIMessage
+		{
+			public EntityMessage Message;
+			[EnumFlags]
+			public UIEvents Events;
+		}
+
+		public UIMessage[] Messages = new UIMessage[0];
+
+		void SendMessage(UIEvents uiEvent, BaseEventData eventData)
+		{
+			for (int i = 0; i < Messages.Length; i++)
+			{
+				var message = Messages[i];
+
+				if (Entity != null && (message.Events & uiEvent) != 0)
+					Entity.SendMessage(message.Message, eventData);
+			}
+		}
+
+		public void OnPointerClick(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnPointerClick, eventData);
+		}
+
+		public void OnPointerDown(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnPointerDown, eventData);
+		}
+
+		public void OnPointerUp(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnPointerUp, eventData);
+		}
+
+		public void OnPointerEnter(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnPointerEnter, eventData);
+		}
+
+		public void OnPointerExit(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnPointerExit, eventData);
+		}
+
+		public void OnBeginDrag(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnBeginDrag, eventData);
+		}
+
+		public void OnEndDrag(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnEndDrag, eventData);
+		}
+
+		public void OnDrag(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnDrag, eventData);
+		}
+
+		public void OnDrop(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnDrop, eventData);
+		}
+
+		public void OnInitializePotentialDrag(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnInitializePotentialDrag, eventData);
+		}
+
+		public void OnSelect(BaseEventData eventData)
+		{
+			SendMessage(UIEvents.OnSelect, eventData);
+		}
+
+		public void OnDeselect(BaseEventData eventData)
+		{
+			SendMessage(UIEvents.OnDeselect, eventData);
+		}
+
+		public void OnMove(AxisEventData eventData)
+		{
+			SendMessage(UIEvents.OnMove, eventData);
+		}
+
+		public void OnScroll(PointerEventData eventData)
+		{
+			SendMessage(UIEvents.OnScroll, eventData);
+		}
+
+		public void OnSubmit(BaseEventData eventData)
+		{
+			SendMessage(UIEvents.OnSubmit, eventData);
+		}
+
+		public void OnCancel(BaseEventData eventData)
+		{
+			SendMessage(UIEvents.OnCancel, eventData);
+		}
+
+		public void OnUpdateSelected(BaseEventData eventData)
+		{
+			SendMessage(UIEvents.OnUpdateSelected, eventData);
+		}
+	}
+}

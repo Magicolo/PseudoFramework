@@ -15,14 +15,11 @@ namespace Pseudo.Internal.Injection
 		}
 
 		readonly IBinder binder;
-		readonly IResolver parent;
 		readonly Dictionary<Type, List<FactoryData>> typeToFactoryData = new Dictionary<Type, List<FactoryData>>();
 
 		public Resolver(IBinder binder)
 		{
 			this.binder = binder;
-
-			parent = binder.Parent == null ? null : binder.Parent.Resolver;
 		}
 
 		public object Resolve(Type contractType)
@@ -35,8 +32,8 @@ namespace Pseudo.Internal.Injection
 					Binder = binder,
 					ContractType = contractType
 				});
-			else if (parent != null)
-				return parent.Resolve(contractType);
+			else if (binder.Parent != null)
+				return binder.Parent.Resolver.Resolve(contractType);
 
 			throw new ArgumentException(string.Format("No binding was found for type {0}.", contractType.Name));
 		}
@@ -47,8 +44,8 @@ namespace Pseudo.Internal.Injection
 
 			if (data != null)
 				return data.Factory.Create(context);
-			else if (parent != null)
-				return parent.Resolve(context);
+			else if (binder.Parent != null)
+				return binder.Parent.Resolver.Resolve(context);
 
 			throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
 		}
@@ -70,7 +67,9 @@ namespace Pseudo.Internal.Injection
 
 		public bool CanResolve(Type contractType)
 		{
-			return GetValidData(contractType) != null || (parent != null && parent.CanResolve(contractType));
+			return
+				GetValidData(contractType) != null ||
+				(binder.Parent != null && binder.Parent.Resolver.CanResolve(contractType));
 		}
 
 		public bool CanResolve(params Type[] contractTypes)
@@ -86,7 +85,9 @@ namespace Pseudo.Internal.Injection
 
 		public bool CanResolve(InjectionContext context)
 		{
-			return GetValidData(ref context) != null || (parent != null && parent.CanResolve(context));
+			return
+				GetValidData(ref context) != null ||
+				(binder.Parent != null && binder.Parent.Resolver.CanResolve(context));
 		}
 
 		public void Register(Type contractType, FactoryData data)
