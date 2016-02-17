@@ -4,31 +4,48 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Injection
 {
 	public class Injector : IInjector
 	{
-		readonly IResolver resolver;
-
-		public Injector(IResolver resolver)
+		public IBinder Binder
 		{
-			this.resolver = resolver;
+			get { return binder; }
+		}
+
+		readonly IBinder binder;
+
+		public Injector(IBinder binder)
+		{
+			this.binder = binder;
 		}
 
 		public void Inject(object instance)
 		{
-			if (instance == null)
-				throw new NullReferenceException("Instance was null.");
+			Inject(new InjectionContext
+			{
+				Binder = binder,
+				Instance = instance
+			});
+		}
 
-			var injectables = InjectionUtility.GetInjectableMembers(instance.GetType());
+		public void Inject(InjectionContext context)
+		{
+			Assert.IsNotNull(context.Binder);
+			Assert.IsNotNull(context.Instance);
+
+			var injectables = InjectionUtility.GetInjectableMembers(context.Instance.GetType());
 
 			for (int i = 0; i < injectables.Length; i++)
-				injectables[i].Inject(instance, resolver);
+				injectables[i].Inject(context);
 		}
 
 		public void Inject(GameObject gameObject, bool recursive = false)
 		{
+			Assert.IsNotNull(gameObject);
+
 			var components = gameObject.GetComponents<Component>();
 
 			for (int i = 0; i < components.Length; i++)

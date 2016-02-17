@@ -8,12 +8,8 @@ using Pseudo.Internal.Injection;
 
 namespace Pseudo
 {
-	public class GlobalRoot : RootBase
+	public class GlobalRoot : RootBase<GlobalRoot>
 	{
-		public static GlobalRoot Instance { get { return instance; } }
-
-		static GlobalRoot instance;
-
 		protected override void Initialize()
 		{
 			base.Initialize();
@@ -29,18 +25,6 @@ namespace Pseudo
 		void Reset()
 		{
 			this.SetExecutionOrder(-9999);
-		}
-
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-		static void OnLoad()
-		{
-			if (Instance == null)
-			{
-				var root = Resources.Load<GlobalRoot>("GlobalRoot");
-
-				if (root != null)
-					instance = Instantiate(root);
-			}
 		}
 	}
 }

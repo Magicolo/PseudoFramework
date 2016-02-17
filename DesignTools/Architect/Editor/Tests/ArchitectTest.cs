@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Tests	
+namespace Pseudo.Tests
 {
 	public class ArchitectTest
 	{

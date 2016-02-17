@@ -5,39 +5,46 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Injection
 {
 	public class Instantiator : IInstantiator
 	{
-		readonly IInjector injector;
-		readonly IResolver resolver;
-
-		public Instantiator(IInjector injector, IResolver resolver)
+		public IBinder Binder
 		{
-			this.injector = injector;
-			this.resolver = resolver;
+			get { return binder; }
 		}
 
-		public object Instantiate(Type concreteType, params object[] additional)
+		readonly IBinder binder;
+
+		public Instantiator(IBinder binder)
 		{
-			var constructor = GetValidConstructor(concreteType, additional);
+			this.binder = binder;
+		}
+
+		public object Instantiate(Type concreteType)
+		{
+			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+
+			var context = new InjectionContext { Binder = binder };
+			var constructor = GetValidConstructor(ref context, concreteType);
 
 			if (constructor == null)
-				throw new ArgumentException(string.Format("No valid constructor was found for type {0} with additional arguments {1}.", concreteType.Name, PDebug.ToString(additional)));
+				throw new ArgumentException(string.Format("No valid constructor was found for type {0}.", concreteType.Name));
 
-			var instance = constructor.Inject(resolver, additional);
-			injector.Inject(instance);
+			context.Instance = constructor.Inject(context);
+			binder.Injector.Inject(context);
 
-			return instance;
+			return context.Instance;
 		}
 
-		public T Instantiate<T>(params object[] arguments) where T : class
+		public T Instantiate<T>() where T : class
 		{
-			return (T)Instantiate(typeof(T), arguments);
+			return (T)Instantiate(typeof(T));
 		}
 
-		IInjectableConstructor GetValidConstructor(Type concreteType, object[] additional)
+		IInjectableConstructor GetValidConstructor(ref InjectionContext context, Type concreteType)
 		{
 			var constructors = InjectionUtility.GetInjectableConstructors(concreteType);
 
@@ -45,7 +52,7 @@ namespace Pseudo.Internal.Injection
 			{
 				var constructor = constructors[i];
 
-				if (constructor.CanInject(resolver, additional))
+				if (constructor.CanInject(ref context))
 					return constructor;
 			}
 

@@ -11,5 +11,9 @@ namespace Pseudo
 	public interface IBindingCondition
 	{
 		void When(Predicate<InjectionContext> condition);
+		void WhenIs(string identifier);
+		void WhenIs(InjectionContext.Types contextType);
+		void WhenInjectedInto(Type declaringType);
+		void WhenInjectedInto(object instance);
 	}
 }

@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections;
-using Zenject;
 using System;
 using Pseudo;
 using Pseudo.Internal;
@@ -9,19 +8,12 @@ using Pseudo.Internal.Communication;
 
 namespace Pseudo
 {
-	public class SceneInstaller : MonoInstaller
+	public class SceneInstaller : BindingInstaller
 	{
-		public override void InstallBindings()
+		public override void Install(IBinder binder)
 		{
-			BindManagers();
-		}
-
-		protected virtual void BindManagers()
-		{
-			Container.BindAllInterfacesToSingle<EntityManager>();
-			Container.Bind<MessageManager>().ToSingle();
-			Container.BindAllInterfacesToSingle<EventManager>();
-			Container.BindLateTickablePriority<EventManager>(100);
+			binder.Bind<IEntityManager>().ToSingle<EntityManager>();
+			binder.Bind<MessageManager>().ToSingle();
 		}
 	}
 }

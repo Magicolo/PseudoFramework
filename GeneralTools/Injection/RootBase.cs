@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo.Internal.Injection
 {
-	public abstract class RootBase : MonoBehaviour
+	public abstract class RootBase<T> : Singleton<T> where T : Singleton<T>
 	{
 		public BindingInstaller[] Installers = new BindingInstaller[0];
 
@@ -19,14 +19,11 @@ namespace Pseudo.Internal.Injection
 
 		protected IBinder binder;
 
-		void Awake()
+		protected override void Awake()
 		{
-			Initialize();
-		}
+			base.Awake();
 
-		void Start()
-		{
-			InjectAll();
+			Initialize();
 		}
 
 		protected virtual void Initialize()

@@ -63,17 +63,38 @@ namespace Pseudo.Internal.Injection
 
 			injectableMembers.AddRange(type.GetFields(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 				.Where(f => f.IsDefined(typeof(InjectAttribute), true))
-				.Select(f => (IInjectableMember)new InjectableField(f)));
+				.Select(f => CreateInjectableField(f)));
 
 			injectableMembers.AddRange(type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 				.Where(p => p.CanWrite && p.IsDefined(typeof(InjectAttribute), true))
-				.Select(p => (IInjectableMember)new InjectableProperty(p)));
+				.Select(p => CreateInjectableProperty(p)));
 
 			injectableMembers.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
 				.Where(m => m.IsDefined(typeof(InjectAttribute), true))
-				.Select(m => (IInjectableMember)new InjectableMethod(m, CreateInjectableParameters(m))));
+				.Select(m => CreateInjectableMethod(m)));
 
 			return injectableMembers.ToArray();
+		}
+
+		static IInjectableMember CreateInjectableField(FieldInfo field)
+		{
+			return new InjectableField(field);
+		}
+
+		static IInjectableMember CreateInjectableProperty(PropertyInfo property)
+		{
+			if (property.IsAutoProperty())
+				return new InjectableAutoProperty(property);
+			else
+				return new InjectableProperty(property);
+		}
+
+		static IInjectableMember CreateInjectableMethod(MethodInfo method)
+		{
+			if (method.GetParameters().Length == 0)
+				return new InjectableEmptyMethod(method);
+			else
+				return new InjectableMethod(method, CreateInjectableParameters(method));
 		}
 
 		static IInjectableParameter[] CreateInjectableParameters(ConstructorInfo constructor)

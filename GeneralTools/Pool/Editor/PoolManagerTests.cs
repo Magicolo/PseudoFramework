@@ -8,7 +8,7 @@ using NUnit.Framework;
 using Pseudo.Internal.Pool;
 using NSubstitute;
 
-namespace Tests
+namespace Pseudo.Tests
 {
 	public class PoolManagerTests
 	{

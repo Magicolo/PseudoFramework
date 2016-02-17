@@ -337,7 +337,12 @@ namespace Pseudo.Internal
 
 		public static bool IsAutoProperty(this PropertyInfo property)
 		{
-			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", AllFlags) != null;
+			return property.GetBackingField() != null;
+		}
+
+		public static FieldInfo GetBackingField(this PropertyInfo property)
+		{
+			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", AllFlags);
 		}
 	}
 }

@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Zenject;
 
 namespace Pseudo
 {
@@ -39,16 +38,27 @@ namespace Pseudo
 			get { return target != null; }
 		}
 
-		[DoNotInitialize]
 		IEntityGroup targetables;
 		IEntity target;
 		float counter;
+		readonly Action<IEntity> onTargetRemoved;
 
-		[PostInject]
-		void Initialize()
+		public GroupTarget()
 		{
+			onTargetRemoved = OnTargetRemoved;
+		}
+
+		[Message(ComponentMessages.OnAdded)]
+		void OnAdd()
+		{
+			targetables.OnEntityRemoved += onTargetRemoved;
 			targetables = Entity.Manager.Entities.Filter(typeof(TransformComponent));
-			targetables.OnEntityRemoved += entity => { if (Entity != null) OnTargetRemoved(entity); };
+		}
+
+		[Message(ComponentMessages.OnRemoved)]
+		void OnRemoved()
+		{
+			targetables.OnEntityRemoved -= onTargetRemoved;
 		}
 
 		void Update()

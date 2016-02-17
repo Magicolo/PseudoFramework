@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Zenject;
 using Pseudo.Internal.Pool;
 
 namespace Pseudo
@@ -50,8 +49,6 @@ namespace Pseudo
 
 		IEntityManager entityManager;
 		IEntity entity;
-		[DoNotInitialize]
-		bool initialized;
 
 		void OnEnable()
 		{
@@ -65,17 +62,17 @@ namespace Pseudo
 				entity.Active = false;
 		}
 
-		[PostInject]
-		public void Initialize(IEntityManager entityManager, DiContainer container)
+		[Inject]
+		public void Initialize(IEntityManager entityManager, IBinder binder)
 		{
 			this.entityManager = entityManager;
 
 			GatherChildren();
 			GatherComponents();
 
-			InitializeChildren(entityManager, container);
+			InitializeChildren(entityManager, binder);
 			CreateEntity();
-			InitializeComponents(container);
+			InitializeComponents(binder);
 		}
 
 		public override void OnCreate()
@@ -187,20 +184,18 @@ namespace Pseudo
 			}
 		}
 
-		void InitializeChildren(IEntityManager entityManager, DiContainer container)
+		void InitializeChildren(IEntityManager entityManager, IBinder binder)
 		{
 			for (int i = 0; i < children.Length; i++)
-				children[i].Initialize(entityManager, container);
+				children[i].Initialize(entityManager, binder);
 		}
 
-		void InitializeComponents(DiContainer container)
+		void InitializeComponents(IBinder binder)
 		{
-			if (!initialized && container != null)
+			if (binder != null)
 			{
 				for (int i = 0; i < componentBehaviours.Length; i++)
-					container.Inject(componentBehaviours[i]);
-
-				initialized = true;
+					binder.Injector.Inject(componentBehaviours[i]);
 			}
 		}
 

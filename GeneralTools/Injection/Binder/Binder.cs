@@ -9,6 +9,10 @@ namespace Pseudo.Internal.Injection
 {
 	public class Binder : IBinder
 	{
+		public IBinder Parent
+		{
+			get { return parent; }
+		}
 		public IResolver Resolver
 		{
 			get { return resolver; }
@@ -22,6 +26,7 @@ namespace Pseudo.Internal.Injection
 			get { return instantiator; }
 		}
 
+		readonly IBinder parent;
 		readonly Resolver resolver;
 		readonly Injector injector;
 		readonly Instantiator instantiator;
@@ -30,9 +35,11 @@ namespace Pseudo.Internal.Injection
 
 		public Binder(IBinder parent)
 		{
-			resolver = new Resolver(parent == null ? null : parent.Resolver);
-			injector = new Injector(resolver);
-			instantiator = new Instantiator(injector, resolver);
+			this.parent = parent;
+
+			resolver = new Resolver(this);
+			injector = new Injector(this);
+			instantiator = new Instantiator(this);
 
 			Bind<IBinder>().ToInstance(this);
 			Bind<IInjector>().ToInstance(injector);
@@ -57,27 +64,32 @@ namespace Pseudo.Internal.Injection
 
 		public IBindingContext<TContract> Bind<TContract, TBase>() where TContract : class, TBase
 		{
-			return new MultipleBindingContext<TContract>(new Type[] { typeof(TBase) }, this, resolver);
+			return Bind<TContract>(typeof(TBase));
 		}
 
 		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : class, TBase1, TBase2
 		{
-			return new MultipleBindingContext<TContract>(new Type[] { typeof(TBase1), typeof(TBase2) }, this, resolver);
+			return Bind<TContract>(typeof(TBase1), typeof(TBase2));
 		}
 
 		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : class, TBase1, TBase2, TBase3
 		{
-			return new MultipleBindingContext<TContract>(new Type[] { typeof(TBase1), typeof(TBase2), typeof(TBase3) }, this, resolver);
+			return Bind<TContract>(typeof(TBase1), typeof(TBase2), typeof(TBase3));
+		}
+
+		public IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes) where TContract : class
+		{
+			return new MultipleBindingContext<TContract>(baseTypes, this, resolver);
 		}
 
 		public IBindingContext BindAll(Type contractType)
 		{
-			return new MultipleBindingContext(contractType, contractType.GetInterfaces(), this, resolver);
+			return Bind(contractType, contractType.GetInterfaces());
 		}
 
 		public IBindingContext<TContract> BindAll<TContract>() where TContract : class
 		{
-			return new MultipleBindingContext<TContract>(typeof(TContract).GetInterfaces(), this, resolver);
+			return Bind<TContract>(typeof(TContract).GetInterfaces());
 		}
 
 		public void Unbind(Type contractType)
@@ -88,7 +100,7 @@ namespace Pseudo.Internal.Injection
 		public void Unbind(params Type[] contractTypes)
 		{
 			for (int i = 0; i < contractTypes.Length; i++)
-				resolver.Unregister(contractTypes[i]);
+				Unbind(contractTypes[i]);
 		}
 
 		public void Unbind<TContract>()

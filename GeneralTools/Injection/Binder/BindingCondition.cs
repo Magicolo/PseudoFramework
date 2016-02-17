@@ -9,21 +9,31 @@ namespace Pseudo.Internal.Injection
 {
 	public class BindingCondition : IBindingCondition
 	{
+		readonly Type contractType;
 		readonly FactoryData data;
+		readonly Resolver resolver;
 
-		public BindingCondition(FactoryData data)
+		public BindingCondition(Type contractType, FactoryData data, Resolver resolver)
 		{
+			this.contractType = contractType;
 			this.data = data;
+			this.resolver = resolver;
 		}
 
 		public void When(Predicate<InjectionContext> condition)
 		{
 			data.Conditions.Add(condition);
+			resolver.Sort(contractType);
 		}
 
-		public void WhenIdentifierIs(string identifier)
+		public void WhenIs(string identifier)
 		{
 			When(context => context.Identifier == identifier);
+		}
+
+		public void WhenIs(InjectionContext.Types contextType)
+		{
+			When(context => context.Type == contextType);
 		}
 
 		public void WhenInjectedInto(Type declaringType)
@@ -31,12 +41,7 @@ namespace Pseudo.Internal.Injection
 			When(context => context.DeclaringType == declaringType);
 		}
 
-		public void WhenInjectionInto(InjectionContext.Types contextType)
-		{
-			When(context => context.Type == contextType);
-		}
-
-		public void WhenInjectionInto(object instance)
+		public void WhenInjectedInto(object instance)
 		{
 			When(context => context.Instance == instance);
 		}

@@ -7,11 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public interface IInstantiator
+	public interface IInjectionFactory
 	{
-		IBinder Binder { get; }
-
-		object Instantiate(Type concreteType);
-		T Instantiate<T>() where T : class;
+		object Create(InjectionContext context);
 	}
 }

@@ -9,7 +9,10 @@ namespace Pseudo
 {
 	public interface IInjector
 	{
+		IBinder Binder { get; }
+
 		void Inject(object instance);
+		void Inject(InjectionContext context);
 		void Inject(GameObject instance, bool recursive = false);
 	}
 }

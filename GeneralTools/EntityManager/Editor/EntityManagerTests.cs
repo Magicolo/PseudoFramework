@@ -3,13 +3,12 @@ using UnityEditor;
 using NUnit.Framework;
 using NSubstitute;
 using System;
-using Zenject;
 using Pseudo;
 using Pseudo.Internal.Entity;
 using Pseudo.Internal;
 using Pseudo.Internal.Communication;
 
-namespace Tests
+namespace Pseudo.Tests
 {
 	public class EntityManagerTests
 	{

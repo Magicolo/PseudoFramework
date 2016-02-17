@@ -14,7 +14,6 @@ namespace Pseudo.Internal.Injection
 		{
 			get { return method; }
 		}
-
 		public ParameterInfo Parameter
 		{
 			get { return parameter; }
@@ -32,25 +31,26 @@ namespace Pseudo.Internal.Injection
 			attribute = (InjectAttribute)parameter.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
 		}
 
-		public void Inject(object instance, object[] arguments, int index, IResolver resolver)
+		public void Inject(InjectionContext context, object[] arguments, int index)
 		{
-			if (!attribute.Optional || resolver.CanResolve(parameter.ParameterType))
-				arguments[index] = resolver.Resolve(new InjectionContext
-				{
-					Resolver = resolver,
-					Additional = InjectionUtility.Empty,
-					Type = InjectionContext.Types.Method,
-					Instance = instance,
-					ContractType = parameter.ParameterType,
-					DeclaringType = method.DeclaringType,
-					Optional = attribute.Optional,
-					Identifier = attribute.Identifier
-				});
+			SetupContext(ref context);
+
+			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
+				arguments[index] = context.Binder.Resolver.Resolve(context);
 		}
 
-		public bool CanInject(IResolver resolver)
+		public bool CanInject(ref InjectionContext context)
 		{
-			throw new NotImplementedException();
+			return context.Binder.Resolver.CanResolve(parameter.ParameterType);
+		}
+
+		void SetupContext(ref InjectionContext context)
+		{
+			context.Type = InjectionContext.Types.MethodParameter;
+			context.ContractType = parameter.ParameterType;
+			context.Parameter = parameter;
+			context.Optional = attribute.Optional;
+			context.Identifier = attribute.Identifier;
 		}
 	}
 }

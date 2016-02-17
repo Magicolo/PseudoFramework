@@ -25,25 +25,22 @@ namespace Pseudo.Internal.Injection
 			attribute = (InjectAttribute)field.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
 		}
 
-		public void Inject(object instance, IResolver resolver)
+		public void Inject(InjectionContext context)
 		{
-			if (!attribute.Optional || CanInject(resolver))
-				field.SetValue(instance, resolver.Resolve(new InjectionContext
-				{
-					Resolver = resolver,
-					Additional = InjectionUtility.Empty,
-					Type = InjectionContext.Types.Field,
-					Instance = instance,
-					ContractType = field.FieldType,
-					DeclaringType = field.DeclaringType,
-					Optional = attribute.Optional,
-					Identifier = attribute.Identifier
-				}));
+			SetupContext(ref context);
+
+			if (!context.Optional || context.Binder.Resolver.CanResolve(context))
+				field.SetValue(context.Instance, context.Binder.Resolver.Resolve(context));
 		}
 
-		public bool CanInject(IResolver resolver)
+		void SetupContext(ref InjectionContext context)
 		{
-			return resolver.CanResolve(field.FieldType);
+			context.Type = InjectionContext.Types.Field;
+			context.ContractType = field.FieldType;
+			context.DeclaringType = field.DeclaringType;
+			context.Member = field;
+			context.Optional = attribute.Optional;
+			context.Identifier = attribute.Identifier;
 		}
 	}
 }

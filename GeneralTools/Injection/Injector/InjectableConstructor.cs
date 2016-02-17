@@ -17,7 +17,7 @@ namespace Pseudo.Internal.Injection
 
 		readonly ConstructorInfo constructor;
 		readonly IInjectableParameter[] parameters;
-		//readonly InjectAttribute attribute;
+		readonly InjectAttribute attribute;
 		readonly object[] arguments;
 
 		public InjectableConstructor(ConstructorInfo constructor, IInjectableParameter[] parameters)
@@ -25,16 +25,16 @@ namespace Pseudo.Internal.Injection
 			this.constructor = constructor;
 			this.parameters = parameters;
 
-			//attribute = (InjectAttribute)constructor.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
+			attribute = (InjectAttribute)constructor.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
 			arguments = new object[parameters.Length];
 		}
 
-		public object Inject(IResolver resolver, object[] additional)
+		public object Inject(InjectionContext context)
 		{
-			for (int i = 0; i < parameters.Length - additional.Length; i++)
-				parameters[i].Inject(null, arguments, i, resolver);
+			SetupContext(ref context);
 
-			additional.CopyTo(arguments, parameters.Length - additional.Length);
+			for (int i = 0; i < parameters.Length; i++)
+				parameters[i].Inject(context, arguments, i);
 
 			var instance = constructor.Invoke(arguments);
 			arguments.Clear();
@@ -42,35 +42,24 @@ namespace Pseudo.Internal.Injection
 			return instance;
 		}
 
-		public bool CanInject(IResolver resolver, object[] additional)
+		public bool CanInject(ref InjectionContext context)
 		{
-			if (additional.Length > parameters.Length)
-				return false;
-
-			bool canResolve = true;
-			int index = 0;
-
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				var parameter = parameters[i];
-
-				if (canResolve)
-					canResolve &= parameter.CanInject(resolver);
-
-				if (canResolve)
-					continue;
-				else if (index >= additional.Length)
+				if (!parameters[i].CanInject(ref context))
 					return false;
-				else
-				{
-					var argument = additional[index++];
-
-					if (argument != null && !parameter.Parameter.ParameterType.IsAssignableFrom(argument.GetType()))
-						return false;
-				}
 			}
 
 			return true;
+		}
+
+		void SetupContext(ref InjectionContext context)
+		{
+			context.Type = InjectionContext.Types.Constructor;
+			context.DeclaringType = constructor.DeclaringType;
+			context.Member = constructor;
+			context.Optional = attribute.Optional;
+			context.Identifier = attribute.Identifier;
 		}
 	}
 }

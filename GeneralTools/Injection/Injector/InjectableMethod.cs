@@ -29,27 +29,38 @@ namespace Pseudo.Internal.Injection
 			arguments = new object[parameters.Length];
 		}
 
-		public void Inject(object instance, IResolver resolver)
+		public void Inject(InjectionContext context)
 		{
-			if (!attribute.Optional || CanInject(resolver))
+			SetupContext(ref context);
+
+			if (!context.Optional || CanInject(ref context))
 			{
 				for (int i = 0; i < parameters.Length; i++)
-					parameters[i].Inject(instance, arguments, i, resolver);
+					parameters[i].Inject(context, arguments, i);
 
-				method.Invoke(instance, arguments);
+				method.Invoke(context.Instance, arguments);
 				arguments.Clear();
 			}
 		}
 
-		public bool CanInject(IResolver resolver)
+		bool CanInject(ref InjectionContext context)
 		{
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				if (!parameters[i].CanInject(resolver))
+				if (!parameters[i].CanInject(ref context))
 					return false;
 			}
 
 			return true;
+		}
+
+		void SetupContext(ref InjectionContext context)
+		{
+			context.Type = InjectionContext.Types.Method;
+			context.DeclaringType = method.DeclaringType;
+			context.Member = method;
+			context.Optional = attribute.Optional;
+			context.Identifier = attribute.Identifier;
 		}
 	}
 }

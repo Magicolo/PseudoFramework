@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Pseudo.Internal.Input;
 using UnityEngine.UI;
 using Pseudo.Internal.UI;
-using Pseudo.UI;
 
 namespace Pseudo
 {

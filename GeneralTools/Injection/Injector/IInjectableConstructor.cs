@@ -12,7 +12,7 @@ namespace Pseudo
 	{
 		ConstructorInfo Constructor { get; }
 
-		object Inject(IResolver resolver, object[] additional);
-		bool CanInject(IResolver resolver, object[] additional);
+		object Inject(InjectionContext context);
+		bool CanInject(ref InjectionContext context);
 	}
 }

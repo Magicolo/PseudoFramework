@@ -9,6 +9,7 @@ namespace Pseudo
 {
 	public interface IBinder
 	{
+		IBinder Parent { get; }
 		IResolver Resolver { get; }
 		IInjector Injector { get; }
 		IInstantiator Instantiator { get; }
@@ -19,6 +20,7 @@ namespace Pseudo
 		IBindingContext<TContract> Bind<TContract, TBase>() where TContract : class, TBase;
 		IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : class, TBase1, TBase2;
 		IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : class, TBase1, TBase2, TBase3;
+		IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes) where TContract : class;
 		IBindingContext BindAll(Type contractType);
 		IBindingContext<TContract> BindAll<TContract>() where TContract : class;
 		void Unbind(Type contractType);

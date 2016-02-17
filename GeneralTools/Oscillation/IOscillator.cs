@@ -3,7 +3,6 @@ using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Pseudo;
 
 namespace Pseudo
 {
@@ -12,6 +11,10 @@ namespace Pseudo
 		Sine,
 		Triangle,
 		Square,
+		InQuad,
+		OutQuad,
+		InOutQuad,
+		OutInQuad,
 		InCubic,
 		OutCubic,
 		InOutCubic,

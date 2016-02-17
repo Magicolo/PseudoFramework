@@ -12,7 +12,6 @@ namespace Pseudo.Internal.Injection
 	{
 		MemberInfo Member { get; }
 
-		void Inject(object instance, IResolver resolver);
-		bool CanInject(IResolver resolver);
+		void Inject(InjectionContext context);
 	}
 }

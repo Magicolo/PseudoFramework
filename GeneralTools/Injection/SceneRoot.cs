@@ -9,18 +9,36 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo
 {
-	public class SceneRoot : RootBase
+	public class SceneRoot : RootBase<SceneRoot>
 	{
 		protected override IBinder CreateBinder()
 		{
-			var globalRoot = GlobalRoot.Instance;
+			InitializeGlobalRoot();
 
-			return new Binder(globalRoot == null ? null : globalRoot.Binder);
+			return new Binder(GlobalRoot.Instance == null ? null : GlobalRoot.Instance.Binder);
+		}
+
+		protected override void Start()
+		{
+			base.Start();
+
+			InjectAll();
 		}
 
 		void Reset()
 		{
 			this.SetExecutionOrder(-9998);
+		}
+
+		void InitializeGlobalRoot()
+		{
+			if (GlobalRoot.Instance == null)
+			{
+				var root = Resources.Load<GlobalRoot>("GlobalRoot");
+
+				if (root != null)
+					Instantiate(root);
+			}
 		}
 	}
 }

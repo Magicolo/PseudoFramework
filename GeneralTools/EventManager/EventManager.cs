@@ -5,14 +5,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
-using Zenject;
 
 namespace Pseudo.Internal.Communication
 {
-	public class EventManager : IEventManager, ILateTickable
+	public class EventManager : IEventManager
 	{
-		static readonly Pool<DelayedEvent> delayedEventPool = new Pool<DelayedEvent>(new DelayedEvent(), () => new DelayedEvent(), 0);
-
+		readonly Pool<DelayedEvent> delayedEventPool = new Pool<DelayedEvent>(new DelayedEvent(), () => new DelayedEvent(), 0);
 		readonly Dictionary<Type, IEventGroup> typeToEventGroups = new Dictionary<Type, IEventGroup>();
 		Queue<IEvent> queuedEvents = new Queue<IEvent>();
 		Queue<IEvent> resolvingEvents = new Queue<IEvent>();
@@ -210,11 +208,6 @@ namespace Pseudo.Internal.Communication
 			}
 
 			return (EventGroup<TId>)eventGroup;
-		}
-
-		void ILateTickable.LateTick()
-		{
-			ResolveEvents();
 		}
 	}
 }

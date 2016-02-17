@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal.Injection;
 
-namespace Tests
+namespace Pseudo.Tests
 {
 	public class InjectionTests
 	{
@@ -72,9 +72,24 @@ namespace Tests
 		}
 
 		[Test]
-		public void BindingToMethod()
+		public void BindingToSingleMethod()
 		{
-			binder.Bind<IDummy>().ToMethod((b, a) => new Dummy1());
+			binder.Bind<IDummy>().ToSingleMethod(c => new Dummy1());
+
+			var instance1 = binder.Resolver.Resolve<IDummy>();
+			var instance2 = binder.Resolver.Resolve<IDummy>();
+
+			Assert.IsNotNull(instance1);
+			Assert.IsNotNull(instance2);
+			Assert.That(instance1, Is.EqualTo(instance2));
+			Assert.That(instance1, Is.TypeOf<Dummy1>());
+			Assert.That(instance2, Is.TypeOf<Dummy1>());
+		}
+
+		[Test]
+		public void BindingToTransientMethod()
+		{
+			binder.Bind<IDummy>().ToTransientMethod(c => new Dummy1());
 
 			var instance1 = binder.Resolver.Resolve<IDummy>();
 			var instance2 = binder.Resolver.Resolve<IDummy>();
@@ -157,16 +172,14 @@ namespace Tests
 			binder.Bind<DummyProperty>().ToTransient();
 			binder.Bind<DummySubProperty>().ToTransient();
 
-			var instance = binder.Resolver.Resolve<Dummy2>(new Dummy1());
+			var instance = binder.Resolver.Resolve<Dummy2>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Field);
 			Assert.IsNotNull(instance.Field.SubField);
 			Assert.IsNotNull(instance.Property);
 			Assert.IsNotNull(instance.Property.SubProperty);
-			Assert.IsNotNull(instance.Dummy);
-			Assert.IsNull(instance.Dummy.Field);
-			Assert.IsNull(instance.Dummy.Property);
+			Assert.IsNull(instance.Dummy);
 		}
 
 		[Test]
@@ -210,11 +223,10 @@ namespace Tests
 
 		public class Dummy1 : IDummy
 		{
-			[Inject(Optional = true)]
+			[Inject(optional: true)]
 			public DummyField Field;
-			[Inject(Optional = true)]
+			[Inject(optional: true)]
 			public DummyProperty Property { get; set; }
-
 		}
 		public class Dummy2 : IDummy
 		{
@@ -222,7 +234,7 @@ namespace Tests
 			public DummyProperty Property { get; set; }
 			public Dummy1 Dummy;
 
-			public Dummy2(DummyField field, DummyProperty property, Dummy1 dummy)
+			public Dummy2(DummyField field, DummyProperty property, [Inject(optional: true)] Dummy1 dummy)
 			{
 				Field = field;
 				Property = property;
@@ -250,19 +262,19 @@ namespace Tests
 		{
 			[Inject]
 			public IDummy Dummy1;
-			[Inject(Identifier = "Boba")]
+			[Inject(identifier: "Boba")]
 			public IDummy Dummy2 { get; set; }
 		}
 		public interface IDummy { }
 		public class DummyField
 		{
-			[Inject(Optional = true)]
+			[Inject(optional: true)]
 			public DummySubField SubField;
 		}
 		public class DummySubField { }
 		public class DummyProperty
 		{
-			[Inject(Optional = true)]
+			[Inject(optional: true)]
 			public DummySubProperty SubProperty { get; set; }
 		}
 		public class DummySubProperty { }

@@ -9,7 +9,7 @@ namespace Pseudo.Internal.Injection
 {
 	public class FactoryData
 	{
-		public IFactory Factory;
+		public IInjectionFactory Factory;
 		public List<Predicate<InjectionContext>> Conditions;
 	}
 }

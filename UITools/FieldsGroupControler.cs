@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using UnityEngine.UI;
 
-namespace Pseudo.UI
+namespace Pseudo.Internal.UI
 {
 	public class FieldsGroupControler : MonoBehaviour
 	{

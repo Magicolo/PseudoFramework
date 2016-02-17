@@ -13,7 +13,7 @@ namespace Pseudo.Internal.Injection
 		MemberInfo Member { get; }
 		ParameterInfo Parameter { get; }
 
-		void Inject(object instance, object[] arguments, int index, IResolver resolver);
-		bool CanInject(IResolver resolver);
+		void Inject(InjectionContext context, object[] arguments, int index);
+		bool CanInject(ref InjectionContext context);
 	}
 }
