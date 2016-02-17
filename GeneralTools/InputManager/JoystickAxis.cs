@@ -11,14 +11,14 @@ namespace Pseudo.Internal.Input
 	public class JoystickAxis : AxisBase
 	{
 		[SerializeField]
-		protected InputManager.Joysticks joystick;
+		protected Joysticks joystick;
 		[SerializeField]
-		protected InputManager.JoystickAxes axis;
+		protected JoystickAxes axis;
 		[SerializeField, Min]
 		protected float threshold;
 		protected string axisName;
 
-		public InputManager.Joysticks Joystick
+		public Joysticks Joystick
 		{
 			get { return joystick; }
 			set
@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Input
 				axisName = InputUtility.JoystickInputToAxis(joystick, axis);
 			}
 		}
-		public InputManager.JoystickAxes Axis
+		public JoystickAxes Axis
 		{
 			get { return axis; }
 			set
@@ -52,7 +52,7 @@ namespace Pseudo.Internal.Input
 			}
 		}
 
-		public JoystickAxis(InputManager.Joysticks joystick, InputManager.JoystickAxes axis, float threshold)
+		public JoystickAxis(Joysticks joystick, JoystickAxes axis, float threshold)
 		{
 			this.joystick = joystick;
 			this.axis = axis;

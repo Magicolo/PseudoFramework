@@ -24,9 +24,18 @@ namespace Pseudo.Internal.Audio
 		AudioSource reference;
 		[SerializeField]
 		bool useCustomCurves = true;
-		AudioItemManager itemManager;
 
-		Dictionary<string, AudioValue<int>> switchValues = new Dictionary<string, AudioValue<int>>();
+		readonly AudioItemManager itemManager;
+		readonly Dictionary<string, AudioValue<int>> switchValues;
+
+		/// <summary>
+		/// Default setup for AudioSources.
+		/// </summary>
+		public AudioSource Reference
+		{
+			get { return reference; }
+			set { reference = value; }
+		}
 
 		/// <summary>
 		/// If you use custom curves in the Reference AudioSource, set this to true otherwise, leave it to false to save useless memory allocations.
@@ -37,51 +46,17 @@ namespace Pseudo.Internal.Audio
 			set { useCustomCurves = value; }
 		}
 
-		/// <summary>
-		/// Default setup for AudioSources.
-		/// </summary>
-		public AudioSource Reference
-		{
-			get
-			{
-				if (reference == null)
-					Initialize();
-
-				return reference;
-			}
-		}
-
 		public AudioManager()
 		{
 			itemManager = new AudioItemManager(this);
-		}
-
-		void Awake()
-		{
-			Initialize();
+			switchValues = new Dictionary<string, AudioValue<int>>();
 		}
 
 		void OnDestroy()
 		{
 			StopAllItemsImmediate();
 		}
-
-		void Reset()
-		{
-			Initialize();
-		}
-
-		void Initialize()
-		{
-			if (this == null)
-				return;
-
-			reference = gameObject.FindOrAddChild("Reference").GetOrAddComponent<AudioSource>();
-			reference.gameObject.SetActive(false);
-			reference.playOnAwake = false;
-			reference.spatialBlend = 1f;
-		}
-
+		
 		public void Update()
 		{
 			itemManager.Update();

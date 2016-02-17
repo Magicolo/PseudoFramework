@@ -11,7 +11,7 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/General/Player Input")]
 	public class PlayerInput : PMonoBehaviour
 	{
-		public InputManager.Players Player;
+		public Players Player;
 		public InputAction[] Actions = new InputAction[0];
 
 		protected readonly Dictionary<string, InputAction> actions = new Dictionary<string, InputAction>();
@@ -20,7 +20,7 @@ namespace Pseudo
 		{
 			for (int i = 0; i < Actions.Length; i++)
 			{
-				InputAction action = Actions[i];
+				var action = Actions[i];
 				actions[action.Name] = action;
 			}
 		}

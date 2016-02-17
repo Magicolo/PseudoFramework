@@ -7,6 +7,13 @@ using Pseudo;
 
 namespace Pseudo
 {
+	[MessageEnum]
+	public enum StateMachineMessages
+	{
+		OnStateEnter,
+		OnStateExit
+	}
+
 	public class StateMachine : ComponentBehaviour, IMessageable
 	{
 		[Serializable]

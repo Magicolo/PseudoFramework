@@ -6,7 +6,7 @@ namespace Pseudo
 {
 	public interface IAudioManager
 	{
-		AudioSource Reference { get; }
+		AudioSource Reference { get; set; }
 		bool UseCustomCurves { get; set; }
 
 		IAudioItem CreateItem(AudioSettingsBase settings);

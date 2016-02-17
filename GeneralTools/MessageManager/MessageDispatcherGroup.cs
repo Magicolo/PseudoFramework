@@ -9,10 +9,14 @@ namespace Pseudo.Internal.Communication
 {
 	public class MessageDispatcherGroup<TId>
 	{
+		static readonly bool isValueType = typeof(TId).IsValueType;
 		readonly Dictionary<TId, MessageDispatcher<TId>> idToDispatcherGroup = new Dictionary<TId, MessageDispatcher<TId>>(PEqualityComparer<TId>.Default);
 
 		public void Send<TArg>(object target, TId identifier, TArg argument)
 		{
+			if (!isValueType && identifier == null)
+				return;
+
 			GetDispatcher(identifier).Send(target, argument);
 		}
 

@@ -10,12 +10,12 @@ namespace Pseudo.Internal.Input
 	public class JoystickButton
 	{
 		[SerializeField]
-		protected InputManager.Joysticks joystick;
+		protected Joysticks joystick;
 		[SerializeField]
-		protected InputManager.JoystickButtons button;
+		protected JoystickButtons button;
 		protected KeyCode key;
 
-		public InputManager.Joysticks Joystick
+		public Joysticks Joystick
 		{
 			get { return joystick; }
 			set
@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Input
 				}
 			}
 		}
-		public InputManager.JoystickButtons Button
+		public JoystickButtons Button
 		{
 			get { return button; }
 			set
@@ -51,7 +51,7 @@ namespace Pseudo.Internal.Input
 			}
 		}
 
-		public JoystickButton(InputManager.Joysticks joystick, InputManager.JoystickButtons button)
+		public JoystickButton(Joysticks joystick, JoystickButtons button)
 		{
 			this.joystick = joystick;
 			this.button = button;

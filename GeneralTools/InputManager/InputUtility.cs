@@ -29,22 +29,21 @@ namespace Pseudo.Internal.Input
 		public static void SetupInputManager()
 		{
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
-			UnityEditor.SerializedProperty axesProperty = inputManagerSerialized.FindProperty("m_Axes");
+			var inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
+			var axesProperty = inputManagerSerialized.FindProperty("m_Axes");
 
-			InputManager.Joysticks[] joysticks = (InputManager.Joysticks[])System.Enum.GetValues(typeof(InputManager.Joysticks));
+			var joysticks = (Joysticks[])System.Enum.GetValues(typeof(Joysticks));
 
 			for (int i = 0; i < joysticks.Length; i++)
 			{
-				InputManager.Joysticks joystick = joysticks[i];
-				InputManager.JoystickAxes[] joystickAxes = (InputManager.JoystickAxes[])System.Enum.GetValues(typeof(InputManager.JoystickAxes));
+				var joystick = joysticks[i];
+				var joystickAxes = (JoystickAxes[])System.Enum.GetValues(typeof(JoystickAxes));
 
 				for (int j = 0; j < joystickAxes.Length; j++)
 				{
-					InputManager.JoystickAxes joystickAxis = joystickAxes[j];
-					string axis = joystick.ToString() + joystickAxis;
-
-					UnityEditor.SerializedProperty currentAxisProperty = axesProperty.Find(property => property.FindPropertyRelative("m_Name").GetValue<string>() == axis);
+					var joystickAxis = joystickAxes[j];
+					var axis = joystick.ToString() + joystickAxis;
+					var currentAxisProperty = axesProperty.Find(property => property.FindPropertyRelative("m_Name").GetValue<string>() == axis);
 
 					if (currentAxisProperty == null)
 					{
@@ -61,9 +60,9 @@ namespace Pseudo.Internal.Input
 						currentAxisProperty.SetValue("dead", 0.2f);
 						currentAxisProperty.SetValue("sensitivity", 1f);
 						currentAxisProperty.SetValue("snap", false);
-						currentAxisProperty.SetValue("invert", joystickAxis == InputManager.JoystickAxes.LeftStickY || joystickAxis == InputManager.JoystickAxes.RightStickY);
+						currentAxisProperty.SetValue("invert", joystickAxis == JoystickAxes.LeftStickY || joystickAxis == JoystickAxes.RightStickY);
 						currentAxisProperty.SetValue("type", value: 2);
-						currentAxisProperty.SetValue("axis", value: (joystickAxis == InputManager.JoystickAxes.LeftTrigger || joystickAxis == InputManager.JoystickAxes.RightTrigger) ? 2 : (int)joystickAxis);
+						currentAxisProperty.SetValue("axis", value: (joystickAxis == JoystickAxes.LeftTrigger || joystickAxis == JoystickAxes.RightTrigger) ? 2 : (int)joystickAxis);
 						currentAxisProperty.SetValue("joyNum", value: (int)joystick);
 					}
 					else
@@ -77,11 +76,11 @@ namespace Pseudo.Internal.Input
 
 		public static string[] GetKeyboardAxes()
 		{
-			List<string> axes = new List<string>();
+			var axes = new List<string>();
 
 #if UNITY_EDITOR
-			UnityEditor.SerializedObject inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
-			UnityEditor.SerializedProperty inputManagerAxesProperty = inputManagerSerialized.FindProperty("m_Axes");
+			var inputManagerSerialized = new UnityEditor.SerializedObject(UnityEditor.AssetDatabase.LoadAllAssetsAtPath("ProjectSettings/InputManager.asset"));
+			var inputManagerAxesProperty = inputManagerSerialized.FindProperty("m_Axes");
 
 			for (int i = 0; i < inputManagerAxesProperty.arraySize; i++)
 			{
@@ -95,49 +94,49 @@ namespace Pseudo.Internal.Input
 			return axes.ToArray();
 		}
 
-		public static InputManager.Joysticks KeyToJoystick(KeyCode key)
+		public static Joysticks KeyToJoystick(KeyCode key)
 		{
-			return (InputManager.Joysticks)((key - KeyCode.JoystickButton0) / 20);
+			return (Joysticks)((key - KeyCode.JoystickButton0) / 20);
 		}
 
-		public static InputManager.JoystickButtons KeyToJoystickButton(KeyCode key)
+		public static JoystickButtons KeyToJoystickButton(KeyCode key)
 		{
-			return (InputManager.JoystickButtons)((key - KeyCode.JoystickButton0) % 20);
+			return (JoystickButtons)((key - KeyCode.JoystickButton0) % 20);
 		}
 
-		public static KeyCode JoystickInputToKey(InputManager.Joysticks joystick, InputManager.JoystickButtons button)
+		public static KeyCode JoystickInputToKey(Joysticks joystick, JoystickButtons button)
 		{
 			return KeyCode.JoystickButton0 + ((int)joystick * 20 + (int)button);
 		}
 
-		public static InputManager.Joysticks AxisToJoystick(string axis)
+		public static Joysticks AxisToJoystick(string axis)
 		{
 			int length = axis.StartsWith("Any") ? 3 : char.IsNumber(axis[9]) ? 9 : 8;
 			string joystickName = axis.Substring(0, length);
 
-			return (InputManager.Joysticks)System.Enum.Parse(typeof(InputManager.Joysticks), joystickName);
+			return (Joysticks)System.Enum.Parse(typeof(Joysticks), joystickName);
 		}
 
-		public static InputManager.JoystickAxes AxisToJoystickAxis(string axis)
+		public static JoystickAxes AxisToJoystickAxis(string axis)
 		{
 			int startIndex = axis.StartsWith("Any") ? 3 : char.IsNumber(axis[9]) ? 9 : 8;
 			string axisName = axis.Substring(startIndex);
 
-			return (InputManager.JoystickAxes)System.Enum.Parse(typeof(InputManager.JoystickAxes), axisName);
+			return (JoystickAxes)System.Enum.Parse(typeof(JoystickAxes), axisName);
 		}
 
-		public static string JoystickInputToAxis(InputManager.Joysticks joystick, InputManager.JoystickAxes axis)
+		public static string JoystickInputToAxis(Joysticks joystick, JoystickAxes axis)
 		{
 			return joystick.ToString() + axis;
 		}
 
 		public static KeyCode[] GetPressedKeys(KeyCode[] keys)
 		{
-			List<KeyCode> pressed = new List<KeyCode>();
+			var pressed = new List<KeyCode>();
 
 			for (int i = 0; i < keys.Length; i++)
 			{
-				KeyCode key = keys[i];
+				var key = keys[i];
 
 				if (UnityEngine.Input.GetKey(key))
 					pressed.Add(key);
@@ -146,19 +145,19 @@ namespace Pseudo.Internal.Input
 			return pressed.ToArray();
 		}
 
-		public static InputManager.Joysticks[] GetPressedJoysticks()
+		public static Joysticks[] GetPressedJoysticks()
 		{
-			List<InputManager.Joysticks> joysticks = new List<InputManager.Joysticks>();
-			KeyCode[] joystickKeys = GetJoystickKeys();
+			var joysticks = new List<Joysticks>();
+			var joystickKeys = GetJoystickKeys();
 
 			for (int i = 0; i < joystickKeys.Length; i++)
 			{
-				KeyCode joystickKey = joystickKeys[i];
+				var joystickKey = joystickKeys[i];
 
 				if (!UnityEngine.Input.GetKey(joystickKey))
 					continue;
 
-				InputManager.Joysticks joystick = KeyToJoystick(joystickKey);
+				var joystick = KeyToJoystick(joystickKey);
 
 				if (!joysticks.Contains(joystick))
 					joysticks.Add(joystick);
@@ -167,9 +166,9 @@ namespace Pseudo.Internal.Input
 			return joysticks.ToArray();
 		}
 
-		public static InputManager.JoystickButtons[] GetPressedJoystickButtons()
+		public static JoystickButtons[] GetPressedJoystickButtons()
 		{
-			var joystickButtons = new List<InputManager.JoystickButtons>();
+			var joystickButtons = new List<JoystickButtons>();
 			var joystickKeys = GetJoystickKeys();
 
 			for (int i = 0; i < joystickKeys.Length; i++)
@@ -192,7 +191,7 @@ namespace Pseudo.Internal.Input
 		public static KeyCode[] GetAllKeys() { return allKeys; }
 		public static KeyCode[] GetKeyboardKeys() { return keypadKeys; }
 		public static KeyCode[] GetJoystickKeys() { return joystickKeys; }
-		public static KeyCode[] GetJoystickKeys(InputManager.Joysticks joystick) { return joystickKeysDict[(int)joystick]; }
+		public static KeyCode[] GetJoystickKeys(Joysticks joystick) { return joystickKeysDict[(int)joystick]; }
 		public static KeyCode[] GetNonJoystickKeys() { return nonjoystickKeys; }
 		public static KeyCode[] GetMouseKeys() { return mouseKeys; }
 		public static KeyCode[] GetLetterKeys() { return letterKeys; }
