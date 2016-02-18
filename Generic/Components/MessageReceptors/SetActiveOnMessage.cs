@@ -12,9 +12,9 @@ namespace Pseudo
 		[Serializable]
 		public struct ActiveAction
 		{
-			public MessageEnum Message;
 			public GameObject Target;
 			public bool Active;
+			public MessageEnum Message;
 		}
 
 		[InitializeContent]

@@ -35,9 +35,9 @@ namespace Pseudo
 		[Serializable]
 		public struct UIMessage
 		{
-			public EntityMessage Message;
 			[EnumFlags]
 			public UIEvents Events;
+			public EntityMessage Message;
 		}
 
 		public UIMessage[] Messages = new UIMessage[0];

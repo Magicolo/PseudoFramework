@@ -9,8 +9,8 @@ namespace Pseudo.Internal.Audio
 	public abstract class AudioContainerItem : AudioItemBase
 	{
 		protected readonly List<AudioItemBase> sources = new List<AudioItemBase>();
-		protected readonly Action<AudioModifier> setVolumeScale;
-		protected readonly Action<AudioModifier> setPitchScale;
+		readonly Action<AudioModifier> setVolumeScale;
+		readonly Action<AudioModifier> setPitchScale;
 
 		protected AudioContainerItem()
 		{
@@ -19,7 +19,6 @@ namespace Pseudo.Internal.Audio
 				for (int i = 0; i < sources.Count; i++)
 					sources[i].SetVolumeScale(modifer.Value);
 			};
-
 			setPitchScale = modifer =>
 			{
 				for (int i = 0; i < sources.Count; i++)

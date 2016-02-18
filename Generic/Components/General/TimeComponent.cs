@@ -42,9 +42,9 @@ namespace Pseudo
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdded()
 		{
-			time.ResetTime();
+			time.Reset();
 		}
-		
+
 		public static implicit operator TimeChannel(TimeComponent time)
 		{
 			return time.time;

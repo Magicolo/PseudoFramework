@@ -208,9 +208,9 @@ namespace Pseudo.Tests
 			binder.Bind<DummySubField>().ToTransient();
 			binder.Bind<DummyProperty>().ToTransient();
 			binder.Bind<DummySubProperty>().ToTransient();
-			binder.Bind<Dummy1>().ToSingle().When(c => c.DeclaringType == typeof(Dummy2));
-			binder.Bind<IDummy>().ToSingle<Dummy1>().When(c => c.Type == InjectionContext.Types.Field);
-			binder.Bind<IDummy>().ToSingle<Dummy2>().When(c => c.Identifier == "Boba");
+			binder.Bind<Dummy1>().ToSingle().WhenInjectedInto(typeof(Dummy2));
+			binder.Bind<IDummy>().ToSingle<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
+			binder.Bind<IDummy>().ToSingle<Dummy2>().When("Boba");
 
 			var instance = binder.Resolver.Resolve<Dummy4>();
 
@@ -286,7 +286,7 @@ namespace Pseudo.Tests
 		{
 			[Inject]
 			public IDummy Dummy1;
-			[Inject(identifier: "Boba")]
+			[Inject(optional: true, identifier: "Boba")]
 			public IDummy Dummy2 { get; set; }
 		}
 		public interface IDummy { }

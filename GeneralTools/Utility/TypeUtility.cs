@@ -41,6 +41,16 @@ namespace Pseudo
 			return AllTypes.Where(t => t.IsDefined(attributeType, true)).ToArray();
 		}
 
+		public static Type FindType(Predicate<Type> match)
+		{
+			return Array.Find(AllTypes, match);
+		}
+
+		public static Type[] FindTypes(Predicate<Type> match)
+		{
+			return AllTypes.Where(t => match(t)).ToArray();
+		}
+
 		public static object GetDefaultValue(Type type)
 		{
 			if (type.IsClass)

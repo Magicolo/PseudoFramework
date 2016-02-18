@@ -105,11 +105,6 @@ namespace Pseudo.Internal.Injection
 			typeToFactoryData.Clear();
 		}
 
-		public void Sort(Type contractType)
-		{
-			GetFactoryDataList(contractType).Sort((a, b) => b.Conditions.Count.CompareTo(a.Conditions.Count));
-		}
-
 		T[] ResolveAll<T>(Type contractType) where T : class
 		{
 			var context = new InjectionContext
@@ -143,23 +138,12 @@ namespace Pseudo.Internal.Injection
 				{
 					var data = dataList[i];
 
-					if (CheckConditions(data, ref context))
+					if (data.Condition(context))
 						return data;
 				}
 			}
 
 			return null;
-		}
-
-		bool CheckConditions(FactoryData data, ref InjectionContext context)
-		{
-			for (int i = 0; i < data.Conditions.Count; i++)
-			{
-				if (!data.Conditions[i](context))
-					return false;
-			}
-
-			return true;
 		}
 
 		List<FactoryData> GetFactoryDataList(Type contractType)

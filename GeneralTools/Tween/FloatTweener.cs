@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class FloatTweener : ICopyable
+	public class FloatTweener : ICopyable<FloatTweener>
 	{
 		public enum TweenStates
 		{
@@ -19,10 +19,10 @@ namespace Pseudo
 		float start;
 		float end;
 		float time;
+		float delay;
 		Action<float> setValue;
 		Func<float, float> easeFunction;
 		Func<float> getDeltaTime;
-		float delay;
 		Action startCallback;
 		Action endCallback;
 		TweenStates state = TweenStates.Stopped;
@@ -110,22 +110,21 @@ namespace Pseudo
 			}
 		}
 
-		public void Copy(object reference)
+		public void Copy(FloatTweener reference)
 		{
-			var castedReference = (FloatTweener)reference;
-			start = castedReference.start;
-			end = castedReference.end;
-			time = castedReference.time;
-			setValue = castedReference.setValue;
-			easeFunction = castedReference.easeFunction;
-			getDeltaTime = castedReference.getDeltaTime;
-			delay = castedReference.delay;
-			startCallback = castedReference.startCallback;
-			endCallback = castedReference.endCallback;
-			state = castedReference.state;
-			value = castedReference.value;
-			completion = castedReference.completion;
-			counter = castedReference.counter;
+			start = reference.start;
+			end = reference.end;
+			time = reference.time;
+			setValue = reference.setValue;
+			easeFunction = reference.easeFunction;
+			getDeltaTime = reference.getDeltaTime;
+			delay = reference.delay;
+			startCallback = reference.startCallback;
+			endCallback = reference.endCallback;
+			state = reference.state;
+			value = reference.value;
+			completion = reference.completion;
+			counter = reference.counter;
 		}
 	}
 }

@@ -22,28 +22,24 @@ namespace Pseudo.Internal.Injection
 				conditions[i].When(condition);
 		}
 
-		public void WhenIs(string identifier)
+		public void When(string identifier)
 		{
-			for (int i = 0; i < conditions.Length; i++)
-				conditions[i].WhenIs(identifier);
+			When(context => context.Identifier == identifier);
 		}
 
-		public void WhenIs(InjectionContext.Types contextType)
+		public void WhenInjectedInto(InjectionContext.ContextTypes contextType)
 		{
-			for (int i = 0; i < conditions.Length; i++)
-				conditions[i].WhenIs(contextType);
+			When(context => (context.ContextType & contextType) != 0);
 		}
 
 		public void WhenInjectedInto(Type declaringType)
 		{
-			for (int i = 0; i < conditions.Length; i++)
-				conditions[i].WhenInjectedInto(declaringType);
+			When(context => context.DeclaringType == declaringType);
 		}
 
 		public void WhenInjectedInto(object instance)
 		{
-			for (int i = 0; i < conditions.Length; i++)
-				conditions[i].WhenInjectedInto(instance);
+			When(context => context.Instance == instance);
 		}
 	}
 }

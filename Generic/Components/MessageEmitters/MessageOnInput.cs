@@ -19,10 +19,10 @@ namespace Pseudo
 		[Serializable]
 		public struct InputMessage
 		{
-			public EntityMessage Message;
 			public Players Player;
 			public string Action;
 			public TriggerModes Trigger;
+			public EntityMessage Message;
 		}
 
 		public InputMessage[] Messages = new InputMessage[0];

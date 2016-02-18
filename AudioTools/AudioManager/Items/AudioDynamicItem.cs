@@ -12,7 +12,7 @@ namespace Pseudo
 {
 	public class AudioDynamicItem : AudioContainerItem
 	{
-		Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings;
+		DynamicGetter getNextSettings;
 		AudioDynamicSettings settings;
 		int currentStep;
 		bool requestNextSettings = true;
@@ -20,18 +20,19 @@ namespace Pseudo
 		double deltaTime;
 		double lastTime;
 
-		protected readonly List<AudioDynamicData> dynamicData = new List<AudioDynamicData>();
+		readonly List<AudioDynamicData> dynamicData = new List<AudioDynamicData>();
 
 		public override AudioTypes Type { get { return AudioTypes.Dynamic; } }
 		public override AudioSettingsBase Settings { get { return settings; } }
 		public int CurrentStep { get { return currentStep; } }
 
-		public void Initialize(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
+		public void Initialize(DynamicGetter getNextSettings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(getNextSettings.GetHashCode(), getNextSettings.Method.Name, itemManager, spatializer, parent);
-
-			this.getNextSettings = getNextSettings;
 			settings = TypePoolManager.Create<AudioDynamicSettings>();
+
+			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
+
+			this.getNextSettings = getNextSettings ?? delegate { return null; };
 
 			InitializeModifiers(settings);
 			InitializeSources();

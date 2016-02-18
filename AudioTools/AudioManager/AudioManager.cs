@@ -56,7 +56,7 @@ namespace Pseudo.Internal.Audio
 		{
 			StopAllItemsImmediate();
 		}
-		
+
 		public void Update()
 		{
 			itemManager.Update();
@@ -119,7 +119,7 @@ namespace Pseudo.Internal.Audio
 		/// </summary>
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <returns></returns>
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings)
 		{
 			Assert.IsNotNull(getNextSettings);
 			return itemManager.CreateDynamicItem(getNextSettings);
@@ -133,7 +133,7 @@ namespace Pseudo.Internal.Audio
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="position">Position at which to place the AudioSource.</param>
 		/// <returns></returns>
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Vector3 position)
 		{
 			Assert.IsNotNull(getNextSettings);
 			return itemManager.CreateDynamicItem(getNextSettings, position);
@@ -148,7 +148,7 @@ namespace Pseudo.Internal.Audio
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="follow">Transform the the AudioSource will follow.</param>
 		/// <returns></returns>
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Transform follow)
 		{
 			Assert.IsNotNull(getNextSettings);
 			Assert.IsNotNull(follow);
@@ -163,7 +163,7 @@ namespace Pseudo.Internal.Audio
 		/// <param name="getNextSettings">Delegate that will be called when the AudioItem requires its next AudioSettingsBase.</param>
 		/// <param name="getPosition">Callback that will be used to update the AudioSource's position.</param>
 		/// <returns></returns>
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Func<Vector3> getPosition)
 		{
 			Assert.IsNotNull(getNextSettings);
 			Assert.IsNotNull(getPosition);
@@ -173,13 +173,13 @@ namespace Pseudo.Internal.Audio
 		public void StopItems(AudioSettingsBase settings)
 		{
 			Assert.IsNotNull(settings);
-			itemManager.StopItemsWithId(settings.Id);
+			itemManager.StopItemsWithId(settings.Identifier);
 		}
 
 		public void StopItemsImmediate(AudioSettingsBase settings)
 		{
 			Assert.IsNotNull(settings);
-			itemManager.StopItemsWithIdImmediate(settings.Id);
+			itemManager.StopItemsWithIdImmediate(settings.Identifier);
 		}
 
 		public void StopItems(int id)

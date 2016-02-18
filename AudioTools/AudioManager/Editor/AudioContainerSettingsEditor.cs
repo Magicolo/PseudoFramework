@@ -42,7 +42,7 @@ namespace Pseudo.Internal.Audio
 			sourceSettingsProperty = sourceProperty.FindPropertyRelative("Settings");
 			var settings = sourceSettingsProperty.GetValue<AudioSettingsBase>();
 
-			Foldout(sourceProperty, string.Format("{0}", settings == null ? "null" : settings.Name).ToGUIContent(), CustomEditorStyles.BoldFoldout);
+			Foldout(sourceProperty, string.Format("{0}", settings == null ? "null" : settings.name).ToGUIContent(), CustomEditorStyles.BoldFoldout);
 
 			var rect = EditorGUI.IndentedRect(GUILayoutUtility.GetLastRect());
 			rect.width += 6f;

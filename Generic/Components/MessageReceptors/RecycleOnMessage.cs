@@ -9,30 +9,23 @@ namespace Pseudo
 {
 	public class RecycleOnMessage : ComponentBehaviour, IMessageable
 	{
-		public MessageEnum RecycleMessage;
+		public EntityBehaviour Recycle;
+		public MessageEnum Message;
 
 		bool recycle;
-
-		public EntityBehaviour EntityHolder { get { return cachedEntityHolder.Value; } }
-		readonly Lazy<EntityBehaviour> cachedEntityHolder;
-
-		protected RecycleOnMessage()
-		{
-			cachedEntityHolder = new Lazy<EntityBehaviour>(GetComponent<EntityBehaviour>);
-		}
 
 		void LateUpdate()
 		{
 			if (recycle)
 			{
 				recycle = false;
-				Entity.Manager.RecycleEntity(EntityHolder);
+				Entity.Manager.RecycleEntity(Recycle);
 			}
 		}
 
 		void IMessageable.OnMessage<TId>(TId message)
 		{
-			recycle |= RecycleMessage.Equals(message);
+			recycle |= Message.Equals(message) && Recycle != null;
 		}
 	}
 }

@@ -9,7 +9,12 @@ namespace Pseudo.Internal.Injection
 {
 	public class FactoryData
 	{
-		public IInjectionFactory Factory;
-		public List<Predicate<InjectionContext>> Conditions;
+		public readonly IInjectionFactory Factory;
+		public Predicate<InjectionContext> Condition = c => string.IsNullOrEmpty(c.Identifier);
+
+		public FactoryData(IInjectionFactory factory)
+		{
+			Factory = factory;
+		}
 	}
 }

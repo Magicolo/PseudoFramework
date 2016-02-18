@@ -4,36 +4,34 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Injection
 {
 	public class BindingCondition : IBindingCondition
 	{
-		readonly Type contractType;
 		readonly FactoryData data;
-		readonly Resolver resolver;
 
-		public BindingCondition(Type contractType, FactoryData data, Resolver resolver)
+		public BindingCondition(FactoryData data)
 		{
-			this.contractType = contractType;
 			this.data = data;
-			this.resolver = resolver;
 		}
 
 		public void When(Predicate<InjectionContext> condition)
 		{
-			data.Conditions.Add(condition);
-			resolver.Sort(contractType);
+			Assert.IsNotNull(condition);
+
+			data.Condition = condition;
 		}
 
-		public void WhenIs(string identifier)
+		public void When(string identifier)
 		{
 			When(context => context.Identifier == identifier);
 		}
 
-		public void WhenIs(InjectionContext.Types contextType)
+		public void WhenInjectedInto(InjectionContext.ContextTypes contextType)
 		{
-			When(context => context.Type == contextType);
+			When(context => context.ContextType == contextType);
 		}
 
 		public void WhenInjectedInto(Type declaringType)

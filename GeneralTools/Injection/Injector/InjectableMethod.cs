@@ -56,7 +56,7 @@ namespace Pseudo.Internal.Injection
 
 		void SetupContext(ref InjectionContext context)
 		{
-			context.Type = InjectionContext.Types.Method;
+			context.ContextType = InjectionContext.ContextTypes.Method;
 			context.DeclaringType = method.DeclaringType;
 			context.Member = method;
 			context.Optional = attribute.Optional;

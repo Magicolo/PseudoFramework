@@ -10,16 +10,16 @@ namespace Pseudo
 	public class SetEnabledOnMessage : ComponentBehaviour, IMessageable
 	{
 		[Serializable]
-		public struct EnableAction
+		public struct EnabledAction
 		{
-			public MessageEnum Message;
 			public MonoBehaviour Target;
 			public bool Enabled;
+			public MessageEnum Message;
 		}
 
 		[InitializeContent]
-		public EnableAction[] Actions = new EnableAction[0];
-		
+		public EnabledAction[] Actions = new EnabledAction[0];
+
 		void IMessageable.OnMessage<TId>(TId message)
 		{
 			for (int i = 0; i < Actions.Length; i++)

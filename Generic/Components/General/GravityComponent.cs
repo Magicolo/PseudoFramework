@@ -36,17 +36,16 @@ namespace Pseudo
 			set { gravity.Rotation = value; }
 		}
 
-		protected readonly Lazy<Rigidbody> cachedRigidbody;
-		public Rigidbody CachedRigidbody { get { return cachedRigidbody; } }
+		readonly Lazy<Rigidbody> cachedRigidbody;
+		public Rigidbody Rigidbody { get { return cachedRigidbody; } }
 
-		protected readonly Lazy<Rigidbody2D> cachedRigidbody2D;
-		public Rigidbody2D CachedRigidbody2D { get { return cachedRigidbody2D; } }
-
-		protected readonly Lazy<TimeComponent> cachedTime;
-		public TimeComponent CachedTime { get { return cachedTime; } }
+		readonly Lazy<Rigidbody2D> cachedRigidbody2D;
+		public Rigidbody2D Rigidbody2D { get { return cachedRigidbody2D; } }
 
 		[SerializeField, InitializeContent]
 		GravityChannel gravity = new GravityChannel();
+		public TimeComponent Time;
+
 		bool hasRigidbody;
 		bool hasRigidbody2D;
 
@@ -54,29 +53,31 @@ namespace Pseudo
 		{
 			cachedRigidbody = new Lazy<Rigidbody>(GetComponent<Rigidbody>);
 			cachedRigidbody2D = new Lazy<Rigidbody2D>(GetComponent<Rigidbody2D>);
-			cachedTime = new Lazy<TimeComponent>(GetComponent<TimeComponent>);
+		}
+
+		[Message(ComponentMessages.OnAdded)]
+		void OnAdded()
+		{
+			gravity.Reset();
 		}
 
 		void Awake()
 		{
-			hasRigidbody = CachedRigidbody != null;
-			hasRigidbody2D = CachedRigidbody2D != null;
+			hasRigidbody = Rigidbody != null;
+			hasRigidbody2D = Rigidbody2D != null;
 		}
 
 		void FixedUpdate()
 		{
 			if (hasRigidbody)
-				CachedRigidbody.velocity += gravity.Gravity * CachedTime.FixedDeltaTime;
+				Rigidbody.velocity += gravity.Gravity * Time.FixedDeltaTime;
 			else if (hasRigidbody2D)
-				CachedRigidbody2D.velocity += gravity.Gravity2D * CachedTime.FixedDeltaTime;
+				Rigidbody2D.velocity += gravity.Gravity2D * Time.FixedDeltaTime;
 		}
 
-		void Reset()
+		public static implicit operator GravityChannel(GravityComponent gravity)
 		{
-			if (CachedRigidbody != null)
-				CachedRigidbody.useGravity = false;
-			else if (CachedRigidbody2D != null)
-				CachedRigidbody2D.gravityScale = 0f;
+			return gravity.gravity;
 		}
 	}
 }

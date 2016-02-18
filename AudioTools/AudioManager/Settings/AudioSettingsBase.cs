@@ -17,13 +17,13 @@ namespace Pseudo
 
 		static int idCounter;
 
-		int id = ++idCounter;
 		string cachedName;
+		int identifier = ++idCounter;
 
 		/// <summary>
 		/// The unique identifier of the AudioSettingsBase.
 		/// </summary>
-		public int Id { get { return id; } }
+		public int Identifier { get { return identifier; } }
 		/// <summary>
 		/// The name of the AudioSettingsBase.
 		/// </summary>
@@ -85,10 +85,12 @@ namespace Pseudo
 		/// <summary>
 		/// RealTime Parameter Controls that will allow to modify the volume or pitch of an AudioItem dynamicaly.
 		/// </summary>
+		[InitializeContent]
 		public List<AudioRTPC> RTPCs = new List<AudioRTPC>();
 		/// <summary>
 		/// Options that will override the default settings of the AudioItem.
 		/// </summary>
+		[InitializeContent]
 		public List<AudioOption> Options = new List<AudioOption>();
 
 		/// <summary>
@@ -112,11 +114,7 @@ namespace Pseudo
 		/// <summary>
 		/// Internaly used by the pooling system.
 		/// </summary>
-		public virtual void OnCreate()
-		{
-			TypePoolManager.CreateElements(RTPCs);
-			TypePoolManager.CreateElements(Options);
-		}
+		public virtual void OnCreate() { }
 
 		/// <summary>
 		/// Internaly used by the pooling system.

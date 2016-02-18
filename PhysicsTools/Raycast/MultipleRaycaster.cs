@@ -11,25 +11,30 @@ namespace Pseudo
 	[AddComponentMenu("Pseudo/Physics/Multiple Raycaster")]
 	public class MultipleRaycaster : RaycasterBase
 	{
-		[Min(2, BeforeSeparator = true)]
-		public int Amount = 2;
+		public RaycastHitModes HitMode = RaycastHitModes.FirstOfEach;
+		[Min(1)]
+		public int Amount = 1;
 		[Range(0f, 360f)]
 		public float Spread = 30f;
 		[Min]
 		public float Distance = 1f;
 
-		public override bool Cast()
+		protected override void UpdateCast()
 		{
-			Hits.Clear();
-			Vector3 position = CachedTransform.position;
-			Vector3 rotation = CachedTransform.eulerAngles;
-			Vector3 scale = CachedTransform.lossyScale;
-			float angleIncrement = Spread / (Amount - 1);
-			rotation.z -= Spread / 2f;
+			var position = CachedTransform.position;
+			var rotation = CachedTransform.eulerAngles;
+			var scale = CachedTransform.lossyScale;
+			float angleIncrement = 0f;
+
+			if (Amount > 1)
+			{
+				angleIncrement = Spread / (Amount - 1);
+				rotation.z -= Spread / 2f;
+			}
 
 			for (int i = 0; i < Amount; i++)
 			{
-				Vector3 direction = Quaternion.Euler(rotation) * Vector3.right;
+				var direction = Quaternion.Euler(rotation) * Vector3.right;
 				direction.Scale(scale);
 
 				RaycastHit hit;
@@ -43,7 +48,7 @@ namespace Pseudo
 						if (Physics.Raycast(position, direction, out hit, Distance, Mask, HitTrigger))
 						{
 							Hits.Add(hit);
-							return true;
+							return;
 						}
 						break;
 					case RaycastHitModes.FirstOfEach:
@@ -57,8 +62,6 @@ namespace Pseudo
 
 				rotation.z += angleIncrement;
 			}
-
-			return Hits.Count > 0;
 		}
 	}
 }

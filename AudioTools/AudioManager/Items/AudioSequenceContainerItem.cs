@@ -3,10 +3,11 @@ using System.Collections;
 using Pseudo;
 using System;
 using System.Collections.Generic;
+using Pseudo.Internal.Copy;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioSequenceContainerItem : AudioContainerItem
+	public class AudioSequenceContainerItem : AudioContainerItem, ICopyable<AudioSequenceContainerItem>
 	{
 		AudioSequenceContainerSettings originalSettings;
 		AudioSequenceContainerSettings settings;
@@ -20,7 +21,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Initialize(AudioSequenceContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
+			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
@@ -158,17 +159,16 @@ namespace Pseudo.Internal.Audio
 			PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public override void Copy(object reference)
+		public void Copy(AudioSequenceContainerItem reference)
 		{
 			base.Copy(reference);
 
-			var castedReference = (AudioSequenceContainerItem)reference;
-			originalSettings = castedReference.originalSettings;
-			settings = castedReference.settings;
-			deltaTime = castedReference.deltaTime;
-			lastTime = castedReference.lastTime;
-			delay = castedReference.delay;
-			sourcesIndex = castedReference.sourcesIndex;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
+			delay = reference.delay;
+			sourcesIndex = reference.sourcesIndex;
 		}
 	}
 }

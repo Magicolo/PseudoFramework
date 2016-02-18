@@ -33,59 +33,6 @@ namespace Pseudo
 			return instance;
 		}
 
-		public static T CreateCopy<T>(T reference) where T : class, ICopyable
-		{
-			return (T)CreateCopy((ICopyable)reference);
-		}
-
-		public static ICopyable CreateCopy(ICopyable reference)
-		{
-			if (reference == null)
-				return null;
-
-			var pool = GetPool(reference.GetType());
-			var instance = pool.CreateCopy(reference);
-
-			return instance;
-		}
-
-		public static void CreateCopies<T>(ref T[] targets, T[] sources) where T : class, ICopyable
-		{
-			if (sources == null)
-				return;
-
-			if (targets == null)
-				targets = new T[sources.Length];
-			else if (targets.Length != sources.Length)
-				Array.Resize(ref targets, sources.Length);
-
-			for (int i = 0; i < targets.Length; i++)
-				targets[i] = CreateCopy(sources[i]);
-		}
-
-		public static void CreateCopies<T>(List<T> targets, IList<T> sources) where T : class, ICopyable
-		{
-			if (sources == null)
-				return;
-
-			if (targets == null)
-				targets = new List<T>(sources.Count);
-			else
-				targets.Clear();
-
-			for (int i = 0; i < targets.Count; i++)
-				targets.Add(CreateCopy(sources[i]));
-		}
-
-		public static void CreateElements<T>(IList<T> elements) where T : class, ICopyable
-		{
-			if (elements == null)
-				return;
-
-			for (int i = 0; i < elements.Count; i++)
-				elements[i] = CreateCopy(elements[i]);
-		}
-
 		public static void Recycle(object instance)
 		{
 			if (instance == null)

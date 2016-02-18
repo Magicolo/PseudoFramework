@@ -9,14 +9,8 @@ namespace Pseudo.Internal.Audio
 {
 	public abstract class AudioContainerSettings : AudioSettingsBase
 	{
+		[InitializeContent]
 		public List<AudioContainerSourceData> Sources = new List<AudioContainerSourceData>();
-
-		public override void OnCreate()
-		{
-			base.OnCreate();
-
-			TypePoolManager.CreateElements(Sources);
-		}
 
 		public override void OnRecycle()
 		{

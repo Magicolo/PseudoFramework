@@ -59,6 +59,15 @@ namespace Pseudo.Internal.Physics
 		protected Vector2 lastGravity2D;
 		protected bool hasChanged = true;
 
+		public void Reset()
+		{
+			gravity = Vector3.zero;
+			lastGravity = Vector3.zero;
+			gravity2D = Vector2.zero;
+			lastGravity2D = Vector2.zero;
+			hasChanged = true;
+		}
+
 		protected virtual void UpdateGravity()
 		{
 			var currentGravity = GetGravity();

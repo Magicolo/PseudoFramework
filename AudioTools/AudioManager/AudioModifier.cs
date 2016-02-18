@@ -7,7 +7,7 @@ using Pseudo;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioModifier : IPoolable, ICopyable
+	public class AudioModifier : IPoolable, ICopyable<AudioModifier>
 	{
 		float initialValue = 1f;
 		float fadeModifier = 1f;
@@ -44,16 +44,15 @@ namespace Pseudo.Internal.Audio
 			OnValueChanged = null;
 		}
 
-		public void Copy(object reference)
+		public void Copy(AudioModifier reference)
 		{
-			var castedReference = (AudioModifier)reference;
-			initialValue = castedReference.initialValue;
-			fadeModifier = castedReference.fadeModifier;
-			rampModifier = castedReference.rampModifier;
-			parentModifier = castedReference.parentModifier;
-			randomModifier = castedReference.randomModifier;
-			rtpcModifier = castedReference.rtpcModifier;
-			OnValueChanged = castedReference.OnValueChanged;
+			initialValue = reference.initialValue;
+			fadeModifier = reference.fadeModifier;
+			rampModifier = reference.rampModifier;
+			parentModifier = reference.parentModifier;
+			randomModifier = reference.randomModifier;
+			rtpcModifier = reference.rtpcModifier;
+			OnValueChanged = reference.OnValueChanged;
 		}
 	}
 }

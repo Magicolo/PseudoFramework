@@ -152,11 +152,21 @@ namespace Pseudo.Internal.Editor
 
 		public static object ObjectField(Rect position, object value, GUIContent label)
 		{
+			float height;
+
+			return ObjectField(position, value, label, out height);
+		}
+
+		public static object ObjectField(Rect position, object value, GUIContent label, out float height)
+		{
+			height = 0f;
+
 			if (value == null)
 				return null;
 
 			var serializedDummy = DummyUtility.GetSerializedDummy(value);
 			EditorGUI.PropertyField(position, serializedDummy, label, true);
+			height = EditorGUI.GetPropertyHeight(serializedDummy);
 
 			return serializedDummy.GetValue();
 		}

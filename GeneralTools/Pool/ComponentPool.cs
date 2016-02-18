@@ -11,7 +11,8 @@ namespace Pseudo
 	{
 		public readonly Transform Transform;
 
-		public ComponentPool(T reference, Transform transform, int startSize) : base(reference, reference.GetType(), null, null, startSize, false)
+		public ComponentPool(T reference, Transform transform, int startSize) :
+			base(reference, reference.GetType(), null, null, startSize, false)
 		{
 			Transform = transform;
 			Initialize();

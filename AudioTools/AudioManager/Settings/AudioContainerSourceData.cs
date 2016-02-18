@@ -8,9 +8,11 @@ using System.Collections.Generic;
 namespace Pseudo.Internal.Audio
 {
 	[Serializable]
-	public class AudioContainerSourceData : IPoolable, ICopyable
+	public class AudioContainerSourceData : IPoolable
 	{
+		[InitializeValue]
 		public AudioSettingsBase Settings;
+		[InitializeContent]
 		public List<AudioOption> Options = new List<AudioOption>();
 
 		public virtual void OnCreate() { }
@@ -18,13 +20,6 @@ namespace Pseudo.Internal.Audio
 		public virtual void OnRecycle()
 		{
 			TypePoolManager.RecycleElements(Options);
-		}
-
-		public virtual void Copy(object reference)
-		{
-			var castedReference = (AudioContainerSourceData)reference;
-			Settings = castedReference.Settings;
-			TypePoolManager.CreateCopies(Options, castedReference.Options);
 		}
 	}
 }

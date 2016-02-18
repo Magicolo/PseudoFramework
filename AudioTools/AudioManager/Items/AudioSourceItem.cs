@@ -10,7 +10,7 @@ using Pseudo.Internal.Audio;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioSourceItem : AudioItemBase
+	public class AudioSourceItem : AudioItemBase, ICopyable<AudioSourceItem>
 	{
 		AudioSourceSettings originalSettings;
 		AudioSourceSettings settings;
@@ -33,7 +33,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Initialize(AudioSourceSettings settings, AudioItemManager itemManager, AudioSource audioSource, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
+			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			// General Setup
 			originalSettings = settings;
@@ -215,12 +215,12 @@ namespace Pseudo.Internal.Audio
 				switch (option.Type)
 				{
 					case AudioOption.Types.VolumeScale:
-						float[] volumeData = option.GetValue<float[]>();
-						SetVolumeScale(volumeData[0], volumeData[1], (TweenUtility.Ease)volumeData[2], true);
+						var volumeData = option.GetValue<Vector3>();
+						SetVolumeScale(volumeData.x, volumeData.y, (TweenUtility.Ease)volumeData.z, true);
 						break;
 					case AudioOption.Types.PitchScale:
-						float[] pitchData = option.GetValue<float[]>();
-						SetPitchScale(pitchData[0], pitchData[1], (TweenUtility.Ease)pitchData[2], true);
+						var pitchData = option.GetValue<Vector3>();
+						SetPitchScale(pitchData.x, pitchData.y, (TweenUtility.Ease)pitchData.z, true);
 						break;
 					case AudioOption.Types.RandomVolume:
 						float randomVolume = option.GetValue<float>();
@@ -233,14 +233,14 @@ namespace Pseudo.Internal.Audio
 						pitchModifier.RandomModifier = 1f + UnityEngine.Random.Range(-randomPitch, randomPitch);
 						break;
 					case AudioOption.Types.FadeIn:
-						float[] fadeInData = option.GetValue<float[]>();
-						settings.FadeIn = fadeInData[0];
-						settings.FadeInEase = (TweenUtility.Ease)fadeInData[1];
+						var fadeInData = option.GetValue<Vector2>();
+						settings.FadeIn = fadeInData.x;
+						settings.FadeInEase = (TweenUtility.Ease)fadeInData.y;
 						break;
 					case AudioOption.Types.FadeOut:
-						float[] fadeOutData = option.GetValue<float[]>();
-						settings.FadeIn = fadeOutData[0];
-						settings.FadeInEase = (TweenUtility.Ease)fadeOutData[1];
+						var fadeOutData = option.GetValue<Vector2>();
+						settings.FadeIn = fadeOutData.x;
+						settings.FadeInEase = (TweenUtility.Ease)fadeOutData.y;
 						break;
 					case AudioOption.Types.Loop:
 						bool loop = option.GetValue<bool>();
@@ -248,12 +248,12 @@ namespace Pseudo.Internal.Audio
 						source.loop = loop && !hasBreak;
 						break;
 					case AudioOption.Types.Clip:
-						AudioClip clip = option.GetValue<AudioClip>();
+						var clip = option.GetValue<AudioClip>();
 						settings.Clip = clip;
 						source.clip = clip;
 						break;
 					case AudioOption.Types.Output:
-						AudioMixerGroup output = option.GetValue<AudioMixerGroup>();
+						var output = option.GetValue<AudioMixerGroup>();
 						settings.Output = output;
 						source.outputAudioMixerGroup = output;
 						break;
@@ -312,7 +312,7 @@ namespace Pseudo.Internal.Audio
 							source.reverbZoneMix = option.GetValue<float>();
 						break;
 					case AudioOption.Types.PlayRange:
-						Vector2 playRangeData = option.GetValue<Vector2>();
+						var playRangeData = option.GetValue<Vector2>();
 						settings.PlayRangeStart = playRangeData.x;
 						settings.PlayRangeEnd = playRangeData.y;
 						lastTime = source.time;
@@ -395,16 +395,15 @@ namespace Pseudo.Internal.Audio
 			PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public override void Copy(object reference)
+		public void Copy(AudioSourceItem reference)
 		{
 			base.Copy(reference);
 
-			var castedReference = (AudioSourceItem)reference;
-			originalSettings = castedReference.originalSettings;
-			settings = castedReference.settings;
-			source = castedReference.source;
-			deltaTime = castedReference.deltaTime;
-			lastTime = castedReference.lastTime;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			source = reference.source;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
 		}
 	}
 }

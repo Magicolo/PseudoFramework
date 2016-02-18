@@ -40,7 +40,7 @@ namespace Pseudo.Internal.Injection
 
 		void SetupContext(ref InjectionContext context)
 		{
-			context.Type = InjectionContext.Types.Property;
+			context.ContextType = InjectionContext.ContextTypes.Property;
 			context.ContractType = property.PropertyType;
 			context.DeclaringType = property.DeclaringType;
 			context.Member = property;

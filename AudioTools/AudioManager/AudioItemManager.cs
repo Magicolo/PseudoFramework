@@ -31,19 +31,19 @@ namespace Pseudo.Internal.Audio
 
 		public void Activate(AudioItemBase item)
 		{
-			GetItems(item.Id).Add(item);
+			GetItems(item.Identifier).Add(item);
 			toUpdate.Add(item);
 		}
 
 		public void Deactivate(AudioItemBase item)
 		{
-			GetItems(item.Id).Remove(item);
+			GetItems(item.Identifier).Remove(item);
 			toUpdate.Remove(item);
 		}
 
 		public void TrimInstances(AudioItemBase item, int maxInstances)
 		{
-			var items = GetItems(item.Id);
+			var items = GetItems(item.Identifier);
 
 			if (maxInstances > 0)
 			{
@@ -119,14 +119,14 @@ namespace Pseudo.Internal.Audio
 			}
 		}
 
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings)
 		{
 			var spatializer = TypePoolManager.Create<AudioSpatializer>();
 
 			return CreateDynamicItem(getNextSettings, spatializer, null);
 		}
 
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Vector3 position)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Vector3 position)
 		{
 			var spatializer = TypePoolManager.Create<AudioSpatializer>();
 			spatializer.Initialize(position);
@@ -134,7 +134,7 @@ namespace Pseudo.Internal.Audio
 			return CreateDynamicItem(getNextSettings, spatializer, null);
 		}
 
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Transform follow)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Transform follow)
 		{
 			var spatializer = TypePoolManager.Create<AudioSpatializer>();
 			spatializer.Initialize(follow);
@@ -142,7 +142,7 @@ namespace Pseudo.Internal.Audio
 			return CreateDynamicItem(getNextSettings, spatializer, null);
 		}
 
-		public IAudioItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, Func<Vector3> getPosition)
+		public IAudioItem CreateDynamicItem(DynamicGetter getNextSettings, Func<Vector3> getPosition)
 		{
 			var spatializer = TypePoolManager.Create<AudioSpatializer>();
 			spatializer.Initialize(getPosition);
@@ -150,7 +150,7 @@ namespace Pseudo.Internal.Audio
 			return CreateDynamicItem(getNextSettings, spatializer, null);
 		}
 
-		public AudioDynamicItem CreateDynamicItem(Func<AudioDynamicItem, AudioDynamicData, AudioSettingsBase> getNextSettings, AudioSpatializer spatializer, IAudioItem parent)
+		public AudioDynamicItem CreateDynamicItem(DynamicGetter getNextSettings, AudioSpatializer spatializer, IAudioItem parent)
 		{
 			var item = TypePoolManager.Create<AudioDynamicItem>();
 			item.Initialize(getNextSettings, this, spatializer, parent);

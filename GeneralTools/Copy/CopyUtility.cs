@@ -6,7 +6,7 @@ using UnityEngine;
 using Pseudo;
 using Pseudo.Internal;
 
-namespace Pseudo
+namespace Pseudo.Internal.Copy
 {
 	public static class CopyUtility
 	{

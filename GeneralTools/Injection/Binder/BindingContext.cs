@@ -16,15 +16,10 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(factory);
 
-			var data = new FactoryData
-			{
-				Factory = factory,
-				Conditions = new List<Predicate<InjectionContext>>()
-			};
-
+			var data = new FactoryData(factory);
 			resolver.Register(contractType, data);
 
-			return new BindingCondition(contractType, data, resolver);
+			return new BindingCondition(data);
 		}
 	}
 

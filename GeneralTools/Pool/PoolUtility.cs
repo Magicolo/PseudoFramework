@@ -6,6 +6,7 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Internal.Copy;
 
 namespace Pseudo.Internal.Pool
 {

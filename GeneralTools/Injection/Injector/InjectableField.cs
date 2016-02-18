@@ -35,7 +35,7 @@ namespace Pseudo.Internal.Injection
 
 		void SetupContext(ref InjectionContext context)
 		{
-			context.Type = InjectionContext.Types.Field;
+			context.ContextType = InjectionContext.ContextTypes.Field;
 			context.ContractType = field.FieldType;
 			context.DeclaringType = field.DeclaringType;
 			context.Member = field;

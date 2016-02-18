@@ -4,13 +4,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.SceneManagement;
 
 namespace Pseudo
 {
 	public class LoadSceneOnMessage : ComponentBehaviour, IMessageable
 	{
-		public MessageEnum LoadMessage;
 		public string Scene;
+		public MessageEnum Message;
 
 		bool load;
 
@@ -28,7 +29,7 @@ namespace Pseudo
 
 		public void OnMessage<TId>(TId message)
 		{
-			load |= LoadMessage.Equals(message);
+			load |= Message.Equals(message) && !string.IsNullOrEmpty(Scene);
 		}
 	}
 }

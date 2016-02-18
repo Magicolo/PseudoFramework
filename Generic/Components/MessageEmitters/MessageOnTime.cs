@@ -16,18 +16,18 @@ namespace Pseudo
 		}
 
 		[Serializable]
-		public struct TimedMessage
+		public struct TimeMessage
 		{
-			public EntityMessage Message;
 			[Min]
 			public float Delay;
 			public TriggerModes Trigger;
+			public EntityMessage Message;
 		}
 
-		public TimedMessage[] Messages = new TimedMessage[0];
+		public TimeMessage[] Messages = new TimeMessage[0];
 		public TimeComponent Time;
 
-		readonly List<TimedMessage> scheduledMessages = new List<TimedMessage>();
+		readonly List<TimeMessage> scheduledMessages = new List<TimeMessage>();
 
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdded()
