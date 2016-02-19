@@ -25,7 +25,7 @@ namespace Pseudo
 		public LayerData LayerData;
 
 
-		public void Init(LayerData layerData, Transform parent, Vector3 position, Vector2 dimension, UnityAction switchLayerAction)
+		public void Init(LayerData layerData, Transform parent, UnityAction switchLayerAction)
 		{
 			LayerData = layerData;
 
@@ -33,9 +33,7 @@ namespace Pseudo
 			NameChangeText.text = layerData.Name;
 
 			RectTransform trans = GetComponent<RectTransform>();
-			trans.SetParent(parent);
-			trans.anchoredPosition = position;
-			trans.sizeDelta = dimension;
+			trans.SetParent(parent,false);
 
 			LayerButton.onClick.AddListener(switchLayerAction);
 

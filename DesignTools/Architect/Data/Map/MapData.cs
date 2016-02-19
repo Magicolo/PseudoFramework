@@ -10,7 +10,7 @@ namespace Pseudo
 	[Serializable]
 	public class MapData
 	{
-		public Transform parent;
+		public Transform ParentTransform;
 		public String Name;
 		public List<LayerData> Layers = new List<LayerData>();
 
@@ -19,6 +19,7 @@ namespace Pseudo
 
 		public MapData(Transform parent, string mapName, int width, int height)
 		{
+			this.ParentTransform = parent;
 			this.Name = mapName;
 			this.Width = width;
 			this.Height = height;
@@ -26,7 +27,7 @@ namespace Pseudo
 
 		public LayerData AddLayer(string name)
 		{
-			return AddLayer(parent, name);
+			return AddLayer(ParentTransform, name);
 		}
 
 		public LayerData AddLayer(Transform parent, string name)
@@ -35,5 +36,21 @@ namespace Pseudo
 			Layers.Add(newLayer);
 			return newLayer;
 		}
+
+		public void DestroyAndRemoveAllLayers()
+		{
+			while (Layers.Count != 0)
+				DestroyAndRemoveLayer(Layers[Layers.Count-1]);
+			if(ParentTransform != null)
+				ParentTransform.gameObject.Destroy();
+		}
+
+		public void DestroyAndRemoveLayer(LayerData removeMe)
+		{
+			if(removeMe != null)
+				removeMe.DestroyAllAndClear();
+			Layers.Remove(removeMe);
+		}
+
 	}
 }
