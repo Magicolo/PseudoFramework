@@ -8,7 +8,36 @@ public static class PRandom
 {
 	public static readonly Random Generator = new Random(Environment.TickCount);
 
-	static List<float> weightSums = new List<float>();
+	static readonly List<float> weightSums = new List<float>();
+
+	public static double NextUniform()
+	{
+		return Generator.NextDouble();
+	}
+
+	public static double NextExponential()
+	{
+		return Generator.NextDouble() * Generator.NextDouble();
+	}
+
+	public static double NextGaussian()
+	{
+		double value1;
+		double value2;
+		double sigma;
+
+		do
+		{
+			value1 = Generator.NextDouble() * 2f - 1f;
+			value2 = Generator.NextDouble() * 2f - 1f;
+			sigma = value1 * value1 + value2 * value2;
+		}
+		while (sigma == 0d || sigma >= 1d);
+
+		sigma = Math.Sqrt(-2d * Math.Log(sigma) / sigma) * 0.1d;
+
+		return PMath.Clamp(value1 * sigma + 0.5d, 0d, 1d);
+	}
 
 	/// <summary>
 	/// Random value between <paramref name="min"/> and <paramref name="max"/> inclusive.
@@ -81,27 +110,17 @@ public static class PRandom
 		switch (distribution)
 		{
 			default:
-				randomValue = Generator.NextDouble();
-				return PMath.Clamp(randomValue * (max - min) + min, min, max);
-			case ProbabilityDistributions.Proportional:
-				return PMath.Clamp(Math.Pow(2d, Range(Math.Log(min, 2d), Math.Log(max, 2d))), min, max);
-			case ProbabilityDistributions.Normal:
-				while (true)
-				{
-					double value1 = Range(-1d, 1d);
-					double value2 = Range(-1d, 1d);
-					double w = value1 * value1 + value2 * value2;
-
-					if (w != 0d && w <= 1d)
-					{
-						double y = Math.Sqrt(-2d * Math.Log(w) / w) * 0.1d;
-						randomValue = value1 * y + 0.5d;
-						break;
-					}
-				}
-
-				return PMath.Clamp(randomValue * (max - min) + min, min, max);
+				randomValue = NextUniform();
+				break;
+			case ProbabilityDistributions.Exponential:
+				randomValue = NextExponential();
+				break;
+			case ProbabilityDistributions.Gaussian:
+				randomValue = NextGaussian();
+				break;
 		}
+
+		return PMath.Clamp(randomValue * (max - min) + min, min, max);
 	}
 
 	public static T WeightedRandom<T>(Dictionary<T, float> objectsAndWeights, ProbabilityDistributions distribution = ProbabilityDistributions.Uniform)
@@ -140,7 +159,7 @@ public static class PRandom
 		return randomObject;
 	}
 
-	public static UnityEngine.AnimationCurve DistributionToCurve(ProbabilityDistributions distribution, int definition)
+	public static UnityEngine.AnimationCurve ToCurve(ProbabilityDistributions distribution, int definition)
 	{
 		var keys = new UnityEngine.Keyframe[definition];
 

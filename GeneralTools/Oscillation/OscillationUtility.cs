@@ -218,7 +218,7 @@ namespace Pseudo.Internal.Oscillation
 
 		public static float WhiteNoise(OscillationSettings settings, float time)
 		{
-			return settings.Amplitude * ((float)PRandom.Generator.NextDouble() * 2f - 1f) + settings.Center;
+			return settings.Amplitude * PRandom.Range(-1f, 1f) + settings.Center;
 		}
 
 		public static float PerlinNoise(OscillationSettings settings, float time)
