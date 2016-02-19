@@ -1,14 +1,14 @@
 fileFormatVersion: 2
 guid: 4c7cf2d9decc4954b8e445d188520add
-timeCreated: 1455670371
+timeCreated: 1455925081
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
-  - GameManager: {fileID: 11414662, guid: 2b89ef7bb15128c4badf822542374b01, type: 2}
-  - AudioManager: {fileID: 11493540, guid: 3848034eddc749a41ad66c640cb7bb00, type: 2}
-  - ParticleManager: {fileID: 11441752, guid: 97a6532eb5f5f93459feb1724d8547a4, type: 2}
-  - InputManager: {fileID: 11406708, guid: 9abf81ea36faa0341a5c96c158f1011d, type: 2}
+  - GameManager: {instanceID: 0}
+  - AudioManager: {instanceID: 0}
+  - ParticleManager: {instanceID: 0}
+  - InputManager: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
