@@ -135,7 +135,7 @@ namespace Pseudo
 			mapDimension = new Point2(layers[0].LayerWidth, layers[0].LayerHeight);
 			Layers.AddRange(layers);
 			SelectedLayer = layers[0];
-			LayerPanel.RefreshLayers();
+			LayerPanel.RefreshUI();
 			ResetGridSize();
 
 		}
@@ -146,7 +146,7 @@ namespace Pseudo
 			addLayer();
 			SelectedLayer = Layers[0];
 			ResetGridSize();
-			LayerPanel.RefreshLayers();
+			LayerPanel.RefreshUI();
 		}
 
 		public void New(string text, int width, int height)

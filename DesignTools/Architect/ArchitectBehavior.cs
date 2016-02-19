@@ -12,7 +12,7 @@ namespace Pseudo
 	{
 
 		public Architect Architect;
-		public GUISkin skin;
+		public UISkin Skin;
 
 		public GameObject BaseMapRoot;
 
