@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 
-namespace Pseydo.Internal.Editor
+namespace Pseudo.Internal.Editor
 {
 	public static class InspectorUtility
 	{

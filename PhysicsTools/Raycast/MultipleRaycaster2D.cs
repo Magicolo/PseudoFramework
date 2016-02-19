@@ -21,10 +21,9 @@ namespace Pseudo
 
 		protected override void UpdateCast()
 		{
-			Hits.Clear();
-			Vector3 position = CachedTransform.position;
-			Vector3 rotation = CachedTransform.eulerAngles;
-			Vector3 scale = CachedTransform.lossyScale;
+			var position = CachedTransform.position;
+			var rotation = CachedTransform.eulerAngles;
+			var scale = CachedTransform.lossyScale;
 			float angleIncrement = 0f;
 
 			if (Amount > 1)

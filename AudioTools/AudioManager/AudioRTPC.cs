@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo
 {
 	[Serializable]
-	public class AudioRTPC : IPoolable, ICopyable
+	public class AudioRTPC : IPoolable, ICopyable<AudioRTPC>
 	{
 		public enum RTPCTypes
 		{
@@ -31,12 +31,9 @@ namespace Pseudo
 		public string Name;
 		public RTPCTypes Type;
 		public RTPCScope Scope;
-		public float MinValue;
-		public float MaxValue = 1f;
+		public MinMax Range = new MinMax(0f, 1f);
 		[Clamp]
 		public AnimationCurve Curve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
-
-		public AudioValue<float> Value { get { return value; } }
 
 		public float GetAdjustedValue()
 		{
@@ -61,7 +58,7 @@ namespace Pseudo
 
 		float GetRatio()
 		{
-			return Mathf.Clamp01((value.Value - MinValue) / (MaxValue - MinValue));
+			return Mathf.Clamp01((value.Value - Range.Min) / (Range.Max - Range.Max));
 		}
 
 		public virtual void OnCreate()
@@ -80,18 +77,16 @@ namespace Pseudo
 				TypePoolManager.Recycle(ref value);
 		}
 
-		public void Copy(object reference)
+		public void Copy(AudioRTPC reference)
 		{
-			var castedReference = (AudioRTPC)reference;
-			value = castedReference.value;
-			lastValue = castedReference.lastValue;
-			lastRatio = castedReference.lastRatio;
-			Name = castedReference.Name;
-			Type = castedReference.Type;
-			Scope = castedReference.Scope;
-			MinValue = castedReference.MinValue;
-			MaxValue = castedReference.MaxValue;
-			Curve = castedReference.Curve;
+			value = reference.value;
+			lastValue = reference.lastValue;
+			lastRatio = reference.lastRatio;
+			Name = reference.Name;
+			Type = reference.Type;
+			Scope = reference.Scope;
+			Range = reference.Range;
+			Curve = reference.Curve;
 		}
 
 		public static AudioValue<float> GetGlobalRTPCValue(string name)

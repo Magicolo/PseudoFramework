@@ -17,6 +17,10 @@ namespace Pseudo.Internal.Oscillation
 			Sine,
 			Triangle,
 			Square,
+			InQuad,
+			OutQuad,
+			InOutQuad,
+			OutInQuad,
 			InCubic,
 			OutCubic,
 			InOutCubic,
@@ -95,6 +99,58 @@ namespace Pseudo.Internal.Oscillation
 			return settings.Amplitude * PMath.Square(settings.Frequency * time + settings.Offset, settings.Ratio) + settings.Center;
 		}
 
+		public static float InQuad(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.InQuad(phase / settings.Ratio);
+			else
+				value = TweenUtility.InQuad(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
+		}
+
+		public static float OutQuad(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.OutQuad(phase / settings.Ratio);
+			else
+				value = TweenUtility.OutQuad(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
+		}
+
+		public static float InOutQuad(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.InOutQuad(phase / settings.Ratio);
+			else
+				value = TweenUtility.InOutQuad(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
+		}
+
+		public static float OutInQuad(OscillationSettings settings, float time)
+		{
+			float phase = (settings.Frequency * time + settings.Offset) % 1f;
+			float value;
+
+			if (phase < settings.Ratio)
+				value = TweenUtility.OutInQuad(phase / settings.Ratio);
+			else
+				value = TweenUtility.OutInQuad(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
+
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
+		}
+
 		public static float InCubic(OscillationSettings settings, float time)
 		{
 			float phase = (settings.Frequency * time + settings.Offset) % 1f;
@@ -105,7 +161,7 @@ namespace Pseudo.Internal.Oscillation
 			else
 				value = TweenUtility.InCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
 
-			return settings.Amplitude * value * 2f - 1f + settings.Center;
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
 		}
 
 		public static float OutCubic(OscillationSettings settings, float time)
@@ -118,7 +174,7 @@ namespace Pseudo.Internal.Oscillation
 			else
 				value = TweenUtility.OutCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
 
-			return settings.Amplitude * value * 2f - 1f + settings.Center;
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
 		}
 
 		public static float InOutCubic(OscillationSettings settings, float time)
@@ -131,7 +187,7 @@ namespace Pseudo.Internal.Oscillation
 			else
 				value = TweenUtility.InOutCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
 
-			return settings.Amplitude * value * 2f - 1f + settings.Center;
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
 		}
 
 		public static float OutInCubic(OscillationSettings settings, float time)
@@ -144,7 +200,7 @@ namespace Pseudo.Internal.Oscillation
 			else
 				value = TweenUtility.OutInCubic(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
 
-			return settings.Amplitude * value * 2f - 1f + settings.Center;
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
 		}
 
 		public static float SmoothStep(OscillationSettings settings, float time)
@@ -157,7 +213,7 @@ namespace Pseudo.Internal.Oscillation
 			else
 				value = TweenUtility.SmoothStep(1f - (phase - settings.Ratio) / (1f - settings.Ratio));
 
-			return settings.Amplitude * value * 2f - 1f + settings.Center;
+			return settings.Amplitude * (value * 2f - 1f) + settings.Center;
 		}
 
 		public static float WhiteNoise(OscillationSettings settings, float time)
@@ -175,17 +231,22 @@ namespace Pseudo.Internal.Oscillation
 			return waveFunctions[(int)waveShape];
 		}
 
-		public static AnimationCurve ToAnimationCurve(OscillationSettings settings, int definition)
+		public static Vector2[] ToPoints(OscillationSettings settings, int definition)
 		{
-			var keys = new Keyframe[definition];
+			var points = new Vector2[definition];
 
 			for (int i = 0; i < definition; i++)
 			{
 				float ratio = (float)i / definition;
-				keys[i] = new Keyframe(ratio, Oscillate(settings, ratio));
+				points[i] = new Vector2(ratio, Oscillate(settings, ratio));
 			}
 
-			return new AnimationCurve(keys);
+			return points;
+		}
+
+		public static AnimationCurve ToCurve(OscillationSettings settings, int definition)
+		{
+			return new AnimationCurve(ToPoints(settings, definition).Convert(v => new Keyframe(v.x, v.y)));
 		}
 	}
 }

@@ -336,10 +336,8 @@ namespace Pseudo.Internal.Editor
 
 					if (value is MinMax)
 					{
-						var minMax = (MinMax)value;
-						minMax.Min = minMax.Min.Clamp(min, max);
-						minMax.Max = minMax.Max.Clamp(min, max);
-						property.SetValue(minMax);
+						property.FindPropertyRelative("min").Clamp(min, max);
+						property.FindPropertyRelative("max").Clamp(min, max);
 					}
 					break;
 			}

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using Pseudo.Internal.Copy;
 
 namespace Pseudo.Internal.Pool
 {
@@ -109,7 +110,7 @@ namespace Pseudo.Internal.Pool
 				return true;
 			else if (field.IsDefined(typeof(InitializeValueAttribute), true) || field.IsDefined(typeof(InitializeContentAttribute), true))
 				return true;
-			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true))
+			else if (field.IsDefined(typeof(DoNotInitializeAttribute), true) || field.DeclaringType.IsDefined(typeof(DoNotInitializeAttribute), true))
 				return false;
 			else if (field.IsInitOnly || field.IsBackingField())
 				return false;

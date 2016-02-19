@@ -6,6 +6,7 @@ using System.Linq;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Internal.Copy;
 
 namespace Pseudo.Internal.Pool
 {
@@ -150,7 +151,6 @@ namespace Pseudo.Internal.Pool
 			TypePoolManager.ClearPools();
 			PrefabPoolManager.ClearPools();
 			cachedJanitor.Reset();
-			GC.Collect();
 		}
 
 		public static void InitializeJanitor()

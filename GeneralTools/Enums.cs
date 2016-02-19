@@ -9,18 +9,18 @@ namespace Pseudo
 		X = 1,
 		Y = 2,
 		Z = 4,
-		XY = 3,
-		XZ = 5,
-		YZ = 6,
-		XYZ = 7,
 		W = 8,
-		XW = 9,
-		YW = 10,
-		XYW = 11,
-		ZW = 12,
-		XZW = 13,
-		YZW = 14,
-		XYZW = 15
+		XY = X | Y,
+		XZ = X | Z,
+		YZ = Y | Z,
+		XYZ = X | Y | Z,
+		XW = X | W,
+		YW = Y | W,
+		XYW = X | Y | W,
+		ZW = Z | W,
+		XZW = X | Z | W,
+		YZW = Y | Z | W,
+		XYZW = X | Y | Z | W
 	}
 
 	[Flags]
@@ -30,18 +30,18 @@ namespace Pseudo
 		R = 1,
 		G = 2,
 		B = 4,
-		RG = 3,
-		RB = 5,
-		GB = 6,
-		RGB = 7,
 		A = 8,
-		RA = 9,
-		GA = 10,
-		RGA = 11,
-		BA = 12,
-		RBA = 13,
-		GBA = 14,
-		RGBA = 15
+		RG = R | G,
+		RB = R | B,
+		GB = G | B,
+		RGB = R | G | B,
+		RA = R | A,
+		GA = G | A,
+		RGA = R | G | A,
+		BA = B | A,
+		RBA = R | B | A,
+		GBA = G | B | A,
+		RGBA = R | G | B | A
 	}
 
 	[Flags]
@@ -51,10 +51,6 @@ namespace Pseudo
 		Position = 1,
 		Rotation = 2,
 		Scale = 4,
-		PositionRotation = 3,
-		PositionScale = 5,
-		RotationScale = 6,
-		PositionRotationScale = 7
 	}
 
 	public enum ProbabilityDistributions

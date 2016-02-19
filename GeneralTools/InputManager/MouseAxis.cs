@@ -11,7 +11,7 @@ namespace Pseudo.Internal.Input
 	public class MouseAxis
 	{
 		[SerializeField]
-		protected InputManager.MouseAxes axis;
+		protected MouseAxes axis;
 		[SerializeField, Min]
 		protected float scale = 1f;
 		[SerializeField, Min]
@@ -21,7 +21,7 @@ namespace Pseudo.Internal.Input
 		protected bool axisJustUp;
 		protected bool axisDown;
 
-		public InputManager.MouseAxes Axis
+		public MouseAxes Axis
 		{
 			get { return axis; }
 			set { axis = value; }
@@ -37,7 +37,7 @@ namespace Pseudo.Internal.Input
 			set { threshold = value; }
 		}
 
-		public MouseAxis(InputManager.MouseAxes axis, float threshold)
+		public MouseAxis(MouseAxes axis, float threshold)
 		{
 			this.axis = axis;
 			this.threshold = threshold;
@@ -49,16 +49,16 @@ namespace Pseudo.Internal.Input
 
 			switch (axis)
 			{
-				case InputManager.MouseAxes.X:
+				case MouseAxes.X:
 					value = UnityEngine.Input.mousePosition.x - relativeScreenPosition.x;
 					break;
-				case InputManager.MouseAxes.Y:
+				case MouseAxes.Y:
 					value = UnityEngine.Input.mousePosition.y - relativeScreenPosition.y;
 					break;
-				case InputManager.MouseAxes.WheelX:
+				case MouseAxes.WheelX:
 					value = UnityEngine.Input.mouseScrollDelta.x;
 					break;
-				case InputManager.MouseAxes.WheelY:
+				case MouseAxes.WheelY:
 					value = UnityEngine.Input.mouseScrollDelta.y;
 					break;
 			}

@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine.Assertions;
-using Zenject;
 
 namespace Pseudo.Internal.Entity
 {
@@ -22,7 +21,7 @@ namespace Pseudo.Internal.Entity
 		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
 		readonly MessageManager messageManager;
 		[Inject]
-		readonly DiContainer container = null;
+		readonly IBinder binder = null;
 
 		public EntityManager(MessageManager messageManager)
 		{
@@ -55,7 +54,7 @@ namespace Pseudo.Internal.Entity
 			Assert.IsNotNull(prefab);
 
 			var entity = PrefabPoolManager.Create(prefab);
-			entity.Initialize(this, container);
+			entity.Initialize(this, binder);
 
 			return entity.Entity;
 		}

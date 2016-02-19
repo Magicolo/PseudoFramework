@@ -6,11 +6,16 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Internal.Copy;
 
 namespace Pseudo
 {
 	public abstract class Copier<T> : ICopier<T>
 	{
+		public static readonly ICopier<T> Default = CopyUtility.GetCopier<T>();
+
+		protected static readonly bool isValueType = typeof(T).IsValueType;
+
 		public abstract void CopyTo(T source, T target);
 
 		public virtual void CopyTo(IList<T> source, IList<T> target)
@@ -21,7 +26,6 @@ namespace Pseudo
 
 		void ICopier.CopyTo(object source, object target)
 		{
-			PDebug.Log(source, target);
 			CopyTo((T)source, (T)target);
 		}
 

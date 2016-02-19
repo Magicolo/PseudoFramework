@@ -1,5 +1,6 @@
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Copy;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,16 +12,16 @@ using UnityEngine;
 namespace Pseudo
 {
 	[Serializable]
-	public class DynamicValue : ICopyable, ISerializationCallbackReceiver
+	public class DynamicValue : ICopyable<DynamicValue>, ISerializationCallbackReceiver
 	{
 		public enum ValueTypes : byte
 		{
 			Null = 0,
-			Bool = 1,
-			Int = 2,
-			Float = 3,
-			Char = 4,
-			String = 5,
+			Bool = TypeCode.Boolean,
+			Int = TypeCode.Int32,
+			Float = TypeCode.Single,
+			Char = TypeCode.Char,
+			String = TypeCode.String,
 			Vector2 = 100,
 			Vector3 = 101,
 			Vector4 = 102,
@@ -32,89 +33,224 @@ namespace Pseudo
 			Object = 150,
 		}
 
-		static readonly MemoryStream stream = new MemoryStream();
-		static readonly BinaryReader reader = new BinaryReader(stream);
-		static readonly BinaryWriter writer = new BinaryWriter(stream);
-
-		public bool IsArray { get { return isArray; } }
+		public object Value
+		{
+			get { return value; }
+			set { SetValue(value); }
+		}
+		public ValueTypes Type
+		{
+			get { return valueType; }
+			set { SetType(value, isArray); }
+		}
+		public bool IsArray
+		{
+			get { return isArray; }
+			set { SetType(valueType, value); }
+		}
 
 		object value;
 		[SerializeField]
-		ValueTypes type;
+		ValueTypes valueType;
 		[SerializeField, Toggle("Array", "Array")]
 		bool isArray;
 		[SerializeField, HideInInspector]
-		byte[] data;
+		string data;
 		[SerializeField]
 		UnityEngine.Object[] objectValue;
 
-		public T GetValue<T>()
+		public void SetType(ValueTypes type, bool isArray)
 		{
-			return (T)GetValue();
+			if (this.valueType == type && this.isArray == isArray)
+				return;
+
+			this.valueType = type;
+			this.isArray = isArray;
+
+			SetValue(GetDefaultValue(type, isArray));
 		}
 
-		public object GetValue()
+		public void Serialize()
 		{
-			return value;
+			if (valueType == ValueTypes.Object)
+			{
+				if (isArray)
+					objectValue = (UnityEngine.Object[])value;
+				else
+				{
+					if (objectValue == null)
+						objectValue = new UnityEngine.Object[1];
+					else if (objectValue.Length != 1)
+						Array.Resize(ref objectValue, 1);
+
+					objectValue[0] = (UnityEngine.Object)value;
+				}
+			}
+			else
+				data = JsonUtility.ToJson(value);
 		}
 
-		public void SetValue(object value)
+		public void Deserialize()
+		{
+			if (valueType == ValueTypes.Object)
+			{
+				if (isArray)
+					value = objectValue;
+				else if (objectValue != null && objectValue.Length > 0)
+					value = objectValue[0];
+			}
+			else if (!string.IsNullOrEmpty(data))
+			{
+				var type = ToType(valueType, isArray);
+
+				if (type != null)
+					value = JsonUtility.FromJson(data, type);
+			}
+			else
+				value = GetDefaultValue(valueType, isArray);
+		}
+
+		public void Copy(DynamicValue reference)
+		{
+			value = reference.value;
+			valueType = reference.valueType;
+			isArray = reference.isArray;
+			data = reference.data;
+			CopyUtility.CopyTo(reference.objectValue, ref objectValue);
+		}
+
+		void SetValue(object value)
 		{
 			this.value = value;
 			isArray = value is Array;
 
 			if (value == null)
 			{
-				if (type != ValueTypes.Null || type != ValueTypes.Object)
-					value = GetDefaultValue(type, isArray);
+				if (valueType != ValueTypes.Null || valueType != ValueTypes.Object)
+					value = GetDefaultValue(valueType, isArray);
 			}
 			else
 			{
 				if (value is UnityEngine.Object[] || value is UnityEngine.Object)
-					type = ValueTypes.Object;
-				else if (isArray)
-					type = (ValueTypes)BinaryUtility.ToTypeCode(value.GetType().GetElementType());
+					valueType = ValueTypes.Object;
 				else
-					type = (ValueTypes)BinaryUtility.ToTypeCode(value.GetType());
+					valueType = ToValueType(value.GetType());
 			}
 		}
 
-		public ValueTypes GetValueType()
+		void ISerializationCallbackReceiver.OnBeforeSerialize()
 		{
-			return type;
+			Serialize();
 		}
 
-		public void SetValueType(ValueTypes type, bool isArray)
+		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
-			if (this.type == type && this.isArray == isArray)
-				return;
-
-			this.type = type;
-			this.isArray = isArray;
-
-			SetValue(GetDefaultValue(type, isArray));
-		}
-
-		public virtual void Copy(object reference)
-		{
-			var castedReference = (DynamicValue)reference;
-			value = castedReference.value;
-			type = castedReference.type;
-			isArray = castedReference.isArray;
-			CopyUtility.CopyTo(castedReference.data, ref data);
-			CopyUtility.CopyTo(castedReference.objectValue, ref objectValue);
+			Deserialize();
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}{2}, {3})", GetType().Name, type, isArray ? "[]" : "", PDebug.ToString(GetValue()));
+			return string.Format("{0}({1}{2}, {3})", GetType().Name, valueType, isArray ? "[]" : "", PDebug.ToString(Value));
 		}
 
-		public static object GetDefaultValue(ValueTypes type, bool isArray)
+		public static Type ToType(ValueTypes valueType, bool isArray)
+		{
+			Type type = null;
+
+			switch (valueType)
+			{
+				case ValueTypes.Bool:
+					type = ToType<bool>(isArray);
+					break;
+				case ValueTypes.Int:
+					type = ToType<int>(isArray);
+					break;
+				case ValueTypes.Float:
+					type = ToType<float>(isArray);
+					break;
+				case ValueTypes.Char:
+					type = ToType<char>(isArray);
+					break;
+				case ValueTypes.String:
+					type = ToType<string>(isArray);
+					break;
+				case ValueTypes.Vector2:
+					type = ToType<Vector2>(isArray);
+					break;
+				case ValueTypes.Vector3:
+					type = ToType<Vector3>(isArray);
+					break;
+				case ValueTypes.Vector4:
+					type = ToType<Vector4>(isArray);
+					break;
+				case ValueTypes.Color:
+					type = ToType<Color>(isArray);
+					break;
+				case ValueTypes.Quaternion:
+					type = ToType<Quaternion>(isArray);
+					break;
+				case ValueTypes.Rect:
+					type = ToType<Rect>(isArray);
+					break;
+				case ValueTypes.Bounds:
+					type = ToType<Bounds>(isArray);
+					break;
+				case ValueTypes.AnimationCurve:
+					type = ToType<AnimationCurve>(isArray);
+					break;
+			}
+
+			return type;
+		}
+
+		public static ValueTypes ToValueType(Type type)
+		{
+			if (type == null)
+				return ValueTypes.Null;
+			else if (type.IsArray)
+				return ToValueType(type.GetElementType());
+			else if (type == typeof(bool))
+				return ValueTypes.Bool;
+			else if (type == typeof(int))
+				return ValueTypes.Int;
+			else if (type == typeof(float))
+				return ValueTypes.Float;
+			else if (type == typeof(char))
+				return ValueTypes.Char;
+			else if (type == typeof(string))
+				return ValueTypes.String;
+			else if (type == typeof(Vector2))
+				return ValueTypes.Vector2;
+			else if (type == typeof(Vector3))
+				return ValueTypes.Vector3;
+			else if (type == typeof(Vector4))
+				return ValueTypes.Vector4;
+			else if (type == typeof(Color))
+				return ValueTypes.Color;
+			else if (type == typeof(Quaternion))
+				return ValueTypes.Quaternion;
+			else if (type == typeof(Rect))
+				return ValueTypes.Rect;
+			else if (type == typeof(Bounds))
+				return ValueTypes.Bounds;
+			else if (type == typeof(AnimationCurve))
+				return ValueTypes.AnimationCurve;
+			else if (typeof(UnityEngine.Object).IsAssignableFrom(type))
+				return ValueTypes.Object;
+
+			return ValueTypes.Null;
+		}
+
+		static Type ToType<T>(bool isArray)
+		{
+			return isArray ? typeof(T[]) : typeof(T);
+		}
+
+		static object GetDefaultValue(ValueTypes valueType, bool isArray)
 		{
 			object defaultValue = null;
 
-			switch (type)
+			switch (valueType)
 			{
 				case ValueTypes.Bool:
 					defaultValue = GetDefaultValue<bool>(isArray);
@@ -160,80 +296,14 @@ namespace Pseudo
 			return defaultValue;
 		}
 
-		public static object GetDefaultValue<T>(bool isArray)
+		static object GetDefaultValue<T>(bool isArray)
 		{
 			if (isArray)
 				return new T[0];
-			else if (typeof(T).IsValueType)
-				return FormatterServices.GetUninitializedObject(typeof(T));
+			else if (typeof(T) == typeof(string))
+				return string.Empty;
 			else
-				return Activator.CreateInstance<T>();
-		}
-
-		public static byte[] Serialize(object value, bool isArray)
-		{
-			stream.Position = 0L;
-			stream.SetLength(1L);
-
-			if (isArray)
-				writer.Write((Array)value);
-			else
-				writer.Write(value);
-
-			return stream.ToArray();
-		}
-
-		public static object Deserialize(byte[] bytes, bool isArray)
-		{
-			stream.Position = 0L;
-			stream.Write(bytes, 0, bytes.Length);
-			stream.Position = 0L;
-
-			object value = null;
-
-			try
-			{
-				if (isArray)
-					value = reader.ReadArray();
-				else
-					value = reader.ReadObject();
-			}
-			catch { }
-
-			return value;
-		}
-
-		public void OnBeforeSerialize()
-		{
-			if (type == ValueTypes.Object)
-			{
-				if (isArray)
-					objectValue = (UnityEngine.Object[])value;
-				else
-				{
-					if (objectValue == null)
-						objectValue = new UnityEngine.Object[1];
-					else if (objectValue.Length != 1)
-						Array.Resize(ref objectValue, 1);
-
-					objectValue[0] = (UnityEngine.Object)value;
-				}
-			}
-			else
-				data = Serialize(value, isArray);
-		}
-
-		public void OnAfterDeserialize()
-		{
-			if (type == ValueTypes.Object)
-			{
-				if (isArray)
-					value = objectValue;
-				else if (objectValue != null && objectValue.Length > 0)
-					value = objectValue[0];
-			}
-			else
-				value = Deserialize(data, isArray);
+				return Activator.CreateInstance(typeof(T), true);
 		}
 	}
 }

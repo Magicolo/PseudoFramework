@@ -10,12 +10,7 @@ namespace Pseudo
 {
 	public abstract class PEqualityComparer<T> : IEqualityComparer<T>
 	{
-		public static IEqualityComparer<T> Default
-		{
-			get { return defaultComparer; }
-		}
-
-		static readonly IEqualityComparer<T> defaultComparer = CreateComparer();
+		public static readonly IEqualityComparer<T> Default = CreateComparer();
 
 		static IEqualityComparer<T> CreateComparer()
 		{

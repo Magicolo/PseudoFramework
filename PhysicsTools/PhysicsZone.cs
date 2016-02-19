@@ -23,7 +23,7 @@ namespace Pseudo.Internal.Physics
 
 		void OnTriggerEnter(Collider collision)
 		{
-			Rigidbody attachedRigidbody = collision.attachedRigidbody;
+			var attachedRigidbody = collision.attachedRigidbody;
 
 			if (attachedRigidbody == null)
 				return;
@@ -42,13 +42,12 @@ namespace Pseudo.Internal.Physics
 
 		void OnTriggerExit(Collider collision)
 		{
-			Rigidbody attachedRigidbody = collision.attachedRigidbody;
+			var attachedRigidbody = collision.attachedRigidbody;
 
 			if (attachedRigidbody == null)
 				return;
 
 			int index = Rigidbodies.IndexOf(attachedRigidbody);
-
 
 			if (rigidbodyCount[index] == 1)
 			{

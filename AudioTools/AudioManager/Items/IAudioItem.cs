@@ -34,9 +34,7 @@ namespace Pseudo
 		event Action<IAudioItem> OnStopping;
 		event Action<IAudioItem> OnUpdate;
 
-		int Id { get; }
 		bool IsPlaying { get; }
-		string Name { get; }
 		AudioSettingsBase Settings { get; }
 		AudioSpatializer Spatializer { get; }
 		AudioStates State { get; }
@@ -44,7 +42,6 @@ namespace Pseudo
 
 		void ApplyOption(AudioOption option, bool recycle = true);
 		void Break();
-		void ClearEvents();
 		float GetPitchScale();
 		double GetScheduledTime();
 		float GetVolumeScale();

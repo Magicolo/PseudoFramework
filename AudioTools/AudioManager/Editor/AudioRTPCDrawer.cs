@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Audio
 
 			Begin(position, property, label);
 
-			string rtpcName = string.Format("{4}{0} | {1} [{2}, {3}]", rtpc.Name, rtpc.Type, rtpc.MinValue, rtpc.MaxValue, rtpc.Scope == AudioRTPC.RTPCScope.Global ? "*" : "");
+			var rtpcName = string.Format("{4}{0} | {1} [{2}, {3}]", rtpc.Name, rtpc.Type, rtpc.Range.Min, rtpc.Range.Max, rtpc.Scope == AudioRTPC.RTPCScope.Global ? "*" : "");
 			PropertyField(property, rtpcName.ToGUIContent(), false);
 
 			if (property.isExpanded)
@@ -30,8 +30,7 @@ namespace Pseudo.Internal.Audio
 				PropertyField(property.FindPropertyRelative("Scope"), GUIContent.none);
 				PropertyField(property.FindPropertyRelative("Name"));
 				PropertyField(property.FindPropertyRelative("Type"));
-				PropertyField(property.FindPropertyRelative("MinValue"));
-				PropertyField(property.FindPropertyRelative("MaxValue"));
+				PropertyField(property.FindPropertyRelative("Range"));
 				PropertyField(property.FindPropertyRelative("Curve"));
 
 				EditorGUI.indentLevel--;

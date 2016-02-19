@@ -12,7 +12,7 @@ namespace Pseudo.Internal
 		public TimeManager.TimeChannels Channel
 		{
 			get { return channel; }
-			set { channel = value; ResetTime(); }
+			set { channel = value; Reset(); }
 		}
 		public float TimeScale
 		{
@@ -41,7 +41,7 @@ namespace Pseudo.Internal
 		protected float time;
 		protected float lastTime;
 
-		public virtual void ResetTime()
+		public void Reset()
 		{
 			time = 0f;
 			lastTime = GetTime();

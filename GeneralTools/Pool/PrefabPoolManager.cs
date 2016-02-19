@@ -49,6 +49,17 @@ namespace Pseudo
 			instance = null;
 		}
 
+		public static void RecycleElements(IList elements)
+		{
+			if (elements == null)
+				return;
+
+			for (int i = 0; i < elements.Count; i++)
+				Recycle(elements[i]);
+
+			elements.Clear();
+		}
+
 		public static IPool GetPool(object prefab)
 		{
 			if (prefab == null)
@@ -116,7 +127,7 @@ namespace Pseudo
 		[UnityEditor.Callbacks.DidReloadScripts]
 		static void OnReloadScripts()
 		{
-			Pseydo.Internal.Editor.InspectorUtility.OnValidate += OnValidate;
+			Pseudo.Internal.Editor.InspectorUtility.OnValidate += OnValidate;
 		}
 
 		static void OnValidate(UnityEngine.Object instance)

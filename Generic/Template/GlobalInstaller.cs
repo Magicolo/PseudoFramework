@@ -1,16 +1,15 @@
 ﻿using UnityEngine;
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Zenject;
 using Pseudo;
-using Pseudo.Internal.Audio;
 using Pseudo.Internal;
+using Pseudo.Internal.Audio;
 
 namespace Pseudo
 {
-	public class GlobalInstaller : MonoInstaller
+	public class GlobalInstaller : BindingInstaller
 	{
 		[Header("Prefabs")]
 		public GameManager GameManager;
@@ -18,12 +17,24 @@ namespace Pseudo
 		public ParticleManager ParticleManager;
 		public InputManager InputManager;
 
-		public override void InstallBindings()
+		public override void Install(IBinder binder)
 		{
-			Container.BindSinglePrefabOrInstance<IGameManager, GameManager>(GameManager);
-			Container.BindSinglePrefabOrInstance<IAudioManager, AudioManager>(AudioManager);
-			Container.BindSinglePrefabOrInstance<IParticleManager, ParticleManager>(ParticleManager);
-			Container.BindSinglePrefabOrInstance<IInputManager, InputManager>(InputManager);
+			binder.Bind<IGameManager>().ToSingleMethod(c => InstantiateOrFind(GameManager));
+			binder.Bind<IAudioManager>().ToSingleMethod(c => InstantiateOrFind(AudioManager));
+			binder.Bind<IParticleManager>().ToSingleMethod(c => InstantiateOrFind(ParticleManager));
+			binder.Bind<IInputManager>().ToSingleMethod(c => InstantiateOrFind(InputManager));
+		}
+
+		T InstantiateOrFind<T>(T prefab) where T : Component
+		{
+			var instance = FindObjectOfType<T>();
+
+			if (instance == null)
+				instance = Instantiate(prefab);
+
+			instance.transform.parent = transform;
+
+			return instance;
 		}
 	}
 }

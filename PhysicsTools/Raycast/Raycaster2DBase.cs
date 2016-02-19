@@ -7,13 +7,13 @@ using Pseudo;
 
 namespace Pseudo.Internal.Physics
 {
-	public abstract class Raycaster2DBase : PMonoBehaviour
+	public abstract class Raycaster2DBase : ComponentBehaviour, IRaycaster
 	{
 		public readonly List<RaycastHit2D> Hits = new List<RaycastHit2D>();
 
 		public LayerMask Mask = Physics2D.DefaultRaycastLayers;
-		public QueryTriggerInteraction HitTrigger = QueryTriggerInteraction.UseGlobal;
-		public QueryColliderInteration HitStartCollider = QueryColliderInteration.UseGlobal;
+		public QueryTriggerInteraction HitTrigger;
+		public QueryColliderInteration HitStartCollider;
 		public bool Draw = true;
 
 		bool hitTrigger;
@@ -23,7 +23,7 @@ namespace Pseudo.Internal.Physics
 		/// Updates the Raycaster and stores the results in the Hits list.
 		/// </summary>
 		/// <returns>If the raycaster has hit.</returns>
-		public virtual bool Cast()
+		public bool Cast()
 		{
 			BeginCast();
 			UpdateCast();
@@ -32,10 +32,9 @@ namespace Pseudo.Internal.Physics
 			return Hits.Count > 0;
 		}
 
-		protected abstract void UpdateCast();
-
-		protected virtual void BeginCast()
+		void BeginCast()
 		{
+			Hits.Clear();
 			hitTrigger = Physics2D.queriesHitTriggers;
 
 			switch (HitTrigger)
@@ -61,7 +60,7 @@ namespace Pseudo.Internal.Physics
 			}
 		}
 
-		protected virtual void EndCast()
+		void EndCast()
 		{
 			Physics2D.queriesHitTriggers = hitTrigger;
 			Physics2D.queriesStartInColliders = hitStartCollider;
@@ -72,5 +71,7 @@ namespace Pseudo.Internal.Physics
 			if (!Application.isPlaying)
 				Cast();
 		}
+
+		protected abstract void UpdateCast();
 	}
 }

@@ -18,15 +18,6 @@ namespace Pseudo.Internal.Editor
 		static bool stopPreview;
 		static bool audioManagerExists;
 
-		public override void OnInspectorGUI()
-		{
-			Begin();
-
-			EditorGUILayout.PropertyField(serializedObject.FindProperty("useCustomCurves"));
-
-			End();
-		}
-
 		[UnityEditor.Callbacks.DidReloadScripts, InitializeOnLoadMethod]
 		static void InitializeCallbacks()
 		{

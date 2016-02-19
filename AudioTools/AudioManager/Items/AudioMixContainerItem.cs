@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Audio
 {
-	public class AudioMixContainerItem : AudioContainerItem
+	public class AudioMixContainerItem : AudioContainerItem, ICopyable<AudioMixContainerItem>
 	{
 		AudioMixContainerSettings originalSettings;
 		AudioMixContainerSettings settings;
@@ -20,7 +20,7 @@ namespace Pseudo.Internal.Audio
 
 		public void Initialize(AudioMixContainerSettings settings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			base.Initialize(settings.Id, settings.Name, itemManager, spatializer, parent);
+			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
 			this.settings = PrefabPoolManager.Create(settings);
@@ -116,15 +116,14 @@ namespace Pseudo.Internal.Audio
 			PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public override void Copy(object reference)
+		public void Copy(AudioMixContainerItem reference)
 		{
 			base.Copy(reference);
 
-			var castedReference = (AudioMixContainerItem)reference;
-			originalSettings = castedReference.originalSettings;
-			settings = castedReference.settings;
-			deltaTime = castedReference.deltaTime;
-			lastTime = castedReference.lastTime;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
 		}
 	}
 }

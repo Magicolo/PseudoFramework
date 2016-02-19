@@ -20,14 +20,14 @@ namespace Pseudo
 		{
 			for (int i = 0; i < Rigidbodies.Count; i++)
 			{
-				Rigidbody body = Rigidbodies[i];
-				Vector2 adjustedForce = Force;
+				var body = Rigidbodies[i];
+				var adjustedForce = Force;
 				float adjustedDamping = Damping;
 
 				if (DistanceScaling > 0)
 				{
-					Bounds zoneBounds = Collider.bounds;
-					Vector3 bodyPosition = body.transform.position;
+					var zoneBounds = Collider.bounds;
+					var bodyPosition = body.transform.position;
 					float xAttenuation = Mathf.Clamp01(Mathf.Abs(zoneBounds.center.x - bodyPosition.x) / zoneBounds.extents.x) * DistanceScaling;
 					float yAttenuation = Mathf.Clamp01(Mathf.Abs(zoneBounds.center.y - bodyPosition.y) / zoneBounds.extents.y) * DistanceScaling;
 					float attenuation = 1 - (xAttenuation + yAttenuation) / 2;

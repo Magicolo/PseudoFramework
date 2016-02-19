@@ -87,6 +87,8 @@ namespace Pseudo.Internal
 			while (!loadingTask.isDone)
 				yield return null;
 
+			GC.Collect();
+
 			// Fade Out
 			if (FadeSettings.Canvas != null && FadeSettings.Image != null)
 			{

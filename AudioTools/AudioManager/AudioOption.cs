@@ -9,7 +9,7 @@ using UnityEngine.Audio;
 namespace Pseudo
 {
 	[Serializable]
-	public class AudioOption : IPoolable, ICopyable
+	public class AudioOption : IPoolable, ICopyable<AudioOption>
 	{
 		public enum Types
 		{
@@ -67,22 +67,22 @@ namespace Pseudo
 
 		public static AudioOption FadeIn(float fadeIn, TweenUtility.Ease ease = TweenUtility.Ease.OutQuad, float delay = 0f)
 		{
-			return Create(Types.FadeIn, new[] { fadeIn, (float)ease }, delay);
+			return Create(Types.FadeIn, new Vector2(fadeIn, (float)ease), delay);
 		}
 
 		public static AudioOption FadeOut(float fadeOut, TweenUtility.Ease ease = TweenUtility.Ease.InQuad, float delay = 0f)
 		{
-			return Create(Types.FadeOut, new[] { fadeOut, (float)ease }, delay);
+			return Create(Types.FadeOut, new Vector2(fadeOut, (float)ease), delay);
 		}
 
 		public static AudioOption VolumeScale(float volume, float time = 0f, TweenUtility.Ease ease = TweenUtility.Ease.Linear, float delay = 0f)
 		{
-			return Create(Types.VolumeScale, new[] { volume, time, (float)ease }, delay);
+			return Create(Types.VolumeScale, new Vector3(volume, time, (float)ease), delay);
 		}
 
 		public static AudioOption PitchScale(float pitch, float time = 0f, TweenUtility.Ease ease = TweenUtility.Ease.Linear, float delay = 0f)
 		{
-			return Create(Types.PitchScale, new[] { pitch, time, (float)ease }, delay);
+			return Create(Types.PitchScale, new Vector3(pitch, time, (float)ease), delay);
 		}
 
 		public static AudioOption RandomVolume(float randomVolume, float delay = 0f)
@@ -220,70 +220,6 @@ namespace Pseudo
 			return Create(Types.Spatialize, spatialize, delay);
 		}
 
-		static AudioOption Create(Types type, object value, float delay = 0f)
-		{
-			var option = TypePoolManager.Create<AudioOption>();
-			option.Initialize(type, value, delay);
-
-			return option;
-		}
-
-		public object GetValue()
-		{
-			DynamicValue.ValueTypes valueType;
-			bool isArray;
-
-			ToValueType(type, HasCurve(), out valueType, out isArray);
-
-			if (value.GetValueType() != valueType || value.IsArray != isArray)
-				value.SetValue(GetDefaultValue(type));
-
-			return value.GetValue();
-		}
-
-		public T GetValue<T>()
-		{
-			return (T)GetValue();
-		}
-
-		public bool HasCurve()
-		{
-			if (type == Types.SpatialBlend || type == Types.ReverbZoneMix || type == Types.Spread || type == Types.RolloffMode)
-				return value.GetValue() is AnimationCurve;
-			else
-				return false;
-		}
-
-		public void Initialize(Types type, object value, float delay = 0f)
-		{
-			this.type = type;
-			this.value.SetValue(value);
-			this.delay = delay;
-		}
-
-		public void OnCreate()
-		{
-			value = TypePoolManager.Create<DynamicValue>();
-		}
-
-		public void OnRecycle()
-		{
-			TypePoolManager.Recycle(ref value);
-		}
-
-		public virtual void Copy(object reference)
-		{
-			var castedReference = (AudioOption)reference;
-			type = castedReference.type;
-			value.Copy(castedReference.value);
-			delay = castedReference.delay;
-		}
-
-		public override string ToString()
-		{
-			return string.Format("{0}({1}, {2})", GetType().Name, type, value);
-		}
-
 		public static object GetDefaultValue(Types type, bool hasCurve = false)
 		{
 			object defaultValue = null;
@@ -291,10 +227,10 @@ namespace Pseudo
 			switch (type)
 			{
 				case Types.VolumeScale:
-					defaultValue = new float[] { 1f, 0f, 0f };
+					defaultValue = new Vector3(1f, 0f, 0f);
 					break;
 				case Types.PitchScale:
-					defaultValue = new float[] { 1f, 0f, 0f };
+					defaultValue = new Vector3(1f, 0f, 0f);
 					break;
 				case Types.RandomVolume:
 					defaultValue = 0f;
@@ -303,10 +239,10 @@ namespace Pseudo
 					defaultValue = 0f;
 					break;
 				case Types.FadeIn:
-					defaultValue = new float[] { 0f, 0f };
+					defaultValue = new Vector2(0f, 0f);
 					break;
 				case Types.FadeOut:
-					defaultValue = new float[] { 0f, 0f };
+					defaultValue = new Vector2(0f, 0f);
 					break;
 				case Types.Loop:
 					defaultValue = false;
@@ -394,20 +330,17 @@ namespace Pseudo
 			return defaultValue;
 		}
 
-		public static void ToValueType(Types type, bool hasCurve, out DynamicValue.ValueTypes valueType, out bool isArray)
+		public static DynamicValue.ValueTypes ToValueType(Types type, bool hasCurve)
 		{
-			valueType = DynamicValue.ValueTypes.Null;
-			isArray = false;
+			var valueType = DynamicValue.ValueTypes.Null;
 
 			switch (type)
 			{
 				case Types.VolumeScale:
-					valueType = DynamicValue.ValueTypes.Float;
-					isArray = true;
+					valueType = DynamicValue.ValueTypes.Vector3;
 					break;
 				case Types.PitchScale:
-					valueType = DynamicValue.ValueTypes.Float;
-					isArray = true;
+					valueType = DynamicValue.ValueTypes.Vector3;
 					break;
 				case Types.RandomVolume:
 					valueType = DynamicValue.ValueTypes.Float;
@@ -416,12 +349,10 @@ namespace Pseudo
 					valueType = DynamicValue.ValueTypes.Float;
 					break;
 				case Types.FadeIn:
-					valueType = DynamicValue.ValueTypes.Float;
-					isArray = true;
+					valueType = DynamicValue.ValueTypes.Vector2;
 					break;
 				case Types.FadeOut:
-					valueType = DynamicValue.ValueTypes.Float;
-					isArray = true;
+					valueType = DynamicValue.ValueTypes.Vector2;
 					break;
 				case Types.Loop:
 					valueType = DynamicValue.ValueTypes.Bool;
@@ -493,6 +424,68 @@ namespace Pseudo
 					valueType = DynamicValue.ValueTypes.Bool;
 					break;
 			}
+
+			return valueType;
+		}
+
+		static AudioOption Create(Types type, object value, float delay = 0f)
+		{
+			var option = TypePoolManager.Create<AudioOption>();
+			option.Initialize(type, value, delay);
+
+			return option;
+		}
+
+		public object GetValue()
+		{
+			if (value.Type != ToValueType(type, HasCurve()))
+				value.Value = GetDefaultValue(type);
+
+			return value.Value;
+		}
+
+		public T GetValue<T>()
+		{
+			return (T)GetValue();
+		}
+
+		public bool HasCurve()
+		{
+			return
+				value.Value is AnimationCurve &&
+				(type == Types.SpatialBlend ||
+				type == Types.ReverbZoneMix ||
+				type == Types.Spread ||
+				type == Types.RolloffMode);
+		}
+
+		public void Initialize(Types type, object value, float delay = 0f)
+		{
+			this.type = type;
+			this.value.Value = value;
+			this.delay = delay;
+		}
+
+		public void Copy(AudioOption reference)
+		{
+			type = reference.type;
+			value.Copy(reference.value);
+			delay = reference.delay;
+		}
+
+		void IPoolable.OnCreate()
+		{
+			value = TypePoolManager.Create<DynamicValue>();
+		}
+
+		void IPoolable.OnRecycle()
+		{
+			TypePoolManager.Recycle(ref value);
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1}, {2})", GetType().Name, type, value);
 		}
 	}
 }

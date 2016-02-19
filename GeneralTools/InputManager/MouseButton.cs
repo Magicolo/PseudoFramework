@@ -11,10 +11,10 @@ namespace Pseudo.Internal.Input
 	public class MouseButton
 	{
 		[SerializeField]
-		protected InputManager.MouseButtons button = InputManager.MouseButtons.LeftClick;
+		protected MouseButtons button = MouseButtons.LeftClick;
 		protected KeyCode key;
 
-		public InputManager.MouseButtons Button
+		public MouseButtons Button
 		{
 			get { return button; }
 			set
@@ -38,7 +38,7 @@ namespace Pseudo.Internal.Input
 			}
 		}
 
-		public MouseButton(InputManager.MouseButtons button)
+		public MouseButton(MouseButtons button)
 		{
 			this.button = button;
 			key = (KeyCode)button;
@@ -47,7 +47,7 @@ namespace Pseudo.Internal.Input
 		public MouseButton(KeyCode key)
 		{
 			this.key = key;
-			button = (InputManager.MouseButtons)key;
+			button = (MouseButtons)key;
 		}
 
 		public virtual bool GetKeyDown()

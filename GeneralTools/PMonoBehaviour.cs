@@ -32,7 +32,7 @@ namespace Pseudo
 		protected virtual void OnValidate()
 		{
 #if UNITY_EDITOR
-			Pseydo.Internal.Editor.InspectorUtility.OnValidate(this);
+			Pseudo.Internal.Editor.InspectorUtility.OnValidate(this);
 #endif
 		}
 

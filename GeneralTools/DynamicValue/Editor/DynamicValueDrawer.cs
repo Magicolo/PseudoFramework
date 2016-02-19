@@ -12,20 +12,14 @@ namespace Pseudo.Internal
 	[CustomPropertyDrawer(typeof(DynamicValue))]
 	public class DynamicValueDrawer : CustomPropertyDrawerBase
 	{
-		DynamicValueDrawerDummy dummy;
-		SerializedObject dummySerialized;
-
 		DynamicValue dynamicValue;
-		SerializedProperty typeProperty;
-		SerializedProperty isArrayProperty;
-		SerializedProperty valueProperty;
+		float height;
+
+		readonly Dictionary<DynamicValue, float> dynamicValueToHeight = new Dictionary<DynamicValue, float>();
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Begin(position, property, label);
-
-			if (valueProperty != null)
-				valueProperty.SetValue(dynamicValue.GetValue());
 
 			currentPosition.height = 16f;
 			EditorGUI.PropertyField(currentPosition, property, label, false);
@@ -35,48 +29,18 @@ namespace Pseudo.Internal
 			{
 				EditorGUI.indentLevel++;
 
-				EditorGUI.BeginChangeCheck();
-
-				EditorGUI.PropertyField(new Rect(currentPosition.x, currentPosition.y, currentPosition.width - 48f, currentPosition.height), typeProperty, GUIContent.none);
-				EditorGUI.PropertyField(new Rect(currentPosition.width - 27f - EditorGUI.indentLevel * 16f, currentPosition.y, 40f + EditorGUI.indentLevel * 16f, currentPosition.height), isArrayProperty);
-				currentPosition.y += 16f;
-
-				if (EditorGUI.EndChangeCheck())
-				{
-					var valueType = GetValueType(typeProperty);
-					valueProperty = GetValueProperty(valueType, isArrayProperty.GetValue<bool>());
-					dynamicValue.SetValue(valueProperty == null ? null : valueProperty.GetValue());
-					dynamicValue.OnBeforeSerialize();
-				}
-
-				if (valueProperty != null)
-				{
-					EditorGUI.BeginChangeCheck();
-
-					EditorGUI.PropertyField(currentPosition, valueProperty, new GUIContent("Value"), true);
-
-					if (EditorGUI.EndChangeCheck())
-					{
-						dummySerialized.ApplyModifiedProperties();
-						var valueType = GetValueType(typeProperty);
-						valueProperty = GetValueProperty(valueType, isArrayProperty.GetValue<bool>());
-						dynamicValue.SetValue(valueProperty.GetValue());
-					}
-				}
+				ShowValueType();
+				ShowValue();
 
 				EditorGUI.indentLevel--;
 			}
 
+			dynamicValueToHeight[dynamicValue] = currentPosition.y - initPosition.y;
+
+			if (height != currentPosition.y - initPosition.y)
+				Event.current.Use();
+
 			End();
-		}
-
-		public override void Initialize(SerializedProperty property, GUIContent label)
-		{
-			base.Initialize(property, label);
-
-			dummy = ScriptableObject.CreateInstance<DynamicValueDrawerDummy>();
-			dummy.hideFlags = HideFlags.DontSave;
-			dummySerialized = new SerializedObject(dummy);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -84,33 +48,77 @@ namespace Pseudo.Internal
 			base.GetPropertyHeight(property, label);
 
 			dynamicValue = property.GetValue<DynamicValue>();
-			typeProperty = property.FindPropertyRelative("type");
-			isArrayProperty = property.FindPropertyRelative("isArray");
-			valueProperty = GetValueProperty(GetValueType(typeProperty), isArrayProperty.GetValue<bool>());
+			height = GetHeight();
 
-			if (property.isExpanded)
-				if (valueProperty == null)
-					return 32f;
-				else
-					return EditorGUI.GetPropertyHeight(valueProperty, label, true) + 32f;
+			if (height == 0f)
+				return 18f;
 			else
-				return 16f;
+				return height;
+		}
+
+		void ShowValueType()
+		{
+			EditorGUI.BeginProperty(currentPosition, GUIContent.none, currentProperty.FindPropertyRelative("valueType"));
+			EditorGUI.BeginChangeCheck();
+
+			dynamicValue.Type = (DynamicValue.ValueTypes)EditorGUI.EnumPopup(new Rect(currentPosition) { width = currentPosition.width - 48f }, GUIContent.none, dynamicValue.Type);
+
+			if (EditorGUI.EndChangeCheck())
+				serializedObject.Update();
+			EditorGUI.EndProperty();
+
+			EditorGUI.BeginChangeCheck();
+
+			var isArrayProperty = currentProperty.FindPropertyRelative("isArray");
+			EditorGUI.PropertyField(new Rect(currentPosition) { x = currentPosition.width - 27f - EditorGUI.indentLevel * 16f, width = 40f + EditorGUI.indentLevel * 16f }, isArrayProperty);
+			currentPosition.y += 16f;
+
+			if (EditorGUI.EndChangeCheck())
+				serializedObject.ApplyModifiedProperties();
+		}
+
+		void ShowValue()
+		{
+			if (dynamicValue.Type == DynamicValue.ValueTypes.Object)
+			{
+				var objectProperty = currentProperty.FindPropertyRelative("objectValue");
+
+				if (dynamicValue.IsArray)
+					PropertyField(objectProperty);
+				else
+				{
+					objectProperty.arraySize = 1;
+					PropertyField(objectProperty.GetArrayElementAtIndex(0));
+				}
+			}
+			else
+			{
+				EditorGUI.BeginProperty(currentPosition, "Value".ToGUIContent(), currentProperty.FindPropertyRelative("data"));
+
+				float valueHeight;
+				dynamicValue.Value = ObjectField(currentPosition, dynamicValue.Value, "Value".ToGUIContent(), out valueHeight);
+				currentPosition.y += valueHeight;
+
+				EditorGUI.EndProperty();
+			}
+		}
+
+		float GetHeight()
+		{
+			float height;
+
+			if (!dynamicValueToHeight.TryGetValue(dynamicValue, out height))
+			{
+				height = 0f;
+				dynamicValueToHeight[dynamicValue] = height;
+			}
+
+			return height;
 		}
 
 		DynamicValue.ValueTypes GetValueType(SerializedProperty typeProperty)
 		{
 			return (DynamicValue.ValueTypes)System.Enum.GetValues(typeof(DynamicValue.ValueTypes)).GetValue(typeProperty.GetValue<int>());
-		}
-
-		SerializedProperty GetValueProperty(DynamicValue.ValueTypes type, bool isArray)
-		{
-			string propertyName = type.ToString();
-			SerializedProperty valueProperty = null;
-
-			if (type != DynamicValue.ValueTypes.Null)
-				valueProperty = dummySerialized.FindProperty(isArray ? propertyName + "Array" : propertyName);
-
-			return valueProperty;
 		}
 	}
 }

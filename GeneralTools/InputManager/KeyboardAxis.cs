@@ -7,7 +7,7 @@ using System;
 
 namespace Pseudo.Internal.Input
 {
-	[System.Serializable]
+	[Serializable]
 	public class KeyboardAxis : AxisBase
 	{
 		[SerializeField]

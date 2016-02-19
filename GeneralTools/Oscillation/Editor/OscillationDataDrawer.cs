@@ -189,7 +189,7 @@ namespace Pseudo.Internal.Oscillation
 
 		void ShowSettings(SerializedProperty settingsProperty)
 		{
-			PropertyField(settingsProperty.FindPropertyRelative("WaveShape"));
+			PropertyField(settingsProperty.FindPropertyRelative("WaveShape"), GUIContent.none);
 
 			var waveShape = settingsProperty.GetValue<WaveShapes>("WaveShape");
 			var frequencyProperty = settingsProperty.FindPropertyRelative("Frequency");
@@ -200,60 +200,18 @@ namespace Pseudo.Internal.Oscillation
 
 			switch (waveShape)
 			{
+				default:
+					PropertyField(frequencyProperty);
+					PropertyField(amplitudeProperty);
+					PropertyField(centerProperty);
+					PropertyField(offsetProperty);
+					PropertyField(ratioProperty);
+					break;
 				case WaveShapes.Sine:
 					PropertyField(frequencyProperty);
 					PropertyField(amplitudeProperty);
 					PropertyField(centerProperty);
 					PropertyField(offsetProperty);
-					break;
-				case WaveShapes.Triangle:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.Square:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.InCubic:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.OutCubic:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.InOutCubic:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.OutInCubic:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
-					break;
-				case WaveShapes.SmoothStep:
-					PropertyField(frequencyProperty);
-					PropertyField(amplitudeProperty);
-					PropertyField(centerProperty);
-					PropertyField(offsetProperty);
-					PropertyField(ratioProperty);
 					break;
 				case WaveShapes.WhiteNoise:
 					PropertyField(amplitudeProperty);

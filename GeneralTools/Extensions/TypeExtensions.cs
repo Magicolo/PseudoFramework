@@ -10,56 +10,6 @@ namespace Pseudo
 {
 	public static class TypeExtensions
 	{
-		public static Type[] GetSubclasses(this Type baseType)
-		{
-			return TypeUtility.GetAssignableTypes(baseType);
-		}
-
-		public static Type[] GetAssignableTypes(this Type baseType, bool includeSelf = true)
-		{
-			return TypeUtility.GetAssignableTypes(baseType, includeSelf);
-		}
-
-		public static Type[] GetDefinedTypes(this Type attributeType)
-		{
-			return TypeUtility.GetDefinedTypes(attributeType);
-		}
-
-		public static FieldInfo[] GetAllFields(this Type type)
-		{
-			return TypeUtility.GetAllFields(type);
-		}
-
-		public static object CreateDefaultInstance(this Type type)
-		{
-			object instance = null;
-
-			if (type == typeof(string))
-				instance = string.Empty;
-			else
-				instance = Activator.CreateInstance(type, type.GetDefaultConstructorParameters());
-
-			return instance;
-		}
-
-		public static object[] GetDefaultConstructorParameters(this Type type)
-		{
-			List<object> parameters = new List<object>();
-
-			if (!type.HasEmptyConstructor() && type.HasConstructor())
-			{
-				ParameterInfo[] parameterInfos = type.GetConstructors()[0].GetParameters();
-
-				for (int i = 0; i < parameterInfos.Length; i++)
-				{
-					ParameterInfo info = parameterInfos[i];
-					parameters.Add(info.ParameterType.CreateDefaultInstance());
-				}
-			}
-
-			return parameters.ToArray();
-		}
-
 		public static bool HasConstructor(this Type type)
 		{
 			return type.GetConstructors().Length > 0;
