@@ -19,6 +19,7 @@ namespace Pseudo
 
 		public EntityGroups Group;
 		public TargetPreferences Prefer;
+		public bool AutoUpdate = true;
 		[Range(0.001f, 100)]
 		public float UpdateFrequency = 2f;
 		public TimeComponent Time;
@@ -65,6 +66,8 @@ namespace Pseudo
 
 		void Update()
 		{
+			if (!AutoUpdate) return;
+
 			counter += Time.DeltaTime;
 
 			if (counter >= 1f / UpdateFrequency)
@@ -74,7 +77,7 @@ namespace Pseudo
 			}
 		}
 
-		void UpdateTarget()
+		public void UpdateTarget()
 		{
 			var targets = targetables.Filter(Group);
 
