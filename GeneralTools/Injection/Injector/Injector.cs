@@ -46,11 +46,6 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(gameObject);
 
-			var components = gameObject.GetComponents<Component>();
-
-			for (int i = 0; i < components.Length; i++)
-				Inject(components[i]);
-
 			if (recursive)
 			{
 				var transform = gameObject.transform;
@@ -58,6 +53,11 @@ namespace Pseudo.Internal.Injection
 				for (int i = 0; i < transform.childCount; i++)
 					Inject(transform.GetChild(i).gameObject, recursive);
 			}
+
+			var components = gameObject.GetComponents<Component>();
+
+			for (int i = 0; i < components.Length; i++)
+				Inject(components[i]);
 		}
 	}
 }

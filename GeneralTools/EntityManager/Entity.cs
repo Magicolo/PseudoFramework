@@ -307,12 +307,16 @@ namespace Pseudo.Internal.Entity
 		{
 			if (this.active != active)
 			{
-				this.active = active;
-
-				if (this.active)
-					SendMessage(ComponentMessages.OnEntityActivated);
-				else
+				if (active)
+				{
 					SendMessage(ComponentMessages.OnEntityDeactivated);
+					active = false;
+				}
+				else
+				{
+					active = true;
+					SendMessage(ComponentMessages.OnEntityActivated);
+				}
 			}
 		}
 
