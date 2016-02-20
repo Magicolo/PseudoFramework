@@ -81,7 +81,7 @@ namespace Pseudo.Internal.Editor
 				{
 					var value = values.GetValue(j);
 					enumValueList.Add((Enum)value);
-					enumValuePathList.Add(new GUIContent(enumType.Name + "/" + value));
+					enumValuePathList.Add(new GUIContent((enumType.Name + '/' + value).Replace('_', '/')));
 				}
 			}
 

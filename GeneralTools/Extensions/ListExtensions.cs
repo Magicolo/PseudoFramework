@@ -55,7 +55,7 @@ namespace Pseudo
 
 		public static List<T> PopRange<T>(this List<T> list, int startIndex, int count)
 		{
-			List<T> popped = new List<T>(count);
+			var popped = new List<T>(count);
 
 			for (int i = 0; i < count; i++)
 				popped[i] = list.Pop(i + startIndex);

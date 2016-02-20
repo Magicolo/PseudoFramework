@@ -114,6 +114,67 @@ namespace Pseudo
 			return vector.Oscillate(frequency, amplitude, center, 0, Axes.XYZW);
 		}
 
+		public static float Distance(this Vector4 vector, Vector4 target)
+		{
+			return Vector4.Distance(vector, target);
+		}
+
+		public static float Distance(this Vector4 vector, Vector4 target, Axes axes)
+		{
+			float distance = 0f;
+
+			switch (axes)
+			{
+				case Axes.X:
+					distance = Mathf.Abs(vector.x - target.x);
+					break;
+				case Axes.Y:
+					distance = Mathf.Abs(vector.y - target.y);
+					break;
+				case Axes.Z:
+					distance = Mathf.Abs(vector.z - target.z);
+					break;
+				case Axes.W:
+					distance = Mathf.Abs(vector.w - target.w);
+					break;
+				case Axes.XY:
+					distance = Vector2.Distance(vector, target);
+					break;
+				case Axes.XZ:
+					distance = Vector2.Distance(new Vector2(vector.x, vector.z), new Vector2(target.x, target.z));
+					break;
+				case Axes.YZ:
+					distance = Vector2.Distance(new Vector2(vector.y, vector.z), new Vector2(target.y, target.z));
+					break;
+				case Axes.XYZ:
+					distance = Vector3.Distance(vector, target);
+					break;
+				case Axes.XW:
+					distance = Vector2.Distance(new Vector2(vector.x, vector.w), new Vector2(target.x, target.w));
+					break;
+				case Axes.YW:
+					distance = Vector2.Distance(new Vector2(vector.y, vector.w), new Vector2(target.y, target.w));
+					break;
+				case Axes.XYW:
+					distance = Vector3.Distance(new Vector3(vector.x, vector.y, vector.w), new Vector3(target.x, target.y, target.w));
+					break;
+				case Axes.ZW:
+					distance = Vector2.Distance(new Vector2(vector.z, vector.w), new Vector2(target.z, target.w));
+					break;
+				case Axes.XZW:
+					distance = Vector3.Distance(new Vector3(vector.x, vector.z, vector.w), new Vector3(target.x, target.z, target.w));
+					break;
+				case Axes.YZW:
+					distance = Vector3.Distance(new Vector3(vector.y, vector.z, vector.w), new Vector3(target.y, target.z, target.w));
+					break;
+				case Axes.XYZW:
+					distance = Vector4.Distance(vector, target);
+					break;
+			}
+
+			return distance;
+		}
+
 		public static Vector4 Mult(this Vector4 vector, Vector4 values, Axes axes)
 		{
 			if ((axes & Axes.X) != 0)

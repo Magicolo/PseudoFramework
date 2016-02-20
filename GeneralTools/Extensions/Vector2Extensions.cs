@@ -127,6 +127,31 @@ namespace Pseudo
 			return vector.Oscillate(new Vector2(frequency, frequency), new Vector2(amplitude, amplitude), new Vector2(center, center), time, offset, axes);
 		}
 
+		public static float Distance(this Vector2 vector, Vector2 target)
+		{
+			return Vector2.Distance(vector, target);
+		}
+
+		public static float Distance(this Vector2 vector, Vector2 target, Axes axes)
+		{
+			float distance = 0f;
+
+			switch (axes)
+			{
+				case Axes.X:
+					distance = Mathf.Abs(vector.x - target.x);
+					break;
+				case Axes.Y:
+					distance = Mathf.Abs(vector.y - target.y);
+					break;
+				case Axes.XY:
+					distance = Vector2.Distance(vector, target);
+					break;
+			}
+
+			return distance;
+		}
+
 		public static Vector2 Mult(this Vector2 vector, Vector2 values, Axes axes)
 		{
 			if ((axes & Axes.X) != 0)
