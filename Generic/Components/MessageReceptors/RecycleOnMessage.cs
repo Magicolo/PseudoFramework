@@ -13,13 +13,15 @@ namespace Pseudo
 		public MessageEnum Message;
 
 		bool recycle;
+		[Inject]
+		readonly IEntityManager entityManager = null;
 
 		void LateUpdate()
 		{
 			if (recycle)
 			{
 				recycle = false;
-				Entity.Manager.RecycleEntity(Recycle);
+				entityManager.RecycleEntity(Recycle);
 			}
 		}
 

@@ -41,6 +41,8 @@ namespace Pseudo
 		IEntityGroup targetables;
 		IEntity target;
 		float counter;
+		[Inject]
+		readonly IEntityManager entityManager = null;
 		readonly Action<IEntity> onTargetRemoved;
 
 		public GroupTarget()
@@ -51,7 +53,7 @@ namespace Pseudo
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdd()
 		{
-			targetables = Entity.Manager.Entities.Filter(typeof(TransformComponent));
+			targetables = entityManager.Entities.Filter(typeof(TransformComponent));
 			targetables.OnEntityRemoved += onTargetRemoved;
 		}
 

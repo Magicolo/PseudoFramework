@@ -71,8 +71,8 @@ namespace Pseudo
 			GatherComponents();
 
 			InitializeChildren(entityManager, binder);
-			CreateEntity();
 			InitializeComponents(binder);
+			CreateEntity();
 		}
 
 		public override void OnCreate()
