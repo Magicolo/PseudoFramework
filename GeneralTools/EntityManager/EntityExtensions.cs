@@ -30,6 +30,16 @@ namespace Pseudo
 			return entity.GetComponent<GameObjectComponent>().GameObject;
 		}
 
+		public static bool HasBehaviour(this IEntity entity)
+		{
+			return entity.HasComponent<BehaviourComponent>();
+		}
+
+		public static EntityBehaviour GetBehaviour(this IEntity entity)
+		{
+			return entity.GetComponent<BehaviourComponent>().Behaviour;
+		}
+
 		public static bool HasTime(this IEntity entity)
 		{
 			return entity.HasComponent<TimeComponent>();

@@ -171,7 +171,8 @@ namespace Pseudo
 			components = new IComponent[]
 			{
 				new TransformComponent { Transform = CachedTransform },
-				new GameObjectComponent { GameObject = CachedGameObject }
+				new GameObjectComponent { GameObject = CachedGameObject },
+				new BehaviourComponent {Behaviour = this }
 			};
 
 			componentBehaviours = GetComponents<ComponentBehaviour>();
