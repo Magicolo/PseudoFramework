@@ -48,7 +48,7 @@ namespace Pseudo
 			{
 				var message = Messages[i];
 
-				if (Entity != null && (message.Events & uiEvent) != 0)
+				if (Active && Entity != null && (message.Events & uiEvent) != 0)
 					Entity.SendMessage(message.Message, eventData);
 			}
 		}

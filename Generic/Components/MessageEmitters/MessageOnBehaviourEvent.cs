@@ -11,25 +11,25 @@ namespace Pseudo
 	[Flags]
 	public enum BehaviourEvents
 	{
-		OnApplicationFocus,
-		OnApplicationQuit,
-		OnApplicationPause,
-		OnBecameVisible,
-		OnBecameInvisible,
-		OnLevelWasLoaded,
-		OnBeforeTransformParentChanged,
-		OnTransformParentChanged,
-		OnTransformChildrenChanged,
-		OnRectTransformRemoved,
-		OnRectTransformDimensionsChange,
-		OnMouseUpAsButton,
-		OnMouseUp,
-		OnMouseOver,
-		OnMouseExit,
-		OnMouseEnter,
-		OnMouseDrag,
-		OnMouseDown,
-		OnCanvasGroupChanged,
+		OnApplicationFocus = 1 << 0,
+		OnApplicationQuit = 1 << 1,
+		OnApplicationPause = 1 << 2,
+		OnBecameVisible = 1 << 3,
+		OnBecameInvisible = 1 << 4,
+		OnLevelWasLoaded = 1 << 5,
+		OnBeforeTransformParentChanged = 1 << 6,
+		OnTransformParentChanged = 1 << 7,
+		OnTransformChildrenChanged = 1 << 8,
+		OnRectTransformRemoved = 1 << 9,
+		OnRectTransformDimensionsChange = 1 << 10,
+		OnMouseUpAsButton = 1 << 11,
+		OnMouseUp = 1 << 12,
+		OnMouseOver = 1 << 13,
+		OnMouseExit = 1 << 14,
+		OnMouseEnter = 1 << 15,
+		OnMouseDrag = 1 << 16,
+		OnMouseDown = 1 << 17,
+		OnCanvasGroupChanged = 1 << 18,
 	}
 
 	public class MessageOnBehaviourEvent : ComponentBehaviour
@@ -55,7 +55,7 @@ namespace Pseudo
 			{
 				var message = Messages[i];
 
-				if (Entity != null && (message.Events & behaviourEvent) != 0)
+				if (Active && Entity != null && (message.Events & behaviourEvent) != 0)
 					Entity.SendMessage(message.Message, data);
 			}
 		}
