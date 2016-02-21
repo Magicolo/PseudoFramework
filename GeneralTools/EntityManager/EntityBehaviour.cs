@@ -147,6 +147,9 @@ namespace Pseudo
 
 		void RecycleEntity()
 		{
+			if (entity == null)
+				return;
+
 			// Deactivate components
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
