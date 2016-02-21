@@ -12,7 +12,7 @@ namespace Pseudo
 	{
 		public static bool HasTransform(this IEntity entity)
 		{
-			return entity.HasComponent<TransformComponent>();
+			return entity.GetTransform() != null;
 		}
 
 		public static Transform GetTransform(this IEntity entity)

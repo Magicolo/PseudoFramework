@@ -36,7 +36,7 @@ namespace Pseudo
 		}
 		public override bool HasTarget
 		{
-			get { return target != null; }
+			get { return target != null && target.HasTransform(); }
 		}
 
 		IEntityGroup targetables;
