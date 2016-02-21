@@ -62,6 +62,11 @@ namespace Pseudo
 				entity.Active = false;
 		}
 
+		void OnDestroy()
+		{
+			RecycleEntity();
+		}
+
 		[Inject]
 		public void Initialize(IEntityManager entityManager, IBinder binder)
 		{
