@@ -82,7 +82,7 @@ namespace Pseudo.Internal.Entity
 			return readonlyComponentIndices;
 		}
 
-		public T GetComponent<T>() where T : IComponent
+		public T GetComponent<T>() where T : class, IComponent
 		{
 			int index = ComponentIndexHolder<T>.Index;
 
@@ -90,6 +90,31 @@ namespace Pseudo.Internal.Entity
 				return default(T);
 			else
 				return (T)singleComponents[index];
+		}
+
+		public T GetComponentInChildren<T>(bool includeSelf = true, bool recursive = true) where T : class, IComponent
+		{
+			T component;
+
+			if (includeSelf && TryGetComponent(out component))
+				return component;
+
+			for (int i = 0; i < children.Count; i++)
+			{
+				if (children[i].TryGetComponent(out component))
+					return component;
+			}
+
+			if (recursive)
+			{
+				for (int i = 0; i < children.Count; i++)
+				{
+					if (children[i].TryGetComponentInChildren(out component, false, recursive))
+						return component;
+				}
+			}
+
+			return default(T);
 		}
 
 		public IComponent GetComponent(Type type)
@@ -104,7 +129,7 @@ namespace Pseudo.Internal.Entity
 				return singleComponents[index];
 		}
 
-		public IList<T> GetComponents<T>() where T : IComponent
+		public IList<T> GetComponents<T>() where T : class, IComponent
 		{
 			return GetComponentGroup<T>().Components;
 		}
@@ -116,9 +141,16 @@ namespace Pseudo.Internal.Entity
 			return GetComponentGroup(type).Components;
 		}
 
-		public bool TryGetComponent<T>(out T component) where T : IComponent
+		public bool TryGetComponent<T>(out T component) where T : class, IComponent
 		{
 			component = GetComponent<T>();
+
+			return component != null;
+		}
+
+		public bool TryGetComponentInChildren<T>(out T component, bool includeSelf = true, bool recursive = true) where T : class, IComponent
+		{
+			component = GetComponentInChildren<T>(includeSelf, recursive);
 
 			return component != null;
 		}
@@ -132,9 +164,14 @@ namespace Pseudo.Internal.Entity
 			return component != null;
 		}
 
-		public bool HasComponent<T>() where T : IComponent
+		public bool HasComponent<T>() where T : class, IComponent
 		{
 			return GetComponent<T>() != null;
+		}
+
+		public bool HasComponentInChildren<T>(bool includeSelf = true, bool recursive = true) where T : class, IComponent
+		{
+			return GetComponentInChildren<T>(includeSelf, recursive) != null;
 		}
 
 		public bool HasComponent(Type type)
@@ -172,7 +209,7 @@ namespace Pseudo.Internal.Entity
 			RemoveComponent(component, true, true);
 		}
 
-		public void RemoveComponents<T>() where T : IComponent
+		public void RemoveComponents<T>() where T : class, IComponent
 		{
 			var components = GetComponents<T>();
 
@@ -307,12 +344,16 @@ namespace Pseudo.Internal.Entity
 		{
 			if (this.active != active)
 			{
-				this.active = active;
-
-				if (this.active)
-					SendMessage(ComponentMessages.OnEntityActivated);
-				else
+				if (active)
+				{
 					SendMessage(ComponentMessages.OnEntityDeactivated);
+					active = false;
+				}
+				else
+				{
+					active = true;
+					SendMessage(ComponentMessages.OnEntityActivated);
+				}
 			}
 		}
 
@@ -502,7 +543,7 @@ namespace Pseudo.Internal.Entity
 			componentIndices.Remove(index);
 		}
 
-		IComponentGroup<T> GetComponentGroup<T>() where T : IComponent
+		IComponentGroup<T> GetComponentGroup<T>() where T : class, IComponent
 		{
 			return (IComponentGroup<T>)GetComponentGroup(typeof(T), ComponentIndexHolder<T>.Index);
 		}

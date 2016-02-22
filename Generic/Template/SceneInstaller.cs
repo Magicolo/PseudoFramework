@@ -10,10 +10,15 @@ namespace Pseudo
 {
 	public class SceneInstaller : BindingInstaller
 	{
+		public Camera MainCamera;
+		public Camera UICamera;
+
 		public override void Install(IBinder binder)
 		{
 			binder.Bind<IEntityManager>().ToSingle<EntityManager>();
 			binder.Bind<MessageManager>().ToSingle();
+			binder.Bind<Camera>().ToInstance(MainCamera).When(c => c.Identifier == "Main");
+			binder.Bind<Camera>().ToInstance(UICamera).When(c => c.Identifier == "UI");
 		}
 	}
 }

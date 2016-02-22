@@ -14,8 +14,8 @@ namespace Pseudo
 		{
 			get
 			{
-				if (enumValue == null && ValueType != null)
-					enumValue = (Enum)Enum.ToObject(ValueType, value);
+				if (enumValue == null && EnumType != null)
+					enumValue = (Enum)Enum.ToObject(EnumType, value);
 
 				return enumValue;
 			}
@@ -37,7 +37,7 @@ namespace Pseudo
 				enumValue = value;
 			}
 		}
-		public Type ValueType
+		public Type EnumType
 		{
 			get
 			{

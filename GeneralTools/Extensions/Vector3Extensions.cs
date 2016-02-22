@@ -116,6 +116,43 @@ namespace Pseudo
 			return vector.LerpAnglesLinear(targetAngles, time, Axes.XYZW);
 		}
 
+		public static float Distance(this Vector3 vector, Vector3 target)
+		{
+			return Vector3.Distance(vector, target);
+		}
+
+		public static float Distance(this Vector3 vector, Vector3 target, Axes axes)
+		{
+			float distance = 0f;
+
+			switch (axes)
+			{
+				case Axes.X:
+					distance = Mathf.Abs(vector.x - target.x);
+					break;
+				case Axes.Y:
+					distance = Mathf.Abs(vector.y - target.y);
+					break;
+				case Axes.Z:
+					distance = Mathf.Abs(vector.z - target.z);
+					break;
+				case Axes.XY:
+					distance = Vector2.Distance(vector, target);
+					break;
+				case Axes.XZ:
+					distance = Vector2.Distance(new Vector2(vector.x, vector.z), new Vector2(target.x, target.z));
+					break;
+				case Axes.YZ:
+					distance = Vector2.Distance(new Vector2(vector.y, vector.z), new Vector2(target.y, target.z));
+					break;
+				case Axes.XYZ:
+					distance = Vector3.Distance(vector, target);
+					break;
+			}
+
+			return distance;
+		}
+
 		public static Vector3 Oscillate(this Vector3 vector, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, float offset = 0f, Axes axes = Axes.XYZ)
 		{
 			if ((axes & Axes.X) != 0)

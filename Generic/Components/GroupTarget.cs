@@ -19,6 +19,7 @@ namespace Pseudo
 
 		public EntityGroups Group;
 		public TargetPreferences Prefer;
+		public bool AutoUpdate = true;
 		[Range(0.001f, 100)]
 		public float UpdateFrequency = 2f;
 		public TimeComponent Time;
@@ -35,12 +36,14 @@ namespace Pseudo
 		}
 		public override bool HasTarget
 		{
-			get { return target != null; }
+			get { return target != null && target.HasTransform(); }
 		}
 
 		IEntityGroup targetables;
 		IEntity target;
 		float counter;
+		[Inject]
+		readonly IEntityManager entityManager = null;
 		readonly Action<IEntity> onTargetRemoved;
 
 		public GroupTarget()
@@ -51,8 +54,8 @@ namespace Pseudo
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdd()
 		{
+			targetables = entityManager.Entities.Filter(typeof(TransformComponent));
 			targetables.OnEntityRemoved += onTargetRemoved;
-			targetables = Entity.Manager.Entities.Filter(typeof(TransformComponent));
 		}
 
 		[Message(ComponentMessages.OnRemoved)]
@@ -63,6 +66,8 @@ namespace Pseudo
 
 		void Update()
 		{
+			if (!AutoUpdate) return;
+
 			counter += Time.DeltaTime;
 
 			if (counter >= 1f / UpdateFrequency)
@@ -72,7 +77,7 @@ namespace Pseudo
 			}
 		}
 
-		void UpdateTarget()
+		public void UpdateTarget()
 		{
 			var targets = targetables.Filter(Group);
 

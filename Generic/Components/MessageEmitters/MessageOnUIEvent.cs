@@ -48,92 +48,92 @@ namespace Pseudo
 			{
 				var message = Messages[i];
 
-				if (Entity != null && (message.Events & uiEvent) != 0)
+				if (Active && Entity != null && (message.Events & uiEvent) != 0)
 					Entity.SendMessage(message.Message, eventData);
 			}
 		}
 
-		public void OnPointerClick(PointerEventData eventData)
+		void IPointerClickHandler.OnPointerClick(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnPointerClick, eventData);
 		}
 
-		public void OnPointerDown(PointerEventData eventData)
+		void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnPointerDown, eventData);
 		}
 
-		public void OnPointerUp(PointerEventData eventData)
+		void IPointerUpHandler.OnPointerUp(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnPointerUp, eventData);
 		}
 
-		public void OnPointerEnter(PointerEventData eventData)
+		void IPointerEnterHandler.OnPointerEnter(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnPointerEnter, eventData);
 		}
 
-		public void OnPointerExit(PointerEventData eventData)
+		void IPointerExitHandler.OnPointerExit(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnPointerExit, eventData);
 		}
 
-		public void OnBeginDrag(PointerEventData eventData)
+		void IBeginDragHandler.OnBeginDrag(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnBeginDrag, eventData);
 		}
 
-		public void OnEndDrag(PointerEventData eventData)
+		void IEndDragHandler.OnEndDrag(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnEndDrag, eventData);
 		}
 
-		public void OnDrag(PointerEventData eventData)
+		void IDragHandler.OnDrag(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnDrag, eventData);
 		}
 
-		public void OnDrop(PointerEventData eventData)
+		void IDropHandler.OnDrop(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnDrop, eventData);
 		}
 
-		public void OnInitializePotentialDrag(PointerEventData eventData)
+		void IInitializePotentialDragHandler.OnInitializePotentialDrag(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnInitializePotentialDrag, eventData);
 		}
 
-		public void OnSelect(BaseEventData eventData)
+		void ISelectHandler.OnSelect(BaseEventData eventData)
 		{
 			SendMessage(UIEvents.OnSelect, eventData);
 		}
 
-		public void OnDeselect(BaseEventData eventData)
+		void IDeselectHandler.OnDeselect(BaseEventData eventData)
 		{
 			SendMessage(UIEvents.OnDeselect, eventData);
 		}
 
-		public void OnMove(AxisEventData eventData)
+		void IMoveHandler.OnMove(AxisEventData eventData)
 		{
 			SendMessage(UIEvents.OnMove, eventData);
 		}
 
-		public void OnScroll(PointerEventData eventData)
+		void IScrollHandler.OnScroll(PointerEventData eventData)
 		{
 			SendMessage(UIEvents.OnScroll, eventData);
 		}
 
-		public void OnSubmit(BaseEventData eventData)
+		void ISubmitHandler.OnSubmit(BaseEventData eventData)
 		{
 			SendMessage(UIEvents.OnSubmit, eventData);
 		}
 
-		public void OnCancel(BaseEventData eventData)
+		void ICancelHandler.OnCancel(BaseEventData eventData)
 		{
 			SendMessage(UIEvents.OnCancel, eventData);
 		}
 
-		public void OnUpdateSelected(BaseEventData eventData)
+		void IUpdateSelectedHandler.OnUpdateSelected(BaseEventData eventData)
 		{
 			SendMessage(UIEvents.OnUpdateSelected, eventData);
 		}

@@ -52,7 +52,7 @@ namespace Pseudo
 		#region Position
 		public static void SetPosition(this Rigidbody rigidbody, Vector3 position, Axes axes = Axes.XYZ)
 		{
-			rigidbody.MovePosition(rigidbody.transform.position.SetValues(position, axes));
+			rigidbody.MovePosition(rigidbody.position.SetValues(position, axes));
 		}
 
 		public static void SetPosition(this Rigidbody rigidbody, float position, Axes axes = Axes.XYZ)
@@ -62,7 +62,7 @@ namespace Pseudo
 
 		public static void Translate(this Rigidbody rigidbody, Vector3 translation, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position + translation, axes);
+			rigidbody.SetPosition(rigidbody.position + translation, axes);
 		}
 
 		public static void Translate(this Rigidbody rigidbody, float translation, Axes axes = Axes.XYZ)
@@ -72,7 +72,7 @@ namespace Pseudo
 
 		public static void TranslateTowards(this Rigidbody rigidbody, Vector3 targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position.Lerp(targetPosition, deltaTime, axes), axes);
+			rigidbody.SetPosition(rigidbody.position.Lerp(targetPosition, deltaTime, axes), axes);
 		}
 
 		public static void TranslateTowards(this Rigidbody rigidbody, float targetPosition, float deltaTime, Axes axes = Axes.XYZ)
@@ -82,7 +82,7 @@ namespace Pseudo
 
 		public static void OscillatePosition(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
+			rigidbody.SetPosition(rigidbody.position.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
 		}
 
 		public static void OscillatePosition(this Rigidbody rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
@@ -94,7 +94,7 @@ namespace Pseudo
 		#region Rotation
 		public static void SetEulerAngles(this Rigidbody rigidbody, Vector3 angles, Axes axes = Axes.XYZ)
 		{
-			rigidbody.MoveRotation(Quaternion.Euler(rigidbody.transform.eulerAngles.SetValues(angles, axes)));
+			rigidbody.MoveRotation(Quaternion.Euler(rigidbody.rotation.eulerAngles.SetValues(angles, axes)));
 		}
 
 		public static void SetEulerAngles(this Rigidbody rigidbody, float angle, Axes axes = Axes.XYZ)
@@ -104,7 +104,7 @@ namespace Pseudo
 
 		public static void Rotate(this Rigidbody rigidbody, Vector3 rotation, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles + rotation, axes);
+			rigidbody.SetEulerAngles(rigidbody.rotation.eulerAngles + rotation, axes);
 		}
 
 		public static void Rotate(this Rigidbody rigidbody, float rotation, Axes axes = Axes.XYZ)
@@ -114,7 +114,7 @@ namespace Pseudo
 
 		public static void RotateTowards(this Rigidbody rigidbody, Vector3 targetAngles, float deltaTime, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
+			rigidbody.SetEulerAngles(rigidbody.rotation.eulerAngles.LerpAngles(targetAngles, deltaTime, axes), axes);
 		}
 
 		public static void RotateTowards(this Rigidbody rigidbody, float targetAngle, float deltaTime, Axes axes = Axes.XYZ)
@@ -124,7 +124,7 @@ namespace Pseudo
 
 		public static void OscillateEulerAngles(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
 		{
-			rigidbody.SetEulerAngles(rigidbody.transform.eulerAngles.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
+			rigidbody.SetEulerAngles(rigidbody.rotation.eulerAngles.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
 		}
 
 		public static void OscillateEulerAngles(this Rigidbody rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)

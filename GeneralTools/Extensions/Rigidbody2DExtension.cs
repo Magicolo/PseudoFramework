@@ -52,7 +52,7 @@ namespace Pseudo
 		#region Position
 		public static void SetPosition(this Rigidbody2D rigidbody, Vector2 position, Axes axes = Axes.XY)
 		{
-			rigidbody.MovePosition(rigidbody.transform.position.ToVector2().SetValues(position, axes));
+			rigidbody.MovePosition(rigidbody.position.SetValues(position, axes));
 		}
 
 		public static void SetPosition(this Rigidbody2D rigidbody, float position, Axes axes = Axes.XY)
@@ -62,7 +62,7 @@ namespace Pseudo
 
 		public static void Translate(this Rigidbody2D rigidbody, Vector2 translation, Axes axes = Axes.XY)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position + translation.ToVector3(), axes);
+			rigidbody.SetPosition(rigidbody.position + translation, axes);
 		}
 
 		public static void Translate(this Rigidbody2D rigidbody, float translation, Axes axes = Axes.XY)
@@ -72,7 +72,7 @@ namespace Pseudo
 
 		public static void TranslateTowards(this Rigidbody2D rigidbody, Vector2 targetPosition, float deltaTime, Axes axes = Axes.XY)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position.ToVector2().Lerp(targetPosition, deltaTime, axes), axes);
+			rigidbody.SetPosition(rigidbody.position.Lerp(targetPosition, deltaTime, axes), axes);
 		}
 
 		public static void TranslateTowards(this Rigidbody2D rigidbody, float targetPosition, float deltaTime, Axes axes = Axes.XY)
@@ -82,7 +82,7 @@ namespace Pseudo
 
 		public static void OscillatePosition(this Rigidbody2D rigidbody, Vector2 frequency, Vector2 amplitude, Vector2 center, float time, Axes axes = Axes.XY)
 		{
-			rigidbody.SetPosition(rigidbody.transform.position.ToVector2().Oscillate(frequency, amplitude, center, time, rigidbody.transform.GetInstanceID() / 1000, axes), axes);
+			rigidbody.SetPosition(rigidbody.position.Oscillate(frequency, amplitude, center, time, rigidbody.transform.GetInstanceID() / 1000, axes), axes);
 		}
 
 		public static void OscillatePosition(this Rigidbody2D rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XY)
@@ -99,17 +99,17 @@ namespace Pseudo
 
 		public static void Rotate(this Rigidbody2D rigidbody, float rotation)
 		{
-			rigidbody.SetEulerAngle(rigidbody.transform.eulerAngles.z + rotation);
+			rigidbody.SetEulerAngle(rigidbody.rotation + rotation);
 		}
 
 		public static void RotateTowards(this Rigidbody2D rigidbody, float targetAngle, float deltaTime)
 		{
-			rigidbody.SetEulerAngle(rigidbody.transform.eulerAngles.LerpAngles(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, Axes.Z).z);
+			rigidbody.SetEulerAngle(Mathf.LerpAngle(rigidbody.rotation, targetAngle, deltaTime));
 		}
 
 		public static void OscillateEulerAngles(this Rigidbody2D rigidbody, float frequency, float amplitude, float center, float time)
 		{
-			rigidbody.SetEulerAngle(rigidbody.transform.eulerAngles.Oscillate(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, rigidbody.GetInstanceID() / 1000, Axes.Z).z);
+			rigidbody.SetEulerAngle(center + amplitude * Mathf.Sin(frequency * time));
 		}
 		#endregion
 	}

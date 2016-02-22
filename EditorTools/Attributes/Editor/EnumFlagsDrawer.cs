@@ -54,8 +54,8 @@ namespace Pseudo.Internal.Editor
 
 			EditorGUI.BeginChangeCheck();
 
-			string path = currentProperty.GetAdjustedPath();
-			var value = target.GetValueFromMemberAtPath<Enum>(path);
+			serializedObject.ApplyModifiedProperties();
+			var value = (Enum)target.GetValueFromFieldAtPath(currentProperty.GetAdjustedPath());
 
 			value = EditorGUI.EnumMaskField(currentPosition, currentLabel, value);
 

@@ -110,7 +110,7 @@ namespace Pseudo.Internal.Entity
 		}
 	}
 
-	public static class ComponentIndexHolder<T> where T : IComponent
+	public static class ComponentIndexHolder<T> where T : class, IComponent
 	{
 		public static int Index = ComponentUtility.GetComponentIndex(typeof(T));
 	}

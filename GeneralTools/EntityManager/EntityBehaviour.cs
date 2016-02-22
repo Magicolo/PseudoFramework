@@ -62,6 +62,11 @@ namespace Pseudo
 				entity.Active = false;
 		}
 
+		void OnDestroy()
+		{
+			RecycleEntity();
+		}
+
 		[Inject]
 		public void Initialize(IEntityManager entityManager, IBinder binder)
 		{
@@ -71,8 +76,8 @@ namespace Pseudo
 			GatherComponents();
 
 			InitializeChildren(entityManager, binder);
-			CreateEntity();
 			InitializeComponents(binder);
+			CreateEntity();
 		}
 
 		public override void OnCreate()
@@ -119,6 +124,9 @@ namespace Pseudo
 
 		void CreateEntity()
 		{
+			if (entity != null)
+				RecycleEntity();
+
 			entity = entityManager.CreateEntity(groups, enabled);
 
 			for (int i = 0; i < children.Length; i++)
@@ -139,6 +147,9 @@ namespace Pseudo
 
 		void RecycleEntity()
 		{
+			if (entity == null)
+				return;
+
 			// Deactivate components
 			for (int i = 0; i < componentBehaviours.Length; i++)
 			{
@@ -171,7 +182,8 @@ namespace Pseudo
 			components = new IComponent[]
 			{
 				new TransformComponent { Transform = CachedTransform },
-				new GameObjectComponent { GameObject = CachedGameObject }
+				new GameObjectComponent { GameObject = CachedGameObject },
+				new BehaviourComponent {Behaviour = this }
 			};
 
 			componentBehaviours = GetComponents<ComponentBehaviour>();
