@@ -48,33 +48,33 @@ namespace Pseudo.Internal.Entity
 
 		public void BroadcastMessage(EntityMessage message)
 		{
-			BroadcastMessage(message.Message.Value, (object)null, message.Propagation);
+			BroadcastMessage(message.Message.Value, (object)null, message.Scope);
 		}
 
 		public void BroadcastMessage<TArg>(EntityMessage message, TArg argument)
 		{
-			BroadcastMessage(message.Message.Value, argument, message.Propagation);
+			BroadcastMessage(message.Message.Value, argument, message.Scope);
 		}
 
 		public void BroadcastMessage<TId>(TId identifier)
 		{
-			BroadcastMessage(identifier, (object)null, MessagePropagation.Local);
+			BroadcastMessage(identifier, (object)null, HierarchyScope.Local);
 		}
 
-		public void BroadcastMessage<TId>(TId identifier, MessagePropagation propagation)
+		public void BroadcastMessage<TId>(TId identifier, HierarchyScope scope)
 		{
-			BroadcastMessage(identifier, (object)null, propagation);
+			BroadcastMessage(identifier, (object)null, scope);
 		}
 
 		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument)
 		{
-			BroadcastMessage(identifier, argument, MessagePropagation.Local);
+			BroadcastMessage(identifier, argument, HierarchyScope.Local);
 		}
 
-		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation)
+		public void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, HierarchyScope scope)
 		{
 			for (int i = entities.Count - 1; i >= 0; i--)
-				entities[i].SendMessage(identifier, argument, propagation);
+				entities[i].SendMessage(identifier, argument, scope);
 		}
 
 		public bool Contains(IEntity entity)
@@ -170,6 +170,21 @@ namespace Pseudo.Internal.Entity
 			}
 
 			return matchGroup;
+		}
+
+		public List<IEntity>.Enumerator GetEnumerator()
+		{
+			return entities.GetEnumerator();
+		}
+
+		IEnumerator<IEntity> IEnumerable<IEntity>.GetEnumerator()
+		{
+			return GetEnumerator();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return GetEnumerator();
 		}
 	}
 }

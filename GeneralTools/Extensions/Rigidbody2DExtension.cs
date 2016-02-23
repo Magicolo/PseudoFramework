@@ -37,16 +37,6 @@ namespace Pseudo
 		{
 			rigidbody.AccelerateTowards(new Vector2(targetSpeed, targetSpeed), deltaTime, axes);
 		}
-
-		public static void OscillateVelocity(this Rigidbody2D rigidbody, Vector2 frequency, Vector2 amplitude, Vector2 center, float time, Axes axes = Axes.XY)
-		{
-			rigidbody.SetVelocity(rigidbody.velocity.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateVelocity(this Rigidbody2D rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XY)
-		{
-			OscillateVelocity(rigidbody, new Vector2(frequency, frequency), new Vector2(amplitude, amplitude), new Vector2(center, center), time, axes);
-		}
 		#endregion
 
 		#region Position
@@ -79,16 +69,6 @@ namespace Pseudo
 		{
 			rigidbody.TranslateTowards(new Vector2(targetPosition, targetPosition), deltaTime, axes);
 		}
-
-		public static void OscillatePosition(this Rigidbody2D rigidbody, Vector2 frequency, Vector2 amplitude, Vector2 center, float time, Axes axes = Axes.XY)
-		{
-			rigidbody.SetPosition(rigidbody.position.Oscillate(frequency, amplitude, center, time, rigidbody.transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillatePosition(this Rigidbody2D rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XY)
-		{
-			rigidbody.OscillatePosition(new Vector2(frequency, frequency), new Vector2(amplitude, amplitude), new Vector2(center, center), time, axes);
-		}
 		#endregion
 
 		#region Rotation
@@ -105,11 +85,6 @@ namespace Pseudo
 		public static void RotateTowards(this Rigidbody2D rigidbody, float targetAngle, float deltaTime)
 		{
 			rigidbody.SetEulerAngle(Mathf.LerpAngle(rigidbody.rotation, targetAngle, deltaTime));
-		}
-
-		public static void OscillateEulerAngles(this Rigidbody2D rigidbody, float frequency, float amplitude, float center, float time)
-		{
-			rigidbody.SetEulerAngle(center + amplitude * Mathf.Sin(frequency * time));
 		}
 		#endregion
 	}

@@ -12,21 +12,42 @@ namespace Pseudo
 	{
 		public bool Active
 		{
-			get { return enabled; }
-			set
-			{
-				if (Entity != null && enabled != value)
-				{
-					enabled = value;
+			get { return active; }
+			set { SetActive(value); }
+		}
+		public IEntity Entity
+		{
+			get { return entity; }
+			set { entity = value; }
+		}
 
-					if (enabled)
-						OnActivated();
-					else
-						OnDeactivated();
-				}
+		IEntity entity;
+		bool active;
+
+		void OnEnable()
+		{
+			SetActive(true);
+		}
+
+		void OnDisable()
+		{
+			SetActive(false);
+		}
+
+		void SetActive(bool active)
+		{
+			if (entity == null)
+				this.active = active;
+			else if (this.active != active)
+			{
+				this.active = active;
+
+				if (this.active)
+					OnActivated();
+				else
+					OnDeactivated();
 			}
 		}
-		public IEntity Entity { get; set; }
 
 		public virtual void OnActivated() { }
 		public virtual void OnDeactivated() { }

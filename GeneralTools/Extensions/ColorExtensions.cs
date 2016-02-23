@@ -62,26 +62,31 @@ namespace Pseudo
 			return color;
 		}
 
-		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, float offset, float time, Channels channels)
+		public static Color Oscillate(this Color color, Color frequency, Color amplitude, Color center, Color offset, float time, Channels channels)
 		{
 			if ((channels & Channels.R) != 0)
-				color.r = center.r + amplitude.r * Mathf.Sin(frequency.r * time + offset);
+				color.r = center.r + amplitude.r * Mathf.Sin(frequency.r * time + offset.r);
 
 			if ((channels & Channels.G) != 0)
-				color.g = center.g + amplitude.g * Mathf.Sin(frequency.g * time + offset);
+				color.g = center.g + amplitude.g * Mathf.Sin(frequency.g * time + offset.g);
 
 			if ((channels & Channels.B) != 0)
-				color.b = center.b + amplitude.b * Mathf.Sin(frequency.b * time + offset);
+				color.b = center.b + amplitude.b * Mathf.Sin(frequency.b * time + offset.b);
 
 			if ((channels & Channels.A) != 0)
-				color.a = center.a + amplitude.a * Mathf.Sin(frequency.a * time + offset);
+				color.a = center.a + amplitude.a * Mathf.Sin(frequency.a * time + offset.a);
 
 			return color;
 		}
 
 		public static Color Oscillate(this Color color, float frequency, float amplitude, float center, float offset, float time, Channels channels)
 		{
-			return color.Oscillate(new Color(frequency, frequency, frequency, frequency), new Color(amplitude, amplitude, amplitude, amplitude), new Color(center, center, center, center), offset, time, channels);
+			return color.Oscillate(
+				new Color(frequency, frequency, frequency, frequency),
+				new Color(amplitude, amplitude, amplitude, amplitude),
+				new Color(center, center, center, center),
+				new Color(offset, offset, offset, offset),
+				time, channels);
 		}
 
 		public static Color Mult(this Color color, Color values, Channels channels)
@@ -216,13 +221,13 @@ namespace Pseudo
 
 		public static Color HueShift(this Color color, float amount)
 		{
-			var hsv = color.ToHsv();
+			var hsv = color.ToHSV();
 			hsv.r = (hsv.r + amount) % 1f;
 
-			return hsv.ToRgb();
+			return hsv.ToRGB();
 		}
 
-		public static Color ToHsv(this Color RgbColor)
+		public static Color ToHSV(this Color RgbColor)
 		{
 			float hue = 0f;
 			float saturation = 0f;
@@ -257,7 +262,7 @@ namespace Pseudo
 			return new Color(hue, saturation, value, RgbColor.a);
 		}
 
-		public static Color ToRgb(this Color HsvColor)
+		public static Color ToRGB(this Color HsvColor)
 		{
 			float red = 0f;
 			float green = 0f;

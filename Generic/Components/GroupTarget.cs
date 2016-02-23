@@ -51,17 +51,24 @@ namespace Pseudo
 			onTargetRemoved = OnTargetRemoved;
 		}
 
+		public override void OnActivated()
+		{
+			base.OnActivated();
+
+			targetables.OnEntityRemoved += onTargetRemoved;
+		}
+
+		public override void OnDeactivated()
+		{
+			base.OnDeactivated();
+
+			targetables.OnEntityRemoved -= onTargetRemoved;
+		}
+
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdd()
 		{
 			targetables = entityManager.Entities.Filter(typeof(TransformComponent));
-			targetables.OnEntityRemoved += onTargetRemoved;
-		}
-
-		[Message(ComponentMessages.OnRemoved)]
-		void OnRemoved()
-		{
-			targetables.OnEntityRemoved -= onTargetRemoved;
 		}
 
 		void Update()

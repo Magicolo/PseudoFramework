@@ -111,20 +111,25 @@ namespace Pseudo
 			return vector.LerpAnglesLinear(targetAngles, deltaTime, Axes.XYZW);
 		}
 
-		public static Vector2 Oscillate(this Vector2 vector, Vector2 frequency, Vector2 amplitude, Vector2 center, float time, float offset, Axes axes)
+		public static Vector2 Oscillate(this Vector2 vector, Vector2 frequency, Vector2 amplitude, Vector2 center, Vector2 offset, float time, Axes axes)
 		{
 			if ((axes & Axes.X) != 0)
-				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * time + offset);
+				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * time + offset.x);
 
 			if ((axes & Axes.Y) != 0)
-				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * time + offset);
+				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * time + offset.y);
 
 			return vector;
 		}
 
-		public static Vector2 Oscillate(this Vector2 vector, float frequency, float amplitude, float center, float time, float offset, Axes axes)
+		public static Vector2 Oscillate(this Vector2 vector, float frequency, float amplitude, float center, float offset, float time, Axes axes)
 		{
-			return vector.Oscillate(new Vector2(frequency, frequency), new Vector2(amplitude, amplitude), new Vector2(center, center), time, offset, axes);
+			return vector.Oscillate(
+				new Vector2(frequency, frequency),
+				new Vector2(amplitude, amplitude),
+				new Vector2(center, center),
+				new Vector2(offset, offset),
+				time, axes);
 		}
 
 		public static float Distance(this Vector2 vector, Vector2 target)

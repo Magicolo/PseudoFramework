@@ -153,18 +153,28 @@ namespace Pseudo
 			return distance;
 		}
 
-		public static Vector3 Oscillate(this Vector3 vector, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, float offset = 0f, Axes axes = Axes.XYZ)
+		public static Vector3 Oscillate(this Vector3 vector, Vector3 frequency, Vector3 amplitude, Vector3 center, Vector3 offset, float time, Axes axes)
 		{
 			if ((axes & Axes.X) != 0)
-				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * time + offset);
+				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * time + offset.x);
 
 			if ((axes & Axes.Y) != 0)
-				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * time + offset);
+				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * time + offset.y);
 
 			if ((axes & Axes.Z) != 0)
-				vector.z = center.z + amplitude.z * Mathf.Sin(frequency.z * time + offset);
+				vector.z = center.z + amplitude.z * Mathf.Sin(frequency.z * time + offset.z);
 
 			return vector;
+		}
+
+		public static Vector3 Oscillate(this Vector3 vector, float frequency, float amplitude, float center, float offset, float time, Axes axes)
+		{
+			return vector.Oscillate(
+				new Vector3(frequency, frequency, frequency),
+				new Vector3(amplitude, amplitude, amplitude),
+				new Vector3(center, center, center),
+				new Vector3(offset, offset, offset),
+				time, axes);
 		}
 
 		public static Vector3 Mult(this Vector3 vector, Vector3 values, Axes axes)

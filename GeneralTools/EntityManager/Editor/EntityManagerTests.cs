@@ -483,8 +483,8 @@ namespace Pseudo.Tests
 			entity2.AddComponent(component2);
 			entity3.AddComponent(component3);
 
-			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
-			entity2.SendMessage(1, 1, MessagePropagation.DownwardsExclusive);
+			entity1.SendMessage(0, HierarchyScope.Downwards | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Downwards);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -518,8 +518,8 @@ namespace Pseudo.Tests
 			component1.Active = false;
 			entity2.Active = false;
 
-			entity1.SendMessage(0, MessagePropagation.DownwardsInclusive);
-			entity2.SendMessage(1, 1, MessagePropagation.DownwardsInclusive);
+			entity1.SendMessage(0, HierarchyScope.Downwards | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Downwards | HierarchyScope.Local);
 
 			component1.Received(0).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -550,8 +550,8 @@ namespace Pseudo.Tests
 			entity2.AddComponent(component2);
 			entity3.AddComponent(component3);
 
-			entity1.SendMessage(0, MessagePropagation.UpwardsInclusive);
-			entity2.SendMessage(1, 1, MessagePropagation.UpwardsExclusive);
+			entity1.SendMessage(0, HierarchyScope.Upwards | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Upwards);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);
@@ -582,8 +582,8 @@ namespace Pseudo.Tests
 			entity2.AddComponent(component2);
 			entity3.AddComponent(component3);
 
-			entity1.SendMessage(0, MessagePropagation.Global);
-			entity2.SendMessage(1, 1, MessagePropagation.Global);
+			entityManager.Entities.BroadcastMessage(0);
+			entityManager.Entities.BroadcastMessage(1, 1);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);

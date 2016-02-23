@@ -23,7 +23,6 @@ namespace Pseudo
 			public EntityBehaviour State;
 		}
 
-		public EntityBehaviour StartState;
 		[InitializeContent]
 		public StateData[] States = new StateData[0];
 
@@ -39,15 +38,13 @@ namespace Pseudo
 				if (state.State != null)
 					state.State.CachedGameObject.SetActive(false);
 			}
-
-			SwitchState(StartState);
 		}
 
 		void SwitchState(EntityBehaviour state)
 		{
 			if (currentState != null)
 			{
-				Entity.SendMessage(StateMachineMessages.OnStateExit, MessagePropagation.DownwardsInclusive);
+				Entity.SendMessage(StateMachineMessages.OnStateExit, HierarchyScope.Downwards | HierarchyScope.Local);
 				currentState.CachedGameObject.SetActive(false);
 			}
 
@@ -56,7 +53,7 @@ namespace Pseudo
 			if (currentState != null)
 			{
 				currentState.CachedGameObject.SetActive(true);
-				Entity.SendMessage(StateMachineMessages.OnStateEnter, MessagePropagation.DownwardsInclusive);
+				Entity.SendMessage(StateMachineMessages.OnStateEnter, HierarchyScope.Downwards | HierarchyScope.Local);
 			}
 		}
 

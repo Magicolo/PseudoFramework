@@ -118,6 +118,17 @@ namespace Pseudo.Internal.Injection
 			return ToSingleMethod(c => instance);
 		}
 
+		public virtual IBindingCondition ToFactory(Type factoryType)
+		{
+			Assert.IsNotNull(factoryType);
+			Assert.IsTrue(typeof(IFactory).IsAssignableFrom(factoryType));
+
+			binder.Bind(factoryType).ToSingle();
+
+			return ToTransientMethod(c => ((IFactory)c.Binder.Resolver.Resolve(factoryType)).Create());
+
+		}
+
 		public virtual IBindingCondition ToFactory(IFactory factory)
 		{
 			Assert.IsNotNull(factory);
@@ -142,6 +153,11 @@ namespace Pseudo.Internal.Injection
 			return base.ToSinglePrefab(prefab);
 		}
 
+		public virtual IBindingCondition ToSingleMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
+		{
+			return binder.Bind(contractType).ToSingleMethod(method);
+		}
+
 		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : class, TContract
 		{
 			return base.ToTransient(typeof(TConcrete));
@@ -152,26 +168,28 @@ namespace Pseudo.Internal.Injection
 			return base.ToTransientPrefab(prefab);
 		}
 
+		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
+		{
+			return binder.Bind(contractType).ToTransientMethod(method);
+		}
+
 		public virtual IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : class, TContract
 		{
 			return base.ToInstance(instance);
 		}
 
-		public virtual IBindingCondition ToFactory<TConcrete>(IFactory<TConcrete> factory) where TConcrete : class, TContract
+		public virtual IBindingCondition ToFactory<TFactory>() where TFactory : class, IFactory<TContract>
+		{
+			binder.Bind<TFactory>().ToSingle();
+
+			return ToTransientMethod(c => c.Binder.Resolver.Resolve<TFactory>().Create());
+		}
+
+		public virtual IBindingCondition ToFactory(IFactory<TContract> factory)
 		{
 			Assert.IsNotNull(factory);
 
 			return ToTransientMethod(c => factory.Create());
-		}
-
-		public virtual IBindingCondition ToSingleMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
-		{
-			return binder.Bind(contractType).ToSingleMethod(method);
-		}
-
-		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
-		{
-			return binder.Bind(contractType).ToTransientMethod(method);
 		}
 	}
 }

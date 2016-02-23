@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public interface IEntityGroup
+	public interface IEntityGroup : IEnumerable<IEntity>
 	{
 		event Action<IEntity> OnEntityAdded;
 		event Action<IEntity> OnEntityRemoved;
@@ -21,9 +21,9 @@ namespace Pseudo
 		void BroadcastMessage(EntityMessage message);
 		void BroadcastMessage<TArg>(EntityMessage message, TArg argument);
 		void BroadcastMessage<TId>(TId identifier);
-		void BroadcastMessage<TId>(TId identifier, MessagePropagation propagation);
+		void BroadcastMessage<TId>(TId identifier, HierarchyScope scope);
 		void BroadcastMessage<TId, TArg>(TId identifier, TArg argument);
-		void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, MessagePropagation propagation);
+		void BroadcastMessage<TId, TArg>(TId identifier, TArg argument, HierarchyScope scope);
 
 		bool Contains(IEntity entity);
 		int IndexOf(IEntity entity);

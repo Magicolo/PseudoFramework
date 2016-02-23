@@ -37,16 +37,6 @@ namespace Pseudo
 		{
 			rigidbody.AccelerateTowards(new Vector3(targetSpeed, targetSpeed, targetSpeed), deltaTime, axes);
 		}
-
-		public static void OscillateVelocity(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			rigidbody.SetVelocity(rigidbody.velocity.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateVelocity(this Rigidbody rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			OscillateVelocity(rigidbody, new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
-		}
 		#endregion
 
 		#region Position
@@ -79,16 +69,6 @@ namespace Pseudo
 		{
 			rigidbody.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, axes);
 		}
-
-		public static void OscillatePosition(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			rigidbody.SetPosition(rigidbody.position.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillatePosition(this Rigidbody rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			rigidbody.OscillatePosition(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
-		}
 		#endregion
 
 		#region Rotation
@@ -120,16 +100,6 @@ namespace Pseudo
 		public static void RotateTowards(this Rigidbody rigidbody, float targetAngle, float deltaTime, Axes axes = Axes.XYZ)
 		{
 			rigidbody.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, axes);
-		}
-
-		public static void OscillateEulerAngles(this Rigidbody rigidbody, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			rigidbody.SetEulerAngles(rigidbody.rotation.eulerAngles.Oscillate(frequency, amplitude, center, time, rigidbody.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateEulerAngles(this Rigidbody rigidbody, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			rigidbody.OscillateEulerAngles(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
 		}
 		#endregion
 	}

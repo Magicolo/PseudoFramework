@@ -82,36 +82,31 @@ namespace Pseudo
 			return vector.LerpLinear(target, deltaTime, Axes.XYZW);
 		}
 
-		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center, float offset, Axes axes)
+		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center, Vector4 offset, float time, Axes axes)
 		{
 			if ((axes & Axes.X) != 0)
-				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * Time.time + offset);
+				vector.x = center.x + amplitude.x * Mathf.Sin(frequency.x * time + offset.x);
 
 			if ((axes & Axes.Y) != 0)
-				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * Time.time + offset);
+				vector.y = center.y + amplitude.y * Mathf.Sin(frequency.y * time + offset.y);
 
 			if ((axes & Axes.Z) != 0)
-				vector.z = center.z + amplitude.z * Mathf.Sin(frequency.z * Time.time + offset);
+				vector.z = center.z + amplitude.z * Mathf.Sin(frequency.z * time + offset.z);
 
 			if ((axes & Axes.W) != 0)
-				vector.w = center.w + amplitude.w * Mathf.Sin(frequency.w * Time.time + offset);
+				vector.w = center.w + amplitude.w * Mathf.Sin(frequency.w * time + offset.w);
 
 			return vector;
 		}
 
-		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center, float offset)
+		public static Vector4 Oscillate(this Vector4 vector, float frequency, float amplitude, float center, float offset, float time, Axes axes)
 		{
-			return vector.Oscillate(frequency, amplitude, center, offset, Axes.XYZW);
-		}
-
-		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center, Axes axes)
-		{
-			return vector.Oscillate(frequency, amplitude, center, 0, axes);
-		}
-
-		public static Vector4 Oscillate(this Vector4 vector, Vector4 frequency, Vector4 amplitude, Vector4 center)
-		{
-			return vector.Oscillate(frequency, amplitude, center, 0, Axes.XYZW);
+			return vector.Oscillate(
+				new Vector4(frequency, frequency, frequency, frequency),
+				new Vector4(amplitude, amplitude, amplitude, amplitude),
+				new Vector4(center, center, center, center),
+				new Vector4(offset, offset, offset, offset),
+				time, axes);
 		}
 
 		public static float Distance(this Vector4 vector, Vector4 target)

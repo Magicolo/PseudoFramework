@@ -22,6 +22,7 @@ namespace Pseudo
 		IBindingCondition ToTransientPrefab(GameObject prefab);
 		IBindingCondition ToTransientMethod(InjectionMethod<object> method);
 		IBindingCondition ToInstance(object instance);
+		IBindingCondition ToFactory(Type factoryType);
 		IBindingCondition ToFactory(IFactory factory);
 		IBindingCondition ToFactory(IInjectionFactory factory);
 	}
@@ -35,6 +36,7 @@ namespace Pseudo
 		IBindingCondition ToTransientPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract;
 		IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract;
 		IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : class, TContract;
-		IBindingCondition ToFactory<TConcrete>(IFactory<TConcrete> factory) where TConcrete : class, TContract;
+		IBindingCondition ToFactory<TFactory>() where TFactory : class, IFactory<TContract>;
+		IBindingCondition ToFactory(IFactory<TContract> factory);
 	}
 }

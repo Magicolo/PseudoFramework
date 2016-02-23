@@ -11,18 +11,19 @@ namespace Pseudo
 	public struct EntityMessage
 	{
 		public MessageEnum Message;
-		public MessagePropagation Propagation;
+		[EnumFlags]
+		public HierarchyScope Scope;
 
-		public EntityMessage(MessageEnum message, MessagePropagation propagation = MessagePropagation.Local)
+		public EntityMessage(MessageEnum message, HierarchyScope scope = HierarchyScope.Local)
 		{
 			Message = message;
-			Propagation = propagation;
+			Scope = scope;
 		}
 
-		public EntityMessage(Enum message, MessagePropagation propagation = MessagePropagation.Local)
+		public EntityMessage(Enum message, HierarchyScope scope = HierarchyScope.Local)
 		{
 			Message = message;
-			Propagation = propagation;
+			Scope = scope;
 		}
 	}
 }

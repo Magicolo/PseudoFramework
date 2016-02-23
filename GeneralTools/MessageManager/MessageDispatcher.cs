@@ -12,7 +12,7 @@ namespace Pseudo.Internal.Communication
 	public class MessageDispatcher<TId>
 	{
 		readonly TId identifier;
-		readonly Dictionary<object, Delegate> targetToMethod = new Dictionary<object, Delegate>();
+		readonly Dictionary<object, Delegate> targetToReceiver = new Dictionary<object, Delegate>();
 
 		public MessageDispatcher(TId identifier)
 		{
@@ -28,23 +28,17 @@ namespace Pseudo.Internal.Communication
 			else if (dispatcher is Action)
 				((Action)dispatcher)();
 			else if (dispatcher != null)
-				throw new ArgumentException(string.Format("Argument signature does not exactly match target method's signature. Inheritance is not supported for AOT compiling readons."));
-
-			if (target is IMessageable)
-				((IMessageable)target).OnMessage(identifier);
-
-			if (target is IMessageable<TId>)
-				((IMessageable<TId>)target).OnMessage(identifier);
+				throw new MethodSignatureMismatchException();
 		}
 
 		Delegate GetMethod(object target)
 		{
 			Delegate method;
 
-			if (!targetToMethod.TryGetValue(target, out method))
+			if (!targetToReceiver.TryGetValue(target, out method))
 			{
 				method = MessageUtility.CreateMethod(target, identifier);
-				targetToMethod[target] = method;
+				targetToReceiver[target] = method;
 			}
 
 			return method;

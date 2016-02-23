@@ -12,6 +12,7 @@ namespace Pseudo
 		public enum TriggerModes
 		{
 			Once,
+			Repeat,
 			Continuous
 		}
 
@@ -24,44 +25,57 @@ namespace Pseudo
 			public EntityMessage Message;
 		}
 
+		public struct Timer
+		{
+			public float Counter;
+			public bool IsDone;
+			public TimeMessage Message;
+		}
+
 		public TimeMessage[] Messages = new TimeMessage[0];
 		public TimeComponent Time;
 
-		readonly List<TimeMessage> scheduledMessages = new List<TimeMessage>();
+		readonly List<Timer> timers = new List<Timer>();
 
 		[Message(ComponentMessages.OnAdded)]
 		void OnAdded()
 		{
-			scheduledMessages.AddRange(Messages);
+			for (int i = 0; i < Messages.Length; i++)
+				timers.Add(new Timer { Message = Messages[i] });
 		}
 
 		[Message(ComponentMessages.OnRemoved)]
 		void OnRemoved()
 		{
-			scheduledMessages.Clear();
+			timers.Clear();
 		}
 
 		void Update()
 		{
-			for (int i = 0; i < scheduledMessages.Count; i++)
+			for (int i = 0; i < timers.Count; i++)
 			{
-				var message = scheduledMessages[i];
-				message.Delay -= Time.DeltaTime;
-				scheduledMessages[i] = message;
+				var timer = timers[i];
 
-				if (message.Delay < 0f)
+				if (timer.IsDone)
+					continue;
+				else if (timer.Counter >= timer.Message.Delay)
 				{
-					switch (message.Trigger)
+					switch (timer.Message.Trigger)
 					{
 						case TriggerModes.Once:
-							scheduledMessages.RemoveAt(i--);
+							timer.IsDone = true;
 							break;
-						case TriggerModes.Continuous:
+						case TriggerModes.Repeat:
+							timer.Counter -= timer.Message.Delay;
 							break;
 					}
 
-					Entity.SendMessage(message.Message);
+					Entity.SendMessage(timer.Message.Message);
 				}
+				else
+					timer.Counter += Time.DeltaTime;
+
+				timers[i] = timer;
 			}
 		}
 	}

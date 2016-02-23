@@ -7,7 +7,7 @@ namespace Pseudo
 	{
 		public static Color GetColor(this Renderer renderer, bool shared = false)
 		{
-			SpriteRenderer spriteRenderer = renderer as SpriteRenderer;
+			var spriteRenderer = renderer as SpriteRenderer;
 			Color color;
 
 			if (spriteRenderer != null && spriteRenderer.sharedMaterial == null)
@@ -22,7 +22,7 @@ namespace Pseudo
 
 		public static void SetColor(this Renderer renderer, Color color, bool shared = false, Channels channels = Channels.RGBA)
 		{
-			SpriteRenderer spriteRenderer = renderer as SpriteRenderer;
+			var spriteRenderer = renderer as SpriteRenderer;
 
 			if (spriteRenderer != null && spriteRenderer.sharedMaterial == null)
 				spriteRenderer.color = spriteRenderer.color.SetValues(color, channels);
@@ -55,16 +55,6 @@ namespace Pseudo
 		public static void FadeTowards(this Renderer renderer, float targetColor, float deltaTime, bool shared = false, Channels channels = Channels.RGBA)
 		{
 			renderer.FadeTowards(new Color(targetColor, targetColor, targetColor, targetColor), deltaTime, shared, channels);
-		}
-
-		public static void OscillateColor(this Renderer renderer, Color frequency, Color amplitude, Color center, float time, bool shared = false, Channels channels = Channels.RGBA)
-		{
-			renderer.SetColor(renderer.GetColor().Oscillate(frequency, amplitude, center, renderer.GetInstanceID() / 1000f, time, channels), shared, channels);
-		}
-
-		public static void OscillateColor(this Renderer renderer, float frequency, float amplitude, float center, float time, bool shared = false, Channels channels = Channels.RGBA)
-		{
-			renderer.OscillateColor(new Color(frequency, frequency, frequency, frequency), new Color(amplitude, amplitude, amplitude, amplitude), new Color(center, center, center, center), time, shared, channels);
 		}
 	}
 }

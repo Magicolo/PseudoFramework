@@ -10,9 +10,34 @@ using Pseudo.Internal.Communication;
 
 namespace Pseudo
 {
-	public class MessageManager
+	public class MessageManager : IMessageManager
 	{
 		readonly Dictionary<Type, object> typeToDispatcherGroup = new Dictionary<Type, object>();
+		readonly List<IMessageable> receivers = new List<IMessageable>();
+
+		public void SubscribeAll(IMessageable receiver)
+		{
+			receivers.Add(receiver);
+		}
+
+		public void Subscribe<TId>(IMessageable<TId> receiver)
+		{
+			Assert.IsNotNull(receiver);
+
+			GetDispatcherGroup<TId>().Subscribe(receiver);
+		}
+
+		public void UnsubscribeAll(IMessageable receiver)
+		{
+			receivers.Remove(receiver);
+		}
+
+		public void Unsubscribe<TId>(IMessageable<TId> receiver)
+		{
+			Assert.IsNotNull(receiver);
+
+			GetDispatcherGroup<TId>().Unsubscribe(receiver);
+		}
 
 		public void Send<TId>(object target, TId identifier)
 		{
@@ -24,6 +49,9 @@ namespace Pseudo
 			Assert.IsNotNull(target);
 
 			GetDispatcherGroup<TId>().Send(target, identifier, argument);
+
+			for (int i = 0; i < receivers.Count; i++)
+				receivers[i].OnMessage(identifier);
 		}
 
 		MessageDispatcherGroup<TId> GetDispatcherGroup<TId>()

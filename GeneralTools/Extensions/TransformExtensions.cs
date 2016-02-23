@@ -38,16 +38,6 @@ namespace Pseudo
 			transform.TranslateTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, axes);
 		}
 
-		public static void OscillatePosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetPosition(transform.position.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillatePosition(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillatePosition(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
-		}
-
 		public static void SetLocalPosition(this Transform transform, Vector3 position, Axes axes = Axes.XYZ)
 		{
 			transform.localPosition = transform.localPosition.SetValues(position, axes);
@@ -76,16 +66,6 @@ namespace Pseudo
 		public static void TranslateLocalTowards(this Transform transform, float targetPosition, float deltaTime, Axes axes = Axes.XYZ)
 		{
 			transform.TranslateLocalTowards(new Vector3(targetPosition, targetPosition, targetPosition), deltaTime, axes);
-		}
-
-		public static void OscillateLocalPosition(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetLocalPosition(transform.localPosition.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000f, axes), axes);
-		}
-
-		public static void OscillateLocalPosition(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillateLocalPosition(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
 		}
 		#endregion
 
@@ -120,16 +100,6 @@ namespace Pseudo
 			transform.RotateTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, axes);
 		}
 
-		public static void OscillateEulerAngles(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetEulerAngles(transform.eulerAngles.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateEulerAngles(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillateEulerAngles(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
-		}
-
 		public static void SetLocalEulerAngles(this Transform transform, Vector3 angles, Axes axes = Axes.XYZ)
 		{
 			transform.localEulerAngles = transform.localEulerAngles.SetValues(angles, axes);
@@ -158,16 +128,6 @@ namespace Pseudo
 		public static void RotateLocalTowards(this Transform transform, float targetAngle, float deltaTime, Axes axes = Axes.XYZ)
 		{
 			transform.RotateLocalTowards(new Vector3(targetAngle, targetAngle, targetAngle), deltaTime, axes);
-		}
-
-		public static void OscillateLocalEulerAngles(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetLocalEulerAngles(transform.localEulerAngles.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateLocalEulerAngles(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillateLocalEulerAngles(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
 		}
 		#endregion
 
@@ -200,16 +160,6 @@ namespace Pseudo
 		public static void ScaleTowards(this Transform transform, float targetScale, float deltaTime, Axes axes = Axes.XYZ)
 		{
 			transform.ScaleTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, axes);
-		}
-
-		public static void OscillateScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetScale(transform.lossyScale.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateScale(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillateScale(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
 		}
 
 		public static void FlipScale(this Transform transform, Axes axes = Axes.XYZ)
@@ -247,32 +197,16 @@ namespace Pseudo
 			transform.ScaleLocalTowards(new Vector3(targetScale, targetScale, targetScale), deltaTime, axes);
 		}
 
-		public static void OscillateLocalScale(this Transform transform, Vector3 frequency, Vector3 amplitude, Vector3 center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.SetLocalScale(transform.localScale.Oscillate(frequency, amplitude, center, time, transform.GetInstanceID() / 1000, axes), axes);
-		}
-
-		public static void OscillateLocalScale(this Transform transform, float frequency, float amplitude, float center, float time, Axes axes = Axes.XYZ)
-		{
-			transform.OscillateLocalScale(new Vector3(frequency, frequency, frequency), new Vector3(amplitude, amplitude, amplitude), new Vector3(center, center, center), time, axes);
-		}
-
 		public static void FlipLocalScale(this Transform transform, Axes axes = Axes.XYZ)
 		{
 			transform.SetLocalScale(transform.localScale.SetValues(-transform.localScale, axes), axes);
 		}
 		#endregion
 
-		public static void SortByPosition(this Transform[] transforms)
-		{
-			Array.Sort(transforms, (a, b) => a.position.x.CompareTo(b.position.x));
-		}
-
 		public static Transform[] GetParents(this Transform child)
 		{
-			List<Transform> parents = new List<Transform>();
-
-			Transform parent = child.parent;
+			var parents = new List<Transform>();
+			var parent = child.parent;
 
 			while (parent != null)
 			{
@@ -291,7 +225,7 @@ namespace Pseudo
 			{
 				for (int i = 0; i < parent.childCount; i++)
 				{
-					Transform child = parent.GetChild(i);
+					var child = parent.GetChild(i);
 					childCount++;
 
 					if (child.childCount > 0)
@@ -327,11 +261,11 @@ namespace Pseudo
 
 		public static Transform FindChild(this Transform parent, Predicate<Transform> predicate, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren(recursive);
+			var children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 			{
-				Transform child = children[i];
+				var child = children[i];
 
 				if (predicate(child))
 					return child;
@@ -347,12 +281,12 @@ namespace Pseudo
 
 		public static Transform[] FindChildren(this Transform parent, Predicate<Transform> predicate, bool recursive = false)
 		{
-			List<Transform> validChildren = new List<Transform>();
-			Transform[] children = parent.GetChildren(recursive);
+			var validChildren = new List<Transform>();
+			var children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 			{
-				Transform child = children[i];
+				var child = children[i];
 
 				if (predicate(child))
 					validChildren.Add(child);
@@ -363,7 +297,7 @@ namespace Pseudo
 
 		public static Transform AddChild(this Transform parent, string childName, PrimitiveType primitiveType)
 		{
-			GameObject child = GameObject.CreatePrimitive(primitiveType);
+			var child = GameObject.CreatePrimitive(primitiveType);
 
 			child.name = childName;
 			child.transform.parent = parent;
@@ -374,7 +308,7 @@ namespace Pseudo
 
 		public static Transform AddChild(this Transform parent, string childName)
 		{
-			GameObject child = new GameObject(childName);
+			var child = new GameObject(childName);
 
 			child.transform.parent = parent;
 			child.transform.Reset();
@@ -384,7 +318,7 @@ namespace Pseudo
 
 		public static Transform FindOrAddChild(this Transform parent, string childName, PrimitiveType primitiveType)
 		{
-			Transform child = parent.FindChild(childName);
+			var child = parent.FindChild(childName);
 
 			if (child == null)
 				child = parent.AddChild(childName, primitiveType);
@@ -394,7 +328,7 @@ namespace Pseudo
 
 		public static Transform FindOrAddChild(this Transform parent, string childName)
 		{
-			Transform child = parent.FindChild(childName);
+			var child = parent.FindChild(childName);
 
 			if (child == null)
 				child = parent.AddChild(childName);
@@ -404,8 +338,8 @@ namespace Pseudo
 
 		public static void SortChildren(this Transform parent, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren();
-			string[] childrendNames = new string[children.Length];
+			var children = parent.GetChildren();
+			var childrendNames = new string[children.Length];
 
 			for (int i = 0; i < children.Length; i++)
 				childrendNames[i] = children[i].name;
@@ -414,7 +348,7 @@ namespace Pseudo
 
 			for (int i = 0; i < children.Length; i++)
 			{
-				Transform child = children[i];
+				var child = children[i];
 
 				child.parent = null;
 				child.parent = parent;
@@ -426,7 +360,7 @@ namespace Pseudo
 
 		public static void SetChildrenActive(this Transform parent, bool value, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren(recursive);
+			var children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].gameObject.SetActive(value);
@@ -434,7 +368,7 @@ namespace Pseudo
 
 		public static void DestroyChildren(this Transform parent)
 		{
-			Transform[] children = parent.GetChildren();
+			var children = parent.GetChildren();
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].gameObject.Destroy();
@@ -443,7 +377,7 @@ namespace Pseudo
 		public static int GetHierarchyDepth(this Transform transform)
 		{
 			int depth = 0;
-			Transform currentTransform = transform;
+			var currentTransform = transform;
 
 			while (currentTransform.parent != null)
 			{
@@ -461,7 +395,7 @@ namespace Pseudo
 
 			for (int i = 0; i < targets.Count; i++)
 			{
-				T target = targets[i];
+				var target = targets[i];
 				float distance = Vector3.Distance(transform.position, target.transform.position);
 
 				if (distance < closestDistance)
@@ -476,7 +410,7 @@ namespace Pseudo
 
 		public static void ResetChildren(this Transform parent, bool recursive = false)
 		{
-			Transform[] children = parent.GetChildren(recursive);
+			var children = parent.GetChildren(recursive);
 
 			for (int i = 0; i < children.Length; i++)
 				children[i].Reset();
