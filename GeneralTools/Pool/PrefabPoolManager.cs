@@ -127,7 +127,7 @@ namespace Pseudo
 		[UnityEditor.Callbacks.DidReloadScripts]
 		static void OnReloadScripts()
 		{
-			Pseudo.Internal.Editor.InspectorUtility.OnValidate += OnValidate;
+			Internal.Editor.InspectorUtility.OnValidate += OnValidate;
 		}
 
 		static void OnValidate(UnityEngine.Object instance)

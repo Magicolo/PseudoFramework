@@ -30,6 +30,7 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(concreteType);
 			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
 
 			return ToSingleMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
 		}
@@ -37,6 +38,7 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToSinglePrefab(UnityEngine.Object prefab)
 		{
 			Assert.IsNotNull(prefab);
+			Assert.IsTrue(contractType.IsAssignableFrom(prefab.GetType()));
 
 			return ToSingleMethod(c =>
 			{
@@ -56,7 +58,7 @@ namespace Pseudo.Internal.Injection
 				var instance = UnityEngine.Object.Instantiate(prefab);
 				c.Binder.Injector.Inject(instance, true);
 
-				return instance;
+				return instance.GetComponent(contractType);
 			});
 		}
 
@@ -76,6 +78,7 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(concreteType);
 			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
 
 			return ToTransientMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
 		}
@@ -83,6 +86,7 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToTransientPrefab(UnityEngine.Object prefab)
 		{
 			Assert.IsNotNull(prefab);
+			Assert.IsTrue(contractType.IsAssignableFrom(prefab.GetType()));
 
 			return ToTransientMethod(c =>
 			{
@@ -96,13 +100,14 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToTransientPrefab(GameObject prefab)
 		{
 			Assert.IsNotNull(prefab);
+			Assert.IsTrue(prefab.GetComponent(contractType) != null);
 
 			return ToTransientMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
 				c.Binder.Injector.Inject(instance, true);
 
-				return instance;
+				return instance.GetComponent(contractType);
 			});
 		}
 
@@ -115,6 +120,9 @@ namespace Pseudo.Internal.Injection
 
 		public virtual IBindingCondition ToInstance(object instance)
 		{
+			Assert.IsNotNull(instance);
+			Assert.IsTrue(contractType.IsAssignableFrom(instance.GetType()));
+
 			return ToSingleMethod(c => instance);
 		}
 
@@ -155,7 +163,7 @@ namespace Pseudo.Internal.Injection
 
 		public virtual IBindingCondition ToSingleMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
 		{
-			return binder.Bind(contractType).ToSingleMethod(method);
+			return base.ToSingleMethod(method);
 		}
 
 		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : class, TContract
@@ -170,7 +178,7 @@ namespace Pseudo.Internal.Injection
 
 		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
 		{
-			return binder.Bind(contractType).ToTransientMethod(method);
+			return base.ToTransientMethod(method);
 		}
 
 		public virtual IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : class, TContract
