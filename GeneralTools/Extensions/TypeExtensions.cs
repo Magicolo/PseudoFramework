@@ -32,10 +32,15 @@ namespace Pseudo
 
 		public static bool Is(this Type type, Type otherType, params Type[] genericArguments)
 		{
-			if (genericArguments.Length > 0)
-				return otherType.MakeGenericType(genericArguments).IsAssignableFrom(type);
+			if (genericArguments.Length > 0 && otherType.IsGenericType)
+				return type.Is(otherType.MakeGenericType(genericArguments));
 			else
-				return otherType.IsAssignableFrom(type);
+				return type.Is(otherType);
+		}
+
+		public static bool Is(this Type type, Type otherType)
+		{
+			return otherType.IsAssignableFrom(type);
 		}
 
 		public static bool IsNumerical(this Type type)

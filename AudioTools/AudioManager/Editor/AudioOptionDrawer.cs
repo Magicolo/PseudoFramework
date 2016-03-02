@@ -24,6 +24,13 @@ namespace Pseudo.Internal.Audio
 		SerializedProperty delayProperty;
 		bool hasCurve;
 
+		public AudioOptionDrawer()
+		{
+			dummy = ScriptableObject.CreateInstance<AudioOptionDrawerDummy>();
+			dummy.hideFlags = HideFlags.DontSave;
+			dummySerialized = new SerializedObject(dummy);
+		}
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Begin(position, property, label);
@@ -49,15 +56,6 @@ namespace Pseudo.Internal.Audio
 			}
 
 			End();
-		}
-
-		public override void Initialize(SerializedProperty property, GUIContent label)
-		{
-			base.Initialize(property, label);
-
-			dummy = ScriptableObject.CreateInstance<AudioOptionDrawerDummy>();
-			dummy.hideFlags = HideFlags.DontSave;
-			dummySerialized = new SerializedObject(dummy);
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

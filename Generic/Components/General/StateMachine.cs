@@ -44,7 +44,7 @@ namespace Pseudo
 		{
 			if (currentState != null)
 			{
-				Entity.SendMessage(StateMachineMessages.OnStateExit, HierarchyScope.Downwards | HierarchyScope.Local);
+				Entity.SendMessage(StateMachineMessages.OnStateExit, HierarchyScope.Children | HierarchyScope.Local);
 				currentState.CachedGameObject.SetActive(false);
 			}
 
@@ -53,7 +53,7 @@ namespace Pseudo
 			if (currentState != null)
 			{
 				currentState.CachedGameObject.SetActive(true);
-				Entity.SendMessage(StateMachineMessages.OnStateEnter, HierarchyScope.Downwards | HierarchyScope.Local);
+				Entity.SendMessage(StateMachineMessages.OnStateEnter, HierarchyScope.Children | HierarchyScope.Local);
 			}
 		}
 

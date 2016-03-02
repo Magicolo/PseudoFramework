@@ -483,8 +483,8 @@ namespace Pseudo.Tests
 			entity2.AddComponent(component2);
 			entity3.AddComponent(component3);
 
-			entity1.SendMessage(0, HierarchyScope.Downwards | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Downwards);
+			entity1.SendMessage(0, HierarchyScope.Children | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Children);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -518,8 +518,8 @@ namespace Pseudo.Tests
 			component1.Active = false;
 			entity2.Active = false;
 
-			entity1.SendMessage(0, HierarchyScope.Downwards | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Downwards | HierarchyScope.Local);
+			entity1.SendMessage(0, HierarchyScope.Children | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Children | HierarchyScope.Local);
 
 			component1.Received(0).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -550,8 +550,8 @@ namespace Pseudo.Tests
 			entity2.AddComponent(component2);
 			entity3.AddComponent(component3);
 
-			entity1.SendMessage(0, HierarchyScope.Upwards | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Upwards);
+			entity1.SendMessage(0, HierarchyScope.Parents | HierarchyScope.Local);
+			entity2.SendMessage(1, 1, HierarchyScope.Parents);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);

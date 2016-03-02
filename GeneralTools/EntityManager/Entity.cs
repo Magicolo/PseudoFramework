@@ -97,12 +97,12 @@ namespace Pseudo.Internal.Entity
 			T component;
 
 			if ((scope & HierarchyScope.Global) != 0)
-				return Root.GetComponent<T>(HierarchyScope.Local | HierarchyScope.Downwards);
+				return Root.GetComponent<T>(HierarchyScope.Local | HierarchyScope.Children);
 
 			if ((scope & HierarchyScope.Local) != 0 && TryGetComponent(out component))
 				return component;
 
-			if ((scope & HierarchyScope.Lateral) != 0 && parent != null && parent.Children.Count > 0)
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null && parent.Children.Count > 0)
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
@@ -111,17 +111,17 @@ namespace Pseudo.Internal.Entity
 				}
 			}
 
-			if ((scope & HierarchyScope.Upwards) != 0 && parent != null)
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
 			{
-				if (parent.TryGetComponent(out component, HierarchyScope.Local | HierarchyScope.Upwards))
+				if (parent.TryGetComponent(out component, HierarchyScope.Local | HierarchyScope.Parents))
 					return component;
 			}
 
-			if ((scope & HierarchyScope.Downwards) != 0 && children.Count > 0)
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
 			{
 				for (int i = 0; i < children.Count; i++)
 				{
-					if (children[i].TryGetComponent(out component, HierarchyScope.Local | HierarchyScope.Downwards))
+					if (children[i].TryGetComponent(out component, HierarchyScope.Local | HierarchyScope.Children))
 						return component;
 				}
 			}
@@ -148,12 +148,12 @@ namespace Pseudo.Internal.Entity
 			IComponent component;
 
 			if ((scope & HierarchyScope.Global) != 0)
-				return Root.GetComponent(componentType, HierarchyScope.Local | HierarchyScope.Downwards);
+				return Root.GetComponent(componentType, HierarchyScope.Local | HierarchyScope.Children);
 
 			if ((scope & HierarchyScope.Local) != 0 && TryGetComponent(componentType, out component))
 				return component;
 
-			if ((scope & HierarchyScope.Lateral) != 0 && parent != null && parent.Children.Count > 0)
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null && parent.Children.Count > 0)
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
@@ -162,18 +162,18 @@ namespace Pseudo.Internal.Entity
 				}
 			}
 
-			if ((scope & HierarchyScope.Downwards) != 0 && children.Count > 0)
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
 			{
 				for (int i = 0; i < children.Count; i++)
 				{
-					if (children[i].TryGetComponent(componentType, out component, HierarchyScope.Local | HierarchyScope.Downwards))
+					if (children[i].TryGetComponent(componentType, out component, HierarchyScope.Local | HierarchyScope.Children))
 						return component;
 				}
 			}
 
-			if ((scope & HierarchyScope.Upwards) != 0 && parent != null)
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
 			{
-				if (parent.TryGetComponent(componentType, out component, HierarchyScope.Local | HierarchyScope.Upwards))
+				if (parent.TryGetComponent(componentType, out component, HierarchyScope.Local | HierarchyScope.Parents))
 					return component;
 			}
 
@@ -258,12 +258,12 @@ namespace Pseudo.Internal.Entity
 			Assert.IsNotNull(component);
 
 			if ((scope & HierarchyScope.Global) != 0)
-				return Root.HasComponent(component, HierarchyScope.Local | HierarchyScope.Downwards);
+				return Root.HasComponent(component, HierarchyScope.Local | HierarchyScope.Children);
 
 			if ((scope & HierarchyScope.Local) != 0 && HasComponent(component))
 				return true;
 
-			if ((scope & HierarchyScope.Lateral) != 0 && parent != null && parent.Children.Count > 0)
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null && parent.Children.Count > 0)
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
@@ -272,18 +272,18 @@ namespace Pseudo.Internal.Entity
 				}
 			}
 
-			if ((scope & HierarchyScope.Downwards) != 0 && children.Count > 0)
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
 			{
 				for (int i = 0; i < children.Count; i++)
 				{
-					if (children[i].HasComponent(component, HierarchyScope.Local | HierarchyScope.Downwards))
+					if (children[i].HasComponent(component, HierarchyScope.Local | HierarchyScope.Children))
 						return true;
 				}
 			}
 
-			if ((scope & HierarchyScope.Upwards) != 0 && parent != null)
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
 			{
-				if (parent.HasComponent(component, HierarchyScope.Local | HierarchyScope.Upwards))
+				if (parent.HasComponent(component, HierarchyScope.Local | HierarchyScope.Parents))
 					return true;
 			}
 
@@ -364,7 +364,7 @@ namespace Pseudo.Internal.Entity
 
 			if ((scope & HierarchyScope.Global) != 0)
 			{
-				Root.SendMessage(identifier, argument, HierarchyScope.Local | HierarchyScope.Downwards);
+				Root.SendMessage(identifier, argument, HierarchyScope.Local | HierarchyScope.Children);
 				return;
 			}
 
@@ -379,19 +379,19 @@ namespace Pseudo.Internal.Entity
 				}
 			}
 
-			if ((scope & HierarchyScope.Lateral) != 0 && parent != null)
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null)
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 					parent.Children[i].SendMessage(identifier, argument, HierarchyScope.Local);
 			}
 
-			if ((scope & HierarchyScope.Upwards) != 0 && parent != null)
-				parent.SendMessage(identifier, argument, HierarchyScope.Upwards | HierarchyScope.Local);
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
+				parent.SendMessage(identifier, argument, HierarchyScope.Parents | HierarchyScope.Local);
 
-			if ((scope & HierarchyScope.Downwards) != 0 && children.Count > 0)
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
 			{
 				for (int i = 0; i < children.Count; i++)
-					children[i].SendMessage(identifier, argument, HierarchyScope.Downwards | HierarchyScope.Local);
+					children[i].SendMessage(identifier, argument, HierarchyScope.Children | HierarchyScope.Local);
 			}
 		}
 

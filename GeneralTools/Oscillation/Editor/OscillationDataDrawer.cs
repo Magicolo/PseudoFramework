@@ -25,7 +25,6 @@ namespace Pseudo.Internal.Oscillation
 		{
 			Begin(position, property, label);
 
-			UpdateProperties();
 			GUIContent foldoutLabel;
 
 			if (data.Target == null)
@@ -59,19 +58,13 @@ namespace Pseudo.Internal.Oscillation
 			End();
 		}
 
-		public override void Initialize(SerializedProperty property, GUIContent label)
-		{
-			base.Initialize(property, label);
-
-			UpdateProperties();
-		}
-
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
 
 			data = property.GetValue<PropertyOscillator.OscillatorData>();
 			height = GetHeight();
+			UpdateProperties();
 
 			if (height == 0f)
 				return 18f;
@@ -94,12 +87,34 @@ namespace Pseudo.Internal.Oscillation
 
 		void ShowTarget()
 		{
-			//EditorGUI.BeginChangeCheck();
+			var targetProperty = currentProperty.FindPropertyRelative("Target");
+			var target = targetProperty.GetValue() as GameObject;
+			var rect = new Rect(currentPosition)
+			{
+				width = target == null ? currentPosition.width : currentPosition.width * 0.8f,
+				height = EditorGUI.GetPropertyHeight(targetProperty)
+			};
 
-			PropertyField(currentProperty.FindPropertyRelative("Target"));
+			EditorGUI.PropertyField(rect, targetProperty);
 
-			//if (EditorGUI.EndChangeCheck())
-			//	UpdateProperties();
+			if (target != null)
+			{
+				var components = target.GetComponents<Component>();
+				var componentNames = components.Convert(c => c.GetType().Name);
+
+				EditorGUI.BeginProperty(currentPosition, targetProperty.ToGUIContent(), targetProperty);
+				EditorGUI.BeginChangeCheck();
+
+				BeginIndent(0);
+				int index = EditorGUI.Popup(new Rect(rect) { x = rect.xMax + 6f, width = currentPosition.width - rect.width - 6f }, "", -1, componentNames);
+				EndIndent();
+
+				if (EditorGUI.EndChangeCheck())
+					targetProperty.SetValue(components[index]);
+				EditorGUI.EndProperty();
+			}
+
+			currentPosition.y += currentPosition.height;
 		}
 
 		void ShowProperties()

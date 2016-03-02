@@ -11,45 +11,27 @@ namespace Pseudo.Internal.Editor
 {
 	public class CustomPropertyDrawerBase : PropertyDrawer
 	{
+		protected static readonly float lineHeight = EditorGUIUtility.singleLineHeight;
+
 		protected UnityEngine.Object target;
 		protected UnityEngine.Object[] targets;
 		protected SerializedProperty currentProperty;
 		protected SerializedObject serializedObject;
 		protected Rect currentPosition;
-		protected float lineHeight;
 		protected bool isArray;
 		protected int index;
 		protected GUIContent currentLabel = GUIContent.none;
 		protected Rect initPosition;
 		protected SerializedProperty arrayProperty;
 
-		bool initialized;
 		readonly Stack<int> indentStack = new Stack<int>();
 		readonly Stack<float> labelWidthStack = new Stack<float>();
 		readonly Stack<float> fieldWidthStack = new Stack<float>();
 
-		public virtual void Initialize(SerializedProperty property, GUIContent label)
-		{
-			initialized = true;
-			InitializeProperty(property, label);
-			isArray = fieldInfo == null ? false : typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
-			lineHeight = EditorGUIUtility.singleLineHeight;
-
-			if (isArray)
-			{
-				index = GetIndexFromLabel(label);
-				arrayProperty = property.GetParent();
-			}
-		}
-
 		public virtual void Begin(Rect position, SerializedProperty property, GUIContent label)
 		{
-			if (!initialized)
-				Initialize(property, label);
-
 			initPosition = position;
 			currentPosition = position;
-			InitializeProperty(property, label);
 
 			EditorGUI.BeginProperty(position, label, property);
 			EditorGUI.BeginChangeCheck();
@@ -75,8 +57,18 @@ namespace Pseudo.Internal.Editor
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
-			if (!initialized)
-				Initialize(property, label);
+			currentProperty = property;
+			currentLabel = label;
+			serializedObject = property.serializedObject;
+			target = serializedObject.targetObject;
+			targets = serializedObject.targetObjects;
+			isArray = fieldInfo == null ? false : typeof(IList).IsAssignableFrom(fieldInfo.FieldType);
+
+			if (isArray)
+			{
+				index = GetIndexFromLabel(label);
+				arrayProperty = property.GetParent();
+			}
 
 			return EditorGUI.GetPropertyHeight(property, label, true);
 		}
@@ -139,15 +131,6 @@ namespace Pseudo.Internal.Editor
 		public void EndFieldWidth()
 		{
 			EditorGUIUtility.fieldWidth = fieldWidthStack.Pop();
-		}
-
-		void InitializeProperty(SerializedProperty property, GUIContent label)
-		{
-			currentProperty = property;
-			currentLabel = label;
-			serializedObject = property.serializedObject;
-			target = serializedObject.targetObject;
-			targets = serializedObject.targetObjects;
 		}
 
 		public static object ObjectField(Rect position, object value, GUIContent label)

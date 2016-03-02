@@ -10,9 +10,9 @@ namespace Pseudo
 	{
 		Local = 1 << 0,
 		Global = 1 << 1,
-		Upwards = 1 << 2,
-		Downwards = 1 << 3,
-		Lateral = 1 << 4,
+		Parents = 1 << 2,
+		Children = 1 << 3,
+		Siblings = 1 << 4,
 	}
 
 	public interface IEntity : IPoolable

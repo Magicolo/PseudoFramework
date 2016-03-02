@@ -17,6 +17,11 @@ namespace Pseudo.Internal.Editor
 
 		MessageEnum messageEnum;
 
+		static MessageEnumDrawer()
+		{
+			InitializeEnumValues();
+		}
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			Begin(position, property, label);
@@ -24,13 +29,6 @@ namespace Pseudo.Internal.Editor
 			ShowEnums();
 
 			End();
-		}
-
-		public override void Initialize(SerializedProperty property, GUIContent label)
-		{
-			base.Initialize(property, label);
-
-			InitializeEnumValues();
 		}
 
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)

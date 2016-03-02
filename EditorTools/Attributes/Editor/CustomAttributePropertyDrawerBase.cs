@@ -23,37 +23,6 @@ namespace Pseudo.Internal.Editor
 		public bool drawPrefixLabel = true;
 		public bool boolDisabled;
 
-		public override void Initialize(SerializedProperty property, GUIContent label)
-		{
-			base.Initialize(property, label);
-
-			var customAttribute = (CustomAttributeBase)attribute;
-
-			noFieldLabel = customAttribute.NoFieldLabel;
-			noPrefixLabel = customAttribute.NoPrefixLabel;
-			noIndex = customAttribute.NoIndex;
-			prefixLabel = customAttribute.PrefixLabel;
-			disableOnPlay = customAttribute.DisableOnPlay;
-			disableOnStop = customAttribute.DisableOnStop;
-			disableBool = customAttribute.DisableBool;
-			indent = customAttribute.Indent;
-			beforeSeparator = customAttribute.BeforeSeparator;
-			afterSeparator = customAttribute.AfterSeparator;
-
-			bool inverseBool = false;
-
-			if (!string.IsNullOrEmpty(disableBool))
-			{
-				inverseBool = disableBool.StartsWith("!");
-
-				string boolPath = property.GetParent().FindPropertyRelative(inverseBool ? disableBool.Substring(1) : disableBool).GetAdjustedPath();
-
-				boolDisabled = property.serializedObject.targetObject.GetValueFromMemberAtPath<bool>(boolPath);
-			}
-
-			boolDisabled = inverseBool ? !boolDisabled : boolDisabled;
-		}
-
 		public override void Begin(Rect position, SerializedProperty property, GUIContent label)
 		{
 			base.Begin(position, property, label);
@@ -129,6 +98,31 @@ namespace Pseudo.Internal.Editor
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
+
+			var customAttribute = (CustomAttributeBase)attribute;
+			noFieldLabel = customAttribute.NoFieldLabel;
+			noPrefixLabel = customAttribute.NoPrefixLabel;
+			noIndex = customAttribute.NoIndex;
+			prefixLabel = customAttribute.PrefixLabel;
+			disableOnPlay = customAttribute.DisableOnPlay;
+			disableOnStop = customAttribute.DisableOnStop;
+			disableBool = customAttribute.DisableBool;
+			indent = customAttribute.Indent;
+			beforeSeparator = customAttribute.BeforeSeparator;
+			afterSeparator = customAttribute.AfterSeparator;
+
+			bool inverseBool = false;
+
+			if (!string.IsNullOrEmpty(disableBool))
+			{
+				inverseBool = disableBool.StartsWith("!");
+
+				string boolPath = property.GetParent().FindPropertyRelative(inverseBool ? disableBool.Substring(1) : disableBool).GetAdjustedPath();
+
+				boolDisabled = property.serializedObject.targetObject.GetValueFromMemberAtPath<bool>(boolPath);
+			}
+
+			boolDisabled = inverseBool ? !boolDisabled : boolDisabled;
 
 			return EditorGUI.GetPropertyHeight(property, label, true) + (beforeSeparator ? 16 : 0) + (afterSeparator ? 16 : 0);
 		}
