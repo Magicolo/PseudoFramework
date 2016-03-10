@@ -9,7 +9,7 @@ using UnityEditor;
 namespace Pseudo.Internal.Editor
 {
 	[CustomPropertyDrawer(typeof(MessageEnum))]
-	public class MessageEnumDrawer : CustomPropertyDrawerBase
+	public class MessageEnumDrawer : PPropertyDrawer
 	{
 		static Type[] enumTypes;
 		static Enum[] enumValues;

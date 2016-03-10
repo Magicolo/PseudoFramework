@@ -9,7 +9,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal
 {
 	[CustomEditor(typeof(ComboSystem)), CanEditMultipleObjects]
-	public class ComboSystemEditor : CustomEditorBase
+	public class ComboSystemEditor : PEditor
 	{
 		ComboSystem comboSystem;
 		ComboSequenceManager comboManager;
@@ -274,7 +274,7 @@ namespace Pseudo.Internal
 
 		GUIStyle GetComboSequenceStyle()
 		{
-			GUIStyle style = CustomEditorStyles.BoldFoldout;
+			GUIStyle style = PEditorStyles.BoldFoldout;
 			Color textColor = style.normal.textColor * 1.4F;
 
 			if (Application.isPlaying)

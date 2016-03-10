@@ -10,7 +10,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal.Audio
 {
 	[CustomPropertyDrawer(typeof(AudioRTPC))]
-	public class AudioRTPCDrawer : CustomPropertyDrawerBase
+	public class AudioRTPCDrawer : PPropertyDrawer
 	{
 		AudioRTPC rtpc;
 

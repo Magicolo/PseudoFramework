@@ -70,7 +70,7 @@ namespace Pseudo.Internal.Injection
 				.Select(p => CreateInjectableProperty(p)));
 
 			injectableMembers.AddRange(type.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-				.Where(m => m.IsDefined(typeof(InjectAttribute), true))
+				.Where(m => !m.IsConstructor && !m.IsSpecialName && !m.IsGenericMethod && m.IsDefined(typeof(InjectAttribute), true))
 				.Select(m => CreateInjectableMethod(m)));
 
 			return injectableMembers.ToArray();

@@ -9,7 +9,7 @@ using UnityEditor;
 namespace Pseudo.Internal.Editor
 {
 	[CustomPropertyDrawer(typeof(MinMax))]
-	public class MinMaxDrawer : CustomPropertyDrawerBase
+	public class MinMaxDrawer : PPropertyDrawer
 	{
 		bool isEditingMin;
 		bool isEditingMax;

@@ -10,7 +10,7 @@ using System.ComponentModel;
 namespace Pseudo.Internal
 {
 	[CustomPropertyDrawer(typeof(DynamicValue))]
-	public class DynamicValueDrawer : CustomPropertyDrawerBase
+	public class DynamicValueDrawer : PPropertyDrawer
 	{
 		DynamicValue dynamicValue;
 		float height;

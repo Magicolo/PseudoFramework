@@ -9,7 +9,7 @@ using Pseudo.Internal.Unity;
 
 namespace Pseudo.Internal.Editor
 {
-	public class CustomPropertyDrawerBase : PropertyDrawer
+	public class PPropertyDrawer : PropertyDrawer
 	{
 		protected static readonly float lineHeight = EditorGUIUtility.singleLineHeight;
 

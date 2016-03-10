@@ -111,6 +111,11 @@ namespace Pseudo
 			return color.Mult(otherVector, Channels.RGBA);
 		}
 
+		public static Color Mult(this Color color, float value, Channels channels)
+		{
+			return color.Mult(new Color(value, value, value, value), channels);
+		}
+
 		public static Color Div(this Color color, Color values, Channels channels)
 		{
 			if ((channels & Channels.R) != 0)
@@ -131,6 +136,11 @@ namespace Pseudo
 		public static Color Div(this Color color, Color otherVector)
 		{
 			return color.Div(otherVector, Channels.RGBA);
+		}
+
+		public static Color Div(this Color color, float value, Channels channels)
+		{
+			return color.Div(new Color(value, value, value, value), channels);
 		}
 
 		public static Color Pow(this Color color, float power, Channels channels)

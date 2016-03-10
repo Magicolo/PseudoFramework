@@ -10,7 +10,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal.Audio
 {
 	[CustomPropertyDrawer(typeof(AudioOption))]
-	public class AudioOptionDrawer : CustomPropertyDrawerBase
+	public class AudioOptionDrawer : PPropertyDrawer
 	{
 		AudioOptionDrawerDummy dummy;
 		SerializedObject dummySerialized;

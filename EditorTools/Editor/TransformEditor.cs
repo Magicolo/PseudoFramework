@@ -7,7 +7,7 @@ using System;
 namespace Pseudo.Internal.Editor
 {
 	[CustomEditor(typeof(Transform), true), CanEditMultipleObjects]
-	public class TransformEditor : CustomEditorBase
+	public class TransformEditor : PEditor
 	{
 		Transform transform;
 		Vector3 pLocalPosition;

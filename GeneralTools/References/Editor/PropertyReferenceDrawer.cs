@@ -12,7 +12,7 @@ using System.Reflection;
 namespace Pseudo.Internal
 {
 	[CustomPropertyDrawer(typeof(PropertyReference), true), CanEditMultipleObjects]
-	public class PropertyReferenceDrawer : CustomPropertyDrawerBase
+	public class PropertyReferenceDrawer : PPropertyDrawer
 	{
 		IPropertyReference reference;
 		PropertyInfo[] properties = new PropertyInfo[0];
@@ -122,7 +122,7 @@ namespace Pseudo.Internal
 			else
 			{
 				properties = target.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
-					.Where(p => p.CanRead && p.CanWrite && p.PropertyType.Is(reference.ValueType))
+					.Where(p => p.CanRead && p.CanWrite && p.PropertyType == reference.ValueType)
 					.ToArray();
 				propertyNames = properties.Convert(p => p.Name);
 				propertyDisplayNames = properties.Convert(p => string.Format("{0} ({1})", p.Name, p.PropertyType.Name));

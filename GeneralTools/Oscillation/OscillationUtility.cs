@@ -58,27 +58,6 @@ namespace Pseudo.Internal.Oscillation
 			return oscillator;
 		}
 
-		static IOscillator CreateOscillator(PropertyInfo property)
-		{
-			Type oscillatorType = null;
-
-			if (property.PropertyType == typeof(float))
-				oscillatorType = typeof(FloatOscillator<>).MakeGenericType(property.DeclaringType);
-			else if (property.PropertyType == typeof(Vector2))
-				oscillatorType = typeof(Vector2Oscillator<>).MakeGenericType(property.DeclaringType);
-			else if (property.PropertyType == typeof(Vector3))
-				oscillatorType = typeof(Vector3Oscillator<>).MakeGenericType(property.DeclaringType);
-			else if (property.PropertyType == typeof(Vector4))
-				oscillatorType = typeof(Vector4Oscillator<>).MakeGenericType(property.DeclaringType);
-			else if (property.PropertyType == typeof(Color))
-				oscillatorType = typeof(ColorOscillator<>).MakeGenericType(property.DeclaringType);
-
-			if (oscillatorType == null)
-				return null;
-			else
-				return (IOscillator)Activator.CreateInstance(oscillatorType, property);
-		}
-
 		public static float Sine(OscillationSettings settings, float time)
 		{
 			return settings.Amplitude * Mathf.Sin(settings.Frequency * 2f * Mathf.PI * time + settings.Offset) + settings.Center;
@@ -247,6 +226,27 @@ namespace Pseudo.Internal.Oscillation
 		public static AnimationCurve ToCurve(OscillationSettings settings, int definition)
 		{
 			return new AnimationCurve(ToPoints(settings, definition).Convert(v => new Keyframe(v.x, v.y)));
+		}
+
+		static IOscillator CreateOscillator(PropertyInfo property)
+		{
+			Type oscillatorType = null;
+
+			if (property.PropertyType == typeof(float))
+				oscillatorType = typeof(FloatOscillator<>).MakeGenericType(property.DeclaringType);
+			else if (property.PropertyType == typeof(Vector2))
+				oscillatorType = typeof(Vector2Oscillator<>).MakeGenericType(property.DeclaringType);
+			else if (property.PropertyType == typeof(Vector3))
+				oscillatorType = typeof(Vector3Oscillator<>).MakeGenericType(property.DeclaringType);
+			else if (property.PropertyType == typeof(Vector4))
+				oscillatorType = typeof(Vector4Oscillator<>).MakeGenericType(property.DeclaringType);
+			else if (property.PropertyType == typeof(Color))
+				oscillatorType = typeof(ColorOscillator<>).MakeGenericType(property.DeclaringType);
+
+			if (oscillatorType == null)
+				return null;
+			else
+				return (IOscillator)Activator.CreateInstance(oscillatorType, property);
 		}
 	}
 }

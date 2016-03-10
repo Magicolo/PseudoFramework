@@ -10,7 +10,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal.Entity
 {
 	[CustomPropertyDrawer(typeof(EntityMatch))]
-	public class EntityMatchDrawer : CustomPropertyDrawerBase
+	public class EntityMatchDrawer : PPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

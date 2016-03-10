@@ -9,6 +9,11 @@ namespace Pseudo
 	{
 		public readonly Type[] Types;
 
+		public TypePopupAttribute()
+		{
+			Types = TypeUtility.AllTypes;
+		}
+
 		public TypePopupAttribute(params Type[] types)
 		{
 			Types = types;

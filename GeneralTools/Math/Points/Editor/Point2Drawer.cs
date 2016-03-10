@@ -9,7 +9,7 @@ using UnityEditor;
 namespace Pseudo.Internal.Editor
 {
 	[CustomPropertyDrawer(typeof(Point2))]
-	public class Point2Drawer : CustomPropertyDrawerBase
+	public class Point2Drawer : PPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

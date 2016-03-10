@@ -7,7 +7,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal
 {
 	//[CustomEditor(typeof(InputManager)), CanEditMultipleObjects]
-	public class InputManagerEditor : CustomEditorBase
+	public class InputManagerEditor : PEditor
 	{
 		//InputManager input;
 

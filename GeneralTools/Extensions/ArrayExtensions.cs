@@ -100,7 +100,22 @@ namespace Pseudo
 
 		public static T[] Joined<T>(this T[] array, IList<T> other)
 		{
-			T[] joined = new T[array.Length + other.Count];
+			var joined = new T[array.Length + other.Count];
+
+			array.CopyTo(joined, 0);
+			other.CopyTo(joined, array.Length);
+
+			return joined;
+		}
+
+		public static T[] Joined<T>(this T[] array, params T[] other)
+		{
+			if (array == null)
+				return other;
+			else if (other == null)
+				return array;
+
+			var joined = new T[array.Length + other.Length];
 
 			array.CopyTo(joined, 0);
 			other.CopyTo(joined, array.Length);

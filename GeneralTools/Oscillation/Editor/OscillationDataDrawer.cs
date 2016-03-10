@@ -11,7 +11,7 @@ using System.Reflection;
 namespace Pseudo.Internal.Oscillation
 {
 	[CustomPropertyDrawer(typeof(PropertyOscillator.OscillatorData))]
-	public class OscillationDataDrawer : CustomPropertyDrawerBase
+	public class OscillationDataDrawer : PPropertyDrawer
 	{
 		PropertyOscillator.OscillatorData data;
 		PropertyInfo[] properties = new PropertyInfo[0];

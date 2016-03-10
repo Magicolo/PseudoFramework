@@ -10,7 +10,7 @@ using Pseudo.Internal.Editor;
 namespace Pseudo.Internal.Entity
 {
 	[CustomPropertyDrawer(typeof(EntityBehaviour))]
-	public class EntityBehaviourDrawer : CustomPropertyDrawerBase
+	public class EntityBehaviourDrawer : PPropertyDrawer
 	{
 		List<GUIContent> errors = new List<GUIContent>();
 
@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Entity
 
 			currentPosition.x -= 21f;
 			currentPosition.y -= 1f;
-			CustomEditorBase.Errors(currentPosition, errors);
+			PEditor.Errors(currentPosition, errors);
 
 			End();
 		}

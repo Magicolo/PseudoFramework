@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
+using System.Linq;
+using System;
+using System.Diagnostics;
 
 namespace Pseudo
 {
@@ -24,7 +27,7 @@ namespace Pseudo
 		public static bool LogToConsole { get { return logToConsole; } set { logToConsole = value; } }
 
 		static int indent;
-		static Dictionary<System.Type, int> instanceDict = new Dictionary<System.Type, int>();
+		static Dictionary<Type, int> instanceDict = new Dictionary<Type, int>();
 
 		public static float RoundPrecision = 0.001F;
 
@@ -34,7 +37,7 @@ namespace Pseudo
 				ScreenLogger.Log(LogToString(toLog));
 
 			if (logToConsole)
-				Debug.Log(LogToString(toLog));
+				UnityEngine.Debug.Log(LogToString(toLog));
 		}
 
 		public static void LogWarning(params object[] toLog)
@@ -43,7 +46,7 @@ namespace Pseudo
 				ScreenLogger.LogWarning(LogToString(toLog));
 
 			if (logToConsole)
-				Debug.LogWarning(LogToString(toLog));
+				UnityEngine.Debug.LogWarning(LogToString(toLog));
 		}
 
 		public static void LogError(params object[] toLog)
@@ -52,21 +55,21 @@ namespace Pseudo
 				ScreenLogger.LogError(LogToString(toLog));
 
 			if (logToConsole)
-				Debug.LogError(LogToString(toLog));
+				UnityEngine.Debug.LogError(LogToString(toLog));
 		}
 
 		public static void LogMethod(params object[] toLog)
 		{
-			System.Diagnostics.StackTrace trace = new System.Diagnostics.StackTrace();
-			System.Diagnostics.StackFrame callerFrame = trace.GetFrame(1);
-			MethodBase method = callerFrame.GetMethod();
+			var trace = new StackTrace();
+			var callerFrame = trace.GetFrame(1);
+			var method = callerFrame.GetMethod();
 
 			indent++;
-			Debug.Log(string.Format("{0}.{1}\n{2}", method.DeclaringType, method.Name, LogToString(toLog)));
+			UnityEngine.Debug.Log(string.Format("{0}.{1}\n{2}", method.DeclaringType, method.Name, LogToString(toLog)));
 			indent--;
 		}
 
-		public static void LogSingleInstance(Object instanceToLog, params object[] toLog)
+		public static void LogSingleInstance(UnityEngine.Object instanceToLog, params object[] toLog)
 		{
 			int instanceId;
 
@@ -82,33 +85,30 @@ namespace Pseudo
 			}
 		}
 
-		public static void LogTest(string testName, System.Action test, int iterations)
+		public static void LogTest(string testName, Action test, int iterations)
 		{
-			System.Diagnostics.Stopwatch timer = new System.Diagnostics.Stopwatch();
-			System.Action empty = () => { };
+			test();
+			long total = 0L;
+			long min = long.MaxValue;
+			long max = 0L;
 
-			long overheadTicks = 0L;
-			for (int i = 0; i < iterations; i++)
-			{
-				timer.Start();
-				empty();
-				timer.Stop();
-				overheadTicks += timer.ElapsedTicks;
-				timer.Reset();
-			}
-
-			long elapsedTicks = -overheadTicks;
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
 
 			for (int i = 0; i < iterations; i++)
 			{
-				timer.Start();
+				var timer = Stopwatch.StartNew();
 				test();
 				timer.Stop();
-				elapsedTicks += timer.ElapsedTicks;
-				timer.Reset();
+
+				long elapsed = timer.ElapsedTicks;
+				total += elapsed;
+				min = Math.Min(min, elapsed);
+				max = Math.Max(max, elapsed);
 			}
 
-			Log(string.Format("{0}\nTicks Per Iteration = {1} | Total Ticks = {2}", testName, elapsedTicks / (double)iterations, FormatNumber(elapsedTicks)));
+			Log(string.Format("{0}\nAverage = {1} | Min: {2} | Max: {3} | Total: {4}", testName, total / (double)iterations, FormatNumber(min), FormatNumber(max), FormatNumber(total)));
 		}
 
 		static string LogToString(object[] toLog)
@@ -137,7 +137,7 @@ namespace Pseudo
 
 		static string FormatNumber(long number)
 		{
-			string formattedTicks = number.ToString();
+			var formattedTicks = number.ToString();
 
 			for (int i = formattedTicks.Length - 3; i > 0; i -= 3)
 				formattedTicks = formattedTicks.Insert(i, " ");
@@ -161,7 +161,7 @@ namespace Pseudo
 
 		static string FormatType(System.Type type)
 		{
-			string formattedType = "";
+			var formattedType = "";
 
 			if (type.IsArray)
 				formattedType += FormatType(type.GetElementType()) + "[]";
@@ -174,7 +174,7 @@ namespace Pseudo
 
 			if (type.IsGenericType)
 			{
-				System.Type[] genericTypes = type.GetGenericArguments();
+				var genericTypes = type.GetGenericArguments();
 
 				formattedType += "<";
 
@@ -194,7 +194,7 @@ namespace Pseudo
 
 		static string GetIndentString()
 		{
-			string str = "";
+			var str = "";
 
 			for (int i = 0; i < indent; i++)
 				str += "   ";
@@ -210,7 +210,7 @@ namespace Pseudo
 			{
 				str += FormatType(obj.GetType()) + "{ ";
 
-				foreach (object item in (System.Array)obj)
+				foreach (object item in (Array)obj)
 					str += ToString(item) + ", ";
 
 				if (((System.Array)obj).Length > 0)
@@ -262,36 +262,36 @@ namespace Pseudo
 
 		public static string VectorToString(object obj)
 		{
-			string str = "";
+			var str = "";
 
 			if (obj is Vector2)
 			{
-				Vector2 vector2 = ((Vector2)obj).Round(RoundPrecision);
+				var vector2 = ((Vector2)obj).Round(RoundPrecision);
 				str += "Vector2(" + vector2.x + ", " + vector2.y;
 			}
 			else if (obj is Vector3)
 			{
-				Vector3 vector3 = ((Vector3)obj).Round(RoundPrecision);
+				var vector3 = ((Vector3)obj).Round(RoundPrecision);
 				str += "Vector3(" + vector3.x + ", " + vector3.y + ", " + vector3.z;
 			}
 			else if (obj is Vector4)
 			{
-				Vector4 vector4 = ((Vector4)obj).Round(RoundPrecision);
+				var vector4 = ((Vector4)obj).Round(RoundPrecision);
 				str += "Vector4(" + vector4.x + ", " + vector4.y + ", " + vector4.z + ", " + vector4.w;
 			}
 			else if (obj is Quaternion)
 			{
-				Quaternion quaternion = ((Quaternion)obj).Round(RoundPrecision);
+				var quaternion = ((Quaternion)obj).Round(RoundPrecision);
 				str += "Quaternion(" + quaternion.x + ", " + quaternion.y + ", " + quaternion.z + ", " + quaternion.w;
 			}
 			else if (obj is Color)
 			{
-				Color color = ((Color)obj).Round(RoundPrecision);
+				var color = ((Color)obj).Round(RoundPrecision);
 				str += "Color(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a;
 			}
 			else if (obj is Rect)
 			{
-				Rect rect = ((Rect)obj).Round(RoundPrecision);
+				var rect = ((Rect)obj).Round(RoundPrecision);
 				str += "Rect(" + rect.x + ", " + rect.y + ", " + rect.width + ", " + rect.height;
 			}
 

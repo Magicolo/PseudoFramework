@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Editor
 {
-	public class SnapSettings : CustomWindowBase<SnapSettings>
+	public class SnapSettings : PEditorWindow<SnapSettings>
 	{
 		public float moveX;
 		public float moveY;

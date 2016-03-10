@@ -30,8 +30,15 @@ namespace Pseudo
 
 		public static Rect Clamp(this Rect rect, Rect otherRect)
 		{
-			return Rect.MinMaxRect(Mathf.Max(otherRect.xMin, rect.xMin), Mathf.Max(otherRect.yMin, rect.yMin), Mathf.Min(otherRect.xMax, rect.xMax), Mathf.Min(otherRect.yMax, rect.yMax));
+			return new Rect
+			{
+				xMin = Mathf.Max(otherRect.xMin, rect.xMin),
+				xMax = Mathf.Min(otherRect.xMax, rect.xMax),
+				yMin = Mathf.Max(otherRect.yMin, rect.yMin),
+				yMax = Mathf.Min(otherRect.yMax, rect.yMax)
+			};
 		}
+
 
 		public static bool Contains(this Rect rect, Rect otherRect)
 		{

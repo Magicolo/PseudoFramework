@@ -7,7 +7,7 @@ using System.Collections.Generic;
 // TODO Add a UniqueNameFoldout (when selected it becomes a UniqueNameField)
 namespace Pseudo.Internal.Editor
 {
-	public class CustomEditorBase : UnityEditor.Editor
+	public class PEditor : UnityEditor.Editor
 	{
 		public enum ButtonAlign
 		{

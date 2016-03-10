@@ -10,7 +10,7 @@ using Pseudo.Internal.Audio;
 namespace Pseudo.Internal.Editor
 {
 	[CustomEditor(typeof(AudioManager), true), CanEditMultipleObjects]
-	public class AudioManagerEditor : CustomEditorBase
+	public class AudioManagerEditor : PEditor
 	{
 		static AudioManager audioManager;
 		static IAudioItem previewItem;

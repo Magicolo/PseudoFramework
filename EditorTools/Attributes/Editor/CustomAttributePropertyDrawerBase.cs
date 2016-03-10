@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Pseudo.Internal.Editor
 {
-	public class CustomAttributePropertyDrawerBase : CustomPropertyDrawerBase
+	public class CustomAttributePropertyDrawerBase : PPropertyDrawer
 	{
 		public string prefixLabel;
 		public bool noFieldLabel;

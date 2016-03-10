@@ -10,7 +10,7 @@ using UnityEngine;
 namespace Pseudo.Internal
 {
 	[CustomPropertyDrawer(typeof(PEnum), true)]
-	public class PEnumDrawer : CustomPropertyDrawerBase
+	public class PEnumDrawer : PPropertyDrawer
 	{
 		bool isFlag;
 		IEnum enumValue;

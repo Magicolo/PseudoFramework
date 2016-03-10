@@ -335,6 +335,16 @@ namespace Pseudo.Internal
 			return field.DeclaringType.GetProperty(field.Name.GetRange(1, '>'), AllFlags);
 		}
 
+		public static bool IsStatic(this PropertyInfo property)
+		{
+			if (property.CanRead)
+				return property.GetGetMethod().IsStatic;
+			else if (property.CanWrite)
+				return property.GetSetMethod().IsStatic;
+			else
+				return false;
+		}
+
 		public static bool IsAutoProperty(this PropertyInfo property)
 		{
 			return property.GetBackingField() != null;
@@ -343,6 +353,11 @@ namespace Pseudo.Internal
 		public static FieldInfo GetBackingField(this PropertyInfo property)
 		{
 			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", AllFlags);
+		}
+
+		public static bool IsOperator(this MethodInfo method)
+		{
+			return method.IsStatic && method.IsSpecialName && method.Name.StartsWith("op_");
 		}
 	}
 }

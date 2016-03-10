@@ -9,7 +9,7 @@ using Pseudo.Internal.Editor;
 
 namespace Pseudo.Internal.Audio
 {
-	public abstract class AudioSettingsBaseEditor : CustomEditorBase
+	public abstract class AudioSettingsBaseEditor : PEditor
 	{
 		UnityEditorInternal.ReorderableList list;
 		PropertyDrawer drawer;
