@@ -34,7 +34,7 @@ namespace Pseudo.Internal.Injection
 			SetupContext(ref context);
 
 			for (int i = 0; i < parameters.Length; i++)
-				parameters[i].Inject(context, arguments, i);
+				arguments[i] = parameters[i].Resolve(context);
 
 			var instance = constructor.Invoke(arguments);
 			arguments.Clear();
@@ -46,7 +46,7 @@ namespace Pseudo.Internal.Injection
 		{
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				if (!parameters[i].CanInject(ref context))
+				if (!parameters[i].CanResolve(ref context))
 					return false;
 			}
 

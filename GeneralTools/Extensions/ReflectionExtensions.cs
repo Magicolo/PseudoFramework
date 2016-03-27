@@ -17,6 +17,11 @@ namespace Pseudo.Internal
 		public const BindingFlags StaticFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
 		public const BindingFlags InstanceFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
 
+		public static object[] GetDefaultParameters(this MethodInfo method)
+		{
+			return method.GetParameters().Convert(p => TypeUtility.GetDefaultValue(p.ParameterType));
+		}
+
 		public static MemberInfo GetMemberInfo(this object obj, string memberName)
 		{
 			var field = obj.GetType().GetField(memberName, AllFlags);
@@ -32,19 +37,19 @@ namespace Pseudo.Internal
 			return null;
 		}
 
-		public static T GetMemberValue<T>(this MemberInfo memberInfo, object obj)
+		public static T GetMemberValue<T>(this MemberInfo member, object obj)
 		{
-			return (T)memberInfo.GetMemberValue(obj);
+			return (T)member.GetMemberValue(obj);
 		}
 
-		public static object GetMemberValue(this MemberInfo memberInfo, object obj)
+		public static object GetMemberValue(this MemberInfo member, object obj)
 		{
-			FieldInfo field = memberInfo as FieldInfo;
+			var field = member as FieldInfo;
 
 			if (field != null)
 				return field.GetValue(obj);
 
-			PropertyInfo property = memberInfo as PropertyInfo;
+			var property = member as PropertyInfo;
 
 			if (property != null)
 				return property.GetValue(obj, null);
@@ -52,9 +57,9 @@ namespace Pseudo.Internal
 			return null;
 		}
 
-		public static void SetMemberValue(this MemberInfo memberInfo, object obj, object value)
+		public static void SetMemberValue(this MemberInfo member, object obj, object value)
 		{
-			FieldInfo field = memberInfo as FieldInfo;
+			var field = member as FieldInfo;
 
 			if (field != null)
 			{
@@ -62,7 +67,7 @@ namespace Pseudo.Internal
 				return;
 			}
 
-			PropertyInfo property = memberInfo as PropertyInfo;
+			var property = member as PropertyInfo;
 
 			if (property != null)
 			{
@@ -71,14 +76,14 @@ namespace Pseudo.Internal
 			}
 		}
 
-		public static Type GetMemberType(this MemberInfo memberInfo)
+		public static Type GetMemberType(this MemberInfo member)
 		{
-			FieldInfo field = memberInfo as FieldInfo;
+			var field = member as FieldInfo;
 
 			if (field != null)
 				return field.FieldType;
 
-			PropertyInfo property = memberInfo as PropertyInfo;
+			var property = member as PropertyInfo;
 
 			if (property != null)
 				return property.PropertyType;

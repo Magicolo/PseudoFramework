@@ -36,10 +36,23 @@ namespace Pseudo.Internal.Injection
 
 		protected virtual void InjectAll()
 		{
-			var roots = SceneManager.GetActiveScene().GetRootGameObjects();
+			var behaviours = SceneManager.GetActiveScene().GetRootGameObjects()
+				.SelectMany(g => g.GetComponentsInChildren<MonoBehaviour>())
+				.ToArray();
 
-			for (int i = 0; i < roots.Length; i++)
-				Binder.Injector.Inject(roots[i], true);
+			var injectables = behaviours
+				.Where(b => b is ISceneInjectable)
+				.Cast<ISceneInjectable>()
+				.ToArray();
+
+			for (int i = 0; i < injectables.Length; i++)
+				injectables[i].OnPreSceneInject(binder);
+
+			for (int i = 0; i < behaviours.Length; i++)
+				binder.Injector.Inject(behaviours[i]);
+
+			for (int i = 0; i < injectables.Length; i++)
+				injectables[i].OnPostSceneInject(binder);
 		}
 
 		protected abstract IBinder CreateBinder();

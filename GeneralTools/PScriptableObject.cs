@@ -7,10 +7,8 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class PScriptableObject : ScriptableObject, IPoolable
+	public class PScriptableObject : ScriptableObject
 	{
-		public virtual void OnCreate() { }
 
-		public virtual void OnRecycle() { }
 	}
 }

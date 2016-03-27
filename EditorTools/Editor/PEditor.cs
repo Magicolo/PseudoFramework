@@ -213,8 +213,10 @@ namespace Pseudo.Internal.Editor
 
 		public static bool DeleteButton(ButtonAlign align, bool disabeOnPlay = true)
 		{
-			GUIStyle style = new GUIStyle("MiniToolbarButtonLeft");
-			style.clipping = TextClipping.Overflow;
+			var style = new GUIStyle("MiniToolbarButtonLeft")
+			{
+				clipping = TextClipping.Overflow
+			};
 
 			bool pressed = Button("−".ToGUIContent(), style, align, disabeOnPlay, GUILayout.Width(16));
 

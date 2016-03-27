@@ -49,7 +49,6 @@ namespace Pseudo.Internal
 		{
 			var typeNameProperty = currentProperty.FindPropertyRelative("typeName");
 			var type = Type.GetType(typeNameProperty.GetValue<string>());
-			var assembly = Assembly.GetExecutingAssembly();
 
 			int index = Array.IndexOf(types, type);
 

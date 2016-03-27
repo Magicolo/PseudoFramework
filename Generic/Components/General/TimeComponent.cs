@@ -39,9 +39,10 @@ namespace Pseudo
 		[SerializeField, InitializeContent]
 		TimeChannel time = new TimeChannel();
 
-		[Message(ComponentMessages.OnAdded)]
-		void OnAdded()
+		public override void OnAdded()
 		{
+			base.OnAdded();
+
 			time.Reset();
 		}
 

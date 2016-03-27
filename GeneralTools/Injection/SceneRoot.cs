@@ -18,10 +18,8 @@ namespace Pseudo
 			return new Binder(GlobalRoot.Instance == null ? null : GlobalRoot.Instance.Binder);
 		}
 
-		protected override void Start()
+		void Start()
 		{
-			base.Start();
-
 			InjectAll();
 		}
 

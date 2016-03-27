@@ -6,11 +6,8 @@ using System.Linq;
 
 namespace Pseudo
 {
-	public abstract class PMonoBehaviour : MonoBehaviour, IPoolable
+	public abstract class PMonoBehaviour : MonoBehaviour
 	{
-		[DoNotInitialize]
-		bool created;
-
 		readonly Lazy<GameObject> cachedGameObject;
 		public GameObject CachedGameObject { get { return cachedGameObject; } }
 
@@ -22,22 +19,13 @@ namespace Pseudo
 			cachedGameObject = new Lazy<GameObject>(() => gameObject);
 			cachedTransform = new Lazy<Transform>(() => transform);
 		}
-
-		protected virtual void Start()
-		{
-			if (!created)
-				OnCreate();
-		}
-
+		
 		protected virtual void OnValidate()
 		{
 #if UNITY_EDITOR
-			Pseudo.Internal.Editor.InspectorUtility.OnValidate(this);
+			Internal.Editor.InspectorUtility.OnValidate(this);
 #endif
 		}
-
-		public virtual void OnCreate() { created = true; }
-		public virtual void OnRecycle() { }
 	}
 }
 

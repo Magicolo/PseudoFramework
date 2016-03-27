@@ -15,7 +15,15 @@ namespace Pseudo.Internal.Pool
 
 		public FieldInitializer(object source)
 		{
+			bool isInitializable = source is IPoolFieldsInitializable;
+
+			if (isInitializable)
+				((IPoolFieldsInitializable)source).OnPrePoolFieldsInitialize(this);
+
 			setters = GetSetters(source, new List<object> { source });
+
+			if (isInitializable)
+				((IPoolFieldsInitializable)source).OnPostPoolFieldsInitialize(this);
 		}
 
 		public void InitializeFields(object instance)
@@ -28,10 +36,6 @@ namespace Pseudo.Internal.Pool
 			var type = instance.GetType();
 			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 			var setters = new List<IPoolSetter>(allFields.Length);
-			bool isInitializable = instance is IPoolSettersInitializable;
-
-			if (isInitializable)
-				((IPoolSettersInitializable)instance).OnPrePoolSettersInitialize();
 
 			for (int i = 0; i < allFields.Length; i++)
 			{
@@ -41,9 +45,6 @@ namespace Pseudo.Internal.Pool
 				if (ShouldInitialize(field, value))
 					setters.Add(GetSetter(value, field, toIgnore));
 			}
-
-			if (isInitializable)
-				((IPoolSettersInitializable)instance).OnPostPoolSettersInitialize(setters);
 
 			return setters.ToArray();
 		}

@@ -65,9 +65,10 @@ namespace Pseudo
 			targetables.OnEntityRemoved -= onTargetRemoved;
 		}
 
-		[Message(ComponentMessages.OnAdded)]
-		void OnAdd()
+		public override void OnAdded()
 		{
+			base.OnAdded();
+
 			targetables = entityManager.Entities.Filter(typeof(TransformComponent));
 		}
 

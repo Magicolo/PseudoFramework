@@ -8,11 +8,13 @@ using UnityEngine.Assertions;
 
 namespace Pseudo
 {
-	public class GameObjectComponent : IComponent
+	public class GameObjectComponent : ComponentBase
 	{
-		public GameObject GameObject;
+		public readonly GameObject GameObject;
 
-		public bool Active { get; set; }
-		public IEntity Entity { get; set; }
+		public GameObjectComponent(GameObject gameObject)
+		{
+			GameObject = gameObject;
+		}
 	}
 }

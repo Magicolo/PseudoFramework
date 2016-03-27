@@ -12,10 +12,7 @@ namespace Pseudo.Internal.Injection
 	{
 		public MemberInfo Member
 		{
-			get
-			{
-				throw new NotImplementedException();
-			}
+			get { return property; }
 		}
 
 		readonly PropertyInfo property;

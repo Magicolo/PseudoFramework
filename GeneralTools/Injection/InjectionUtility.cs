@@ -10,8 +10,6 @@ namespace Pseudo.Internal.Injection
 {
 	public static class InjectionUtility
 	{
-		public static readonly object[] Empty = new object[0];
-
 		static readonly Dictionary<Type, IInjectableConstructor[]> typeToInjectableConstructors = new Dictionary<Type, IInjectableConstructor[]>();
 		static readonly Dictionary<Type, IInjectableMember[]> typeToInjectableMembers = new Dictionary<Type, IInjectableMember[]>();
 
@@ -48,12 +46,12 @@ namespace Pseudo.Internal.Injection
 			if (Array.TrueForAll(constructors, c => !c.IsDefined(typeof(InjectAttribute), true)))
 				return constructors
 					.Where(c => !c.IsStatic)
-					.Select(c => (IInjectableConstructor)new InjectableConstructor(c, CreateInjectableParameters(c)))
+					.Select(c => (IInjectableConstructor)new InjectableConstructor(c, CreateInjectableParameters(c.GetParameters())))
 					.ToArray();
 			else
 				return constructors
 					.Where(c => !c.IsStatic)
-					.Select(c => (IInjectableConstructor)new InjectableConstructor(c, CreateInjectableParameters(c)))
+					.Select(c => (IInjectableConstructor)new InjectableConstructor(c, CreateInjectableParameters(c.GetParameters())))
 					.ToArray();
 		}
 
@@ -94,17 +92,12 @@ namespace Pseudo.Internal.Injection
 			if (method.GetParameters().Length == 0)
 				return new InjectableEmptyMethod(method);
 			else
-				return new InjectableMethod(method, CreateInjectableParameters(method));
+				return new InjectableMethod(method, CreateInjectableParameters(method.GetParameters()));
 		}
 
-		static IInjectableParameter[] CreateInjectableParameters(ConstructorInfo constructor)
+		static IInjectableParameter[] CreateInjectableParameters(IEnumerable<ParameterInfo> parameters)
 		{
-			return constructor.GetParameters().Select(p => (IInjectableParameter)new InjectableConstructorParameter(constructor, p)).ToArray();
-		}
-
-		static IInjectableParameter[] CreateInjectableParameters(MethodInfo method)
-		{
-			return method.GetParameters().Select(m => (IInjectableParameter)new InjectableMethodParameter(method, m)).ToArray();
+			return parameters.Select(p => (IInjectableParameter)new InjectableParameter(p)).ToArray();
 		}
 	}
 }

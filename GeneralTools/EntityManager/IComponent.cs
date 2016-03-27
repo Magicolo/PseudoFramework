@@ -9,5 +9,12 @@ namespace Pseudo
 	{
 		bool Active { get; set; }
 		IEntity Entity { get; set; }
+
+		void OnActivated();
+		void OnDeactivated();
+		void OnAdded();
+		void OnRemoved();
+		void OnEntityActivated();
+		void OnEntityDeactivated();
 	}
 }

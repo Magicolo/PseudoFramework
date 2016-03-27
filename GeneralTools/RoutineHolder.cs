@@ -35,11 +35,11 @@ namespace Pseudo
 			routines.Clear();
 		}
 
-		public void OnCreate()
+		void IPoolable.OnCreate()
 		{
 		}
 
-		public void OnRecycle()
+		void IPoolable.OnRecycle()
 		{
 			routines.Clear();
 		}

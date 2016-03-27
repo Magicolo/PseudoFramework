@@ -37,16 +37,18 @@ namespace Pseudo
 
 		readonly List<Timer> timers = new List<Timer>();
 
-		[Message(ComponentMessages.OnAdded)]
-		void OnAdded()
+		public override void OnAdded()
 		{
+			base.OnAdded();
+
 			for (int i = 0; i < Messages.Length; i++)
 				timers.Add(new Timer { Message = Messages[i] });
 		}
 
-		[Message(ComponentMessages.OnRemoved)]
-		void OnRemoved()
+		public override void OnRemoved()
 		{
+			base.OnRemoved();
+
 			timers.Clear();
 		}
 

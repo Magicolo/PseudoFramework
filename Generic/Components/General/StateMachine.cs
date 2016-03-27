@@ -28,9 +28,10 @@ namespace Pseudo
 
 		EntityBehaviour currentState;
 
-		[Message(ComponentMessages.OnAdded)]
-		public void OnAdded()
+		public override void OnAdded()
 		{
+			base.OnAdded();
+
 			for (int i = 0; i < States.Length; i++)
 			{
 				var state = States[i];

@@ -19,10 +19,10 @@ namespace Pseudo
 
 		public override void Install(IBinder binder)
 		{
-			binder.Bind<IGameManager>().ToSingleMethod(c => InstantiateOrFind(GameManager));
-			binder.Bind<IAudioManager>().ToSingleMethod(c => InstantiateOrFind(AudioManager));
-			binder.Bind<IParticleManager>().ToSingleMethod(c => InstantiateOrFind(ParticleManager));
-			binder.Bind<IInputManager>().ToSingleMethod(c => InstantiateOrFind(InputManager));
+			binder.Bind<IGameManager>().ToSingletonMethod(c => InstantiateOrFind(GameManager));
+			binder.Bind<IAudioManager>().ToSingletonMethod(c => InstantiateOrFind(AudioManager));
+			binder.Bind<IParticleManager>().ToSingletonMethod(c => InstantiateOrFind(ParticleManager));
+			binder.Bind<IInputManager>().ToSingletonMethod(c => InstantiateOrFind(InputManager));
 		}
 
 		T InstantiateOrFind<T>(T prefab) where T : Component

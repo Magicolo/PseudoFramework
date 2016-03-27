@@ -17,9 +17,9 @@ namespace Pseudo
 
 		public static Transform GetTransform(this IEntity entity)
 		{
-			var transform = entity.GetComponent<TransformComponent>();
+			var component = entity.GetComponent<TransformComponent>();
 
-			return transform == null ? null : transform.Transform;
+			return component == null ? null : component.Transform;
 		}
 
 		public static bool HasGameObject(this IEntity entity)
@@ -29,9 +29,9 @@ namespace Pseudo
 
 		public static GameObject GetGameObject(this IEntity entity)
 		{
-			var gameObject = entity.GetComponent<GameObjectComponent>();
+			var component = entity.GetComponent<GameObjectComponent>();
 
-			return gameObject == null ? null : gameObject.GameObject;
+			return component == null ? null : component.GameObject;
 		}
 
 		public static bool HasBehaviour(this IEntity entity)
@@ -41,9 +41,9 @@ namespace Pseudo
 
 		public static EntityBehaviour GetBehaviour(this IEntity entity)
 		{
-			var behaviour = entity.GetComponent<BehaviourComponent>();
+			var component = entity.GetComponent<BehaviourComponent>();
 
-			return behaviour == null ? null : behaviour.Behaviour;
+			return component == null ? null : component.Behaviour;
 		}
 
 		public static bool HasTime(this IEntity entity)

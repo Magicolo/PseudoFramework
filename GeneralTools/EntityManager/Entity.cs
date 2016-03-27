@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 
 namespace Pseudo.Internal.Entity
 {
-	public class Entity : IEntity
+	public partial class Entity : IEntity
 	{
 		public bool Active
 		{
@@ -24,18 +24,6 @@ namespace Pseudo.Internal.Entity
 				entityManager.UpdateEntity(this);
 			}
 		}
-		public IEntity Root
-		{
-			get { return GetRoot(); }
-		}
-		public IEntity Parent
-		{
-			get { return parent; }
-		}
-		public IList<IEntity> Children
-		{
-			get { return readonlyChildren; }
-		}
 		public IList<IComponent> Components
 		{
 			get { return readonlyComponents; }
@@ -43,15 +31,11 @@ namespace Pseudo.Internal.Entity
 
 		bool active;
 		EntityGroups groups;
-		IEntity parent;
 		IEntityManager entityManager = null;
-		MessageManager messageManager = null;
 		[DoNotInitialize]
 		IComponent[] singleComponents;
 		[DoNotInitialize]
 		ComponentGroup[] componentGroups;
-		readonly List<IEntity> children;
-		readonly IList<IEntity> readonlyChildren;
 		readonly List<IComponent> allComponents;
 		readonly IList<IComponent> readonlyComponents;
 		readonly List<int> componentIndices;
@@ -99,6 +83,9 @@ namespace Pseudo.Internal.Entity
 			if ((scope & HierarchyScope.Global) != 0)
 				return Root.GetComponent<T>(HierarchyScope.Local | HierarchyScope.Children);
 
+			if ((scope & HierarchyScope.Root) != 0 && Root.TryGetComponent(out component))
+				return component;
+
 			if ((scope & HierarchyScope.Local) != 0 && TryGetComponent(out component))
 				return component;
 
@@ -106,9 +93,17 @@ namespace Pseudo.Internal.Entity
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
-					if (parent.Children[i].TryGetComponent(out component, HierarchyScope.Local))
+					var child = parent.Children[i];
+
+					if (child != this && child.TryGetComponent(out component, HierarchyScope.Local))
 						return component;
 				}
+			}
+
+			if ((scope & HierarchyScope.Parent) != 0 && parent != null)
+			{
+				if (parent.TryGetComponent(out component, HierarchyScope.Local))
+					return component;
 			}
 
 			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
@@ -150,6 +145,9 @@ namespace Pseudo.Internal.Entity
 			if ((scope & HierarchyScope.Global) != 0)
 				return Root.GetComponent(componentType, HierarchyScope.Local | HierarchyScope.Children);
 
+			if ((scope & HierarchyScope.Root) != 0 && Root.TryGetComponent(componentType, out component))
+				return component;
+
 			if ((scope & HierarchyScope.Local) != 0 && TryGetComponent(componentType, out component))
 				return component;
 
@@ -157,7 +155,9 @@ namespace Pseudo.Internal.Entity
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
-					if (parent.Children[i].TryGetComponent(componentType, out component, HierarchyScope.Local))
+					var child = parent.Children[i];
+
+					if (child != this && child.TryGetComponent(componentType, out component, HierarchyScope.Local))
 						return component;
 				}
 			}
@@ -169,6 +169,12 @@ namespace Pseudo.Internal.Entity
 					if (children[i].TryGetComponent(componentType, out component, HierarchyScope.Local | HierarchyScope.Children))
 						return component;
 				}
+			}
+
+			if ((scope & HierarchyScope.Parent) != 0 && parent != null)
+			{
+				if (parent.TryGetComponent(componentType, out component, HierarchyScope.Local))
+					return component;
 			}
 
 			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
@@ -185,11 +191,108 @@ namespace Pseudo.Internal.Entity
 			return GetComponentGroup<T>().Components;
 		}
 
+		public IList<T> GetComponents<T>(HierarchyScope scope) where T : class, IComponent
+		{
+			if (scope == HierarchyScope.Local)
+				return GetComponents<T>();
+
+			var components = new List<T>();
+			GetComponents(components, scope);
+
+			return components;
+		}
+
+		public void GetComponents<T>(List<T> components, HierarchyScope scope) where T : class, IComponent
+		{
+			Assert.IsNotNull(components);
+
+			if ((scope & HierarchyScope.Global) != 0)
+				Root.GetComponents(components, HierarchyScope.Local | HierarchyScope.Children);
+
+			if ((scope & HierarchyScope.Root) != 0)
+				components.AddRange(Root.GetComponents<T>());
+
+			if ((scope & HierarchyScope.Local) != 0)
+				components.AddRange(GetComponents<T>());
+
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null && parent.Children.Count > 0)
+			{
+				for (int i = 0; i < parent.Children.Count; i++)
+				{
+					var child = parent.Children[i];
+
+					if (child != this)
+						child.GetComponents(components, HierarchyScope.Local);
+				}
+			}
+
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
+			{
+				for (int i = 0; i < children.Count; i++)
+					children[i].GetComponents(components, HierarchyScope.Local | HierarchyScope.Children);
+			}
+
+			if ((scope & HierarchyScope.Parent) != 0 && parent != null)
+				parent.GetComponents(components, HierarchyScope.Local);
+
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
+				parent.GetComponents(components, HierarchyScope.Local | HierarchyScope.Parents);
+		}
+
 		public IList<IComponent> GetComponents(Type componentType)
 		{
 			Assert.IsNotNull(componentType);
 
 			return GetComponentGroup(componentType).Components;
+		}
+
+		public IList<IComponent> GetComponents(Type componentType, HierarchyScope scope)
+		{
+			if (scope == HierarchyScope.Local)
+				return GetComponents(componentType);
+
+			var components = new List<IComponent>();
+			GetComponents(components, componentType, scope);
+
+			return components;
+		}
+
+		public void GetComponents(List<IComponent> components, Type componentType, HierarchyScope scope)
+		{
+			Assert.IsNotNull(components);
+			Assert.IsNotNull(componentType);
+
+			if ((scope & HierarchyScope.Global) != 0)
+				Root.GetComponents(components, componentType, HierarchyScope.Local | HierarchyScope.Children);
+
+			if ((scope & HierarchyScope.Root) != 0)
+				components.AddRange(Root.GetComponents(componentType));
+
+			if ((scope & HierarchyScope.Local) != 0)
+				components.AddRange(GetComponents(componentType));
+
+			if ((scope & HierarchyScope.Siblings) != 0 && parent != null && parent.Children.Count > 0)
+			{
+				for (int i = 0; i < parent.Children.Count; i++)
+				{
+					var child = parent.Children[i];
+
+					if (child != this)
+						child.GetComponents(components, componentType, HierarchyScope.Local);
+				}
+			}
+
+			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
+			{
+				for (int i = 0; i < children.Count; i++)
+					children[i].GetComponents(components, componentType, HierarchyScope.Local | HierarchyScope.Children);
+			}
+
+			if ((scope & HierarchyScope.Parent) != 0 && parent != null)
+				parent.GetComponents(components, componentType, HierarchyScope.Local);
+
+			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
+				parent.GetComponents(components, componentType, HierarchyScope.Local | HierarchyScope.Parents);
 		}
 
 		public bool TryGetComponent<T>(out T component) where T : class, IComponent
@@ -260,6 +363,9 @@ namespace Pseudo.Internal.Entity
 			if ((scope & HierarchyScope.Global) != 0)
 				return Root.HasComponent(component, HierarchyScope.Local | HierarchyScope.Children);
 
+			if ((scope & HierarchyScope.Root) != 0 && Root.HasComponent(component))
+				return true;
+
 			if ((scope & HierarchyScope.Local) != 0 && HasComponent(component))
 				return true;
 
@@ -267,7 +373,9 @@ namespace Pseudo.Internal.Entity
 			{
 				for (int i = 0; i < parent.Children.Count; i++)
 				{
-					if (parent.Children[i].HasComponent(component, HierarchyScope.Local))
+					var child = parent.Children[i];
+
+					if (child != this && child.HasComponent(component, HierarchyScope.Local))
 						return true;
 				}
 			}
@@ -279,6 +387,12 @@ namespace Pseudo.Internal.Entity
 					if (children[i].HasComponent(component, HierarchyScope.Local | HierarchyScope.Children))
 						return true;
 				}
+			}
+
+			if ((scope & HierarchyScope.Parent) != 0 && parent != null)
+			{
+				if (parent.HasComponent(component, HierarchyScope.Local))
+					return true;
 			}
 
 			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
@@ -332,141 +446,25 @@ namespace Pseudo.Internal.Entity
 			RemoveAllComponents(true, true);
 		}
 
-		public void SendMessage(EntityMessage message)
-		{
-			SendMessage(message.Message.Value, (object)null, message.Scope);
-		}
-
-		public void SendMessage<TArg>(EntityMessage message, TArg argument)
-		{
-			SendMessage(message.Message.Value, argument, message.Scope);
-		}
-
-		public void SendMessage<TId>(TId identifier)
-		{
-			SendMessage(identifier, (object)null, HierarchyScope.Local);
-		}
-
-		public void SendMessage<TId>(TId identifier, HierarchyScope scope)
-		{
-			SendMessage(identifier, (object)null, scope);
-		}
-
-		public void SendMessage<TId, TArg>(TId identifier, TArg argument)
-		{
-			SendMessage(identifier, argument, HierarchyScope.Local);
-		}
-
-		public void SendMessage<TId, TArg>(TId identifier, TArg argument, HierarchyScope scope)
-		{
-			if (!Active)
-				return;
-
-			if ((scope & HierarchyScope.Global) != 0)
-			{
-				Root.SendMessage(identifier, argument, HierarchyScope.Local | HierarchyScope.Children);
-				return;
-			}
-
-			if ((scope & HierarchyScope.Local) != 0)
-			{
-				for (int i = allComponents.Count - 1; i >= 0; i--)
-				{
-					var component = allComponents[i];
-
-					if (component.Active)
-						messageManager.Send(component, identifier, argument);
-				}
-			}
-
-			if ((scope & HierarchyScope.Siblings) != 0 && parent != null)
-			{
-				for (int i = 0; i < parent.Children.Count; i++)
-					parent.Children[i].SendMessage(identifier, argument, HierarchyScope.Local);
-			}
-
-			if ((scope & HierarchyScope.Parents) != 0 && parent != null)
-				parent.SendMessage(identifier, argument, HierarchyScope.Parents | HierarchyScope.Local);
-
-			if ((scope & HierarchyScope.Children) != 0 && children.Count > 0)
-			{
-				for (int i = 0; i < children.Count; i++)
-					children[i].SendMessage(identifier, argument, HierarchyScope.Children | HierarchyScope.Local);
-			}
-		}
-
-		public void SetParent(IEntity entity)
-		{
-			if (parent == entity)
-				return;
-
-			if (parent != null)
-				parent.RemoveChild(this);
-
-			parent = entity;
-
-			if (parent != null)
-				parent.AddChild(this);
-		}
-
-		public bool HasChild(IEntity entity)
-		{
-			return children.Contains(entity);
-		}
-
-		public void AddChild(IEntity entity)
-		{
-			Assert.IsNotNull(entity);
-
-			if (!HasChild(entity))
-			{
-				children.Add(entity);
-				entity.SetParent(this);
-			}
-		}
-
-		public void RemoveChild(IEntity entity)
-		{
-			Assert.IsNotNull(entity);
-
-			if (HasChild(entity))
-			{
-				children.Remove(entity);
-				entity.SetParent(null);
-			}
-		}
-
-		public void RemoveAllChildren()
-		{
-			for (int i = children.Count - 1; i >= 0; i--)
-				RemoveChild(children[i]);
-		}
-
 		void SetActive(bool active)
 		{
 			if (this.active != active)
 			{
 				if (active)
 				{
-					SendMessage(ComponentMessages.OnEntityDeactivated);
 					active = false;
+
+					for (int i = 0; i < allComponents.Count; i++)
+						allComponents[i].OnEntityDeactivated();
 				}
 				else
 				{
 					active = true;
-					SendMessage(ComponentMessages.OnEntityActivated);
+
+					for (int i = 0; i < allComponents.Count; i++)
+						allComponents[i].OnEntityActivated();
 				}
 			}
-		}
-
-		IEntity GetRoot()
-		{
-			IEntity root = this;
-
-			while (root.Parent != null)
-				root = root.Parent;
-
-			return root;
 		}
 
 		bool AddComponent(IComponent component, bool raiseEvent, bool updateEntity)
@@ -490,7 +488,7 @@ namespace Pseudo.Internal.Entity
 			if (isNew && updateEntity)
 				entityManager.UpdateEntity(this);
 
-			messageManager.Send(component, ComponentMessages.OnAdded);
+			component.OnAdded();
 
 			return isNew;
 		}
@@ -535,7 +533,7 @@ namespace Pseudo.Internal.Entity
 		{
 			if (allComponents.Remove(component))
 			{
-				messageManager.Send(component, ComponentMessages.OnRemoved);
+				component.OnRemoved();
 
 				var subComponentTypes = ComponentUtility.GetSubComponentTypes(component.GetType());
 
@@ -617,7 +615,7 @@ namespace Pseudo.Internal.Entity
 			{
 				var component = allComponents[i];
 
-				messageManager.Send(component, ComponentMessages.OnRemoved);
+				component.OnRemoved();
 				component.Entity = null;
 			}
 

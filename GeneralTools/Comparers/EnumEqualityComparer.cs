@@ -8,16 +8,27 @@ using Pseudo.Internal;
 
 namespace Pseudo.Internal.Comparison
 {
-	public class EnumEqualityComparer<TEnum, TUnder> : PEqualityComparer<TEnum> where TUnder : struct, IComparable, IFormattable, IConvertible, IComparable<TUnder>, IEquatable<TUnder>
+	public class EnumEqualityComparer<TEnum, TUnder> : PEqualityComparer<TEnum>
+		where TUnder : struct, IComparable, IFormattable, IConvertible, IComparable<TUnder>, IEquatable<TUnder>
 	{
+		static readonly ICaster<TEnum, TUnder> caster = Caster<TEnum, TUnder>.Default;
+
+		static EnumEqualityComparer()
+		{
+			if (!typeof(TEnum).IsEnum)
+				throw new InvalidOperationException(string.Format("Type {0} must be an enum.", typeof(TEnum).Name));
+			else if (Enum.GetUnderlyingType(typeof(TEnum)) != typeof(TUnder))
+				throw new InvalidOperationException(string.Format("Type {0} must be equals to the underlying type of the enum type {1}.", typeof(TEnum).Name, typeof(TUnder).Name));
+		}
+
 		public override bool Equals(TEnum x, TEnum y)
 		{
-			return Cast<TEnum, TUnder>.To(x).Equals(Cast<TEnum, TUnder>.To(y));
+			return caster.Cast(x).Equals(caster.Cast(y));
 		}
 
 		public override int GetHashCode(TEnum obj)
 		{
-			return Cast<TEnum, TUnder>.To(obj).GetHashCode();
+			return caster.Cast(obj).GetHashCode();
 		}
 	}
 }

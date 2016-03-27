@@ -10,9 +10,11 @@ namespace Pseudo
 	{
 		Local = 1 << 0,
 		Global = 1 << 1,
-		Parents = 1 << 2,
-		Children = 1 << 3,
-		Siblings = 1 << 4,
+		Root = 1 << 2,
+		Parent = 1 << 3,
+		Parents = 1 << 4,
+		Children = 1 << 5,
+		Siblings = 1 << 6,
 	}
 
 	public interface IEntity : IPoolable
@@ -30,7 +32,11 @@ namespace Pseudo
 		IComponent GetComponent(Type componentType);
 		IComponent GetComponent(Type componentType, HierarchyScope scope);
 		IList<T> GetComponents<T>() where T : class, IComponent;
+		IList<T> GetComponents<T>(HierarchyScope scope) where T : class, IComponent;
+		void GetComponents<T>(List<T> components, HierarchyScope scope) where T : class, IComponent;
 		IList<IComponent> GetComponents(Type componentType);
+		IList<IComponent> GetComponents(Type componentType, HierarchyScope scope);
+		void GetComponents(List<IComponent> components, Type componentType, HierarchyScope scope);
 		bool TryGetComponent<T>(out T component) where T : class, IComponent;
 		bool TryGetComponent<T>(out T component, HierarchyScope scope) where T : class, IComponent;
 		bool TryGetComponent(Type componentType, out IComponent component);

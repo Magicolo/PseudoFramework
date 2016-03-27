@@ -49,7 +49,11 @@ namespace Pseudo
 			}
 		}
 
+		public virtual void OnAdded() { }
+		public virtual void OnRemoved() { }
 		public virtual void OnActivated() { }
 		public virtual void OnDeactivated() { }
+		public virtual void OnEntityActivated() { }
+		public virtual void OnEntityDeactivated() { }
 	}
 }

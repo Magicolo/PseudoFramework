@@ -29,7 +29,7 @@ namespace Pseudo.Tests
 		[Test]
 		public void BindingToSingle()
 		{
-			binder.Bind<IDummy>().ToSingle<Dummy1>();
+			binder.Bind<IDummy>().ToSingleton<Dummy1>();
 
 			var instance1 = binder.Resolver.Resolve<IDummy>();
 			var instance2 = binder.Resolver.Resolve<IDummy>();
@@ -74,7 +74,7 @@ namespace Pseudo.Tests
 		[Test]
 		public void BindingToSingleMethod()
 		{
-			binder.Bind<IDummy>().ToSingleMethod(c => new Dummy1());
+			binder.Bind<IDummy>().ToSingletonMethod(c => new Dummy1());
 
 			var instance1 = binder.Resolver.Resolve<IDummy>();
 			var instance2 = binder.Resolver.Resolve<IDummy>();
@@ -123,7 +123,7 @@ namespace Pseudo.Tests
 		[Test]
 		public void BindAllToSingle()
 		{
-			binder.BindAll<Dummy1>().ToSingle();
+			binder.BindAll<Dummy1>().ToSingleton();
 
 			var instance1 = binder.Resolver.Resolve<IDummy>();
 			var instance2 = binder.Resolver.Resolve<Dummy1>();
@@ -208,9 +208,9 @@ namespace Pseudo.Tests
 			binder.Bind<DummySubField>().ToTransient();
 			binder.Bind<DummyProperty>().ToTransient();
 			binder.Bind<DummySubProperty>().ToTransient();
-			binder.Bind<Dummy1>().ToSingle().WhenInjectedInto(typeof(Dummy2));
-			binder.Bind<IDummy>().ToSingle<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
-			binder.Bind<IDummy>().ToSingle<Dummy2>().When("Boba");
+			binder.Bind<Dummy1>().ToSingleton().WhenInjectedInto(typeof(Dummy2));
+			binder.Bind<IDummy>().ToSingleton<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
+			binder.Bind<IDummy>().ToSingleton<Dummy2>().When("Boba");
 
 			var instance = binder.Resolver.Resolve<Dummy4>();
 
@@ -224,16 +224,16 @@ namespace Pseudo.Tests
 		[Test]
 		public void ResolveAll()
 		{
-			binder.Bind<IDummy>().ToSingle<Dummy1>();
-			binder.Bind<IDummy>().ToSingle<Dummy1>();
-			binder.Bind<IDummy>().ToSingle<Dummy1>();
-			binder.Bind<IDummy>().ToSingle<Dummy2>();
-			binder.Bind<IDummy>().ToSingle<Dummy3>();
-			binder.Bind<IDummy>().ToSingle<Dummy4>();
-			binder.Bind<DummyField>().ToSingle();
-			binder.Bind<DummyProperty>().ToSingle();
-			binder.Bind<DummySubField>().ToSingle();
-			binder.Bind<DummySubProperty>().ToSingle();
+			binder.Bind<IDummy>().ToSingleton<Dummy1>();
+			binder.Bind<IDummy>().ToSingleton<Dummy1>();
+			binder.Bind<IDummy>().ToSingleton<Dummy1>();
+			binder.Bind<IDummy>().ToSingleton<Dummy2>();
+			binder.Bind<IDummy>().ToSingleton<Dummy3>();
+			binder.Bind<IDummy>().ToSingleton<Dummy4>();
+			binder.Bind<DummyField>().ToSingleton();
+			binder.Bind<DummyProperty>().ToSingleton();
+			binder.Bind<DummySubField>().ToSingleton();
+			binder.Bind<DummySubProperty>().ToSingleton();
 
 			var dummies1 = binder.Resolver.ResolveAll<IDummy>();
 			var dummies2 = binder.Resolver.ResolveAll<IDummy>();

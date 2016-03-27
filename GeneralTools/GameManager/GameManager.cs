@@ -88,6 +88,8 @@ namespace Pseudo.Internal
 				yield return null;
 
 			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
 
 			// Fade Out
 			if (FadeSettings.Canvas != null && FadeSettings.Image != null)

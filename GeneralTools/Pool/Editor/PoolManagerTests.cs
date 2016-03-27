@@ -111,15 +111,15 @@ namespace Pseudo.Tests
 
 			Received.InOrder(() =>
 			{
-				reference.OnPrePoolSettersInitialize();
-				reference.OnPostPoolSettersInitialize(null);
+				reference.OnPrePoolFieldsInitialize(initializer);
+				reference.OnPostPoolFieldsInitialize(initializer);
 				reference.OnPrePoolInitialize();
 				reference.OnPostPoolInitialize();
 			});
 		}
 
 		[Serializable]
-		public class DummyPoolable : IPoolSettersInitializable, IPoolInitializable
+		public class DummyPoolable : IPoolFieldsInitializable, IPoolInitializable
 		{
 			public float Value1;
 			public string Value2;
@@ -141,9 +141,9 @@ namespace Pseudo.Tests
 
 			public void OnPostPoolInitialize() { }
 
-			public void OnPrePoolSettersInitialize() { }
+			public void OnPrePoolFieldsInitialize(IFieldInitializer initializer) { }
 
-			public void OnPostPoolSettersInitialize(List<IPoolSetter> setters) { }
+			public void OnPostPoolFieldsInitialize(IFieldInitializer initializer) { }
 		}
 
 		public class DummyScriptable : ScriptableObject { }

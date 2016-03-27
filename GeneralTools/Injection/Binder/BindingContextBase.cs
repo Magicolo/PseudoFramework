@@ -21,26 +21,26 @@ namespace Pseudo.Internal.Injection
 			this.resolver = resolver;
 		}
 
-		public virtual IBindingCondition ToSingle()
+		public virtual IBindingCondition ToSingleton()
 		{
-			return ToSingle(contractType);
+			return ToSingleton(contractType);
 		}
 
-		public virtual IBindingCondition ToSingle(Type concreteType)
+		public virtual IBindingCondition ToSingleton(Type concreteType)
 		{
 			Assert.IsNotNull(concreteType);
 			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
 			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
 
-			return ToSingleMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
+			return ToSingletonMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
 		}
 
-		public virtual IBindingCondition ToSinglePrefab(UnityEngine.Object prefab)
+		public virtual IBindingCondition ToSingletonPrefab(UnityEngine.Object prefab)
 		{
 			Assert.IsNotNull(prefab);
 			Assert.IsTrue(contractType.IsAssignableFrom(prefab.GetType()));
 
-			return ToSingleMethod(c =>
+			return ToSingletonMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
 				c.Binder.Injector.Inject(instance);
@@ -49,11 +49,11 @@ namespace Pseudo.Internal.Injection
 			});
 		}
 
-		public virtual IBindingCondition ToSinglePrefab(GameObject prefab)
+		public virtual IBindingCondition ToSingletonPrefab(GameObject prefab)
 		{
 			Assert.IsNotNull(prefab);
 
-			return ToSingleMethod(c =>
+			return ToSingletonMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
 				c.Binder.Injector.Inject(instance, true);
@@ -62,7 +62,7 @@ namespace Pseudo.Internal.Injection
 			});
 		}
 
-		public virtual IBindingCondition ToSingleMethod(InjectionMethod<object> method)
+		public virtual IBindingCondition ToSingletonMethod(InjectionMethod<object> method)
 		{
 			Assert.IsNotNull(method);
 
@@ -123,7 +123,7 @@ namespace Pseudo.Internal.Injection
 			Assert.IsNotNull(instance);
 			Assert.IsTrue(contractType.IsAssignableFrom(instance.GetType()));
 
-			return ToSingleMethod(c => instance);
+			return ToSingletonMethod(c => instance);
 		}
 
 		public virtual IBindingCondition ToFactory(Type factoryType)
@@ -131,7 +131,7 @@ namespace Pseudo.Internal.Injection
 			Assert.IsNotNull(factoryType);
 			Assert.IsTrue(typeof(IFactory).IsAssignableFrom(factoryType));
 
-			binder.Bind(factoryType).ToSingle();
+			binder.Bind(factoryType).ToSingleton();
 
 			return ToTransientMethod(c => ((IFactory)c.Binder.Resolver.Resolve(factoryType)).Create());
 
@@ -151,19 +151,19 @@ namespace Pseudo.Internal.Injection
 	{
 		protected BindingContextBase(Binder binder, Resolver resolver) : base(typeof(TContract), binder, resolver) { }
 
-		public virtual IBindingCondition ToSingle<TConcrete>() where TConcrete : class, TContract
+		public virtual IBindingCondition ToSingleton<TConcrete>() where TConcrete : class, TContract
 		{
-			return base.ToSingle(typeof(TConcrete));
+			return base.ToSingleton(typeof(TConcrete));
 		}
 
-		public virtual IBindingCondition ToSinglePrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
+		public virtual IBindingCondition ToSingletonPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
 		{
-			return base.ToSinglePrefab(prefab);
+			return base.ToSingletonPrefab(prefab);
 		}
 
-		public virtual IBindingCondition ToSingleMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
+		public virtual IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
 		{
-			return base.ToSingleMethod(method);
+			return base.ToSingletonMethod(method);
 		}
 
 		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : class, TContract
@@ -188,7 +188,7 @@ namespace Pseudo.Internal.Injection
 
 		public virtual IBindingCondition ToFactory<TFactory>() where TFactory : class, IFactory<TContract>
 		{
-			binder.Bind<TFactory>().ToSingle();
+			binder.Bind<TFactory>().ToSingleton();
 
 			return ToTransientMethod(c => c.Binder.Resolver.Resolve<TFactory>().Create());
 		}

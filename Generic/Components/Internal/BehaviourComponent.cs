@@ -7,11 +7,13 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public class BehaviourComponent : IComponent
+	public class BehaviourComponent : ComponentBase
 	{
 		public EntityBehaviour Behaviour;
 
-		public bool Active { get; set; }
-		public IEntity Entity { get; set; }
+		public BehaviourComponent(EntityBehaviour behaviour)
+		{
+			Behaviour = behaviour;
+		}
 	}
 }

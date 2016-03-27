@@ -142,6 +142,53 @@ namespace Pseudo.Tests
 		}
 		#endregion
 
+		#region Component With Scope
+		[Test]
+		public void GetComponentWithScope()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var entity4 = entityManager.CreateEntity();
+			var component1 = new DummyComponent1();
+			var component2 = new DummyComponent1();
+			var component3 = new DummyComponent1();
+			var component4 = new DummyComponent1();
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+			entity4.AddComponent(component4);
+			entity1.AddChild(entity2);
+			entity1.AddChild(entity4);
+			entity3.SetParent(entity2);
+
+			Assert.That(entity1.GetComponent<DummyComponent1>(HierarchyScope.Local), Is.EqualTo(component1));
+			Assert.That(entity1.GetComponent<DummyComponent1>(HierarchyScope.Children), Is.EqualTo(component2));
+			Assert.That(entity1.GetComponent<DummyComponent1>(HierarchyScope.Parents), Is.Null);
+			Assert.That(entity1.GetComponent<DummyComponent1>(HierarchyScope.Siblings), Is.Null);
+			Assert.That(entity1.GetComponent<DummyComponent1>(HierarchyScope.Global), Is.EqualTo(component1));
+
+			Assert.That(entity2.GetComponent<DummyComponent1>(HierarchyScope.Local), Is.EqualTo(component2));
+			Assert.That(entity2.GetComponent<DummyComponent1>(HierarchyScope.Children), Is.EqualTo(component3));
+			Assert.That(entity2.GetComponent<DummyComponent1>(HierarchyScope.Parents), Is.EqualTo(component1));
+			Assert.That(entity2.GetComponent<DummyComponent1>(HierarchyScope.Siblings), Is.EqualTo(component4));
+			Assert.That(entity2.GetComponent<DummyComponent1>(HierarchyScope.Global), Is.EqualTo(component1));
+
+			Assert.That(entity3.GetComponent<DummyComponent1>(HierarchyScope.Local), Is.EqualTo(component3));
+			Assert.That(entity3.GetComponent<DummyComponent1>(HierarchyScope.Children), Is.Null);
+			Assert.That(entity3.GetComponent<DummyComponent1>(HierarchyScope.Parents), Is.EqualTo(component2));
+			Assert.That(entity3.GetComponent<DummyComponent1>(HierarchyScope.Siblings), Is.Null);
+			Assert.That(entity3.GetComponent<DummyComponent1>(HierarchyScope.Global), Is.EqualTo(component1));
+
+			Assert.That(entity4.GetComponent<DummyComponent1>(HierarchyScope.Local), Is.EqualTo(component4));
+			Assert.That(entity4.GetComponent<DummyComponent1>(HierarchyScope.Children), Is.Null);
+			Assert.That(entity4.GetComponent<DummyComponent1>(HierarchyScope.Parents), Is.EqualTo(component1));
+			Assert.That(entity4.GetComponent<DummyComponent1>(HierarchyScope.Siblings), Is.EqualTo(component2));
+			Assert.That(entity4.GetComponent<DummyComponent1>(HierarchyScope.Global), Is.EqualTo(component1));
+		}
+		#endregion
+
 		#region Group Match
 		void GroupMatchSetup()
 		{
@@ -566,6 +613,38 @@ namespace Pseudo.Tests
 		}
 
 		[Test]
+		public void MessagePropagateLateral()
+		{
+			var entity1 = entityManager.CreateEntity();
+			var entity2 = entityManager.CreateEntity();
+			var entity3 = entityManager.CreateEntity();
+			var component1 = Substitute.For<DummyComponent1>();
+			var component2 = Substitute.For<DummyComponent2>();
+			var component3 = Substitute.For<DummyComponent3>();
+
+			entity1.AddChild(entity2);
+			entity3.SetParent(entity1);
+
+			entity1.AddComponent(component1);
+			entity2.AddComponent(component2);
+			entity3.AddComponent(component3);
+
+			entity2.SendMessage(0, HierarchyScope.Siblings | HierarchyScope.Local);
+			entity3.SendMessage(1, 1, HierarchyScope.Siblings);
+
+			component1.Received(0).MessageNoArgument();
+			component1.Received(0).MessageOneArgument(1);
+			component1.Received(0).OnMessage(0);
+
+			component2.Received(2).MessageNoArgument();
+			component2.Received(1).MessageOneArgument(1);
+			component2.Received(2).OnMessage(0);
+
+			component3.Received(1).MessageNoArgument();
+			component3.Received(0).MessageOneArgument(1);
+		}
+
+		[Test]
 		public void MessagePropagateGlobal()
 		{
 			var entity1 = entityManager.CreateEntity();
@@ -699,11 +778,8 @@ namespace Pseudo.Tests
 		}
 		#endregion
 
-		public class DummyComponent1 : IComponent, IMessageable<int>, IMessageable<string>
+		public class DummyComponent1 : ComponentBase, IMessageable<int>, IMessageable<string>
 		{
-			public bool Active { get; set; }
-			public IEntity Entity { get; set; }
-
 			[Message(0)]
 			public void MessageNoArgument() { }
 			[Message(1)]
@@ -718,11 +794,8 @@ namespace Pseudo.Tests
 			public void OnMessage(string message) { }
 		}
 
-		public class DummyComponent2 : IComponent, IMessageable
+		public class DummyComponent2 : ComponentBase, IMessageable
 		{
-			public bool Active { get; set; }
-			public IEntity Entity { get; set; }
-
 			[Message(0)]
 			public void MessageNoArgument() { }
 			[Message(1)]
@@ -733,11 +806,8 @@ namespace Pseudo.Tests
 			public void OnMessage<TId>(TId message) { }
 		}
 
-		public class DummyComponent3 : IComponent
+		public class DummyComponent3 : ComponentBase
 		{
-			public bool Active { get; set; }
-			public IEntity Entity { get; set; }
-
 			[Message(0)]
 			public void MessageNoArgument() { }
 			[Message(1)]

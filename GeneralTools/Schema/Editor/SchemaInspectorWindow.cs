@@ -11,20 +11,20 @@ namespace Pseudo.Internal
 {
 	public class SchemaInspectorWindow : PEditorWindow<SchemaInspectorWindow>
 	{
-		Schema schema;
+		//Schema schema;
 
-		void OnGUI()
-		{
-		}
+		//void OnGUI()
+		//{
+		//}
 
-		public override void OnSelectionChange()
-		{
-			base.OnSelectionChange();
+		//public override void OnSelectionChange()
+		//{
+		//	base.OnSelectionChange();
 
-			if (Selection.activeObject is Schema)
-				schema = (Schema)Selection.activeObject;
+		//	if (Selection.activeObject is Schema)
+		//		schema = (Schema)Selection.activeObject;
 
-			Repaint();
-		}
+		//	Repaint();
+		//}
 	}
 }

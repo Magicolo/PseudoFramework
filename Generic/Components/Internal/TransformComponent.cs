@@ -8,11 +8,13 @@ using UnityEngine.Assertions;
 
 namespace Pseudo
 {
-	public class TransformComponent : IComponent
+	public class TransformComponent : ComponentBase
 	{
-		public Transform Transform;
+		public readonly Transform Transform;
 
-		public bool Active { get; set; }
-		public IEntity Entity { get; set; }
+		public TransformComponent(Transform transform)
+		{
+			Transform = transform;
+		}
 	}
 }

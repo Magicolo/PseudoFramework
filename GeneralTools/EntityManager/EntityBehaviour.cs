@@ -10,18 +10,13 @@ namespace Pseudo
 {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class EntityBehaviour : PMonoBehaviour, IPoolInitializable, IPoolSettersInitializable
+	public class EntityBehaviour : PMonoBehaviour, ISceneInjectable, IPoolable, IPoolInitializable, IPoolFieldsInitializable
 	{
 		class EntityState
 		{
 			public bool Active;
 			public bool Enabled;
-		}
-
-		class ComponentState
-		{
-			public ComponentBehaviour Component;
-			public bool Enabled;
+			public bool[] ComponentStates;
 		}
 
 		public IEntity Entity
@@ -33,19 +28,45 @@ namespace Pseudo
 			get { return entity.Groups; }
 			set { entity.Groups = value; }
 		}
+		public bool IsRoot
+		{
+			get { return parent == null; }
+		}
 
+		/// <summary>
+		/// Groups that the linked Entity will have.
+		/// </summary>
 		[SerializeField]
 		EntityGroups groups = null;
+		/// <summary>
+		/// Needed to determine if EntityBehaviour is the root of its hierarchy.
+		/// </summary>
+		[NonSerialized, DoNotInitialize]
+		EntityBehaviour parent;
+		/// <summary>
+		/// Needed to build the Entity hierachy.
+		/// Initialize content because pool will start initializing from root.
+		/// </summary>
 		[NonSerialized, InitializeContent]
 		EntityBehaviour[] children;
-		[InitializeContent]
+		/// <summary>
+		/// Default components.
+		/// No need to initialize because they are immutable.
+		/// </summary>
+		[DoNotInitialize]
 		IComponent[] components;
+		/// <summary>
+		/// Cached components on the same GameObject.
+		/// Initialize their content to reset their state when pooled.
+		/// </summary>
 		[InitializeContent]
 		ComponentBehaviour[] componentBehaviours;
+		/// <summary>
+		/// Some information about the initial state of the EntityBehaviour and its components.
+		/// Used to reset the EntityBehaviour and its components to their initial state.
+		/// </summary>
 		[DoNotInitialize]
-		EntityState entityState;
-		[DoNotInitialize]
-		ComponentState[] componentStates;
+		EntityState initialState;
 
 		IEntityManager entityManager;
 		IEntity entity;
@@ -64,62 +85,12 @@ namespace Pseudo
 
 		void OnDestroy()
 		{
-			RecycleEntity();
+			Recycle(false);
 		}
 
-		[Inject]
 		public void Initialize(IEntityManager entityManager, IBinder binder)
 		{
-			this.entityManager = entityManager;
-
-			GatherChildren();
-			GatherComponents();
-
-			InitializeChildren(entityManager, binder);
-			InitializeComponents(binder);
-			CreateEntity();
-		}
-
-		public override void OnCreate()
-		{
-			base.OnCreate();
-
-			GatherChildren();
-			GatherComponents();
-
-			for (int i = 0; i < children.Length; i++)
-				children[i].OnCreate();
-
-			// Create components bottom to top
-			for (int i = 0; i < componentBehaviours.Length; i++)
-			{
-				var component = componentBehaviours[i];
-				var poolable = component as IPoolable;
-
-				if (poolable != null)
-					poolable.OnCreate();
-			}
-		}
-
-		public override void OnRecycle()
-		{
-			base.OnRecycle();
-
-			// Recycle components top to bottom
-			for (int i = 0; i < componentBehaviours.Length; i++)
-			{
-				var component = componentBehaviours[i];
-				var poolable = component as IPoolable;
-
-				if (poolable != null)
-					poolable.OnRecycle();
-			}
-
-			for (int i = 0; i < children.Length; i++)
-				children[i].OnRecycle();
-
-			RecycleEntity();
-			ResetStates();
+			Initialize(entityManager, binder, true);
 		}
 
 		void CreateEntity()
@@ -163,64 +134,87 @@ namespace Pseudo
 			entity = null;
 		}
 
-		void GatherChildren()
+		void Initialize(IEntityManager entityManager, IBinder binder, bool inject, bool fromRoot = false)
+		{
+			this.entityManager = entityManager;
+
+			InitializeHierarchyIfNeeded();
+			InitializeComponentsIfNeeded();
+
+			if (inject)
+			{
+				for (int i = 0; i < componentBehaviours.Length; i++)
+					binder.Injector.Inject(componentBehaviours[i]);
+			}
+
+			// Initialize children only if this call comes from a root EntityBehaviour to ensure proper initialization of the Entity hierarchy.
+			if (fromRoot || IsRoot)
+			{
+				// Initialize bottom up
+				for (int i = 0; i < children.Length; i++)
+					children[i].Initialize(entityManager, binder, inject, true);
+
+				CreateEntity();
+			}
+		}
+
+		void InitializeHierarchyIfNeeded()
 		{
 			if (children != null)
 				return;
 
+			parent = CachedGameObject.GetComponentInParent<EntityBehaviour>(true);
 			var childList = new List<EntityBehaviour>();
 			PopulateChildren(CachedTransform, childList);
 			children = childList.ToArray();
-			entityState = new EntityState { Active = CachedGameObject.activeSelf, Enabled = enabled };
 		}
 
-		void GatherComponents()
+		void InitializeComponentsIfNeeded()
 		{
 			if (components != null && componentBehaviours != null)
 				return;
 
 			components = new IComponent[]
 			{
-				new TransformComponent { Transform = CachedTransform },
-				new GameObjectComponent { GameObject = CachedGameObject },
-				new BehaviourComponent {Behaviour = this }
+				new TransformComponent(CachedTransform),
+				new GameObjectComponent(CachedGameObject),
+				new BehaviourComponent(this)
 			};
 
 			componentBehaviours = GetComponents<ComponentBehaviour>();
-			componentStates = new ComponentState[componentBehaviours.Length];
-
-			for (int i = 0; i < componentBehaviours.Length; i++)
-			{
-				var component = componentBehaviours[i];
-				componentStates[i] = new ComponentState { Component = component, Enabled = component.enabled };
-			}
+			SaveInitialState();
 		}
 
-		void InitializeChildren(IEntityManager entityManager, IBinder binder)
+		void Recycle(bool resetState)
 		{
+			// Recycle from bottom to top
 			for (int i = 0; i < children.Length; i++)
-				children[i].Initialize(entityManager, binder);
+				children[i].Recycle(resetState);
+
+			RecycleEntity();
+
+			if (resetState)
+				ResetToInitialState();
 		}
 
-		void InitializeComponents(IBinder binder)
+		void SaveInitialState()
 		{
-			if (binder != null)
+			initialState = new EntityState
 			{
-				for (int i = 0; i < componentBehaviours.Length; i++)
-					binder.Injector.Inject(componentBehaviours[i]);
-			}
+				Active = CachedGameObject.activeSelf,
+				Enabled = enabled,
+				ComponentStates = componentBehaviours.Convert(c => c.enabled)
+			};
+
 		}
 
-		void ResetStates()
+		void ResetToInitialState()
 		{
-			CachedGameObject.SetActive(entityState.Active);
-			enabled = entityState.Enabled;
+			CachedGameObject.SetActive(initialState.Active);
+			enabled = initialState.Enabled;
 
-			for (int i = 0; i < componentStates.Length; i++)
-			{
-				var componentState = componentStates[i];
-				componentState.Component.enabled = componentState.Enabled;
-			}
+			for (int i = 0; i < initialState.ComponentStates.Length; i++)
+				componentBehaviours[i].enabled = initialState.ComponentStates[i];
 		}
 
 		void PopulateChildren(Transform parent, List<EntityBehaviour> entities)
@@ -237,20 +231,34 @@ namespace Pseudo
 			}
 		}
 
+		void ISceneInjectable.OnPreSceneInject(IBinder binder) { }
+
+		void ISceneInjectable.OnPostSceneInject(IBinder binder)
+		{
+			Initialize(binder.Resolver.Resolve<IEntityManager>(), binder, false);
+		}
+
+		void IPoolable.OnCreate() { }
+
+		void IPoolable.OnRecycle()
+		{
+			Recycle(true);
+		}
+
 		void IPoolInitializable.OnPrePoolInitialize()
 		{
-			GatherChildren();
-			GatherComponents();
+			InitializeHierarchyIfNeeded();
+			InitializeComponentsIfNeeded();
 		}
 
 		void IPoolInitializable.OnPostPoolInitialize() { }
 
-		void IPoolSettersInitializable.OnPrePoolSettersInitialize()
+		void IPoolFieldsInitializable.OnPrePoolFieldsInitialize(IFieldInitializer initializer)
 		{
-			GatherChildren();
-			GatherComponents();
+			InitializeHierarchyIfNeeded();
+			InitializeComponentsIfNeeded();
 		}
 
-		void IPoolSettersInitializable.OnPostPoolSettersInitialize(List<IPoolSetter> setters) { }
+		void IPoolFieldsInitializable.OnPostPoolFieldsInitialize(IFieldInitializer initializer) { }
 	}
 }

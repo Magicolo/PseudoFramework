@@ -14,9 +14,9 @@ namespace Pseudo.Internal.Communication
 		static readonly Dictionary<MethodInfo, object[]> methodToAttributes = new Dictionary<MethodInfo, object[]>();
 		static readonly Dictionary<MethodInfo, Type> methodToActionType = new Dictionary<MethodInfo, Type>();
 
-		public static Delegate CreateMethod<TId>(object dispatcher, TId identifier)
+		public static Delegate CreateMethod<TId>(object target, TId identifier)
 		{
-			var method = GetValidMethod(dispatcher.GetType(), identifier);
+			var method = GetValidMethod(target.GetType(), identifier);
 
 			if (method == null)
 				return null;
@@ -26,7 +26,7 @@ namespace Pseudo.Internal.Communication
 			if (actionType == null)
 				return null;
 
-			return Delegate.CreateDelegate(actionType, dispatcher, method);
+			return Delegate.CreateDelegate(actionType, target, method);
 		}
 
 		static MethodInfo GetValidMethod<TId>(Type type, TId identifier)

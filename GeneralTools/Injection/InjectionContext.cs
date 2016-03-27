@@ -20,8 +20,6 @@ namespace Pseudo
 			Method = 1 << 3 | Member,
 			Constructor = 1 << 4 | Member,
 			Parameter = 1 << 5,
-			MethodParameter = 1 << 6 | Method | Parameter,
-			ConstructorParameter = 1 << 7 | Constructor | Parameter
 		}
 
 		public IBinder Binder;

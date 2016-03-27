@@ -17,17 +17,17 @@ namespace Pseudo
 		TResult Create();
 	}
 
-	public interface IFactory<TArg, out TResult>
+	public interface IFactory<in TArg, out TResult>
 	{
 		TResult Create(TArg argument);
 	}
 
-	public interface IFactory<TArg1, TArg2, out TResult>
+	public interface IFactory<in TArg1, in TArg2, out TResult>
 	{
 		TResult Create(TArg1 argument, TArg2 argument2);
 	}
 
-	public interface IFactory<TArg1, TArg2, TArg3, out TResult>
+	public interface IFactory<in TArg1, in TArg2, in TArg3, out TResult>
 	{
 		TResult Create(TArg1 argument, TArg2 argument2, TArg3 argument3);
 	}

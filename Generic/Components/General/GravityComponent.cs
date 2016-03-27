@@ -55,9 +55,10 @@ namespace Pseudo
 			cachedRigidbody2D = new Lazy<Rigidbody2D>(GetComponent<Rigidbody2D>);
 		}
 
-		[Message(ComponentMessages.OnAdded)]
-		void OnAdded()
+		public override void OnAdded()
 		{
+			base.OnAdded();
+
 			gravity.Reset();
 		}
 

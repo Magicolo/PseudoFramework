@@ -21,8 +21,7 @@ namespace Pseudo.Internal.Pool
 
 		public static readonly List<Action> ToUpdate = new List<Action>();
 		public static PoolJanitor Janitor { get { return cachedJanitor.Value; } }
-		public static GameObject GameObject { get { return Janitor.CachedGameObject; } }
-		public static Transform Transform { get { return Janitor.CachedTransform; } }
+		public static Transform Transform { get { return Janitor.transform; } }
 
 		static readonly Lazy<PoolJanitor> cachedJanitor = new Lazy<PoolJanitor>(() =>
 		{

@@ -30,6 +30,11 @@ namespace Pseudo
 			return interfaceType.IsAssignableFrom(type) || Array.Exists(type.GetInterfaces(), t => t.IsGenericType && t.GetGenericTypeDefinition() == interfaceType);
 		}
 
+		public static bool Is<T>(this Type type)
+		{
+			return type.Is(typeof(T));
+		}
+
 		public static bool Is(this Type type, Type otherType, params Type[] genericArguments)
 		{
 			if (genericArguments.Length > 0 && otherType.IsGenericType)

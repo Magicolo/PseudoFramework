@@ -206,10 +206,8 @@ namespace Pseudo
 			UpdateFogOfWar = true;
 		}
 
-		protected override void Start()
+		void Start()
 		{
-			base.Start();
-
 			UpdateFogOfWar = true;
 			StartCoroutine(UpdateRoutine());
 		}

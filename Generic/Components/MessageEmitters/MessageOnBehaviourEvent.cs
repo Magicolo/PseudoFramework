@@ -16,20 +16,19 @@ namespace Pseudo
 		OnApplicationPause = 1 << 2,
 		OnBecameVisible = 1 << 3,
 		OnBecameInvisible = 1 << 4,
-		OnLevelWasLoaded = 1 << 5,
-		OnBeforeTransformParentChanged = 1 << 6,
-		OnTransformParentChanged = 1 << 7,
-		OnTransformChildrenChanged = 1 << 8,
-		OnRectTransformRemoved = 1 << 9,
-		OnRectTransformDimensionsChange = 1 << 10,
-		OnMouseUpAsButton = 1 << 11,
-		OnMouseUp = 1 << 12,
-		OnMouseOver = 1 << 13,
-		OnMouseExit = 1 << 14,
-		OnMouseEnter = 1 << 15,
-		OnMouseDrag = 1 << 16,
-		OnMouseDown = 1 << 17,
-		OnCanvasGroupChanged = 1 << 18,
+		OnBeforeTransformParentChanged = 1 << 5,
+		OnTransformParentChanged = 1 << 6,
+		OnTransformChildrenChanged = 1 << 7,
+		OnRectTransformRemoved = 1 << 8,
+		OnRectTransformDimensionsChange = 1 << 9,
+		OnMouseUpAsButton = 1 << 10,
+		OnMouseUp = 1 << 11,
+		OnMouseOver = 1 << 12,
+		OnMouseExit = 1 << 13,
+		OnMouseEnter = 1 << 14,
+		OnMouseDrag = 1 << 15,
+		OnMouseDown = 1 << 16,
+		OnCanvasGroupChanged = 1 << 17,
 	}
 
 	public class MessageOnBehaviourEvent : ComponentBehaviour
@@ -83,11 +82,6 @@ namespace Pseudo
 		void OnBecameInvisible()
 		{
 			SendMessage(BehaviourEvents.OnBecameInvisible);
-		}
-
-		void OnLevelWasLoaded(int level)
-		{
-			SendMessage(BehaviourEvents.OnLevelWasLoaded, level);
 		}
 
 		void OnBeforeTransformParentChanged()

@@ -16,6 +16,12 @@ namespace Pseudo.Internal.Pool
 		{
 			this.copier = copier;
 			this.source = source;
+
+			if (source is IPoolFieldsInitializable)
+			{
+				((IPoolFieldsInitializable)source).OnPrePoolFieldsInitialize(this);
+				((IPoolFieldsInitializable)source).OnPostPoolFieldsInitialize(this);
+			}
 		}
 
 		public void InitializeFields(object instance)
