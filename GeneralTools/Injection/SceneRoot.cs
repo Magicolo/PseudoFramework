@@ -11,6 +11,11 @@ namespace Pseudo
 {
 	public class SceneRoot : RootBase<SceneRoot>
 	{
+		public override void InjectAll()
+		{
+			Inject(SceneUtility.FindComponents<MonoBehaviour>(gameObject.scene));
+		}
+
 		protected override IBinder CreateBinder()
 		{
 			InitializeGlobalRoot();
@@ -18,9 +23,11 @@ namespace Pseudo
 			return new Binder(GlobalRoot.Instance == null ? null : GlobalRoot.Instance.Binder);
 		}
 
-		void Start()
+		protected override void Awake()
 		{
-			InjectAll();
+			base.Awake();
+
+			StartCoroutine(InjectionRoutine());
 		}
 
 		void Reset()
@@ -37,6 +44,14 @@ namespace Pseudo
 				if (root != null)
 					Instantiate(root);
 			}
+		}
+
+		IEnumerator InjectionRoutine()
+		{
+			while (gameObject != null && !gameObject.scene.isLoaded)
+				yield return null;
+
+			InjectAll();
 		}
 	}
 }

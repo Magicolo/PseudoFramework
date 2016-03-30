@@ -240,9 +240,9 @@ namespace Pseudo.Tests
 
 			Assert.IsNotNull(dummies1);
 			Assert.IsNotNull(dummies2);
-			Assert.That(dummies1.Length, Is.EqualTo(6));
-			Assert.That(dummies2.Length, Is.EqualTo(6));
-			Assert.That(dummies1.ContentEquals(dummies2));
+			Assert.That(dummies1.Count(), Is.EqualTo(6));
+			Assert.That(dummies2.Count(), Is.EqualTo(6));
+			Assert.That(dummies1.SequenceEqual(dummies2));
 		}
 
 		public class Dummy1 : IDummy

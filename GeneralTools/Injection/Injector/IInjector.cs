@@ -12,7 +12,7 @@ namespace Pseudo
 		IBinder Binder { get; }
 
 		void Inject(object instance);
+		void Inject(params object[] instances);
 		void Inject(InjectionContext context);
-		void Inject(GameObject instance, bool recursive = false);
 	}
 }

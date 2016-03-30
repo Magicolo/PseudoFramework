@@ -26,19 +26,37 @@ namespace Pseudo
 			}
 		}
 
-		public static Type[] GetSubclasses(Type baseType)
+		public static IEnumerable<Type> GetBaseTypes(Type type, bool includeSelf = true, bool includeInterfaces = true)
 		{
-			return AllTypes.Where(t => t.IsSubclassOf(baseType)).ToArray();
+			var types = new HashSet<Type>();
+			var baseType = includeSelf ? type : type.BaseType;
+
+			while (baseType != null)
+			{
+				types.Add(baseType);
+
+				if (includeInterfaces)
+				{
+					var interfaces = baseType.GetInterfaces();
+
+					for (int i = 0; i < interfaces.Length; i++)
+						types.Add(interfaces[i]);
+				}
+
+				baseType = baseType.BaseType;
+			}
+
+			return types;
 		}
 
-		public static Type[] GetAssignableTypes(Type baseType, bool includeSelf = true)
+		public static IEnumerable<Type> GetAssignableTypes(Type baseType, bool includeSelf = true)
 		{
-			return AllTypes.Where(t => (includeSelf || t != baseType) && baseType.IsAssignableFrom(t)).ToArray();
+			return AllTypes.Where(t => (includeSelf || t != baseType) && baseType.IsAssignableFrom(t));
 		}
 
-		public static Type[] GetDefinedTypes(Type attributeType)
+		public static IEnumerable<Type> GetDefinedTypes(Type attributeType)
 		{
-			return AllTypes.Where(t => t.IsDefined(attributeType, true)).ToArray();
+			return AllTypes.Where(t => t.IsDefined(attributeType, true));
 		}
 
 		public static Type FindType(Predicate<Type> match)
@@ -46,9 +64,9 @@ namespace Pseudo
 			return Array.Find(AllTypes, match);
 		}
 
-		public static Type[] FindTypes(Predicate<Type> match)
+		public static IEnumerable<Type> FindTypes(Predicate<Type> match)
 		{
-			return AllTypes.Where(t => match(t)).ToArray();
+			return AllTypes.Where(t => match(t));
 		}
 
 		public static object GetDefaultValue(Type type)

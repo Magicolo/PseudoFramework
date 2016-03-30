@@ -13,12 +13,12 @@ namespace Pseudo
 	{
 		protected override Vector3 GetGravity()
 		{
-			return GravityManager.GetGravity(channel);
+			return GravityManager.GetChannel(channel).Gravity;
 		}
 
 		protected override Vector2 GetGravity2D()
 		{
-			return GravityManager.GetGravity2D(channel);
+			return GravityManager.GetChannel(channel).Gravity2D;
 		}
 	}
 }

@@ -30,6 +30,5 @@ namespace Pseudo
 		void UnbindAll();
 		bool HasBinding(Type contractType);
 		bool HasBinding<TContract>();
-		void Install(IBindingInstaller installer);
 	}
 }

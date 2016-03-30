@@ -17,7 +17,7 @@ namespace Pseudo
 
 		public EnumFlagsAttribute(string enumTypeName)
 		{
-			EnumType = Array.Find(TypeUtility.GetAssignableTypes(typeof(Enum)), type => type.Name.EndsWith(enumTypeName));
+			EnumType = TypeUtility.FindType(t => t.Is<Enum>() && t.Name.EndsWith(enumTypeName));
 		}
 	}
 }

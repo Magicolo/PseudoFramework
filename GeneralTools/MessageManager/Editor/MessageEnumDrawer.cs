@@ -61,7 +61,7 @@ namespace Pseudo.Internal.Editor
 		[UnityEditor.Callbacks.DidReloadScripts]
 		static void InitializeEnumValues()
 		{
-			enumTypes = TypeUtility.GetAssignableTypes(typeof(Enum), false);
+			enumTypes = TypeUtility.GetAssignableTypes(typeof(Enum), false).ToArray();
 
 			var enumValueList = new List<Enum>();
 			var enumValuePathList = new List<GUIContent>();

@@ -20,7 +20,7 @@ namespace Pseudo.Internal
 			for (int i = 0; i < Inputs.Length; i++)
 			{
 				var playerInput = Instantiate(Inputs[i]);
-				playerInput.CachedTransform.parent = transform;
+				playerInput.transform.parent = transform;
 				AddInput(playerInput);
 
 				if (playerInput.Player != Players.None)

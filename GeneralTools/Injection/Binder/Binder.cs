@@ -132,10 +132,5 @@ namespace Pseudo.Internal.Injection
 		{
 			return HasBinding(typeof(TContract));
 		}
-
-		public void Install(IBindingInstaller installer)
-		{
-			installer.Install(this);
-		}
 	}
 }

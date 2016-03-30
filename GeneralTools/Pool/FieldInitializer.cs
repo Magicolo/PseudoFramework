@@ -34,12 +34,16 @@ namespace Pseudo.Internal.Pool
 		static IPoolSetter[] GetSetters(object instance, List<object> toIgnore)
 		{
 			var type = instance.GetType();
-			var allFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			var setters = new List<IPoolSetter>(allFields.Length);
+			var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
+				.Concat(TypeUtility.GetBaseTypes(type) // Need to recover the private members from base types.
+				.SelectMany(t => t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
+				.Where(f => f.IsPrivate))
+				.ToArray();
+			var setters = new List<IPoolSetter>(fields.Length);
 
-			for (int i = 0; i < allFields.Length; i++)
+			for (int i = 0; i < fields.Length; i++)
 			{
-				var field = allFields[i];
+				var field = fields[i];
 				var value = field.GetValue(instance);
 
 				if (ShouldInitialize(field, value))

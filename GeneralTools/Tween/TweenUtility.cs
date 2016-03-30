@@ -10,7 +10,7 @@ namespace Pseudo
 {
 	public static class TweenUtility
 	{
-		public enum Ease
+		public enum Ease : byte
 		{
 			Linear,
 			InQuad,
@@ -112,7 +112,7 @@ namespace Pseudo
 
 		public static Func<float, float> GetEaseFunction(Ease ease)
 		{
-			return easeFunctions[(int)ease];
+			return easeFunctions[(byte)ease];
 		}
 
 		public static AnimationCurve ToAnimationCurve(Ease ease, int definition)

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Internal.Time;
 
 namespace Pseudo
 {
@@ -13,17 +14,17 @@ namespace Pseudo
 	{
 		protected override float GetTime()
 		{
-			return TimeManager.GetTime(channel);
+			return TimeManager.GetChannel(channel).Time;
 		}
 
 		protected override float GetDeltaTime()
 		{
-			return TimeManager.GetDeltaTime(channel);
+			return TimeManager.GetChannel(channel).DeltaTime;
 		}
 
 		protected override float GetFixedDeltaTime()
 		{
-			return TimeManager.GetFixedDeltaTime(channel);
+			return TimeManager.GetChannel(channel).FixedDeltaTime;
 		}
 	}
 }

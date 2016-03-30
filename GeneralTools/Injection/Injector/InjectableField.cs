@@ -29,7 +29,7 @@ namespace Pseudo.Internal.Injection
 		{
 			SetupContext(ref context);
 
-			if (!context.Optional || context.Binder.Resolver.CanResolve(context))
+			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
 				field.SetValue(context.Instance, context.Binder.Resolver.Resolve(context));
 		}
 
@@ -37,10 +37,13 @@ namespace Pseudo.Internal.Injection
 		{
 			context.ContextType = InjectionContext.ContextTypes.Field;
 			context.ContractType = field.FieldType;
-			context.DeclaringType = field.DeclaringType;
 			context.Member = field;
-			context.Optional = attribute.Optional;
-			context.Identifier = attribute.Identifier;
+			context.Attribute = attribute;
+		}
+
+		public override string ToString()
+		{
+			return string.Format("{0}({1}.{2})", GetType().Name, field.DeclaringType.Name, field.Name);
 		}
 	}
 }

@@ -31,6 +31,12 @@ namespace Pseudo.Internal.Injection
 			});
 		}
 
+		public void Inject(params object[] instances)
+		{
+			for (int i = 0; i < instances.Length; i++)
+				Inject(instances[i]);
+		}
+
 		public void Inject(InjectionContext context)
 		{
 			Assert.IsNotNull(context.Binder);
@@ -48,24 +54,6 @@ namespace Pseudo.Internal.Injection
 
 			if (isInjectable)
 				((IInjectable)context.Instance).OnPostInject(binder);
-		}
-
-		public void Inject(GameObject gameObject, bool recursive)
-		{
-			Assert.IsNotNull(gameObject);
-
-			var components = gameObject.GetComponents<Component>();
-
-			for (int i = 0; i < components.Length; i++)
-				Inject(components[i]);
-
-			if (recursive)
-			{
-				var transform = gameObject.transform;
-
-				for (int i = 0; i < transform.childCount; i++)
-					Inject(transform.GetChild(i).gameObject, recursive);
-			}
 		}
 	}
 }

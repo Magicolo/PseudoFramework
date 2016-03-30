@@ -9,14 +9,14 @@ using Pseudo.Internal;
 namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/General/Player Input")]
-	public class PlayerInput : PMonoBehaviour
+	public class PlayerInput : MonoBehaviour
 	{
 		public Players Player;
 		public InputAction[] Actions = new InputAction[0];
 
 		protected readonly Dictionary<string, InputAction> actions = new Dictionary<string, InputAction>();
 
-		protected virtual void Awake()
+		void Awake()
 		{
 			for (int i = 0; i < Actions.Length; i++)
 			{

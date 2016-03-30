@@ -7,9 +7,9 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public interface ISceneInjectable
+	public interface IRootInjectable
 	{
-		void OnPreSceneInject(IBinder binder);
-		void OnPostSceneInject(IBinder binder);
+		void OnPreRootInject(IRoot binder);
+		void OnPostRootInject(IRoot binder);
 	}
 }

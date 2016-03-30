@@ -10,7 +10,7 @@ namespace Pseudo.Internal.Cast
 	public class ConvertibleCaster<TIn, TOut> : Caster<TIn, TOut>
 		where TIn : IConvertible
 	{
-		static TypeCode typeCode = Type.GetTypeCode(typeof(TOut));
+		static readonly TypeCode typeCode = Type.GetTypeCode(typeof(TOut));
 
 		public override TOut Cast(TIn value)
 		{

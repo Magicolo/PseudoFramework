@@ -8,6 +8,7 @@ using Pseudo;
 namespace Pseudo.Internal.Cast
 {
 	public class EnumInCaster<TIn, TEnum, TUnder> : Caster<TIn, TEnum>
+		where TUnder : struct, IConvertible, IComparable<TUnder>, IEquatable<TUnder>
 	{
 		static readonly ICaster<TIn, TUnder> caster = Caster<TIn, TUnder>.Default;
 
@@ -18,6 +19,7 @@ namespace Pseudo.Internal.Cast
 	}
 
 	public class EnumOutCaster<TEnum, TUnder, TOut> : Caster<TEnum, TOut>
+		where TUnder : struct, IConvertible, IComparable<TUnder>, IEquatable<TUnder>
 	{
 		static readonly ICaster<TUnder, TOut> caster = Caster<TUnder, TOut>.Default;
 

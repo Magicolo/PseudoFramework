@@ -40,7 +40,7 @@ namespace Pseudo.Internal
 				return;
 			}
 
-			inputCounter += Time.deltaTime;
+			inputCounter += UnityEngine.Time.deltaTime;
 
 			for (int i = validCombos.Count - 1; i >= 0; i--)
 			{

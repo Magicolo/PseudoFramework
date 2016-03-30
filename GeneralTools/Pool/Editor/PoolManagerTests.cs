@@ -63,6 +63,19 @@ namespace Pseudo.Tests
 		}
 
 		[Test]
+		public void InitializeHiddenPrivateFields()
+		{
+			var reference = new DummySub { ValueBase = "base", ValueSub = "sub" };
+			var instance = new DummySub();
+			var initializer = PoolUtility.GetPoolInitializer(reference);
+
+			initializer.InitializeFields(instance);
+
+			Assert.That(instance.ValueBase, Is.EqualTo(reference.ValueBase));
+			Assert.That(instance.ValueSub, Is.EqualTo(reference.ValueSub));
+		}
+
+		[Test]
 		public void InitializeArrayOrList()
 		{
 			var reference = new DummyPoolable { Value6 = new[] { 0, 1, 2 }, Value7 = new List<char> { 'a', 'b', 'c' } };
@@ -157,6 +170,28 @@ namespace Pseudo.Tests
 			{
 				return Value1 == other.Value1 && Value2 == other.Value2;
 			}
+		}
+
+		public class DummySub : DummyBase
+		{
+			public string ValueSub
+			{
+				get { return value; }
+				set { this.value = value; }
+			}
+
+			string value;
+		}
+
+		public class DummyBase
+		{
+			public string ValueBase
+			{
+				get { return value; }
+				set { this.value = value; }
+			}
+
+			string value;
 		}
 	}
 }

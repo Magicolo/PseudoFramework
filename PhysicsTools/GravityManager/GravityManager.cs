@@ -11,7 +11,7 @@ namespace Pseudo
 {
 	public class GravityManager
 	{
-		public enum GravityChannels
+		public enum GravityChannels : byte
 		{
 			Unity,
 			Game,
@@ -28,7 +28,7 @@ namespace Pseudo
 		public static readonly IGravityChannel Player = new GlobalGravityChannel(GravityChannels.Player);
 		public static readonly IGravityChannel Enemy = new GlobalGravityChannel(GravityChannels.Enemy);
 
-		static List<IGravityChannel> channels = new List<IGravityChannel>
+		static IGravityChannel[] channels =
 		{
 			Unity,
 			Game,
@@ -40,37 +40,7 @@ namespace Pseudo
 
 		public static IGravityChannel GetChannel(GravityChannels channel)
 		{
-			return channels[(int)channel];
-		}
-
-		public static Vector3 GetGravity(GravityChannels channel)
-		{
-			return GetChannel(channel).Gravity;
-		}
-
-		public static Vector2 GetGravity2D(GravityChannels channel)
-		{
-			return GetChannel(channel).Gravity2D;
-		}
-
-		public static float GetGravityScale(GravityChannels channel)
-		{
-			return GetChannel(channel).GravityScale;
-		}
-
-		public static void SetGravityScale(GravityChannels channel, float gravityScale)
-		{
-			GetChannel(channel).GravityScale = gravityScale;
-		}
-
-		public static Vector3 GetRotation(GravityChannels channel)
-		{
-			return GetChannel(channel).Rotation;
-		}
-
-		public static void SetRotation(GravityChannels channel, Vector3 rotation)
-		{
-			GetChannel(channel).Rotation = rotation;
+			return channels[(byte)channel];
 		}
 	}
 }

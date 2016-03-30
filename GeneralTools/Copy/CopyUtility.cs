@@ -60,7 +60,10 @@ namespace Pseudo.Internal.Copy
 			if (typeof(ICopyable<>).MakeGenericType(type).IsAssignableFrom(type))
 				copierType = typeof(GenericCopier<>).MakeGenericType(type);
 			else
-				copierType = Array.Find(TypeUtility.GetAssignableTypes(typeof(ICopier<>).MakeGenericType(type), false), t => !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
+			{
+				var iCopyerType = typeof(ICopier<>).MakeGenericType(type);
+				copierType = TypeUtility.FindType(t => t.Is(iCopyerType) && !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
+			}
 
 			if (copierType == null)
 				return null;

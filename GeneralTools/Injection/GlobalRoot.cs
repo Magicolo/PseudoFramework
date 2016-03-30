@@ -10,16 +10,21 @@ namespace Pseudo
 {
 	public class GlobalRoot : RootBase<GlobalRoot>
 	{
-		protected override void Initialize()
+		public override void InjectAll()
 		{
-			base.Initialize();
-
-			DontDestroyOnLoad(gameObject);
+			Inject(FindObjectsOfType<MonoBehaviour>());
 		}
 
 		protected override IBinder CreateBinder()
 		{
 			return new Binder();
+		}
+
+		protected override void Awake()
+		{
+			base.Awake();
+
+			DontDestroyOnLoad(gameObject);
 		}
 
 		void Reset()

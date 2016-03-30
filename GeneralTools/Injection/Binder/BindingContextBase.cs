@@ -56,7 +56,7 @@ namespace Pseudo.Internal.Injection
 			return ToSingletonMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance, true);
+				c.Binder.Injector.Inject(instance.GetComponentsInChildren<MonoBehaviour>());
 
 				return instance.GetComponent(contractType);
 			});
@@ -105,7 +105,7 @@ namespace Pseudo.Internal.Injection
 			return ToTransientMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance, true);
+				c.Binder.Injector.Inject(instance.GetComponentsInChildren<MonoBehaviour>());
 
 				return instance.GetComponent(contractType);
 			});

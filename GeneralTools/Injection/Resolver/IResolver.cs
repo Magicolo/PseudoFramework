@@ -15,8 +15,8 @@ namespace Pseudo
 		object Resolve(Type contractType);
 		object Resolve(InjectionContext context);
 		TContract Resolve<TContract>() where TContract : class;
-		object[] ResolveAll(Type contractType);
-		TContract[] ResolveAll<TContract>() where TContract : class;
+		IEnumerable<object> ResolveAll(Type contractType);
+		IEnumerable<TContract> ResolveAll<TContract>() where TContract : class;
 		bool CanResolve(Type contractType);
 		bool CanResolve(params Type[] contractTypes);
 		bool CanResolve(InjectionContext context);

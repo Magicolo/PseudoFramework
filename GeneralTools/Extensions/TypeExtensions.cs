@@ -66,7 +66,10 @@ namespace Pseudo
 
 		public static bool IsVector(this Type type)
 		{
-			return type == typeof(Vector2) || type == typeof(Vector3) || type == typeof(Vector4);
+			return
+				type == typeof(Vector2) ||
+				type == typeof(Vector3) ||
+				type == typeof(Vector4);
 		}
 
 		public static string GetName(this Type type)

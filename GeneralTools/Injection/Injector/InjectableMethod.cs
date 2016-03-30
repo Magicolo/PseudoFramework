@@ -33,7 +33,7 @@ namespace Pseudo.Internal.Injection
 		{
 			SetupContext(ref context);
 
-			if (!context.Optional || CanInject(ref context))
+			if (!attribute.Optional || CanInject(ref context))
 			{
 				for (int i = 0; i < parameters.Length; i++)
 					arguments[i] = parameters[i].Resolve(context);
@@ -57,10 +57,8 @@ namespace Pseudo.Internal.Injection
 		void SetupContext(ref InjectionContext context)
 		{
 			context.ContextType = InjectionContext.ContextTypes.Method;
-			context.DeclaringType = method.DeclaringType;
 			context.Member = method;
-			context.Optional = attribute.Optional;
-			context.Identifier = attribute.Identifier;
+			context.Attribute = attribute;
 		}
 	}
 }

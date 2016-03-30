@@ -10,7 +10,7 @@ namespace Pseudo
 {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class EntityBehaviour : PMonoBehaviour, ISceneInjectable, IPoolable, IPoolInitializable, IPoolFieldsInitializable
+	public class EntityBehaviour : PMonoBehaviour, IPoolable, IPoolInitializable, IPoolFieldsInitializable
 	{
 		class EntityState
 		{
@@ -88,9 +88,10 @@ namespace Pseudo
 			Recycle(false);
 		}
 
-		public void Initialize(IEntityManager entityManager, IBinder binder)
+		[Inject]
+		public void Initialize(IEntityManager entityManager)
 		{
-			Initialize(entityManager, binder, true);
+			Initialize(entityManager, false);
 		}
 
 		void CreateEntity()
@@ -134,25 +135,19 @@ namespace Pseudo
 			entity = null;
 		}
 
-		void Initialize(IEntityManager entityManager, IBinder binder, bool inject, bool fromRoot = false)
+		void Initialize(IEntityManager entityManager, bool fromRoot)
 		{
 			this.entityManager = entityManager;
 
 			InitializeHierarchyIfNeeded();
 			InitializeComponentsIfNeeded();
 
-			if (inject)
-			{
-				for (int i = 0; i < componentBehaviours.Length; i++)
-					binder.Injector.Inject(componentBehaviours[i]);
-			}
-
 			// Initialize children only if this call comes from a root EntityBehaviour to ensure proper initialization of the Entity hierarchy.
 			if (fromRoot || IsRoot)
 			{
 				// Initialize bottom up
 				for (int i = 0; i < children.Length; i++)
-					children[i].Initialize(entityManager, binder, inject, true);
+					children[i].Initialize(entityManager, true);
 
 				CreateEntity();
 			}
@@ -189,7 +184,12 @@ namespace Pseudo
 		{
 			// Recycle from bottom to top
 			for (int i = 0; i < children.Length; i++)
-				children[i].Recycle(resetState);
+			{
+				var child = children[i];
+
+				if (child != null)
+					child.Recycle(resetState);
+			}
 
 			RecycleEntity();
 
@@ -229,13 +229,6 @@ namespace Pseudo
 				else
 					entities.Add(entity);
 			}
-		}
-
-		void ISceneInjectable.OnPreSceneInject(IBinder binder) { }
-
-		void ISceneInjectable.OnPostSceneInject(IBinder binder)
-		{
-			Initialize(binder.Resolver.Resolve<IEntityManager>(), binder, false);
 		}
 
 		void IPoolable.OnCreate() { }

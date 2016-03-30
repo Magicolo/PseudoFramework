@@ -1,7 +1,5 @@
 ﻿using Pseudo;
 using Pseudo.Internal.Entity;
-using Pseudo.Internal.Communication;
-using Pseudo.Internal.Pool;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,8 +18,6 @@ namespace Pseudo.Internal.Entity
 		readonly EntityGroup entities = new EntityGroup();
 		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
 		readonly MessageManager messageManager;
-		[Inject]
-		readonly IBinder binder = null;
 
 		public EntityManager(MessageManager messageManager)
 		{
@@ -54,7 +50,7 @@ namespace Pseudo.Internal.Entity
 			Assert.IsNotNull(prefab);
 
 			var entity = PrefabPoolManager.Create(prefab);
-			entity.Initialize(this, binder);
+			entity.Initialize(this);
 
 			return entity.Entity;
 		}

@@ -31,7 +31,7 @@ namespace Pseudo.Internal.Injection
 		{
 			SetupContext(ref context);
 
-			if (!context.Optional || context.Binder.Resolver.CanResolve(context))
+			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
 				backingField.SetValue(context.Instance, context.Binder.Resolver.Resolve(context));
 		}
 
@@ -39,10 +39,8 @@ namespace Pseudo.Internal.Injection
 		{
 			context.ContextType = InjectionContext.ContextTypes.Property;
 			context.ContractType = property.PropertyType;
-			context.DeclaringType = property.DeclaringType;
 			context.Member = property;
-			context.Optional = attribute.Optional;
-			context.Identifier = attribute.Identifier;
+			context.Attribute = attribute;
 		}
 	}
 }

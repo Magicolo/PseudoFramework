@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 
-namespace Pseudo.Internal
+namespace Pseudo.Internal.Time
 {
 	public abstract class TimeChannelBase : ITimeChannel
 	{

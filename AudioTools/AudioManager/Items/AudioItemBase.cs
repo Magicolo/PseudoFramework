@@ -188,7 +188,7 @@ namespace Pseudo.Internal.Audio
 
 		protected virtual float GetDeltaTime()
 		{
-			return Application.isPlaying ? Time.unscaledDeltaTime : 0.01f;
+			return Application.isPlaying ? UnityEngine.Time.unscaledDeltaTime : 0.01f;
 		}
 
 		protected void Spatialize()

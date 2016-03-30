@@ -343,16 +343,35 @@ namespace Pseudo.Internal
 		public static bool IsStatic(this PropertyInfo property)
 		{
 			if (property.CanRead)
-				return property.GetGetMethod().IsStatic;
-			else if (property.CanWrite)
-				return property.GetSetMethod().IsStatic;
+				return property.GetGetMethod(true).IsStatic;
 			else
-				return false;
+				return property.GetSetMethod(true).IsStatic;
 		}
 
 		public static bool IsAutoProperty(this PropertyInfo property)
 		{
 			return property.GetBackingField() != null;
+		}
+
+		public static bool IsPrivate(this PropertyInfo property)
+		{
+			return property.GetGetMethod(false) == null && property.GetSetMethod(false) == null;
+		}
+
+		public static bool IsAbstract(this PropertyInfo property)
+		{
+			if (property.CanRead)
+				return property.GetGetMethod(true).IsAbstract;
+			else
+				return property.GetSetMethod(true).IsAbstract;
+		}
+
+		public static bool IsVirtual(this PropertyInfo property)
+		{
+			if (property.CanRead)
+				return property.GetGetMethod(true).IsVirtual;
+			else
+				return property.GetSetMethod(true).IsVirtual;
 		}
 
 		public static FieldInfo GetBackingField(this PropertyInfo property)

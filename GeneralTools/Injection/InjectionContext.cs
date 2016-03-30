@@ -26,15 +26,26 @@ namespace Pseudo
 		public ContextTypes ContextType;
 		public object Instance;
 		public Type ContractType;
-		public Type DeclaringType;
 		public MemberInfo Member;
 		public ParameterInfo Parameter;
-		public bool Optional;
-		public string Identifier;
+		public InjectAttribute Attribute;
+
+		public Type DeclaringType
+		{
+			get { return Member == null ? null : Member.DeclaringType; }
+		}
+		public string Identifier
+		{
+			get { return Attribute == null ? string.Empty : Attribute.Identifier; }
+		}
+		public bool Optional
+		{
+			get { return Attribute == null ? false : Attribute.Optional; }
+		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}(ContextType: {1}, ContractType: {2}, DeclaringType: {3}, Member: {4}, Parameter: {5}, Identifier: {6})", GetType().Name, ContextType, ContractType, DeclaringType, Member, Parameter, Identifier);
+			return string.Format("{0}(ContextType: {1}, ContractType: {2}, Member: {3}, Parameter: {4}, Attribute: {5})", GetType().Name, ContextType, ContractType, Member, Parameter, Attribute);
 		}
 	}
 }

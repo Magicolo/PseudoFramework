@@ -91,6 +91,7 @@ namespace Pseudo
 		}
 
 		static ICaster<TIn, TOut> CreateEnumCaster<TUnder>(bool input)
+			where TUnder : struct, IConvertible, IComparable<TUnder>, IEquatable<TUnder>
 		{
 			if (input)
 				return new EnumOutCaster<TIn, TUnder, TOut>();

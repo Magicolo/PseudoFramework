@@ -45,8 +45,7 @@ namespace Pseudo.Internal.Injection
 			context.ContextType |= InjectionContext.ContextTypes.Parameter;
 			context.ContractType = parameter.ParameterType;
 			context.Parameter = parameter;
-			context.Optional = attribute.Optional;
-			context.Identifier = attribute.Identifier;
+			context.Attribute = attribute;
 		}
 	}
 }

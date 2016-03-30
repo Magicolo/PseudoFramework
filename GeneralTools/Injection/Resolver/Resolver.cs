@@ -55,14 +55,38 @@ namespace Pseudo.Internal.Injection
 			return (TContract)Resolve(typeof(TContract));
 		}
 
-		public object[] ResolveAll(Type contractType)
+		public IEnumerable<object> ResolveAll(Type contractType)
 		{
-			return ResolveAll<object>(contractType);
+			var context = new InjectionContext
+			{
+				Binder = binder,
+				ContractType = contractType
+			};
+
+			if (binder.Parent == null)
+				return GetFactoryDataList(contractType)
+					.Select(data => data.Factory.Create(context));
+			else
+				return GetFactoryDataList(contractType)
+					.Select(data => data.Factory.Create(context))
+					.Concat(binder.Parent.Resolver.ResolveAll(contractType));
 		}
 
-		public TContract[] ResolveAll<TContract>() where TContract : class
+		public IEnumerable<TContract> ResolveAll<TContract>() where TContract : class
 		{
-			return ResolveAll<TContract>(typeof(TContract));
+			var context = new InjectionContext
+			{
+				Binder = binder,
+				ContractType = typeof(TContract)
+			};
+
+			if (binder.Parent == null)
+				return GetFactoryDataList(typeof(TContract))
+					.Select(data => (TContract)data.Factory.Create(context));
+			else
+				return GetFactoryDataList(typeof(TContract))
+					.Select(data => (TContract)data.Factory.Create(context))
+					.Concat(binder.Parent.Resolver.ResolveAll<TContract>());
 		}
 
 		public bool CanResolve(Type contractType)
@@ -103,19 +127,6 @@ namespace Pseudo.Internal.Injection
 		public void UnregisterAll()
 		{
 			typeToFactoryData.Clear();
-		}
-
-		T[] ResolveAll<T>(Type contractType) where T : class
-		{
-			var context = new InjectionContext
-			{
-				Binder = binder,
-				ContractType = contractType
-			};
-
-			return GetFactoryDataList(contractType)
-				.Select(data => (T)data.Factory.Create(context))
-				.ToArray();
 		}
 
 		FactoryData GetValidData(Type contractType)

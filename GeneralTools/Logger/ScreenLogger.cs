@@ -114,7 +114,7 @@ namespace Pseudo.Internal
 
 			while (counter < FadeOutTime && text != null)
 			{
-				counter += Time.deltaTime;
+				counter += UnityEngine.Time.deltaTime;
 				text.SetColor((1 - (counter / FadeOutTime)) * Alpha, Channels.A);
 				yield return null;
 			}

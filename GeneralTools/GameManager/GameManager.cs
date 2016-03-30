@@ -73,7 +73,7 @@ namespace Pseudo.Internal
 			{
 				FadeSettings.Canvas.gameObject.SetActive(true);
 
-				for (float i = 0; i < FadeSettings.Duration; i += Time.unscaledDeltaTime)
+				for (float i = 0; i < FadeSettings.Duration; i += UnityEngine.Time.unscaledDeltaTime)
 				{
 					FadeSettings.Image.color = new Color(0f, 0f, 0f, i / FadeSettings.Duration);
 					yield return null;
@@ -94,7 +94,7 @@ namespace Pseudo.Internal
 			// Fade Out
 			if (FadeSettings.Canvas != null && FadeSettings.Image != null)
 			{
-				for (float i = 0; i < FadeSettings.Duration; i += Time.unscaledDeltaTime)
+				for (float i = 0; i < FadeSettings.Duration; i += UnityEngine.Time.unscaledDeltaTime)
 				{
 					FadeSettings.Image.color = new Color(0f, 0f, 0f, 1f - i / FadeSettings.Duration);
 					yield return null;
