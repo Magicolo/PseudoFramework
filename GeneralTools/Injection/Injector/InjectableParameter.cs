@@ -32,12 +32,14 @@ namespace Pseudo.Internal.Injection
 			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
 				return context.Binder.Resolver.Resolve(context);
 
-			return TypeUtility.GetDefaultValue(parameter.ParameterType);
+			return null;
 		}
 
-		public bool CanResolve(ref InjectionContext context)
+		public bool CanResolve(InjectionContext context)
 		{
-			return context.Binder.Resolver.CanResolve(parameter.ParameterType);
+			SetupContext(ref context);
+
+			return context.Binder.Resolver.CanResolve(context);
 		}
 
 		void SetupContext(ref InjectionContext context)

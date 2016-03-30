@@ -15,13 +15,13 @@ namespace Pseudo
 
 		IBindingContext Bind(Type contractType);
 		IBindingContext Bind(Type contractType, params Type[] baseTypes);
-		IBindingContext<TContract> Bind<TContract>() where TContract : class;
-		IBindingContext<TContract> Bind<TContract, TBase>() where TContract : class, TBase;
-		IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : class, TBase1, TBase2;
-		IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : class, TBase1, TBase2, TBase3;
-		IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes) where TContract : class;
+		IBindingContext<TContract> Bind<TContract>();
+		IBindingContext<TContract> Bind<TContract, TBase>() where TContract : TBase;
+		IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : TBase1, TBase2;
+		IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : TBase1, TBase2, TBase3;
+		IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes);
 		IBindingContext BindAll(Type contractType);
-		IBindingContext<TContract> BindAll<TContract>() where TContract : class;
+		IBindingContext<TContract> BindAll<TContract>();
 		void Unbind(Type contractType);
 		void Unbind(params Type[] contractTypes);
 		void UnbindAll(Type contractType);

@@ -37,7 +37,7 @@ namespace Pseudo.Internal.Injection
 
 		void SetupContext(ref InjectionContext context)
 		{
-			context.ContextType = InjectionContext.ContextTypes.Property;
+			context.ContextType = InjectionContext.ContextTypes.AutoProperty;
 			context.ContractType = property.PropertyType;
 			context.Member = property;
 			context.Attribute = attribute;

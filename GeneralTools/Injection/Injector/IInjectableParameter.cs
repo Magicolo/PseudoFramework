@@ -13,6 +13,6 @@ namespace Pseudo.Internal.Injection
 		ParameterInfo Parameter { get; }
 
 		object Resolve(InjectionContext context);
-		bool CanResolve(ref InjectionContext context);
+		bool CanResolve(InjectionContext context);
 	}
 }

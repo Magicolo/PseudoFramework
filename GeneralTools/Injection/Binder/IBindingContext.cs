@@ -27,16 +27,16 @@ namespace Pseudo
 		IBindingCondition ToFactory(IInjectionFactory factory);
 	}
 
-	public interface IBindingContext<TContract> : IBindingContext where TContract : class
+	public interface IBindingContext<TContract> : IBindingContext
 	{
-		IBindingCondition ToSingleton<TConcrete>() where TConcrete : class, TContract;
+		IBindingCondition ToSingleton<TConcrete>() where TConcrete : TContract;
 		IBindingCondition ToSingletonPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract;
-		IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract;
-		IBindingCondition ToTransient<TConcrete>() where TConcrete : class, TContract;
+		IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract;
+		IBindingCondition ToTransient<TConcrete>() where TConcrete : TContract;
 		IBindingCondition ToTransientPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract;
-		IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract;
-		IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : class, TContract;
-		IBindingCondition ToFactory<TFactory>() where TFactory : class, IFactory<TContract>;
+		IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract;
+		IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : TContract;
+		IBindingCondition ToFactory<TFactory>() where TFactory : IFactory<TContract>;
 		IBindingCondition ToFactory(IFactory<TContract> factory);
 	}
 }

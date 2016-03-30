@@ -14,6 +14,10 @@ namespace Pseudo.Internal.Injection
 		{
 			get { return constructor; }
 		}
+		public IInjectableParameter[] Parameters
+		{
+			get { return parameters; }
+		}
 
 		readonly ConstructorInfo constructor;
 		readonly IInjectableParameter[] parameters;
@@ -42,11 +46,13 @@ namespace Pseudo.Internal.Injection
 			return instance;
 		}
 
-		public bool CanInject(ref InjectionContext context)
+		public bool CanInject(InjectionContext context)
 		{
+			SetupContext(ref context);
+
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				if (!parameters[i].CanResolve(ref context))
+				if (!parameters[i].CanResolve(context))
 					return false;
 			}
 

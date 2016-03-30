@@ -51,7 +51,7 @@ namespace Pseudo.Internal.Injection
 			return new BindingContext(contractType, this, resolver);
 		}
 
-		public IBindingContext<TContract> Bind<TContract>() where TContract : class
+		public IBindingContext<TContract> Bind<TContract>()
 		{
 			return new BindingContext<TContract>(this, resolver);
 		}
@@ -61,39 +61,39 @@ namespace Pseudo.Internal.Injection
 			return new MultipleBindingContext(contractType, baseTypes, this, resolver);
 		}
 
-		public IBindingContext<TContract> Bind<TContract, TBase>() where TContract : class, TBase
+		public IBindingContext<TContract> Bind<TContract, TBase>() where TContract : TBase
 		{
 			return Bind<TContract>(typeof(TBase));
 		}
 
-		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : class, TBase1, TBase2
+		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : TBase1, TBase2
 		{
 			return Bind<TContract>(typeof(TBase1), typeof(TBase2));
 		}
 
-		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : class, TBase1, TBase2, TBase3
+		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : TBase1, TBase2, TBase3
 		{
 			return Bind<TContract>(typeof(TBase1), typeof(TBase2), typeof(TBase3));
 		}
 
-		public IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes) where TContract : class
+		public IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes)
 		{
 			return new MultipleBindingContext<TContract>(baseTypes, this, resolver);
 		}
 
 		public IBindingContext BindAll(Type contractType)
 		{
-			return Bind(contractType, contractType.GetInterfaces());
+			return Bind(contractType, TypeUtility.GetBaseTypes(contractType, false, true).ToArray());
 		}
 
-		public IBindingContext<TContract> BindAll<TContract>() where TContract : class
+		public IBindingContext<TContract> BindAll<TContract>()
 		{
-			return Bind<TContract>(typeof(TContract).GetInterfaces());
+			return Bind<TContract>(TypeUtility.GetBaseTypes(typeof(TContract), false, true).ToArray());
 		}
 
 		public void Unbind(Type contractType)
 		{
-			resolver.Unregister(contractType);
+			resolver.RemoveFactories(contractType);
 		}
 
 		public void Unbind(params Type[] contractTypes)
@@ -120,7 +120,7 @@ namespace Pseudo.Internal.Injection
 
 		public void UnbindAll()
 		{
-			resolver.UnregisterAll();
+			resolver.RemoveAllFactories();
 		}
 
 		public bool HasBinding(Type contractType)

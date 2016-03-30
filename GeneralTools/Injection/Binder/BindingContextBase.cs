@@ -29,7 +29,7 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToSingleton(Type concreteType)
 		{
 			Assert.IsNotNull(concreteType);
-			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
 			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
 
 			return ToSingletonMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
@@ -66,7 +66,7 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new SingletonMethodFactory(contractType, binder, method));
+			return ToFactory(new SingletonMethodFactory<object>(contractType, binder, method));
 		}
 
 		public virtual IBindingCondition ToTransient()
@@ -77,7 +77,7 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToTransient(Type concreteType)
 		{
 			Assert.IsNotNull(concreteType);
-			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
 			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
 
 			return ToTransientMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
@@ -115,7 +115,7 @@ namespace Pseudo.Internal.Injection
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new TransientMethodFactory(contractType, binder, method));
+			return ToFactory(new TransientMethodFactory<object>(contractType, binder, method));
 		}
 
 		public virtual IBindingCondition ToInstance(object instance)
@@ -129,12 +129,11 @@ namespace Pseudo.Internal.Injection
 		public virtual IBindingCondition ToFactory(Type factoryType)
 		{
 			Assert.IsNotNull(factoryType);
-			Assert.IsTrue(typeof(IFactory).IsAssignableFrom(factoryType));
+			Assert.IsTrue(factoryType.Is<IFactory>());
 
 			binder.Bind(factoryType).ToSingleton();
 
 			return ToTransientMethod(c => ((IFactory)c.Binder.Resolver.Resolve(factoryType)).Create());
-
 		}
 
 		public virtual IBindingCondition ToFactory(IFactory factory)
@@ -147,11 +146,11 @@ namespace Pseudo.Internal.Injection
 		public abstract IBindingCondition ToFactory(IInjectionFactory factory);
 	}
 
-	public abstract class BindingContextBase<TContract> : BindingContextBase, IBindingContext<TContract> where TContract : class
+	public abstract class BindingContextBase<TContract> : BindingContextBase, IBindingContext<TContract>
 	{
 		protected BindingContextBase(Binder binder, Resolver resolver) : base(typeof(TContract), binder, resolver) { }
 
-		public virtual IBindingCondition ToSingleton<TConcrete>() where TConcrete : class, TContract
+		public virtual IBindingCondition ToSingleton<TConcrete>() where TConcrete : TContract
 		{
 			return base.ToSingleton(typeof(TConcrete));
 		}
@@ -161,12 +160,14 @@ namespace Pseudo.Internal.Injection
 			return base.ToSingletonPrefab(prefab);
 		}
 
-		public virtual IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
+		public virtual IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
 		{
-			return base.ToSingletonMethod(method);
+			Assert.IsNotNull(method);
+
+			return ToFactory(new SingletonMethodFactory<TConcrete>(contractType, binder, method));
 		}
 
-		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : class, TContract
+		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : TContract
 		{
 			return base.ToTransient(typeof(TConcrete));
 		}
@@ -176,17 +177,19 @@ namespace Pseudo.Internal.Injection
 			return base.ToTransientPrefab(prefab);
 		}
 
-		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : class, TContract
+		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
 		{
-			return base.ToTransientMethod(method);
+			Assert.IsNotNull(method);
+
+			return ToFactory(new TransientMethodFactory<TConcrete>(contractType, binder, method));
 		}
 
-		public virtual IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : class, TContract
+		public virtual IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : TContract
 		{
 			return base.ToInstance(instance);
 		}
 
-		public virtual IBindingCondition ToFactory<TFactory>() where TFactory : class, IFactory<TContract>
+		public virtual IBindingCondition ToFactory<TFactory>() where TFactory : IFactory<TContract>
 		{
 			binder.Bind<TFactory>().ToSingleton();
 

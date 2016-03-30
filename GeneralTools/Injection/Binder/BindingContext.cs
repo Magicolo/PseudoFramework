@@ -16,13 +16,13 @@ namespace Pseudo.Internal.Injection
 			Assert.IsNotNull(factory);
 
 			var data = new FactoryData(factory);
-			resolver.Register(contractType, data);
+			resolver.AddFactory(contractType, data);
 
 			return new BindingCondition(data);
 		}
 	}
 
-	public class BindingContext<TContract> : BindingContextBase<TContract>, IBindingContext<TContract> where TContract : class
+	public class BindingContext<TContract> : BindingContextBase<TContract>, IBindingContext<TContract>
 	{
 		public BindingContext(Binder binder, Resolver resolver) : base(binder, resolver) { }
 

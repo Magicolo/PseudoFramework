@@ -47,7 +47,7 @@ namespace Pseudo.Internal.Injection
 		{
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				if (!parameters[i].CanResolve(ref context))
+				if (!parameters[i].CanResolve(context))
 					return false;
 			}
 

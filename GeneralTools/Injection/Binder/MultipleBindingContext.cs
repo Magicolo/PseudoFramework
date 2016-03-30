@@ -28,7 +28,7 @@ namespace Pseudo.Internal.Injection
 		}
 	}
 
-	public class MultipleBindingContext<TContract> : BindingContextBase<TContract> where TContract : class
+	public class MultipleBindingContext<TContract> : BindingContextBase<TContract>
 	{
 		readonly Type[] baseTypes;
 

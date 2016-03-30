@@ -9,7 +9,7 @@ namespace Pseudo
 {
 	public interface IRootInjectable
 	{
-		void OnPreRootInject(IRoot binder);
-		void OnPostRootInject(IRoot binder);
+		void OnPreRootInject(IRoot root);
+		void OnPostRootInject(IRoot root);
 	}
 }

@@ -27,7 +27,7 @@ namespace Pseudo.Internal.Injection
 			Inject(new InjectionContext
 			{
 				Binder = binder,
-				Instance = instance
+				Instance = instance,
 			});
 		}
 

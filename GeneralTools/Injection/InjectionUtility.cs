@@ -47,17 +47,22 @@ namespace Pseudo.Internal.Injection
 
 		static IInjectableConstructor[] CreateInjectableConstructors(Type type)
 		{
+			var injectableConstructors = new List<IInjectableConstructor>();
 			var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
 			if (constructors.Any(constructorFilter))
-				return constructors
+				injectableConstructors.AddRange(constructors
 					.Where(constructorFilter)
-					.Select(c => CreateInjectableConstructor(c))
-					.ToArray();
+					.Select(c => CreateInjectableConstructor(c)));
 			else
-				return constructors
-					.Select(c => CreateInjectableConstructor(c))
-					.ToArray();
+				injectableConstructors.AddRange(constructors
+					.Select(c => CreateInjectableConstructor(c)));
+
+			// Must be added last to be evaluated after all other constructors.
+			if (type.IsValueType)
+				injectableConstructors.Add(CreateInjectableConstructor(type));
+
+			return injectableConstructors.ToArray();
 		}
 
 		static IInjectableMember[] CreateInjectableMembers(Type type)
@@ -94,6 +99,11 @@ namespace Pseudo.Internal.Injection
 			return new InjectableConstructor(constructor, CreateInjectableParameters(constructor.GetParameters()));
 		}
 
+		static IInjectableConstructor CreateInjectableConstructor(Type valueType)
+		{
+			return new InjectableEmptyStructConstructor(valueType);
+		}
+
 		static IInjectableMember CreateInjectableField(FieldInfo field)
 		{
 			return new InjectableField(field);
@@ -109,7 +119,7 @@ namespace Pseudo.Internal.Injection
 
 		static IInjectableMember CreateInjectableMethod(MethodInfo method)
 		{
-			if (method.GetParameters().Length == 0)
+			if (method.ReturnType == typeof(void) && method.GetParameters().Length == 0)
 				return new InjectableEmptyMethod(method);
 			else
 				return new InjectableMethod(method, CreateInjectableParameters(method.GetParameters()));

@@ -19,7 +19,10 @@ namespace Pseudo
 			Property = 1 << 2 | Member,
 			Method = 1 << 3 | Member,
 			Constructor = 1 << 4 | Member,
-			Parameter = 1 << 5,
+			AutoProperty = 1 << 5 | Property,
+			EmptyMethod = 1 << 6 | Method,
+			EmptyStructConstructor = 1 << 7,
+			Parameter = 1 << 8,
 		}
 
 		public IBinder Binder;

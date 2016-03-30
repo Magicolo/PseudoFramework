@@ -6,13 +6,14 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo
+namespace Pseudo.Internal.Injection
 {
 	public interface IInjectableConstructor
 	{
 		ConstructorInfo Constructor { get; }
+		IInjectableParameter[] Parameters { get; }
 
 		object Inject(InjectionContext context);
-		bool CanInject(ref InjectionContext context);
+		bool CanInject(InjectionContext context);
 	}
 }

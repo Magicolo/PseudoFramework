@@ -7,9 +7,11 @@ using Pseudo;
 
 namespace Pseudo.Internal.Injection
 {
-	public class TransientMethodFactory : MethodFactoryBase
+	public class TransientMethodFactory<TConcrete> : MethodFactoryBase<TConcrete>
 	{
-		public TransientMethodFactory(Type contractType, IBinder binder, InjectionMethod<object> method) : base(contractType, binder, method) { }
+		public TransientMethodFactory(Type contractType, IBinder binder, InjectionMethod<TConcrete> method)
+			: base(contractType, binder, method)
+		{ }
 
 		public override object Create(InjectionContext argument)
 		{

@@ -50,7 +50,7 @@ namespace Pseudo.Internal.Injection
 			throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
 		}
 
-		public TContract Resolve<TContract>() where TContract : class
+		public TContract Resolve<TContract>()
 		{
 			return (TContract)Resolve(typeof(TContract));
 		}
@@ -72,7 +72,7 @@ namespace Pseudo.Internal.Injection
 					.Concat(binder.Parent.Resolver.ResolveAll(contractType));
 		}
 
-		public IEnumerable<TContract> ResolveAll<TContract>() where TContract : class
+		public IEnumerable<TContract> ResolveAll<TContract>()
 		{
 			var context = new InjectionContext
 			{
@@ -114,17 +114,22 @@ namespace Pseudo.Internal.Injection
 				(binder.Parent != null && binder.Parent.Resolver.CanResolve(context));
 		}
 
-		public void Register(Type contractType, FactoryData data)
+		public void AddFactory(Type contractType, FactoryData data)
 		{
 			GetFactoryDataList(contractType).Add(data);
 		}
 
-		public void Unregister(Type contractType)
+		public void RemoveFactory(Type contractType, FactoryData data)
+		{
+			GetFactoryDataList(contractType).Remove(data);
+		}
+
+		public void RemoveFactories(Type contractType)
 		{
 			typeToFactoryData.Remove(contractType);
 		}
 
-		public void UnregisterAll()
+		public void RemoveAllFactories()
 		{
 			typeToFactoryData.Clear();
 		}

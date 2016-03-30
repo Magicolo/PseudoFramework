@@ -136,6 +136,26 @@ namespace Pseudo.Tests
 		}
 
 		[Test]
+		public void BindStruct()
+		{
+			byte b = 1;
+			binder.Bind<Dummy5, IDummy>().ToTransient<Dummy5>();
+			binder.Bind<int>().ToSingleton();
+			binder.Bind<long>().ToInstance(100L);
+			binder.Bind<IConvertible>().ToTransient<float>();
+			binder.Bind<IComparable>().ToTransientMethod(c => b++);
+
+			var instance = binder.Resolver.Resolve<Dummy5>();
+
+			Assert.That(instance.Int, Is.EqualTo(0));
+			Assert.That(instance.Long, Is.EqualTo(100L));
+			Assert.That(instance.Float, Is.EqualTo(0f));
+			Assert.That(instance.Byte1, Is.EqualTo(1));
+			Assert.That(instance.Byte2, Is.EqualTo(2));
+			Assert.That(instance.Byte3, Is.EqualTo(3));
+		}
+
+		[Test]
 		public void InjectionField()
 		{
 			binder.Bind<Dummy1>().ToTransient();
@@ -288,6 +308,26 @@ namespace Pseudo.Tests
 			public IDummy Dummy1;
 			[Inject(optional: true, identifier: "Boba")]
 			public IDummy Dummy2 { get; set; }
+		}
+		public class Dummy5 : IDummy
+		{
+			[Inject]
+			public readonly int Int;
+			[Inject]
+			public readonly long Long;
+			[Inject]
+			public IConvertible Float { get; set; }
+
+			public readonly IComparable Byte1;
+			public readonly IComparable Byte2;
+			public readonly IComparable Byte3;
+
+			public Dummy5(IComparable byte1, IComparable byte2, IComparable byte3)
+			{
+				Byte1 = byte1;
+				Byte2 = byte2;
+				Byte3 = byte3;
+			}
 		}
 		public interface IDummy { }
 		public class DummyField

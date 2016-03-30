@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using UnityEngine.Assertions;
+using System.Runtime.Serialization;
 
 namespace Pseudo.Internal.Injection
 {
@@ -25,7 +26,7 @@ namespace Pseudo.Internal.Injection
 
 		public object Instantiate(Type concreteType)
 		{
-			Assert.IsTrue(concreteType.IsClass && !concreteType.IsAbstract);
+			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
 
 			var context = new InjectionContext { Binder = binder };
 			var constructor = GetValidConstructor(ref context, concreteType);
@@ -39,7 +40,7 @@ namespace Pseudo.Internal.Injection
 			return context.Instance;
 		}
 
-		public T Instantiate<T>() where T : class
+		public T Instantiate<T>()
 		{
 			return (T)Instantiate(typeof(T));
 		}
@@ -52,7 +53,7 @@ namespace Pseudo.Internal.Injection
 			{
 				var constructor = constructors[i];
 
-				if (constructor.CanInject(ref context))
+				if (constructor.CanInject(context))
 					return constructor;
 			}
 

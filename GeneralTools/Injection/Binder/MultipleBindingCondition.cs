@@ -26,7 +26,7 @@ namespace Pseudo.Internal.Injection
 			When(context => context.Identifier == identifier);
 		}
 
-		public void WhenInjectedInto(InjectionContext.ContextTypes contextType)
+		public void When(InjectionContext.ContextTypes contextType)
 		{
 			When(context => (context.ContextType & contextType) != 0);
 		}

@@ -31,6 +31,14 @@ namespace Pseudo
 			var types = new HashSet<Type>();
 			var baseType = includeSelf ? type : type.BaseType;
 
+			if (includeInterfaces)
+			{
+				var interfaces = type.GetInterfaces();
+
+				for (int i = 0; i < interfaces.Length; i++)
+					types.Add(interfaces[i]);
+			}
+
 			while (baseType != null)
 			{
 				types.Add(baseType);

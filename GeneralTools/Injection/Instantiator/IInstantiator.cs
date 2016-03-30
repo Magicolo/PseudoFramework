@@ -12,6 +12,6 @@ namespace Pseudo
 		IBinder Binder { get; }
 
 		object Instantiate(Type concreteType);
-		T Instantiate<T>() where T : class;
+		T Instantiate<T>();
 	}
 }

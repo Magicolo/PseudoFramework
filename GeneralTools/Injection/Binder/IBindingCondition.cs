@@ -11,7 +11,7 @@ namespace Pseudo
 	{
 		void When(Predicate<InjectionContext> condition);
 		void When(string identifier);
-		void WhenInjectedInto(InjectionContext.ContextTypes contextType);
+		void When(InjectionContext.ContextTypes contextType);
 		void WhenInjectedInto(Type declaringType);
 		void WhenInjectedInto(object instance);
 	}
