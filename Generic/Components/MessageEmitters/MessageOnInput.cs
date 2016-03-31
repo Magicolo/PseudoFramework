@@ -10,7 +10,7 @@ using Pseudo.Input;
 
 namespace Pseudo
 {
-	public class MessageOnInput : ComponentBehaviour
+	public class MessageOnInput : ComponentBehaviourBase
 	{
 		public enum TriggerModes
 		{

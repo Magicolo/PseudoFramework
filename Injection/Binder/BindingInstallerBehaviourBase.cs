@@ -8,7 +8,7 @@ using Pseudo.Injection;
 
 namespace Pseudo.Injection
 {
-	public abstract class BindingInstallerBehaviour : MonoBehaviour, IBindingInstaller
+	public abstract class BindingInstallerBehaviourBase : MonoBehaviour, IBindingInstaller
 	{
 		public abstract void Install(IBinder binder);
 	}

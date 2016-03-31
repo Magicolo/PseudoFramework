@@ -27,7 +27,7 @@ namespace Pseudo
 		OnTriggerExit2D = 1 << 12,
 	}
 
-	public class MessageOnPhysicsEvent : ComponentBehaviour
+	public class MessageOnPhysicsEvent : ComponentBehaviourBase
 	{
 		[Serializable]
 		public struct PhysicsMessage

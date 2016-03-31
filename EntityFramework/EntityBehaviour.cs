@@ -60,7 +60,7 @@ namespace Pseudo.EntityFramework
 		/// Initialize their content to reset their state when pooled.
 		/// </summary>
 		[InitializeContent]
-		ComponentBehaviour[] componentBehaviours;
+		ComponentBehaviourBase[] componentBehaviours;
 		/// <summary>
 		/// Some information about the initial state of the EntityBehaviour and its components.
 		/// Used to reset the EntityBehaviour and its components to their initial state.
@@ -176,7 +176,7 @@ namespace Pseudo.EntityFramework
 				new BehaviourComponent(this)
 			};
 
-			componentBehaviours = GetComponents<ComponentBehaviour>();
+			componentBehaviours = GetComponents<ComponentBehaviourBase>();
 			SaveInitialState();
 		}
 

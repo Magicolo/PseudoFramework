@@ -31,7 +31,7 @@ namespace Pseudo
 		OnUpdateSelected = 1 << 16,
 	}
 
-	public class MessageOnUIEvent : ComponentBehaviour, IUIEventHandler
+	public class MessageOnUIEvent : ComponentBehaviourBase, IUIEventHandler
 	{
 		[Serializable]
 		public struct UIMessage

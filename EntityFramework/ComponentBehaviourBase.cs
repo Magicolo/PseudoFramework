@@ -8,7 +8,7 @@ using Pseudo;
 namespace Pseudo.EntityFramework
 {
 	[RequireComponent(typeof(EntityBehaviour))]
-	public abstract class ComponentBehaviour : PMonoBehaviour, IComponent
+	public abstract class ComponentBehaviourBase : PMonoBehaviour, IComponent
 	{
 		public bool Active
 		{

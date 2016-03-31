@@ -10,7 +10,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class RecycleOnMessage : ComponentBehaviour, IMessageable
+	public class RecycleOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		public EntityBehaviour Recycle;
 		public MessageEnum Message;

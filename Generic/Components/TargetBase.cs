@@ -8,7 +8,7 @@ using Pseudo.EntityFramework;
 
 namespace Pseudo
 {
-	public abstract class TargetBase : ComponentBehaviour
+	public abstract class TargetBase : ComponentBehaviourBase
 	{
 		public abstract Vector3 Target { get; }
 		public abstract bool HasTarget { get; }

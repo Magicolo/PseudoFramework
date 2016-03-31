@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Assertions;
 
 namespace Pseudo
 {
@@ -12,18 +13,8 @@ namespace Pseudo
 	{
 		public Type Type
 		{
-			get
-			{
-				if (type == null)
-					Deserialize();
-
-				return type;
-			}
-			set
-			{
-				type = value;
-				typeName = type == null ? null : type.AssemblyQualifiedName;
-			}
+			get { return type; }
+			set { SetType(value); }
 		}
 
 		Type type;
@@ -32,20 +23,30 @@ namespace Pseudo
 
 		public PType(Type type)
 		{
-			Type = type;
+			SetType(type);
 		}
 
-		void Deserialize()
+		void SetType(Type type)
 		{
-			if (!string.IsNullOrEmpty(typeName))
-				type = TypeUtility.GetType(typeName);
+			Assert.IsNotNull(type);
+
+			this.type = type;
+			typeName = type.AssemblyQualifiedName;
+		}
+
+		public override string ToString()
+		{
+			return Convert.ToString(type);
 		}
 
 		void ISerializationCallbackReceiver.OnBeforeSerialize() { }
 
 		void ISerializationCallbackReceiver.OnAfterDeserialize()
 		{
-			Deserialize();
+			if (string.IsNullOrEmpty(typeName))
+				type = null;
+			else
+				type = TypeUtility.GetType(typeName);
 		}
 
 		public static implicit operator Type(PType type)

@@ -32,7 +32,7 @@ namespace Pseudo
 		OnCanvasGroupChanged = 1 << 17,
 	}
 
-	public class MessageOnBehaviourEvent : ComponentBehaviour
+	public class MessageOnBehaviourEvent : ComponentBehaviourBase
 	{
 		[Serializable]
 		public struct BehaviourMessage

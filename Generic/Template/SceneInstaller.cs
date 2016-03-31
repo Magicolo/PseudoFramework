@@ -9,7 +9,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class SceneInstaller : BindingInstallerBehaviour
+	public class SceneInstaller : BindingInstallerBehaviourBase
 	{
 		public Camera MainCamera;
 		public Camera UICamera;

@@ -11,7 +11,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class AudioOnMessage : ComponentBehaviour, IMessageable
+	public class AudioOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		public enum SpatializationModes
 		{

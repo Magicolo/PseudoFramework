@@ -8,7 +8,7 @@ using Pseudo.Injection.Internal;
 
 namespace Pseudo.Injection
 {
-	public class GlobalRoot : RootBehaviour
+	public class GlobalRoot : RootBehaviourBase
 	{
 		public override void InjectAll()
 		{
@@ -20,8 +20,10 @@ namespace Pseudo.Injection
 			return new Binder();
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			DontDestroyOnLoad(gameObject);
 		}
 

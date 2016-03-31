@@ -11,7 +11,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class LoadSceneOnMessage : ComponentBehaviour, IMessageable
+	public class LoadSceneOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		public string Scene;
 		public MessageEnum Message;

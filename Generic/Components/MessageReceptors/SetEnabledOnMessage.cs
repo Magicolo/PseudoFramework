@@ -10,7 +10,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class SetEnabledOnMessage : ComponentBehaviour, IMessageable
+	public class SetEnabledOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		[Serializable]
 		public struct EnabledAction

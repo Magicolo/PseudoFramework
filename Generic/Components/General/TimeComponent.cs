@@ -9,7 +9,7 @@ using Pseudo.Pooling;
 
 namespace Pseudo
 {
-	public class TimeComponent : ComponentBehaviour, ITimeChannel
+	public class TimeComponent : ComponentBehaviourBase, ITimeChannel
 	{
 		public TimeManager.TimeChannels Channel
 		{

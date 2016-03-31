@@ -13,7 +13,7 @@ namespace Pseudo
 {
 	[AddComponentMenu("Pseudo/Physics/Gravity")]
 	[RequireComponent(typeof(TimeComponent))]
-	public class GravityComponent : ComponentBehaviour, IGravityChannel
+	public class GravityComponent : ComponentBehaviourBase, IGravityChannel
 	{
 		public GravityManager.GravityChannels Channel
 		{

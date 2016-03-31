@@ -8,7 +8,7 @@ using Pseudo.EntityFramework;
 
 namespace Pseudo.Physics.Internal
 {
-	public abstract class RaycasterBase : ComponentBehaviour, IRaycaster
+	public abstract class RaycasterBase : ComponentBehaviourBase, IRaycaster
 	{
 		public readonly List<RaycastHit> Hits = new List<RaycastHit>();
 

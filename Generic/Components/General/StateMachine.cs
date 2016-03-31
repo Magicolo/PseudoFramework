@@ -17,7 +17,7 @@ namespace Pseudo
 		OnStateExit
 	}
 
-	public class StateMachine : ComponentBehaviour, IMessageable
+	public class StateMachine : ComponentBehaviourBase, IMessageable
 	{
 		[Serializable]
 		public struct StateData

@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo.Injection
 {
-	public class SceneRoot : RootBehaviour
+	public class SceneRoot : RootBehaviourBase
 	{
 		public override void InjectAll()
 		{
@@ -23,8 +23,10 @@ namespace Pseudo.Injection
 			return new Binder(root == null ? null : root.Binder);
 		}
 
-		void Awake()
+		protected override void Awake()
 		{
+			base.Awake();
+
 			StartCoroutine(InjectionRoutine());
 		}
 

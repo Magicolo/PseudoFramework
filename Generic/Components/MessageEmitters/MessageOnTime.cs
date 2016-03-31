@@ -8,7 +8,7 @@ using Pseudo.EntityFramework;
 
 namespace Pseudo
 {
-	public class MessageOnTime : ComponentBehaviour
+	public class MessageOnTime : ComponentBehaviourBase
 	{
 		public enum TriggerModes
 		{

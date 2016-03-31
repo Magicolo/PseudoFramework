@@ -8,10 +8,10 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo.Injection.Internal
 {
-	public abstract class RootBehaviour : MonoBehaviour, IRoot
+	public abstract class RootBehaviourBase : MonoBehaviour, IRoot
 	{
 		[SerializeField]
-		BindingInstallerBehaviour[] installers;
+		BindingInstallerBehaviourBase[] installers;
 
 		public IBinder Binder
 		{
@@ -44,7 +44,7 @@ namespace Pseudo.Injection.Internal
 			additionnalInstallers.Remove(installer);
 		}
 
-		void Awake()
+		protected virtual void Awake()
 		{
 			binder = CreateBinder();
 			binder.Bind(GetType(), typeof(IRoot)).ToInstance(this);

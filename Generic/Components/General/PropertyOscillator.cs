@@ -12,7 +12,7 @@ using Pseudo.Oscillation.Internal;
 
 namespace Pseudo
 {
-	public class PropertyOscillator : ComponentBehaviour
+	public class PropertyOscillator : ComponentBehaviourBase
 	{
 		[Serializable]
 		public struct OscillationRangeSettings
