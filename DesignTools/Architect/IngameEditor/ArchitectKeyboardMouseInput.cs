@@ -21,9 +21,9 @@ namespace Pseudo
 		{
 			undoInput.Update();
 
-			if (Input.GetMouseButton(0))
+			if (UnityEngine.Input.GetMouseButton(0))
 				architect.HandleLeftMouse();
-			else if (Input.GetMouseButton(1))
+			else if (UnityEngine.Input.GetMouseButton(1))
 				architect.HandlePipette();
 
 			undoInput.Update();
@@ -35,15 +35,15 @@ namespace Pseudo
 
 		private void handleKeyboardShortcut()
 		{
-			if (Input.GetKeyDown(KeyCode.E))
+			if (UnityEngine.Input.GetKeyDown(KeyCode.E))
 				architect.SelectedToolType = ToolFactory.ToolType.Eraser;
-			else if (Input.GetKeyDown(KeyCode.B))
+			else if (UnityEngine.Input.GetKeyDown(KeyCode.B))
 				architect.SelectedToolType = ToolFactory.ToolType.Brush;
-			else if (Input.GetKeyDown(KeyCode.R))
+			else if (UnityEngine.Input.GetKeyDown(KeyCode.R))
 				architect.Rotate();
-			else if (Input.GetKeyDown(KeyCode.X))
+			else if (UnityEngine.Input.GetKeyDown(KeyCode.X))
 				architect.FlipX();
-			else if (Input.GetKeyDown(KeyCode.Y))
+			else if (UnityEngine.Input.GetKeyDown(KeyCode.Y))
 				architect.FlipY();
 		}
 

@@ -4,6 +4,9 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
+using Pseudo.EntityFramework;
+using Pseudo.Input;
 
 namespace Pseudo
 {

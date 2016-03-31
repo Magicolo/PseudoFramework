@@ -24,12 +24,12 @@ namespace Pseudo
 		void Update()
 		{
 			if (lastClickTime > 0)
-				lastClickTime -= Time.deltaTime;
+				lastClickTime -= UnityEngine.Time.deltaTime;
 
 
-			if (Input.GetMouseButtonDown(0))
+			if (UnityEngine.Input.GetMouseButtonDown(0))
 			{
-				if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, Input.mousePosition))
+				if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, UnityEngine.Input.mousePosition))
 					mouseClicked();
 
 			}

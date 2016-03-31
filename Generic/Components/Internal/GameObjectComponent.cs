@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
 using UnityEngine.Assertions;
+using Pseudo.EntityFramework;
 
 namespace Pseudo
 {

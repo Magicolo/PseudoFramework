@@ -4,12 +4,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
-using Pseudo.Internal;
-using Pseudo.Internal.Audio;
+using Pseudo.Injection;
+using Pseudo.Audio;
+using Pseudo.Particle;
+using Pseudo.Input;
 
 namespace Pseudo
 {
-	public class GlobalInstaller : BindingInstaller
+	public class GlobalInstaller : BindingInstallerBehaviour
 	{
 		[Header("Prefabs")]
 		public GameManager GameManager;

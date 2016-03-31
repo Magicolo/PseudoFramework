@@ -5,8 +5,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
-using Pseudo.Internal.Oscillation;
-using Pseudo.Internal.Pool;
+using Pseudo.EntityFramework;
+using Pseudo.Pooling;
+using Pseudo.Oscillation;
+using Pseudo.Oscillation.Internal;
 
 namespace Pseudo
 {

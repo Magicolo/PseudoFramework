@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using UnityEngine.EventSystems;
+using Pseudo.EntityFramework;
 
 namespace Pseudo
 {

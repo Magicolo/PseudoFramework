@@ -28,7 +28,7 @@ namespace Pseudo
 			{
 				for (int i = 0; i < keyCodes.Length; i++)
 				{
-					bool getKey = Input.GetKey(keyCodes[i]);
+					bool getKey = UnityEngine.Input.GetKey(keyCodes[i]);
 					if (!getKey)
 					{
 						waitForUnPush = false;
@@ -47,7 +47,7 @@ namespace Pseudo
 			bool allPushed = true;
 			for (int i = 0; i < keyCodes.Length; i++)
 			{
-				bool getKey = Input.GetKey(keyCodes[i]);
+				bool getKey = UnityEngine.Input.GetKey(keyCodes[i]);
 				if (!getKey)
 					allPushed = false;
 

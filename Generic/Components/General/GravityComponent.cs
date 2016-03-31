@@ -4,8 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal.Physics;
-using Pseudo.Internal.Entity;
+using Pseudo.Physics.Internal;
+using Pseudo.EntityFramework;
+using Pseudo.Pooling;
+using Pseudo.Physics;
 
 namespace Pseudo
 {

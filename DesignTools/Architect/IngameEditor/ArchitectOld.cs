@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 using System;
-using Pseudo.Internal.UI;
+using Pseudo.UI.Internal;
 
 namespace Pseudo
 {
@@ -15,7 +15,7 @@ namespace Pseudo
 		public SpriteRenderer PreviewSprite;
 
 		public RectTransform drawingRect;
-		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, Input.mousePosition, UICam); } }
+		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, UnityEngine.Input.mousePosition, UICam); } }
 
 
 		public Camera Cam;
@@ -173,9 +173,9 @@ namespace Pseudo
 		{
 			UpdateTileGetter();
 
-			if (Input.GetMouseButton(0))
+			if (UnityEngine.Input.GetMouseButton(0))
 				HandleLeftMouse();
-			else if (Input.GetMouseButton(1))
+			else if (UnityEngine.Input.GetMouseButton(1))
 				HandlePipette();
 
 			//Menu.Refresh();

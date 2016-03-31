@@ -1,0 +1,24 @@
+﻿using UnityEngine;
+using System;
+using System.Linq;
+using System.Collections;
+using System.Collections.Generic;
+using Pseudo;
+using Pseudo.Injection.Internal;
+
+namespace Pseudo.Injection
+{
+	public interface IResolver
+	{
+		IBinder Binder { get; }
+
+		object Resolve(Type contractType);
+		object Resolve(InjectionContext context);
+		TContract Resolve<TContract>();
+		IEnumerable<object> ResolveAll(Type contractType);
+		IEnumerable<TContract> ResolveAll<TContract>();
+		bool CanResolve(Type contractType);
+		bool CanResolve(params Type[] contractTypes);
+		bool CanResolve(InjectionContext context);
+	}
+}

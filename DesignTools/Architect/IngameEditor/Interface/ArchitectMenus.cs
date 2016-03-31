@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using Pseudo.Internal.Input;
+using Pseudo.Input.Internal;
 using UnityEngine.UI;
-using Pseudo.Internal.UI;
+using Pseudo.UI.Internal;
 
 namespace Pseudo
 {

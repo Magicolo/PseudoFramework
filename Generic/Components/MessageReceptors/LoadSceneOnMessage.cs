@@ -5,6 +5,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using UnityEngine.SceneManagement;
+using Pseudo.Injection;
+using Pseudo.EntityFramework;
+using Pseudo.Communication;
 
 namespace Pseudo
 {

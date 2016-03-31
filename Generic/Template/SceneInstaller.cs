@@ -3,12 +3,13 @@ using System.Collections;
 using System;
 using Pseudo;
 using Pseudo.Internal;
-using Pseudo.Internal.Entity;
-using Pseudo.Internal.Communication;
+using Pseudo.Injection;
+using Pseudo.EntityFramework;
+using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class SceneInstaller : BindingInstaller
+	public class SceneInstaller : BindingInstallerBehaviour
 	{
 		public Camera MainCamera;
 		public Camera UICamera;

@@ -4,7 +4,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Pseudo;
-using Pseudo.Internal.Entity;
+using Pseudo.Injection;
+using Pseudo.EntityFramework;
+using Pseudo.Audio;
+using Pseudo.Communication;
 
 namespace Pseudo
 {
