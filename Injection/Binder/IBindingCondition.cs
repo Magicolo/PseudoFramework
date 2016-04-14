@@ -7,6 +7,21 @@ using Pseudo.Injection.Internal;
 
 namespace Pseudo.Injection
 {
+	public enum ConditionSource
+	{
+		ContextType,
+		ContractType,
+		DeclaringType,
+		Identifier,
+		Optional,
+	}
+
+	public enum ConditionComparer
+	{
+		Equals,
+		NotEquals
+	}
+
 	public interface IBindingCondition
 	{
 		void When(Predicate<InjectionContext> condition);

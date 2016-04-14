@@ -9,26 +9,26 @@ namespace Pseudo.Injection.Internal
 {
 	public class BindingContext : BindingContextBase
 	{
-		public BindingContext(Type contractType, Binder binder, Resolver resolver) : base(contractType, binder, resolver) { }
+		public BindingContext(Type contractType, IContainer container) : base(contractType, container) { }
 
 		public override IBindingCondition ToFactory(IInjectionFactory factory)
 		{
 			Assert.IsNotNull(factory);
 
-			var data = new FactoryData(factory);
-			resolver.AddFactory(contractType, data);
+			var binding = new Binding(contractType, factory);
+			container.Binder.Bind(binding);
 
-			return new BindingCondition(data);
+			return new BindingCondition(binding);
 		}
 	}
 
 	public class BindingContext<TContract> : BindingContextBase<TContract>, IBindingContext<TContract>
 	{
-		public BindingContext(Binder binder, Resolver resolver) : base(binder, resolver) { }
+		public BindingContext(IContainer container) : base(container) { }
 
 		public override IBindingCondition ToFactory(IInjectionFactory factory)
 		{
-			return binder.Bind(contractType).ToFactory(factory);
+			return container.Binder.Bind(contractType).ToFactory(factory);
 		}
 	}
 }

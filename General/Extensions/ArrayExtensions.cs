@@ -268,7 +268,10 @@ namespace Pseudo
 		public static void Move<T>(this IList<T> array, int sourceIndex, int targetIndex)
 		{
 			while (sourceIndex != targetIndex)
-				array.Switch(sourceIndex, sourceIndex += (targetIndex - sourceIndex).Sign());
+			{
+				int direction = (targetIndex - sourceIndex).Sign();
+				array.Switch(sourceIndex, sourceIndex += direction);
+			}
 		}
 
 		public static void Switch<T>(this IList<T> array, int sourceIndex, int targetIndex)

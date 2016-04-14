@@ -7,19 +7,20 @@ using Pseudo;
 
 namespace Pseudo.Injection.Internal
 {
-	public abstract class MethodFactoryBase<TConcrete> : IInjectionFactory
+	public abstract class MethodFactoryBase<TConcrete> : IInjectionFactory<TConcrete>
 	{
-		protected readonly Type contractType;
-		protected readonly IBinder binder;
 		protected readonly InjectionMethod<TConcrete> method;
 
-		protected MethodFactoryBase(Type contractType, IBinder binder, InjectionMethod<TConcrete> method)
+		protected MethodFactoryBase(InjectionMethod<TConcrete> method)
 		{
-			this.contractType = contractType;
-			this.binder = binder;
 			this.method = method;
 		}
 
-		public abstract object Create(InjectionContext argument);
+		public abstract TConcrete Create(InjectionContext context);
+
+		object IInjectionFactory.Create(InjectionContext context)
+		{
+			return Create(context);
+		}
 	}
 }

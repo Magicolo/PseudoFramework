@@ -12,7 +12,6 @@ namespace Pseudo
 {
 	public static class PDebug
 	{
-		static bool logToScreen;
 		public static bool LogToScreen
 		{
 			get { return logToScreen; }
@@ -22,12 +21,13 @@ namespace Pseudo
 				ScreenLogger.Initialize();
 			}
 		}
-
-		static bool logToConsole = true;
 		public static bool LogToConsole { get { return logToConsole; } set { logToConsole = value; } }
 
+		static bool logToScreen;
+		static bool logToConsole = true;
 		static int indent;
-		static Dictionary<Type, int> instanceDict = new Dictionary<Type, int>();
+		static readonly Dictionary<Type, int> instanceDict = new Dictionary<Type, int>();
+		static readonly Stopwatch timer = new Stopwatch();
 
 		public static float RoundPrecision = 0.001F;
 
@@ -88,24 +88,24 @@ namespace Pseudo
 		public static void LogTest(string testName, Action test, int iterations)
 		{
 			test();
-			long total = 0L;
-			long min = long.MaxValue;
-			long max = 0L;
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
 			GC.Collect();
 
+			long total = 0L;
+			long min = long.MaxValue;
+			long max = long.MinValue;
+
 			for (int i = 0; i < iterations; i++)
 			{
-				var timer = Stopwatch.StartNew();
+				timer.Reset();
+				timer.Start();
 				test();
 				timer.Stop();
-
-				long elapsed = timer.ElapsedTicks;
-				total += elapsed;
-				min = Math.Min(min, elapsed);
-				max = Math.Max(max, elapsed);
+				total += timer.ElapsedTicks;
+				min = Math.Min(min, timer.ElapsedTicks);
+				max = Math.Max(max, timer.ElapsedTicks);
 			}
 
 			Log(string.Format("{0}\nAverage = {1} | Min: {2} | Max: {3} | Total: {4}", testName, total / (double)iterations, FormatNumber(min), FormatNumber(max), FormatNumber(total)));
@@ -159,7 +159,7 @@ namespace Pseudo
 				return memory + "B";
 		}
 
-		static string FormatType(System.Type type)
+		static string FormatType(Type type)
 		{
 			var formattedType = "";
 

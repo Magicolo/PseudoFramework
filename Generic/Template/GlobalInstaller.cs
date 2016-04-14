@@ -11,7 +11,7 @@ using Pseudo.Input;
 
 namespace Pseudo
 {
-	public class GlobalInstaller : BindingInstallerBehaviourBase
+	public class GlobalInstaller : BehaviourInstallerBase
 	{
 		[Header("Prefabs")]
 		public GameManager GameManager;
@@ -19,12 +19,12 @@ namespace Pseudo
 		public ParticleManager ParticleManager;
 		public InputManager InputManager;
 
-		public override void Install(IBinder binder)
+		public override void Install(IContainer container)
 		{
-			binder.Bind<GameManager, IGameManager>().ToSingletonMethod(c => InstantiateOrFind(GameManager));
-			binder.Bind<AudioManager, IAudioManager>().ToSingletonMethod(c => InstantiateOrFind(AudioManager));
-			binder.Bind<ParticleManager, IParticleManager>().ToSingletonMethod(c => InstantiateOrFind(ParticleManager));
-			binder.Bind<InputManager, IInputManager>().ToSingletonMethod(c => InstantiateOrFind(InputManager));
+			container.Binder.Bind<GameManager, IGameManager>().ToSingletonMethod(c => InstantiateOrFind(GameManager));
+			container.Binder.Bind<AudioManager, IAudioManager>().ToSingletonMethod(c => InstantiateOrFind(AudioManager));
+			container.Binder.Bind<ParticleManager, IParticleManager>().ToSingletonMethod(c => InstantiateOrFind(ParticleManager));
+			container.Binder.Bind<InputManager, Input.IInputManager>().ToSingletonMethod(c => InstantiateOrFind(InputManager));
 		}
 
 		T InstantiateOrFind<T>(T prefab) where T : Component

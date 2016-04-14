@@ -10,137 +10,151 @@ namespace Pseudo.Injection.Internal
 {
 	public abstract class BindingContextBase : IBindingContext
 	{
-		protected readonly Type contractType;
-		protected readonly Binder binder;
-		protected readonly Resolver resolver;
-
-		protected BindingContextBase(Type contractType, Binder binder, Resolver resolver)
+		public IContainer Container
 		{
-			this.contractType = contractType;
-			this.binder = binder;
-			this.resolver = resolver;
+			get { return container; }
+		}
+		public Type ContractType
+		{
+			get { return contractType; }
 		}
 
-		public virtual IBindingCondition ToSingleton()
+		protected readonly Type contractType;
+		protected readonly IContainer container;
+
+		protected BindingContextBase(Type contractType, IContainer container)
+		{
+			this.contractType = contractType;
+			this.container = container;
+		}
+
+		public IBindingCondition ToSingleton()
 		{
 			return ToSingleton(contractType);
 		}
 
-		public virtual IBindingCondition ToSingleton(Type concreteType)
+		public IBindingCondition ToSingleton(Type concreteType)
 		{
 			Assert.IsNotNull(concreteType);
-			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
-			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
+			Assert.IsTrue(concreteType.IsConcrete());
+			Assert.IsTrue(concreteType.Is(contractType));
 
-			return ToSingletonMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
+			// Do not use Container.Get because it could cause an infinite loop.
+			return ToSingletonMethod(c => c.Container.Instantiator.Instantiate(concreteType));
 		}
 
-		public virtual IBindingCondition ToSingletonPrefab(UnityEngine.Object prefab)
+		public IBindingCondition ToSingletonPrefab(UnityEngine.Object prefab)
 		{
 			Assert.IsNotNull(prefab);
-			Assert.IsTrue(contractType.IsAssignableFrom(prefab.GetType()));
+			Assert.IsTrue(prefab.GetType().Is(contractType));
 
 			return ToSingletonMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance);
+				c.Container.Injector.Inject(instance);
 
 				return instance;
 			});
 		}
 
-		public virtual IBindingCondition ToSingletonPrefab(GameObject prefab)
+		public IBindingCondition ToSingletonPrefab(GameObject prefab)
 		{
 			Assert.IsNotNull(prefab);
+			Assert.IsTrue(contractType.Is<GameObject>() || prefab.GetComponent(contractType) != null);
 
 			return ToSingletonMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance.GetComponentsInChildren<MonoBehaviour>());
+				var components = instance.GetComponentsInChildren<MonoBehaviour>();
 
-				return instance.GetComponent(contractType);
+				for (int i = 0; i < components.Length; i++)
+					c.Container.Injector.Inject(components[i]);
+
+				if (contractType.Is<GameObject>())
+					return instance;
+				else
+					return instance.GetComponent(contractType);
 			});
 		}
 
-		public virtual IBindingCondition ToSingletonMethod(InjectionMethod<object> method)
+		public IBindingCondition ToSingletonMethod(InjectionMethod<object> method)
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new SingletonMethodFactory<object>(contractType, binder, method));
+			return ToFactory(new SingletonMethodFactory<object>(method));
 		}
 
-		public virtual IBindingCondition ToTransient()
+		public IBindingCondition ToTransient()
 		{
 			return ToTransient(contractType);
 		}
 
-		public virtual IBindingCondition ToTransient(Type concreteType)
+		public IBindingCondition ToTransient(Type concreteType)
 		{
 			Assert.IsNotNull(concreteType);
-			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
-			Assert.IsTrue(contractType.IsAssignableFrom(concreteType));
+			Assert.IsTrue(concreteType.IsConcrete());
+			Assert.IsTrue(concreteType.Is(contractType));
 
-			return ToTransientMethod(c => c.Binder.Instantiator.Instantiate(concreteType));
+			// Do not use Container.Get because it could cause an infinite loop.
+			return ToTransientMethod(c => c.Container.Instantiator.Instantiate(concreteType));
 		}
 
-		public virtual IBindingCondition ToTransientPrefab(UnityEngine.Object prefab)
+		public IBindingCondition ToTransientPrefab(UnityEngine.Object prefab)
 		{
 			Assert.IsNotNull(prefab);
-			Assert.IsTrue(contractType.IsAssignableFrom(prefab.GetType()));
+			Assert.IsTrue(prefab.GetType().Is(contractType));
 
 			return ToTransientMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance);
+				c.Container.Injector.Inject(instance);
 
 				return instance;
 			});
 		}
 
-		public virtual IBindingCondition ToTransientPrefab(GameObject prefab)
+		public IBindingCondition ToTransientPrefab(GameObject prefab)
 		{
 			Assert.IsNotNull(prefab);
-			Assert.IsTrue(prefab.GetComponent(contractType) != null);
+			Assert.IsTrue(contractType.Is<GameObject>() || prefab.GetComponent(contractType) != null);
 
 			return ToTransientMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Binder.Injector.Inject(instance.GetComponentsInChildren<MonoBehaviour>());
+				var components = instance.GetComponentsInChildren<MonoBehaviour>();
 
-				return instance.GetComponent(contractType);
+				for (int i = 0; i < components.Length; i++)
+					c.Container.Injector.Inject(components[i]);
+
+				if (contractType.Is<GameObject>())
+					return instance;
+				else
+					return instance.GetComponent(contractType);
 			});
 		}
 
-		public virtual IBindingCondition ToTransientMethod(InjectionMethod<object> method)
+		public IBindingCondition ToTransientMethod(InjectionMethod<object> method)
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new TransientMethodFactory<object>(contractType, binder, method));
+			return ToFactory(new TransientMethodFactory<object>(method));
 		}
 
-		public virtual IBindingCondition ToInstance(object instance)
+		public IBindingCondition ToInstance(object instance)
 		{
-			Assert.IsNotNull(instance);
-			Assert.IsTrue(contractType.IsAssignableFrom(instance.GetType()));
+			Assert.IsTrue(instance == null || instance.GetType().Is(contractType));
 
 			return ToSingletonMethod(c => instance);
 		}
 
-		public virtual IBindingCondition ToFactory(Type factoryType)
+		public IBindingCondition ToFactory(Type factoryType)
 		{
 			Assert.IsNotNull(factoryType);
-			Assert.IsTrue(factoryType.Is<IFactory>());
+			Assert.IsTrue(factoryType.Is<IInjectionFactory>());
 
-			binder.Bind(factoryType).ToSingleton();
+			container.Binder.Bind(factoryType).ToSingleton();
 
-			return ToTransientMethod(c => ((IFactory)c.Binder.Resolver.Resolve(factoryType)).Create());
-		}
-
-		public virtual IBindingCondition ToFactory(IFactory factory)
-		{
-			Assert.IsNotNull(factory);
-
-			return ToTransientMethod(c => factory.Create());
+			return ToTransientMethod(c => ((IInjectionFactory)c.Container.Resolver.Resolve(factoryType)).Create(c));
 		}
 
 		public abstract IBindingCondition ToFactory(IInjectionFactory factory);
@@ -148,59 +162,55 @@ namespace Pseudo.Injection.Internal
 
 	public abstract class BindingContextBase<TContract> : BindingContextBase, IBindingContext<TContract>
 	{
-		protected BindingContextBase(Binder binder, Resolver resolver) : base(typeof(TContract), binder, resolver) { }
+		protected BindingContextBase(IContainer container) : base(typeof(TContract), container) { }
 
-		public virtual IBindingCondition ToSingleton<TConcrete>() where TConcrete : TContract
+		public IBindingCondition ToSingleton<TConcrete>() where TConcrete : TContract
 		{
 			return base.ToSingleton(typeof(TConcrete));
 		}
 
-		public virtual IBindingCondition ToSingletonPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
+		public IBindingCondition ToSingletonPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
 		{
 			return base.ToSingletonPrefab(prefab);
 		}
 
-		public virtual IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
+		public IBindingCondition ToSingletonMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new SingletonMethodFactory<TConcrete>(contractType, binder, method));
+			return ToFactory(new SingletonMethodFactory<TConcrete>(method));
 		}
 
-		public virtual IBindingCondition ToTransient<TConcrete>() where TConcrete : TContract
+		public IBindingCondition ToTransient<TConcrete>() where TConcrete : TContract
 		{
 			return base.ToTransient(typeof(TConcrete));
 		}
 
-		public virtual IBindingCondition ToTransientPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
+		public IBindingCondition ToTransientPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract
 		{
 			return base.ToTransientPrefab(prefab);
 		}
 
-		public virtual IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
+		public IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new TransientMethodFactory<TConcrete>(contractType, binder, method));
+			return ToFactory(new TransientMethodFactory<TConcrete>(method));
 		}
 
-		public virtual IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : TContract
+		public IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : TContract
 		{
 			return base.ToInstance(instance);
 		}
 
-		public virtual IBindingCondition ToFactory<TFactory>() where TFactory : IFactory<TContract>
+		public IBindingCondition ToFactory<TFactory>() where TFactory : IInjectionFactory<TContract>
 		{
-			binder.Bind<TFactory>().ToSingleton();
-
-			return ToTransientMethod(c => c.Binder.Resolver.Resolve<TFactory>().Create());
+			return base.ToFactory(typeof(TFactory));
 		}
 
-		public virtual IBindingCondition ToFactory(IFactory<TContract> factory)
+		public IBindingCondition ToFactory(IInjectionFactory<TContract> factory)
 		{
-			Assert.IsNotNull(factory);
-
-			return ToTransientMethod(c => factory.Create());
+			return ToFactory((IInjectionFactory)factory);
 		}
 	}
 }

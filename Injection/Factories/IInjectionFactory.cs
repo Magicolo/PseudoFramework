@@ -11,4 +11,9 @@ namespace Pseudo.Injection
 	{
 		object Create(InjectionContext context);
 	}
+
+	public interface IInjectionFactory<T> : IInjectionFactory
+	{
+		new T Create(InjectionContext context);
+	}
 }

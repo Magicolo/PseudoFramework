@@ -87,7 +87,7 @@ namespace Pseudo.EntityFramework
 
 		static bool MatchesAll(IEntity entity, int[] groups2)
 		{
-			var groups1 = entity.GetComponentIndices();
+			var groups1 = entity.GetIndices();
 
 			if (groups2.Length == 0)
 				return true;
@@ -129,7 +129,7 @@ namespace Pseudo.EntityFramework
 
 		static bool MatchesAny(IEntity entity, int[] groups2)
 		{
-			var groups1 = entity.GetComponentIndices();
+			var groups1 = entity.GetIndices();
 
 			if (groups2.Length == 0)
 				return true;
@@ -167,16 +167,16 @@ namespace Pseudo.EntityFramework
 
 		static bool MatchesExact(IEntity entity, int[] groups2)
 		{
-			if (entity.Components.Count != groups2.Length)
+			if (entity.Count != groups2.Length)
 				return false;
-			else if (entity.Components.Count == 0 && groups2.Length == 0)
+			else if (entity.Count == 0 && groups2.Length == 0)
 				return true;
-			else if (entity.Components.Count == 1 && groups2.Length == 1)
-				return entity.HasComponent(ComponentUtility.GetComponentType(groups2[0]));
+			else if (entity.Count == 1 && groups2.Length == 1)
+				return entity.Has(ComponentUtility.GetComponentType(groups2[0]));
 
 			for (int i = 0; i < groups2.Length; i++)
 			{
-				if (!entity.HasComponent(ComponentUtility.GetComponentType(groups2[i])))
+				if (!entity.Has(ComponentUtility.GetComponentType(groups2[i])))
 					return false;
 			}
 

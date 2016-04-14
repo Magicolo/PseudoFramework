@@ -12,10 +12,10 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToSingle()
 		{
-			Binder.Bind<IDummy>().ToSingleton<Dummy1>();
+			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>();
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -27,10 +27,10 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToTransient()
 		{
-			Binder.Bind<IDummy>().ToTransient<Dummy1>();
+			Container.Binder.Bind<IDummy>().ToTransient<Dummy1>();
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -42,10 +42,10 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToInstance()
 		{
-			Binder.Bind<IDummy>().ToInstance(new Dummy1());
+			Container.Binder.Bind<IDummy>().ToInstance(new Dummy1());
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -57,10 +57,10 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToSingleMethod()
 		{
-			Binder.Bind<IDummy>().ToSingletonMethod(c => new Dummy1());
+			Container.Binder.Bind<IDummy>().ToSingletonMethod(c => new Dummy1());
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -72,10 +72,10 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToTransientMethod()
 		{
-			Binder.Bind<IDummy>().ToTransientMethod(c => new Dummy1());
+			Container.Binder.Bind<IDummy>().ToTransientMethod(c => new Dummy1());
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -87,29 +87,29 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void BindToFactory()
 		{
-			var factory = Substitute.For<IFactory>();
-			factory.Create().Returns(new Dummy1());
+			var factory = Substitute.For<IInjectionFactory>();
+			factory.Create(default(InjectionContext)).ReturnsForAnyArgs(new Dummy1());
 
-			Binder.Bind<IDummy>().ToFactory(factory);
+			Container.Binder.Bind<IDummy>().ToFactory(factory);
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<IDummy>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<IDummy>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
 			Assert.That(instance1, Is.EqualTo(instance2));
 			Assert.That(instance1, Is.TypeOf<Dummy1>());
 			Assert.That(instance2, Is.TypeOf<Dummy1>());
-			factory.Received(2).Create();
+			factory.ReceivedWithAnyArgs(2).Create(default(InjectionContext));
 		}
 
 		[Test]
 		public void BindAllToSingle()
 		{
-			Binder.BindAll<Dummy1>().ToSingleton();
+			Container.Binder.BindAll<Dummy1>().ToSingleton();
 
-			var instance1 = Binder.Resolver.Resolve<IDummy>();
-			var instance2 = Binder.Resolver.Resolve<Dummy1>();
+			var instance1 = Container.Resolver.Resolve<IDummy>();
+			var instance2 = Container.Resolver.Resolve<Dummy1>();
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -122,13 +122,13 @@ namespace Pseudo.Injection.Tests
 		public void BindToStruct()
 		{
 			byte b = 1;
-			Binder.Bind<Dummy5, IDummy>().ToTransient<Dummy5>();
-			Binder.Bind<int>().ToSingleton();
-			Binder.Bind<long>().ToInstance(100L);
-			Binder.Bind<IConvertible>().ToTransient<float>();
-			Binder.Bind<IComparable>().ToTransientMethod(c => b++);
+			Container.Binder.Bind<Dummy5, IDummy>().ToTransient<Dummy5>();
+			Container.Binder.Bind<int>().ToSingleton();
+			Container.Binder.Bind<long>().ToInstance(100L);
+			Container.Binder.Bind<IConvertible>().ToTransient<float>();
+			Container.Binder.Bind<IComparable>().ToTransientMethod(c => b++);
 
-			var instance = Binder.Resolver.Resolve<Dummy5>();
+			var instance = Container.Resolver.Resolve<Dummy5>();
 
 			Assert.That(instance.Int, Is.EqualTo(0));
 			Assert.That(instance.Long, Is.EqualTo(100L));
@@ -136,6 +136,90 @@ namespace Pseudo.Injection.Tests
 			Assert.That(instance.Byte1, Is.EqualTo(1));
 			Assert.That(instance.Byte2, Is.EqualTo(2));
 			Assert.That(instance.Byte3, Is.EqualTo(3));
+		}
+
+		[Test]
+		public void BindWithAttribute()
+		{
+			Assert.That(!Container.Binder.HasBinding<DummyAttribute1>());
+			Container.Binder.Bind(GetType().Assembly);
+			Assert.That(Container.Binder.HasBinding<DummyAttribute1>());
+			Assert.That(Container.Binder.HasBinding<IDummyAttribute>());
+
+			var dummy1 = Container.Resolver.Resolve<DummyAttribute1>();
+			var dummy2 = Container.Resolver.Resolve<DummyAttribute1>();
+			var dummy3 = Container.Resolver.Resolve<IDummyAttribute>();
+			var dummy4 = Container.Resolver.Resolve<IDummyAttribute>();
+
+			Assert.IsNotNull(dummy1);
+			Assert.IsNotNull(dummy2);
+			Assert.IsNotNull(dummy3);
+			Assert.IsNotNull(dummy4);
+			Assert.That(dummy1, !Is.EqualTo(dummy2));
+			Assert.That(dummy1, !Is.EqualTo(dummy3));
+			Assert.That(dummy1, !Is.EqualTo(dummy4));
+			Assert.That(dummy2, !Is.EqualTo(dummy3));
+			Assert.That(dummy2, !Is.EqualTo(dummy4));
+			Assert.That(dummy3, Is.EqualTo(dummy4));
+		}
+
+		[Test]
+		public void BindWithAttributeConditions()
+		{
+			Assert.That(!Container.Binder.HasBinding<DummyAttribute2>());
+			Container.Binder.Bind(GetType().Assembly);
+			Assert.That(Container.Binder.HasBinding<DummyAttribute2>());
+
+			var context1 = new InjectionContext
+			{
+				Container = Container,
+				ContractType = typeof(DummyAttribute2),
+				Identifier = "Boba"
+			};
+			var context2 = new InjectionContext
+			{
+				Container = Container,
+				ContractType = typeof(DummyAttribute2),
+				Identifier = "Fett"
+			};
+
+			var dummy1 = Container.Resolver.Resolve(context1);
+			var dummy2 = Container.Resolver.Resolve(context1);
+			var dummy3 = Container.Resolver.Resolve(context2);
+			var dummy4 = Container.Resolver.Resolve(context2);
+
+			Assert.IsNotNull(dummy1);
+			Assert.IsNotNull(dummy2);
+			Assert.IsNotNull(dummy3);
+			Assert.IsNotNull(dummy4);
+			Assert.That(dummy1, Is.EqualTo(dummy2));
+			Assert.That(dummy1, !Is.EqualTo(dummy3));
+			Assert.That(dummy1, !Is.EqualTo(dummy4));
+			Assert.That(dummy2, !Is.EqualTo(dummy3));
+			Assert.That(dummy2, !Is.EqualTo(dummy4));
+			Assert.That(dummy3, Is.EqualTo(dummy4));
+		}
+
+		[Test]
+		public void BindFactoryWithAttribute()
+		{
+			Assert.That(!Container.Binder.HasBinding<DummyAttribute3>());
+			Container.Binder.Bind(GetType().Assembly);
+			Assert.That(Container.Binder.HasBinding<DummyAttribute3>());
+
+			var factory = Container.Resolver.Resolve<DummyFactory>();
+			var dummy1 = Container.Resolver.Resolve<DummyAttribute3>();
+			var dummy2 = Container.Resolver.Resolve<DummyAttribute3>();
+			var dummy3 = Container.Resolver.Resolve<DummyAttribute3>();
+
+			Assert.IsNotNull(factory);
+			Assert.IsNotNull(dummy1);
+			Assert.IsNotNull(dummy2);
+			Assert.IsNotNull(dummy3);
+			Assert.That(dummy1, !Is.EqualTo(dummy2));
+			Assert.That(dummy1, !Is.EqualTo(dummy3));
+			Assert.That(dummy2, !Is.EqualTo(dummy3));
+			Assert.That(factory.Calls, Is.EqualTo(3));
 		}
 	}
 }

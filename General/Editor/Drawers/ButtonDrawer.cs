@@ -37,7 +37,7 @@ namespace Pseudo.Editor.Internal
 
 					if (!string.IsNullOrEmpty(buttonPressedMethodName))
 					{
-						MethodInfo method = property.serializedObject.targetObject.GetType().GetMethod(buttonPressedMethodName, ReflectionExtensions.AllFlags);
+						MethodInfo method = property.serializedObject.targetObject.GetType().GetMethod(buttonPressedMethodName, ReflectionUtility.AllFlags);
 
 						if (method != null)
 							method.Invoke(property.serializedObject.targetObject, null);

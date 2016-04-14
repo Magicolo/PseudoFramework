@@ -25,30 +25,17 @@ namespace Pseudo.Injection
 			Parameter = 1 << 8,
 		}
 
-		public IBinder Binder;
+		public IContainer Container;
 		public ContextTypes ContextType;
 		public object Instance;
 		public Type ContractType;
-		public MemberInfo Member;
-		public ParameterInfo Parameter;
-		public InjectAttribute Attribute;
-
-		public Type DeclaringType
-		{
-			get { return Member == null ? null : Member.DeclaringType; }
-		}
-		public string Identifier
-		{
-			get { return Attribute == null ? string.Empty : Attribute.Identifier; }
-		}
-		public bool Optional
-		{
-			get { return Attribute == null ? false : Attribute.Optional; }
-		}
+		public Type DeclaringType;
+		public string Identifier;
+		public bool Optional;
 
 		public override string ToString()
 		{
-			return string.Format("{0}(ContextType: {1}, ContractType: {2}, Member: {3}, Parameter: {4}, Attribute: {5})", GetType().Name, ContextType, ContractType, Member, Parameter, Attribute);
+			return string.Format("{0}(ContextType: {1}, ContractType: {2}, DeclaringType: {3}, Identifier: {4})", GetType().Name, ContextType, ContractType, DeclaringType, Identifier);
 		}
 	}
 }

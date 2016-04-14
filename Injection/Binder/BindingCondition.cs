@@ -7,40 +7,18 @@ using UnityEngine.Assertions;
 
 namespace Pseudo.Injection.Internal
 {
-	public class BindingCondition : IBindingCondition
+	public class BindingCondition : BindingConditionBase
 	{
-		readonly FactoryData data;
+		readonly IBinding binding;
 
-		public BindingCondition(FactoryData data)
+		public BindingCondition(IBinding binding)
 		{
-			this.data = data;
+			this.binding = binding;
 		}
 
-		public void When(Predicate<InjectionContext> condition)
+		public override void When(Predicate<InjectionContext> condition)
 		{
-			Assert.IsNotNull(condition);
-
-			data.Condition = condition;
-		}
-
-		public void When(string identifier)
-		{
-			When(context => context.Identifier == identifier);
-		}
-
-		public void When(InjectionContext.ContextTypes contextType)
-		{
-			When(context => (context.ContextType & contextType) != 0);
-		}
-
-		public void WhenInjectedInto(Type declaringType)
-		{
-			When(context => context.DeclaringType == declaringType);
-		}
-
-		public void WhenInjectedInto(object instance)
-		{
-			When(context => context.Instance == instance);
+			binding.Condition = condition;
 		}
 	}
 }

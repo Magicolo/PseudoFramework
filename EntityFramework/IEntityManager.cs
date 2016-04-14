@@ -18,6 +18,5 @@ namespace Pseudo.EntityFramework
 		void AddEntity(IEntity entity);
 		void RemoveEntity(IEntity entity);
 		void RemoveAllEntities();
-		void UpdateEntity(IEntity entity);
 	}
 }

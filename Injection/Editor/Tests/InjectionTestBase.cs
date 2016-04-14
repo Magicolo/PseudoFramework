@@ -12,18 +12,18 @@ namespace Pseudo.Injection.Tests
 {
 	public abstract class InjectionTestBase
 	{
-		public IBinder Binder;
+		public IContainer Container;
 
 		[SetUp]
 		public virtual void Setup()
 		{
-			Binder = new Binder();
+			Container = new Container();
 		}
 
 		[TearDown]
 		public virtual void TearDown()
 		{
-			Binder = null;
+			Container = null;
 		}
 	}
 
@@ -34,6 +34,7 @@ namespace Pseudo.Injection.Tests
 		[Inject(optional: true)]
 		public DummyProperty Property { get; set; }
 	}
+
 	public class Dummy2 : IDummy
 	{
 		public DummyField Field;
@@ -47,6 +48,7 @@ namespace Pseudo.Injection.Tests
 			Dummy = dummy;
 		}
 	}
+
 	public class Dummy3 : IDummy
 	{
 		public DummyField Field;
@@ -64,6 +66,7 @@ namespace Pseudo.Injection.Tests
 			Property = property;
 		}
 	}
+
 	public class Dummy4 : IDummy
 	{
 		[Inject]
@@ -71,6 +74,7 @@ namespace Pseudo.Injection.Tests
 		[Inject(optional: true, identifier: "Boba")]
 		public IDummy Dummy2 { get; set; }
 	}
+
 	public class Dummy5 : IDummy
 	{
 		[Inject]
@@ -91,7 +95,34 @@ namespace Pseudo.Injection.Tests
 			Byte3 = byte3;
 		}
 	}
+
 	public interface IDummy { }
+
+	[Bind(typeof(DummyAttribute1), BindingType.Transient)]
+	[Bind(typeof(IDummyAttribute), BindingType.Singleton)]
+	public class DummyAttribute1 : IDummyAttribute { }
+
+	[Bind(typeof(DummyAttribute2), BindingType.Singleton, ConditionSource.Identifier, ConditionComparer.Equals, "Boba")]
+	[Bind(typeof(DummyAttribute2), BindingType.Singleton, ConditionSource.Identifier, ConditionComparer.Equals, "Fett")]
+	public class DummyAttribute2 : IDummyAttribute { }
+
+	public class DummyAttribute3 : IDummyAttribute { }
+
+	[Bind(typeof(DummyAttribute3), BindingType.Factory)]
+	public class DummyFactory : IInjectionFactory
+	{
+		public int Calls;
+
+		public object Create(InjectionContext context)
+		{
+			Calls++;
+
+			return new DummyAttribute3();
+		}
+	}
+
+	public interface IDummyAttribute { }
+
 	public class DummyField
 	{
 		[Inject(optional: true)]

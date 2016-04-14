@@ -6,6 +6,7 @@ using System.Linq;
 using Pseudo;
 using UnityEditor;
 using Pseudo.Editor.Internal;
+using Pseudo.Internal;
 
 namespace Pseudo.EntityFramework.Internal
 {
@@ -47,7 +48,7 @@ namespace Pseudo.EntityFramework.Internal
 			if (!fieldInfo.IsDefined(typeof(EntityRequiresAttribute), true))
 				return;
 
-			var attribute = (EntityRequiresAttribute)fieldInfo.GetCustomAttributes(typeof(EntityRequiresAttribute), true)[0];
+			var attribute = fieldInfo.GetAttribute<EntityRequiresAttribute>(true);
 
 			if (entity == null && !attribute.CanBeNull)
 				errors.Add(string.Format("Field cannot be null.").ToGUIContent());

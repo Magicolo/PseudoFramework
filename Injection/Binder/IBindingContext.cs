@@ -11,6 +11,9 @@ namespace Pseudo.Injection
 
 	public interface IBindingContext
 	{
+		IContainer Container { get; }
+		Type ContractType { get; }
+
 		IBindingCondition ToSingleton();
 		IBindingCondition ToSingleton(Type concreteType);
 		IBindingCondition ToSingletonPrefab(UnityEngine.Object prefab);
@@ -23,7 +26,6 @@ namespace Pseudo.Injection
 		IBindingCondition ToTransientMethod(InjectionMethod<object> method);
 		IBindingCondition ToInstance(object instance);
 		IBindingCondition ToFactory(Type factoryType);
-		IBindingCondition ToFactory(IFactory factory);
 		IBindingCondition ToFactory(IInjectionFactory factory);
 	}
 
@@ -36,7 +38,7 @@ namespace Pseudo.Injection
 		IBindingCondition ToTransientPrefab<TConcrete>(TConcrete prefab) where TConcrete : UnityEngine.Object, TContract;
 		IBindingCondition ToTransientMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract;
 		IBindingCondition ToInstance<TConcrete>(TConcrete instance) where TConcrete : TContract;
-		IBindingCondition ToFactory<TFactory>() where TFactory : IFactory<TContract>;
-		IBindingCondition ToFactory(IFactory<TContract> factory);
+		IBindingCondition ToFactory<TFactory>() where TFactory : IInjectionFactory<TContract>;
+		IBindingCondition ToFactory(IInjectionFactory<TContract> factory);
 	}
 }

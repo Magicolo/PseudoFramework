@@ -11,27 +11,32 @@ namespace Pseudo.Injection.Internal
 	public abstract class RootBehaviourBase : MonoBehaviour, IRoot
 	{
 		[SerializeField]
-		BindingInstallerBehaviourBase[] installers;
+		BehaviourInstallerBase[] installers;
+		[SerializeField]
+		PAssembly[] assemblies;
 
-		public IBinder Binder
+		public IContainer Container
 		{
-			get { return binder; }
+			get { return container; }
 		}
 		public IEnumerable<IBindingInstaller> Installers
 		{
 			get { return installers.Concat(additionnalInstallers); }
 		}
 
-		IBinder binder;
+		IContainer container;
 		readonly List<IBindingInstaller> additionnalInstallers = new List<IBindingInstaller>();
 
 		public virtual void InstallAll()
 		{
+			for (int i = 0; i < assemblies.Length; i++)
+				container.Binder.Bind(assemblies[i]);
+
 			for (int i = 0; i < installers.Length; i++)
-				installers[i].Install(binder);
+				installers[i].Install(container);
 
 			for (int i = 0; i < additionnalInstallers.Count; i++)
-				additionnalInstallers[i].Install(binder);
+				additionnalInstallers[i].Install(container);
 		}
 
 		public void AddInstaller(IBindingInstaller installer)
@@ -46,15 +51,16 @@ namespace Pseudo.Injection.Internal
 
 		protected virtual void Awake()
 		{
-			binder = CreateBinder();
-			binder.Bind(GetType(), typeof(IRoot)).ToInstance(this);
+			container = CreateContainer();
+			container.Binder.Bind(GetType(), typeof(IRoot)).ToInstance(this);
+
 			InstallAll();
 		}
 
-		protected virtual void Inject(IList injectables)
+		protected virtual void Inject(MonoBehaviour[] injectables)
 		{
 			// Pre-scene injection callback
-			for (int i = 0; i < injectables.Count; i++)
+			for (int i = 0; i < injectables.Length; i++)
 			{
 				var injectable = injectables[i] as IRootInjectable;
 
@@ -63,11 +69,11 @@ namespace Pseudo.Injection.Internal
 			}
 
 			// Injection
-			for (int i = 0; i < injectables.Count; i++)
-				binder.Injector.Inject(injectables[i]);
+			for (int i = 0; i < injectables.Length; i++)
+				container.Injector.Inject(injectables[i]);
 
 			// Post-scene injection callback
-			for (int i = 0; i < injectables.Count; i++)
+			for (int i = 0; i < injectables.Length; i++)
 			{
 				var injectable = injectables[i] as IRootInjectable;
 
@@ -77,6 +83,6 @@ namespace Pseudo.Injection.Internal
 		}
 
 		public abstract void InjectAll();
-		protected abstract IBinder CreateBinder();
+		protected abstract IContainer CreateContainer();
 	}
 }

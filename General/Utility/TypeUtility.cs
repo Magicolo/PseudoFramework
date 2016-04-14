@@ -13,6 +13,7 @@ namespace Pseudo
 	{
 		static readonly Dictionary<Type, object> typeToDefaultValue = new Dictionary<Type, object>();
 		static readonly Dictionary<string, Type> typeNameToType = new Dictionary<string, Type>();
+		static readonly Dictionary<string, Assembly> assemblyNameToAssembly = new Dictionary<string, Assembly>();
 
 		static Type[] allTypes;
 		public static Type[] AllTypes
@@ -105,6 +106,19 @@ namespace Pseudo
 			}
 
 			return type;
+		}
+
+		public static Assembly GetAssembly(string assemblyName)
+		{
+			Assembly assembly;
+
+			if (!assemblyNameToAssembly.TryGetValue(assemblyName, out assembly))
+			{
+				assembly = Array.Find(AppDomain.CurrentDomain.GetAssemblies(), a => a.FullName == assemblyName);
+				assemblyNameToAssembly[assemblyName] = assembly;
+			}
+
+			return assembly;
 		}
 	}
 }

@@ -9,13 +9,11 @@ namespace Pseudo.Injection.Internal
 {
 	public class TransientMethodFactory<TConcrete> : MethodFactoryBase<TConcrete>
 	{
-		public TransientMethodFactory(Type contractType, IBinder binder, InjectionMethod<TConcrete> method)
-			: base(contractType, binder, method)
-		{ }
+		public TransientMethodFactory(InjectionMethod<TConcrete> method) : base(method) { }
 
-		public override object Create(InjectionContext argument)
+		public override TConcrete Create(InjectionContext context)
 		{
-			return method(argument);
+			return method(context);
 		}
 	}
 }

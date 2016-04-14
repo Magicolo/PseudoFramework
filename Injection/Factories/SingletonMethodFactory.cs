@@ -9,16 +9,18 @@ namespace Pseudo.Injection.Internal
 {
 	public class SingletonMethodFactory<TConcrete> : MethodFactoryBase<TConcrete>
 	{
-		object instance;
+		TConcrete instance;
+		bool isCreated;
 
-		public SingletonMethodFactory(Type contractType, IBinder binder, InjectionMethod<TConcrete> method)
-			: base(contractType, binder, method)
-		{ }
+		public SingletonMethodFactory(InjectionMethod<TConcrete> method) : base(method) { }
 
-		public override object Create(InjectionContext argument)
+		public override TConcrete Create(InjectionContext context)
 		{
-			if (instance == null)
-				instance = method(argument);
+			if (!isCreated)
+			{
+				isCreated = true;
+				instance = method(context);
+			}
 
 			return instance;
 		}

@@ -15,9 +15,9 @@ namespace Pseudo.Injection
 			Inject(FindObjectsOfType<MonoBehaviour>());
 		}
 
-		protected override IBinder CreateBinder()
+		protected override IContainer CreateContainer()
 		{
-			return new Binder();
+			return new Container();
 		}
 
 		protected override void Awake()

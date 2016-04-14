@@ -11,11 +11,11 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionField()
 		{
-			Binder.Bind<Dummy1>().ToTransient();
-			Binder.Bind<DummyField>().ToTransient();
-			Binder.Bind<DummySubField>().ToTransient();
+			Container.Binder.Bind<Dummy1>().ToTransient();
+			Container.Binder.Bind<DummyField>().ToTransient();
+			Container.Binder.Bind<DummySubField>().ToTransient();
 
-			var instance = Binder.Resolver.Resolve<Dummy1>();
+			var instance = Container.Resolver.Resolve<Dummy1>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Field);
@@ -25,11 +25,11 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionProperty()
 		{
-			Binder.Bind<Dummy1>().ToTransient();
-			Binder.Bind<DummyProperty>().ToTransient();
-			Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy1>().ToTransient();
+			Container.Binder.Bind<DummyProperty>().ToTransient();
+			Container.Binder.Bind<DummySubProperty>().ToTransient();
 
-			var instance = Binder.Resolver.Resolve<Dummy1>();
+			var instance = Container.Resolver.Resolve<Dummy1>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Property);
@@ -39,13 +39,13 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionConstructor()
 		{
-			Binder.Bind<Dummy2>().ToTransient();
-			Binder.Bind<DummyField>().ToTransient();
-			Binder.Bind<DummySubField>().ToTransient();
-			Binder.Bind<DummyProperty>().ToTransient();
-			Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy2>().ToTransient();
+			Container.Binder.Bind<DummyField>().ToTransient();
+			Container.Binder.Bind<DummySubField>().ToTransient();
+			Container.Binder.Bind<DummyProperty>().ToTransient();
+			Container.Binder.Bind<DummySubProperty>().ToTransient();
 
-			var instance = Binder.Resolver.Resolve<Dummy2>();
+			var instance = Container.Resolver.Resolve<Dummy2>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Field);
@@ -58,13 +58,13 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionMethod()
 		{
-			Binder.Bind<Dummy3>().ToTransient();
-			Binder.Bind<DummyField>().ToTransient();
-			Binder.Bind<DummySubField>().ToTransient();
-			Binder.Bind<DummyProperty>().ToTransient();
-			Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy3>().ToTransient();
+			Container.Binder.Bind<DummyField>().ToTransient();
+			Container.Binder.Bind<DummySubField>().ToTransient();
+			Container.Binder.Bind<DummyProperty>().ToTransient();
+			Container.Binder.Bind<DummySubProperty>().ToTransient();
 
-			var instance = Binder.Resolver.Resolve<Dummy3>();
+			var instance = Container.Resolver.Resolve<Dummy3>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Field);
@@ -76,16 +76,16 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionConditional()
 		{
-			Binder.Bind<Dummy4>().ToTransient();
-			Binder.Bind<DummyField>().ToTransient();
-			Binder.Bind<DummySubField>().ToTransient();
-			Binder.Bind<DummyProperty>().ToTransient();
-			Binder.Bind<DummySubProperty>().ToTransient();
-			Binder.Bind<Dummy1>().ToSingleton().WhenInjectedInto(typeof(Dummy2));
-			Binder.Bind<IDummy>().ToSingleton<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
-			Binder.Bind<IDummy>().ToSingleton<Dummy2>().When("Boba");
+			Container.Binder.Bind<Dummy4>().ToTransient();
+			Container.Binder.Bind<DummyField>().ToTransient();
+			Container.Binder.Bind<DummySubField>().ToTransient();
+			Container.Binder.Bind<DummyProperty>().ToTransient();
+			Container.Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy1>().ToSingleton().WhenInjectedInto(typeof(Dummy2));
+			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
+			Container.Binder.Bind<IDummy>().ToSingleton<Dummy2>().When("Boba");
 
-			var instance = Binder.Resolver.Resolve<Dummy4>();
+			var instance = Container.Resolver.Resolve<Dummy4>();
 
 			Assert.IsNotNull(instance);
 			Assert.IsNotNull(instance.Dummy1);

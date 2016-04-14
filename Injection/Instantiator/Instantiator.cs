@@ -12,52 +12,83 @@ namespace Pseudo.Injection.Internal
 {
 	public class Instantiator : IInstantiator
 	{
-		public IBinder Binder
+		static readonly ConstructorSelector defaultSelector = new ConstructorSelector();
+
+		public IContainer Container
 		{
-			get { return binder; }
+			get { return container; }
+		}
+		public IConstructorSelector Selector
+		{
+			get { return selector; }
+			set { selector = value ?? defaultSelector; }
 		}
 
-		readonly IBinder binder;
+		readonly IContainer container;
+		IConstructorSelector selector = defaultSelector;
 
-		public Instantiator(IBinder binder)
+		public Instantiator(IContainer container)
 		{
-			this.binder = binder;
+			this.container = container;
 		}
 
-		public object Instantiate(Type concreteType)
+		public object Instantiate(InjectionContext context)
 		{
-			Assert.IsTrue(!concreteType.IsInterface && !concreteType.IsAbstract);
+			Assert.IsNotNull(context.DeclaringType);
+			Assert.IsTrue(context.DeclaringType.IsConcrete());
 
-			var context = new InjectionContext { Binder = binder };
-			var constructor = GetValidConstructor(ref context, concreteType);
+			var constructor = GetValidConstructor(ref context);
 
 			if (constructor == null)
-				throw new ArgumentException(string.Format("No valid constructor was found for type {0}.", concreteType.Name));
+				throw new ArgumentException(string.Format("No valid constructor was found for type {0}.", context.DeclaringType.Name));
 
 			context.Instance = constructor.Inject(context);
-			binder.Injector.Inject(context);
+			container.Injector.Inject(context);
 
 			return context.Instance;
 		}
 
-		public T Instantiate<T>()
+		public object Instantiate(Type concreteType)
 		{
-			return (T)Instantiate(typeof(T));
+			return Instantiate(new InjectionContext
+			{
+				ContextType = InjectionContext.ContextTypes.Constructor,
+				DeclaringType = concreteType,
+				Container = container
+			});
 		}
 
-		IInjectableConstructor GetValidConstructor(ref InjectionContext context, Type concreteType)
+		public TConcrete Instantiate<TConcrete>()
 		{
-			var constructors = InjectionUtility.GetInjectableConstructors(concreteType);
+			return (TConcrete)Instantiate(typeof(TConcrete));
+		}
 
-			for (int i = 0; i < constructors.Length; i++)
+		public bool CanInstantiate(InjectionContext context)
+		{
+			if (context.DeclaringType == null || !context.DeclaringType.IsConcrete())
+				return false;
+
+			return GetValidConstructor(ref context) != null;
+		}
+
+		public bool CanInstantiate(Type concreteType)
+		{
+			return CanInstantiate(new InjectionContext
 			{
-				var constructor = constructors[i];
+				ContextType = InjectionContext.ContextTypes.Constructor,
+				DeclaringType = concreteType,
+				Container = container
+			});
+		}
 
-				if (constructor.CanInject(context))
-					return constructor;
-			}
+		public bool CanInstantiate<TConcrete>()
+		{
+			return CanInstantiate(typeof(TConcrete));
+		}
 
-			return constructors.First();
+		IInjectableConstructor GetValidConstructor(ref InjectionContext context)
+		{
+			return selector.Select(context, InjectionUtility.GetInjectionInfo(context.DeclaringType).Constructors);
 		}
 	}
 }

@@ -62,7 +62,7 @@ namespace Pseudo.Internal
 			else
 			{
 				var iCopyerType = typeof(ICopier<>).MakeGenericType(type);
-				copierType = TypeUtility.FindType(t => t.Is(iCopyerType) && !t.IsInterface && !t.IsAbstract && t.HasEmptyConstructor());
+				copierType = TypeUtility.FindType(t => t.Is(iCopyerType) && t.IsConcrete() && t.HasEmptyConstructor());
 			}
 
 			if (copierType == null)

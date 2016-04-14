@@ -13,7 +13,7 @@ namespace Pseudo
 
 		public static Sprite LoadSprite(string spriteFilePath, int spriteIndex)
 		{
-			Sprite[] sprites = Resources.LoadAll<Sprite>(spriteFilePath);
+			Sprite[] sprites = UnityEngine.Resources.LoadAll<Sprite>(spriteFilePath);
 			if (sprites != null && sprites.Length > spriteIndex)
 			{
 				return sprites[spriteIndex];
@@ -27,7 +27,7 @@ namespace Pseudo
 
 		public static XmlDocument LoadXmlDocument(string resourceFile)
 		{
-			TextAsset textAsset = (TextAsset)Resources.Load(resourceFile);
+			TextAsset textAsset = (TextAsset)UnityEngine.Resources.Load(resourceFile);
 			if (textAsset == null)
 			{
 				return null;

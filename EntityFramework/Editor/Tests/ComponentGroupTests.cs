@@ -13,17 +13,17 @@ namespace Pseudo.EntityFramework.Tests
 		{
 			base.Setup();
 
-			EntityManager.CreateEntity().AddComponent(new DummyComponent1());
-			EntityManager.CreateEntity().AddComponent(new DummyComponent2());
-			EntityManager.CreateEntity().AddComponent(new DummyComponent2());
-			EntityManager.CreateEntity().AddComponent(new DummyComponent3());
-			EntityManager.CreateEntity().AddComponent(new DummyComponent3());
-			EntityManager.CreateEntity().AddComponent(new DummyComponent3());
+			EntityManager.CreateEntity().Add(new DummyComponent1());
+			EntityManager.CreateEntity().Add(new DummyComponent2());
+			EntityManager.CreateEntity().Add(new DummyComponent2());
+			EntityManager.CreateEntity().Add(new DummyComponent3());
+			EntityManager.CreateEntity().Add(new DummyComponent3());
+			EntityManager.CreateEntity().Add(new DummyComponent3());
 
 			var entity = EntityManager.CreateEntity();
-			entity.AddComponent(new DummyComponent1());
-			entity.AddComponent(new DummyComponent2());
-			entity.AddComponent(new DummyComponent3());
+			entity.Add(new DummyComponent1());
+			entity.Add(new DummyComponent2());
+			entity.Add(new DummyComponent3());
 		}
 
 		[Test]
@@ -86,13 +86,13 @@ namespace Pseudo.EntityFramework.Tests
 		public void ComponentGroupChangeUpdate()
 		{
 			var entity = EntityManager.CreateEntity();
-			entity.AddComponent(new DummyComponent1());
-			entity.AddComponent(new DummyComponent2());
-			entity.AddComponent(new DummyComponent3());
+			entity.Add(new DummyComponent1());
+			entity.Add(new DummyComponent2());
+			entity.Add(new DummyComponent3());
 
 			var entityGroup = EntityManager.Entities.Filter(new[] { typeof(DummyComponent1), typeof(DummyComponent2), typeof(DummyComponent3) }, EntityMatches.Any);
 			Assert.That(entityGroup.Count, Is.EqualTo(8));
-			entity.RemoveAllComponents();
+			entity.RemoveAll();
 			Assert.That(entityGroup.Count, Is.EqualTo(7));
 		}
 

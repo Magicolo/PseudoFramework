@@ -88,21 +88,9 @@ namespace Pseudo.EntityFramework.Internal
 
 			if (!typeToSubTypes.TryGetValue(componentType, out subComponentTypes))
 			{
-				var type = componentType;
-				var types = new HashSet<Type>();
-
-				var interfaces = type.FindInterfaces((t, f) => typeof(IComponent).IsAssignableFrom(t), null);
-
-				for (int i = 0; i < interfaces.Length; i++)
-					types.Add(interfaces[i]);
-
-				while (type != null && typeof(IComponent).IsAssignableFrom(type))
-				{
-					types.Add(type);
-					type = type.BaseType;
-				}
-
-				subComponentTypes = types.ToArray();
+				subComponentTypes = TypeUtility.GetBaseTypes(componentType, true, true)
+					.Where(t => t.Is<IComponent>())
+					.ToArray();
 				typeToSubTypes[componentType] = subComponentTypes;
 			}
 
@@ -112,6 +100,6 @@ namespace Pseudo.EntityFramework.Internal
 
 	public static class ComponentIndexHolder<T> where T : class, IComponent
 	{
-		public static int Index = ComponentUtility.GetComponentIndex(typeof(T));
+		public static readonly int Index = ComponentUtility.GetComponentIndex(typeof(T));
 	}
 }

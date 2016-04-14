@@ -16,9 +16,9 @@ namespace Pseudo
 			if (currentIconPath != iconPath)
 			{
 				var script = UnityEditor.MonoScript.FromMonoBehaviour(behaviour);
-				typeof(UnityEditor.EditorGUIUtility).GetMethod("SetIconForObject", ReflectionExtensions.AllFlags).Invoke(null, new object[] { script, icon });
-				typeof(UnityEditor.EditorUtility).GetMethod("ForceReloadInspectors", ReflectionExtensions.AllFlags).Invoke(null, null);
-				typeof(UnityEditor.MonoImporter).GetMethod("CopyMonoScriptIconToImporters", ReflectionExtensions.AllFlags).Invoke(null, new object[] { script });
+				typeof(UnityEditor.EditorGUIUtility).GetMethod("SetIconForObject", ReflectionUtility.AllFlags).Invoke(null, new object[] { script, icon });
+				typeof(UnityEditor.EditorUtility).GetMethod("ForceReloadInspectors", ReflectionUtility.AllFlags).Invoke(null, null);
+				typeof(UnityEditor.MonoImporter).GetMethod("CopyMonoScriptIconToImporters", ReflectionUtility.AllFlags).Invoke(null, new object[] { script });
 				UnityEditor.EditorPrefs.SetString(behaviour.GetType().AssemblyQualifiedName + "Icon", iconPath);
 			}
 #endif

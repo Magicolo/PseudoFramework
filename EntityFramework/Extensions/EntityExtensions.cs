@@ -12,48 +12,48 @@ namespace Pseudo.EntityFramework
 	{
 		public static bool HasTransform(this IEntity entity)
 		{
-			return entity.HasComponent<TransformComponent>();
+			return entity.Has<TransformComponent>();
 		}
 
 		public static Transform GetTransform(this IEntity entity)
 		{
-			var component = entity.GetComponent<TransformComponent>();
+			var component = entity.Get<TransformComponent>();
 
 			return component == null ? null : component.Transform;
 		}
 
 		public static bool HasGameObject(this IEntity entity)
 		{
-			return entity.HasComponent<GameObjectComponent>();
+			return entity.Has<GameObjectComponent>();
 		}
 
 		public static GameObject GetGameObject(this IEntity entity)
 		{
-			var component = entity.GetComponent<GameObjectComponent>();
+			var component = entity.Get<GameObjectComponent>();
 
 			return component == null ? null : component.GameObject;
 		}
 
 		public static bool HasBehaviour(this IEntity entity)
 		{
-			return entity.HasComponent<BehaviourComponent>();
+			return entity.Has<BehaviourComponent>();
 		}
 
 		public static EntityBehaviour GetBehaviour(this IEntity entity)
 		{
-			var component = entity.GetComponent<BehaviourComponent>();
+			var component = entity.Get<BehaviourComponent>();
 
 			return component == null ? null : component.Behaviour;
 		}
 
 		public static bool HasTime(this IEntity entity)
 		{
-			return entity.HasComponent<TimeComponent>();
+			return entity.Has<TimeComponent>();
 		}
 
 		public static TimeChannel GetTime(this IEntity entity)
 		{
-			return entity.GetComponent<TimeComponent>();
+			return entity.Get<TimeComponent>();
 		}
 
 		public static IEntity GetEntity(this Component component)

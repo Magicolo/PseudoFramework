@@ -47,6 +47,11 @@ namespace Pseudo.Pooling.Internal
 				Initialize();
 		}
 
+		public virtual object Create()
+		{
+			return CreateObject();
+		}
+
 		public virtual void Recycle(object instance)
 		{
 			if (instance == null)
@@ -159,10 +164,5 @@ namespace Pseudo.Pooling.Internal
 		}
 
 		protected virtual void Destroy(object instance) { }
-
-		object IPool.Create()
-		{
-			return CreateObject();
-		}
 	}
 }

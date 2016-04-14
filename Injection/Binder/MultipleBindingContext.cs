@@ -10,21 +10,17 @@ namespace Pseudo.Injection.Internal
 	{
 		readonly Type[] baseTypes;
 
-		public MultipleBindingContext(Type contractType, Type[] baseTypes, Binder binder, Resolver resolver) : base(contractType, binder, resolver)
+		public MultipleBindingContext(Type contractType, Type[] baseTypes, IContainer container) : base(contractType, container)
 		{
 			this.baseTypes = baseTypes;
 		}
 
 		public override IBindingCondition ToFactory(IInjectionFactory factory)
 		{
-			var conditions = new IBindingCondition[baseTypes.Length + 1];
-
-			for (int i = 0; i < baseTypes.Length; i++)
-				conditions[i] = binder.Bind(baseTypes[i]).ToFactory(factory);
-
-			conditions[conditions.Length - 1] = binder.Bind(contractType).ToFactory(factory);
-
-			return new MultipleBindingCondition(conditions);
+			return new MultipleBindingCondition(baseTypes
+				.Joined(contractType)
+				.Select(t => container.Binder.Bind(t).ToFactory(factory))
+				.ToArray());
 		}
 	}
 
@@ -32,14 +28,14 @@ namespace Pseudo.Injection.Internal
 	{
 		readonly Type[] baseTypes;
 
-		public MultipleBindingContext(Type[] baseTypes, Binder binder, Resolver resolver) : base(binder, resolver)
+		public MultipleBindingContext(Type[] baseTypes, IContainer container) : base(container)
 		{
 			this.baseTypes = baseTypes;
 		}
 
 		public override IBindingCondition ToFactory(IInjectionFactory factory)
 		{
-			return binder.Bind(contractType, baseTypes).ToFactory(factory);
+			return container.Binder.Bind(contractType, baseTypes).ToFactory(factory);
 		}
 	}
 }

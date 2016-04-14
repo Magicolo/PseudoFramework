@@ -79,7 +79,7 @@ namespace Pseudo.Internal
 
 			GUIText text = child.AddComponent<GUIText>();
 			text.pixelOffset = new Vector2(5, 5);
-			text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+			text.font = UnityEngine.Resources.GetBuiltinResource<Font>("Arial.ttf");
 			text.fontSize = FontSize;
 			text.anchor = TextAnchor.LowerLeft;
 			text.alignment = TextAlignment.Left;

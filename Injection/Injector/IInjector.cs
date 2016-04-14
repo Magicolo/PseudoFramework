@@ -9,10 +9,9 @@ namespace Pseudo.Injection
 {
 	public interface IInjector
 	{
-		IBinder Binder { get; }
+		IContainer Container { get; }
 
-		void Inject(object instance);
-		void Inject(params object[] instances);
 		void Inject(InjectionContext context);
+		void Inject(object instance);
 	}
 }

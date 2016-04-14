@@ -78,66 +78,6 @@ namespace Pseudo.Internal
 			return results.CompiledAssembly;
 		}
 
-		public static IEnumerable<UsingDeclaration> GetUsings(this INode node)
-		{
-			return node.GetChildren<UsingDeclaration>();
-		}
-
-		public static IEnumerable<UsingDeclaration> GetUsings(this INode node, Predicate<UsingDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
-		public static IEnumerable<NamespaceDeclaration> GetNamespaces(this INode node)
-		{
-			return node.GetChildren<NamespaceDeclaration>();
-		}
-
-		public static IEnumerable<NamespaceDeclaration> GetNamespaces(this INode node, Predicate<NamespaceDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
-		public static IEnumerable<TypeDeclaration> GetTypes(this INode node)
-		{
-			return node.GetChildren<TypeDeclaration>();
-		}
-
-		public static IEnumerable<TypeDeclaration> GetTypes(this INode node, Predicate<TypeDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
-		public static IEnumerable<FieldDeclaration> GetFields(this INode node)
-		{
-			return node.GetChildren<FieldDeclaration>();
-		}
-
-		public static IEnumerable<FieldDeclaration> GetFields(this INode node, Predicate<FieldDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
-		public static IEnumerable<PropertyDeclaration> GetProperties(this INode node)
-		{
-			return node.GetChildren<PropertyDeclaration>();
-		}
-
-		public static IEnumerable<PropertyDeclaration> GetProperties(this INode node, Predicate<PropertyDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
-		public static IEnumerable<MethodDeclaration> GetMethods(this INode node)
-		{
-			return node.GetChildren<MethodDeclaration>();
-		}
-
-		public static IEnumerable<MethodDeclaration> GetMethods(this INode node, Predicate<MethodDeclaration> match)
-		{
-			return node.GetChildren(match);
-		}
-
 		public static string GetFullTypeName(this TypeDeclaration type)
 		{
 			var typeName = type.Name;

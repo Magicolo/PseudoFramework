@@ -17,9 +17,9 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var component3 = Substitute.For<DummyComponent3>();
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
+			entity.Add(component1);
+			entity.Add(component2);
+			entity.Add(component3);
 			entity.SendMessage(0);
 
 			component1.Received(1).MessageNoArgument();
@@ -38,9 +38,9 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var component3 = Substitute.For<DummyComponent3>();
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
+			entity.Add(component1);
+			entity.Add(component2);
+			entity.Add(component3);
 			entity.SendMessage(1, 1);
 
 			component1.Received(1).MessageOneArgument(1);
@@ -57,7 +57,7 @@ namespace Pseudo.EntityFramework.Tests
 			var entity = EntityManager.CreateEntity();
 			var component = Substitute.For<DummyComponent1>();
 
-			entity.AddComponent(component);
+			entity.Add(component);
 			entity.SendMessage("Boba", component);
 
 			component.Received(1).MessageInheritance(component);
@@ -70,7 +70,7 @@ namespace Pseudo.EntityFramework.Tests
 			var entity = EntityManager.CreateEntity();
 			var component = Substitute.For<DummyComponent1>();
 
-			entity.AddComponent(component);
+			entity.Add(component);
 			entity.SendMessage(0);
 			entity.SendMessage(0, 1);
 
@@ -92,9 +92,9 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var component3 = Substitute.For<DummyComponent3>();
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
+			entity.Add(component1);
+			entity.Add(component2);
+			entity.Add(component3);
 			entity.SendMessage("Fett");
 
 			component1.Received(1).MessageConflict();
@@ -113,9 +113,9 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var component3 = Substitute.For<DummyComponent3>();
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
+			entity.Add(component1);
+			entity.Add(component2);
+			entity.Add(component3);
 
 			component1.Active = false;
 			component2.Active = false;
@@ -137,9 +137,9 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var component3 = Substitute.For<DummyComponent3>();
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
-			entity.AddComponent(component3);
+			entity.Add(component1);
+			entity.Add(component2);
+			entity.Add(component3);
 			entity.Active = false;
 			entity.SendMessage(0);
 
@@ -157,7 +157,7 @@ namespace Pseudo.EntityFramework.Tests
 			var entity = EntityManager.CreateEntity();
 			var component = Substitute.For<DummyComponent2>();
 
-			entity.AddComponent(component);
+			entity.Add(component);
 			entity.SendMessage(0);
 			entity.SendMessage(0f);
 			entity.SendMessage(0u);
@@ -180,12 +180,12 @@ namespace Pseudo.EntityFramework.Tests
 			entity1.AddChild(entity2);
 			entity3.SetParent(entity2);
 
-			entity1.AddComponent(component1);
-			entity2.AddComponent(component2);
-			entity3.AddComponent(component3);
+			entity1.Add(component1);
+			entity2.Add(component2);
+			entity3.Add(component3);
 
-			entity1.SendMessage(0, HierarchyScope.Children | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Children);
+			entity1.SendMessage(0, HierarchyScopes.Children | HierarchyScopes.Self);
+			entity2.SendMessage(1, 1, HierarchyScopes.Children);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -212,15 +212,15 @@ namespace Pseudo.EntityFramework.Tests
 			entity1.AddChild(entity2);
 			entity3.SetParent(entity2);
 
-			entity1.AddComponent(component1);
-			entity2.AddComponent(component2);
-			entity3.AddComponent(component3);
+			entity1.Add(component1);
+			entity2.Add(component2);
+			entity3.Add(component3);
 
 			component1.Active = false;
 			entity2.Active = false;
 
-			entity1.SendMessage(0, HierarchyScope.Children | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Children | HierarchyScope.Local);
+			entity1.SendMessage(0, HierarchyScopes.Children | HierarchyScopes.Self);
+			entity2.SendMessage(1, 1, HierarchyScopes.Children | HierarchyScopes.Self);
 
 			component1.Received(0).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -247,12 +247,12 @@ namespace Pseudo.EntityFramework.Tests
 			entity1.AddChild(entity2);
 			entity3.SetParent(entity2);
 
-			entity1.AddComponent(component1);
-			entity2.AddComponent(component2);
-			entity3.AddComponent(component3);
+			entity1.Add(component1);
+			entity2.Add(component2);
+			entity3.Add(component3);
 
-			entity1.SendMessage(0, HierarchyScope.Parents | HierarchyScope.Local);
-			entity2.SendMessage(1, 1, HierarchyScope.Parents);
+			entity1.SendMessage(0, HierarchyScopes.Ancestors | HierarchyScopes.Self);
+			entity2.SendMessage(1, 1, HierarchyScopes.Ancestors);
 
 			component1.Received(1).MessageNoArgument();
 			component1.Received(1).MessageOneArgument(1);
@@ -279,12 +279,12 @@ namespace Pseudo.EntityFramework.Tests
 			entity1.AddChild(entity2);
 			entity3.SetParent(entity1);
 
-			entity1.AddComponent(component1);
-			entity2.AddComponent(component2);
-			entity3.AddComponent(component3);
+			entity1.Add(component1);
+			entity2.Add(component2);
+			entity3.Add(component3);
 
-			entity2.SendMessage(0, HierarchyScope.Siblings | HierarchyScope.Local);
-			entity3.SendMessage(1, 1, HierarchyScope.Siblings);
+			entity2.SendMessage(0, HierarchyScopes.Siblings | HierarchyScopes.Self);
+			entity3.SendMessage(1, 1, HierarchyScopes.Siblings);
 
 			component1.Received(0).MessageNoArgument();
 			component1.Received(0).MessageOneArgument(1);
@@ -311,9 +311,9 @@ namespace Pseudo.EntityFramework.Tests
 			entity1.AddChild(entity2);
 			entity3.SetParent(entity2);
 
-			entity1.AddComponent(component1);
-			entity2.AddComponent(component2);
-			entity3.AddComponent(component3);
+			entity1.Add(component1);
+			entity2.Add(component2);
+			entity3.Add(component3);
 
 			EntityManager.Entities.BroadcastMessage(0);
 			EntityManager.Entities.BroadcastMessage(1, 1);

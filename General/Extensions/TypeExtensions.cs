@@ -72,6 +72,14 @@ namespace Pseudo
 				type == typeof(Vector4);
 		}
 
+		public static bool IsConcrete(this Type type)
+		{
+			return
+				!type.IsAbstract &&
+				!type.IsInterface &&
+				!type.IsGenericTypeDefinition;
+		}
+
 		public static string GetName(this Type type)
 		{
 			return type.Name.Split('.').Last().GetRange('`');

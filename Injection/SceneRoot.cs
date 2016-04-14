@@ -16,11 +16,14 @@ namespace Pseudo.Injection
 			Inject(SceneUtility.FindComponents<MonoBehaviour>(gameObject.scene));
 		}
 
-		protected override IBinder CreateBinder()
+		protected override IContainer CreateContainer()
 		{
 			var root = GetOrCreateGlobalRoot();
 
-			return new Binder(root == null ? null : root.Binder);
+			if (root == null)
+				return new Container();
+			else
+				return new Container(root.Container);
 		}
 
 		protected override void Awake()
@@ -41,7 +44,7 @@ namespace Pseudo.Injection
 
 			if (root == null)
 			{
-				var rootPrefab = Resources.Load<GlobalRoot>("GlobalRoot");
+				var rootPrefab = UnityEngine.Resources.Load<GlobalRoot>("GlobalRoot");
 
 				if (rootPrefab != null)
 					root = Instantiate(rootPrefab);

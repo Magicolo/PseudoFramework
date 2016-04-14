@@ -6,7 +6,7 @@ using Pseudo;
 
 namespace Pseudo.Injection.Internal
 {
-	public class MultipleBindingCondition : IBindingCondition
+	public class MultipleBindingCondition : BindingConditionBase
 	{
 		readonly IBindingCondition[] conditions;
 
@@ -15,30 +15,10 @@ namespace Pseudo.Injection.Internal
 			this.conditions = conditions;
 		}
 
-		public void When(Predicate<InjectionContext> condition)
+		public override void When(Predicate<InjectionContext> condition)
 		{
 			for (int i = 0; i < conditions.Length; i++)
 				conditions[i].When(condition);
-		}
-
-		public void When(string identifier)
-		{
-			When(context => context.Identifier == identifier);
-		}
-
-		public void When(InjectionContext.ContextTypes contextType)
-		{
-			When(context => (context.ContextType & contextType) != 0);
-		}
-
-		public void WhenInjectedInto(Type declaringType)
-		{
-			When(context => context.DeclaringType == declaringType);
-		}
-
-		public void WhenInjectedInto(object instance)
-		{
-			When(context => context.Instance == instance);
 		}
 	}
 }

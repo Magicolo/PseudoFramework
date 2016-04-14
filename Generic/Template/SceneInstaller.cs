@@ -2,24 +2,23 @@
 using System.Collections;
 using System;
 using Pseudo;
-using Pseudo.Internal;
 using Pseudo.Injection;
 using Pseudo.EntityFramework;
 using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class SceneInstaller : BindingInstallerBehaviourBase
+	public class SceneInstaller : BehaviourInstallerBase
 	{
 		public Camera MainCamera;
 		public Camera UICamera;
 
-		public override void Install(IBinder binder)
+		public override void Install(IContainer container)
 		{
-			binder.Bind<EntityManager, IEntityManager>().ToSingleton();
-			binder.Bind<MessageManager, IMessageManager>().ToSingleton();
-			binder.Bind<Camera>().ToInstance(MainCamera).When(c => c.Identifier == "Main");
-			binder.Bind<Camera>().ToInstance(UICamera).When(c => c.Identifier == "UI");
+			container.Binder.Bind<EntityManager, IEntityManager>().ToSingleton();
+			container.Binder.Bind<MessageManager, IMessageManager>().ToSingleton();
+			container.Binder.Bind<Camera>().ToInstance(MainCamera).When(c => c.Identifier == "Main");
+			container.Binder.Bind<Camera>().ToInstance(UICamera).When(c => c.Identifier == "UI");
 		}
 	}
 }

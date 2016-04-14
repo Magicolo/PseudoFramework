@@ -5,60 +5,59 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableMethod : IInjectableMember
+	public class InjectableMethod : InjectableMemberBase<MethodInfo>, IInjectableMethod
 	{
-		public MemberInfo Member
+		public MethodInfo Method
 		{
-			get { return method; }
+			get { return member; }
+		}
+		public IInjectableParameter[] Parameters
+		{
+			get { return parameters; }
 		}
 
-		readonly MethodInfo method;
 		readonly IInjectableParameter[] parameters;
-		readonly InjectAttribute attribute;
 		readonly object[] arguments;
 
-		public InjectableMethod(MethodInfo method, IInjectableParameter[] parameters)
+		public InjectableMethod(MethodInfo method, IInjectableParameter[] parameters) : base(method)
 		{
-			this.method = method;
 			this.parameters = parameters;
 
-			attribute = (InjectAttribute)method.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
 			arguments = new object[parameters.Length];
 		}
 
-		public void Inject(InjectionContext context)
-		{
-			SetupContext(ref context);
-
-			if (!attribute.Optional || CanInject(ref context))
-			{
-				for (int i = 0; i < parameters.Length; i++)
-					arguments[i] = parameters[i].Resolve(context);
-
-				method.Invoke(context.Instance, arguments);
-				arguments.Clear();
-			}
-		}
-
-		bool CanInject(ref InjectionContext context)
+		public override bool CanInject(InjectionContext context)
 		{
 			for (int i = 0; i < parameters.Length; i++)
 			{
-				if (!parameters[i].CanResolve(context))
+				if (!parameters[i].CanInject(context))
 					return false;
 			}
 
 			return true;
 		}
 
-		void SetupContext(ref InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
 			context.ContextType = InjectionContext.ContextTypes.Method;
-			context.Member = method;
-			context.Attribute = attribute;
+			context.DeclaringType = member.DeclaringType;
+			context.Identifier = attribute.Identifier;
+			context.Optional = attribute.Optional;
+		}
+
+		protected override object Inject(ref InjectionContext context)
+		{
+			for (int i = 0; i < parameters.Length; i++)
+				arguments[i] = parameters[i].Inject(context);
+
+			var returnValue = member.Invoke(context.Instance, arguments);
+			arguments.Clear();
+
+			return returnValue;
 		}
 	}
 }

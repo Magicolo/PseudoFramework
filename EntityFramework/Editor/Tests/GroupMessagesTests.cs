@@ -17,8 +17,8 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var entityGroup = EntityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
+			entity.Add(component1);
+			entity.Add(component2);
 			entityGroup.BroadcastMessage(0);
 
 			component1.Received(1).MessageNoArgument();
@@ -35,8 +35,8 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var entityGroup = EntityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
+			entity.Add(component1);
+			entity.Add(component2);
 			entity.Active = false;
 			entityGroup.BroadcastMessage(0);
 
@@ -54,8 +54,8 @@ namespace Pseudo.EntityFramework.Tests
 			var component2 = Substitute.For<DummyComponent2>();
 			var entityGroup = EntityManager.Entities.Filter(EntityGroups.GetValue(new ByteFlag(1, 2)), EntityMatches.All);
 
-			entity.AddComponent(component1);
-			entity.AddComponent(component2);
+			entity.Add(component1);
+			entity.Add(component2);
 			component2.Active = false;
 			entityGroup.BroadcastMessage(0);
 

@@ -12,9 +12,9 @@ namespace Pseudo.Internal
 	public static class ScriptAttributeUtility
 	{
 		public static readonly Type Type = Type.GetType("UnityEditor.ScriptAttributeUtility, UnityEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null");
-		public static readonly PropertyInfo PropertyHandlerCache = Type.GetProperty("propertyHandlerCache", ReflectionExtensions.AllFlags);
+		public static readonly PropertyInfo PropertyHandlerCache = Type.GetProperty("propertyHandlerCache", ReflectionUtility.AllFlags);
 		public static readonly MethodInfo GetFieldInfoFromPropertyPath = Type.GetMethod("GetFieldInfoFromPropertyPath", BindingFlags.NonPublic | BindingFlags.Static);
-		public static readonly MethodInfo GetPropertyDrawerMethod = Type.GetMethod("GetDrawerTypeForType", ReflectionExtensions.AllFlags);
+		public static readonly MethodInfo GetPropertyDrawerMethod = Type.GetMethod("GetDrawerTypeForType", ReflectionUtility.AllFlags);
 	}
 
 	public static class PropertyHandler

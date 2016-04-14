@@ -10,6 +10,7 @@ namespace Pseudo.Editor.Internal
 	public class EnumFlagsDrawer : CustomAttributePropertyDrawerBase
 	{
 		Type enumType;
+		int enumValue;
 		ByteFlag byteFlag;
 		BigFlag bigFlag;
 		Array enumValues;
@@ -23,13 +24,13 @@ namespace Pseudo.Editor.Internal
 
 			currentPosition.height = 16f;
 
-			if (typeof(Enum).IsAssignableFrom(fieldInfo.FieldType))
+			if (fieldInfo.FieldType.IsEnum)
 				DrawEnumFlag();
 			if (fieldInfo.FieldType.IsNumerical())
 				DrawNumericalFlag();
-			else if (fieldInfo.FieldType == typeof(ByteFlag))
+			else if (fieldInfo.FieldType.Is<ByteFlag>())
 				DrawByteFlag();
-			else if (fieldInfo.FieldType == typeof(BigFlag))
+			else if (fieldInfo.FieldType.Is<BigFlag>())
 				DrawBigFlag();
 
 			End();
@@ -69,14 +70,17 @@ namespace Pseudo.Editor.Internal
 
 		void DrawNumericalFlag()
 		{
-			EditorGUI.BeginChangeCheck();
+			enumValue = currentProperty.GetValue<int>();
+			var options = new FlagsOption[enumValues.Length];
 
-			int value = currentProperty.GetValue<int>();
+			for (int i = 0; i < options.Length; i++)
+			{
+				var name = enumNames[i].Replace('_', '/').ToGUIContent();
+				var value = Convert.ToInt32(enumValues.GetValue(i));
+				options[i] = new FlagsOption(name, value, (enumValue & value) == value);
+			}
 
-			value = EditorGUI.MaskField(currentPosition, currentLabel, value, Enum.GetNames(enumType));
-
-			if (EditorGUI.EndChangeCheck())
-				currentProperty.SetValue(value);
+			Flags(currentPosition, options, OnEnumFlagSelected, currentLabel, currentProperty);
 
 		}
 
@@ -124,7 +128,7 @@ namespace Pseudo.Editor.Internal
 
 		byte[] EnumValuesToBytes(Array enumValues)
 		{
-			byte[] bytes = new byte[enumValues.Length];
+			var bytes = new byte[enumValues.Length];
 
 			for (int i = 0; i < enumValues.Length; i++)
 				bytes[i] = Convert.ToByte(enumValues.GetValue(i));
@@ -134,12 +138,35 @@ namespace Pseudo.Editor.Internal
 
 		int[] EnumValuesToInts(Array enumValues)
 		{
-			int[] ints = new int[enumValues.Length];
+			var ints = new int[enumValues.Length];
 
 			for (int i = 0; i < enumValues.Length; i++)
 				ints[i] = Convert.ToInt32(enumValues.GetValue(i));
 
 			return ints;
+		}
+
+		void OnEnumFlagSelected(FlagsOption option, SerializedProperty property)
+		{
+			switch (option.Type)
+			{
+				case FlagsOption.OptionTypes.Everything:
+					enumValue = -1;
+					break;
+				case FlagsOption.OptionTypes.Nothing:
+					enumValue = 0;
+					break;
+				case FlagsOption.OptionTypes.Custom:
+					var value = (int)option.Value;
+
+					if ((enumValue & value) == value)
+						enumValue &= ~value;
+					else
+						enumValue |= value;
+					break;
+			}
+
+			property.SetValue(enumValue);
 		}
 
 		void OnByteFlagSelected(FlagsOption option, SerializedProperty property)

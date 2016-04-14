@@ -28,7 +28,7 @@ namespace Pseudo.Pooling.Internal
 			return PoolJanitor.Instance;
 		});
 
-		public static IPool CreateTypePool(Type type, int startSize)
+		public static IPool CreateTypePool(Type type, int startSize = 0)
 		{
 			IPool pool;
 
@@ -79,7 +79,7 @@ namespace Pseudo.Pooling.Internal
 			return pool;
 		}
 
-		public static IPool CreatePrefabPool(object reference, int startSize)
+		public static IPool CreatePrefabPool(object reference, int startSize = 0)
 		{
 			IPool pool;
 
@@ -166,12 +166,5 @@ namespace Pseudo.Pooling.Internal
 			else
 				return new CopierFieldInitializer(copier, instance);
 		}
-	}
-
-	public class InitializationCycleException : Exception
-	{
-		public InitializationCycleException(FieldInfo field) :
-			base(string.Format("Initialization cycle detected on field {0}. You might be initializing the content of a field that references back to the its owner.", field.DeclaringType.Name + "." + field.Name))
-		{ }
 	}
 }

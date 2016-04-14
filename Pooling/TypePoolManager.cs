@@ -15,8 +15,6 @@ namespace Pseudo.Pooling
 	{
 		static readonly Dictionary<Type, IPool> pools = new Dictionary<Type, IPool>(8);
 
-		public static int StartSize = 2;
-
 		public static T Create<T>() where T : class
 		{
 			var pool = GetPool<T>();
@@ -59,7 +57,7 @@ namespace Pseudo.Pooling
 			elements.Clear();
 		}
 
-		public static IPool GetPool<T>() where T : class
+		public static IPool<T> GetPool<T>() where T : class
 		{
 			return PoolHolder<T>.Pool;
 		}
@@ -70,7 +68,7 @@ namespace Pseudo.Pooling
 
 			if (!pools.TryGetValue(type, out pool))
 			{
-				pool = PoolUtility.CreateTypePool(type, StartSize);
+				pool = PoolUtility.CreateTypePool(type);
 				pools[type] = pool;
 			}
 

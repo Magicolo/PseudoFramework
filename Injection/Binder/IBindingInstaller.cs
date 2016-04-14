@@ -8,6 +8,6 @@ namespace Pseudo.Injection
 {
 	public interface IBindingInstaller
 	{
-		void Install(IBinder binder);
+		void Install(IContainer container);
 	}
 }

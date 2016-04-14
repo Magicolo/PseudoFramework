@@ -89,7 +89,7 @@ namespace Pseudo.Editor.Internal
 			if (handlerCache.InvokeMethod("GetHandler", new object[] { property }) == null)
 			{
 				var handler = Activator.CreateInstance(PropertyHandler.Type);
-				var attributes = field.GetCustomAttributes(typeof(PropertyAttribute), true);
+				var attributes = field.GetAttributes<PropertyAttribute>(true);
 
 				if (attributes.Length > 0)
 					for (int i = 0; i < attributes.Length; i++)

@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo.Communication.Internal
 {
@@ -56,7 +57,7 @@ namespace Pseudo.Communication.Internal
 
 			if (!methodToAttributes.TryGetValue(method, out attributes))
 			{
-				attributes = method.GetCustomAttributes(typeof(MessageAttribute), true);
+				attributes = method.GetAttributes<MessageAttribute>(true);
 				methodToAttributes[method] = attributes;
 			}
 

@@ -11,8 +11,6 @@ namespace Pseudo.Pooling
 {
 	public static class PrefabPoolManager
 	{
-		public static int StartSize;
-
 		static readonly Dictionary<object, IPool> pools = new Dictionary<object, IPool>(8);
 		static readonly Dictionary<object, IPool> instancePool = new Dictionary<object, IPool>(64);
 
@@ -69,7 +67,7 @@ namespace Pseudo.Pooling
 
 			if (!pools.TryGetValue(prefab, out pool))
 			{
-				pool = PoolUtility.CreatePrefabPool(prefab, ApplicationUtility.IsPlaying ? StartSize : 0);
+				pool = PoolUtility.CreatePrefabPool(prefab);
 				pools[prefab] = pool;
 			}
 

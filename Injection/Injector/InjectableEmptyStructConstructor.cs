@@ -9,9 +9,9 @@ using System.Runtime.Serialization;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableEmptyStructConstructor : IInjectableConstructor
+	public class InjectableEmptyStructConstructor : InjectableMemberBase<ConstructorInfo>, IInjectableConstructor
 	{
-		static readonly IInjectableParameter[] parameters = new IInjectableParameter[0];
+		static readonly IInjectableParameter[] emptyParameters = new IInjectableParameter[0];
 
 		public ConstructorInfo Constructor
 		{
@@ -19,24 +19,26 @@ namespace Pseudo.Injection.Internal
 		}
 		public IInjectableParameter[] Parameters
 		{
-			get { return parameters; }
+			get { return emptyParameters; }
 		}
 
-		readonly Type type;
+		readonly Type concreteType;
 
-		public InjectableEmptyStructConstructor(Type type)
+		public InjectableEmptyStructConstructor(Type concreteType) : base(null)
 		{
-			this.type = type;
+			this.concreteType = concreteType;
 		}
 
-		public object Inject(InjectionContext context)
-		{
-			return FormatterServices.GetUninitializedObject(type);
-		}
-
-		public bool CanInject(InjectionContext context)
+		public override bool CanInject(InjectionContext context)
 		{
 			return true;
+		}
+
+		protected override void SetupContext(ref InjectionContext context) { }
+
+		protected override object Inject(ref InjectionContext context)
+		{
+			return FormatterServices.GetUninitializedObject(concreteType);
 		}
 	}
 }

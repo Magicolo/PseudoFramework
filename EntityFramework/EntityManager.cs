@@ -72,9 +72,15 @@ namespace Pseudo.EntityFramework
 			PrefabPoolManager.Recycle(instance);
 		}
 
+		/// <summary>
+		/// Adds or updates an IEntity instance to the IEntityGroup hierarchy of the IEntityManager instance.
+		/// </summary>
+		/// <param name="entity">The IEntity instance to add or update.</param>
 		public void AddEntity(IEntity entity)
 		{
-			UpdateEntity(entity);
+			Assert.IsNotNull(entity);
+
+			entities.UpdateEntity(entity, true);
 		}
 
 		public void RemoveEntity(IEntity entity)
@@ -87,17 +93,6 @@ namespace Pseudo.EntityFramework
 		public void RemoveAllEntities()
 		{
 			entities.Clear();
-		}
-
-		/// <summary>
-		/// Updates an IEntity instance that has had its group or components changed in all IEntityGroup instances.
-		/// </summary>
-		/// <param name="entity">The modified IEntity instance.</param>
-		public void UpdateEntity(IEntity entity)
-		{
-			Assert.IsNotNull(entity);
-
-			entities.UpdateEntity(entity, true);
 		}
 	}
 }

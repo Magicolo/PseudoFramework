@@ -5,45 +5,44 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableField : IInjectableMember
+	public class InjectableField : InjectableMemberBase<FieldInfo>, IInjectableField
 	{
-		public MemberInfo Member
+		public FieldInfo Field
 		{
-			get { return field; }
+			get { return member; }
 		}
 
-		readonly FieldInfo field;
-		readonly InjectAttribute attribute;
+		public InjectableField(FieldInfo field) : base(field) { }
 
-		public InjectableField(FieldInfo field)
+		public override bool CanInject(InjectionContext context)
 		{
-			this.field = field;
-
-			attribute = (InjectAttribute)field.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
+			return context.Container.Resolver.CanResolve(context);
 		}
 
-		public void Inject(InjectionContext context)
-		{
-			SetupContext(ref context);
-
-			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
-				field.SetValue(context.Instance, context.Binder.Resolver.Resolve(context));
-		}
-
-		void SetupContext(ref InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
 			context.ContextType = InjectionContext.ContextTypes.Field;
-			context.ContractType = field.FieldType;
-			context.Member = field;
-			context.Attribute = attribute;
+			context.ContractType = member.FieldType;
+			context.DeclaringType = member.DeclaringType;
+			context.Identifier = attribute.Identifier;
+			context.Optional = attribute.Optional;
+		}
+
+		protected override object Inject(ref InjectionContext context)
+		{
+			var value = context.Container.Resolver.Resolve(context);
+			member.SetValue(context.Instance, value);
+
+			return value;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}.{2})", GetType().Name, field.DeclaringType.Name, field.Name);
+			return string.Format("{0}({1}.{2})", GetType().Name, member.DeclaringType.Name, member.Name);
 		}
 	}
 }

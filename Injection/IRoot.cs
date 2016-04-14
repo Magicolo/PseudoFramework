@@ -5,7 +5,7 @@ namespace Pseudo.Injection
 {
 	public interface IRoot
 	{
-		IBinder Binder { get; }
+		IContainer Container { get; }
 		IEnumerable<IBindingInstaller> Installers { get; }
 
 		void AddInstaller(IBindingInstaller installer);

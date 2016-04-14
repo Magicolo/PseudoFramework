@@ -12,19 +12,21 @@ namespace Pseudo.EntityFramework
 	public struct EntityMessage
 	{
 		public MessageEnum Message;
-		[EnumFlags]
-		public HierarchyScope Scope;
+		[SerializeField, EnumFlags(typeof(HierarchyScopes))]
+		int scope;
 
-		public EntityMessage(MessageEnum message, HierarchyScope scope = HierarchyScope.Local)
+		public HierarchyScopes Scope
 		{
-			Message = message;
-			Scope = scope;
+			get { return (HierarchyScopes)scope; }
+			set { scope = (int)value; }
 		}
 
-		public EntityMessage(Enum message, HierarchyScope scope = HierarchyScope.Local)
+		public EntityMessage(MessageEnum message, HierarchyScopes scope = HierarchyScopes.Self)
 		{
 			Message = message;
-			Scope = scope;
+			this.scope = (int)scope;
 		}
+
+		public EntityMessage(Enum message, HierarchyScopes scope = HierarchyScopes.Self) : this((MessageEnum)message, scope) { }
 	}
 }

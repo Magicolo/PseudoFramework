@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
@@ -14,6 +15,10 @@ namespace Pseudo.Injection.Internal
 		{
 			get { return parameter; }
 		}
+		public InjectAttribute Attribute
+		{
+			get { return attribute; }
+		}
 
 		readonly ParameterInfo parameter;
 		readonly InjectAttribute attribute;
@@ -22,32 +27,32 @@ namespace Pseudo.Injection.Internal
 		{
 			this.parameter = parameter;
 
-			attribute = (InjectAttribute)parameter.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
+			attribute = parameter.GetAttribute<InjectAttribute>(true) ?? new InjectAttribute();
 		}
 
-		public object Resolve(InjectionContext context)
+		public object Inject(InjectionContext context)
 		{
 			SetupContext(ref context);
 
-			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
-				return context.Binder.Resolver.Resolve(context);
+			if (!attribute.Optional || CanInject(context))
+				return context.Container.Resolver.Resolve(context);
 
 			return null;
 		}
 
-		public bool CanResolve(InjectionContext context)
+		public bool CanInject(InjectionContext context)
 		{
 			SetupContext(ref context);
 
-			return context.Binder.Resolver.CanResolve(context);
+			return context.Container.Resolver.CanResolve(context);
 		}
 
 		void SetupContext(ref InjectionContext context)
 		{
 			context.ContextType |= InjectionContext.ContextTypes.Parameter;
 			context.ContractType = parameter.ParameterType;
-			context.Parameter = parameter;
-			context.Attribute = attribute;
+			context.Identifier = attribute.Identifier;
+			context.Optional = attribute.Optional;
 		}
 	}
 }

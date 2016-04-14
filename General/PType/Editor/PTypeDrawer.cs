@@ -48,8 +48,7 @@ namespace Pseudo.Internal
 		void ShowType()
 		{
 			var typeNameProperty = currentProperty.FindPropertyRelative("typeName");
-			var type = Type.GetType(typeNameProperty.GetValue<string>());
-
+			var type = TypeUtility.GetType(typeNameProperty.GetValue<string>());
 			int index = Array.IndexOf(types, type);
 
 			EditorGUI.BeginProperty(currentPosition, currentLabel, typeNameProperty);

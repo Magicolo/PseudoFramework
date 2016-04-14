@@ -34,7 +34,7 @@ namespace Pseudo
 			if (root == null)
 				return;
 
-			root.Binder.Injector.Inject(this);
+			root.Container.Injector.Inject(this);
 			injected = true;
 		}
 

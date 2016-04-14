@@ -9,45 +9,44 @@ namespace Pseudo.Injection.Internal
 {
 	public class Resolver : IResolver
 	{
-		public IBinder Binder
+		public IContainer Container
 		{
-			get { return binder; }
+			get { return container; }
 		}
 
-		readonly IBinder binder;
-		readonly Dictionary<Type, List<FactoryData>> typeToFactoryData = new Dictionary<Type, List<FactoryData>>();
+		readonly IContainer container;
 
-		public Resolver(IBinder binder)
+		public Resolver(IContainer container)
 		{
-			this.binder = binder;
-		}
-
-		public object Resolve(Type contractType)
-		{
-			var data = GetValidData(contractType);
-
-			if (data != null)
-				return data.Factory.Create(new InjectionContext
-				{
-					Binder = binder,
-					ContractType = contractType
-				});
-			else if (binder.Parent != null)
-				return binder.Parent.Resolver.Resolve(contractType);
-
-			throw new ArgumentException(string.Format("No binding was found for type {0}.", contractType.Name));
+			this.container = container;
 		}
 
 		public object Resolve(InjectionContext context)
 		{
-			var data = GetValidData(ref context);
+			var binding = container.Binder.GetBinding(context);
 
-			if (data != null)
-				return data.Factory.Create(context);
-			else if (binder.Parent != null)
-				return binder.Parent.Resolver.Resolve(context);
+			if (binding != null)
+				return binding.Factory.Create(context);
+			else if (container.Parent != null)
+				return container.Parent.Resolver.Resolve(context);
 
 			throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
+		}
+
+		public object Resolve(Type contractType)
+		{
+			var binding = container.Binder.GetBinding(contractType);
+
+			if (binding != null)
+				return binding.Factory.Create(new InjectionContext
+				{
+					Container = container,
+					ContractType = contractType
+				});
+			else if (container.Parent != null)
+				return container.Parent.Resolver.Resolve(contractType);
+
+			throw new ArgumentException(string.Format("No binding was found for type {0}.", contractType.Name));
 		}
 
 		public TContract Resolve<TContract>()
@@ -55,124 +54,68 @@ namespace Pseudo.Injection.Internal
 			return (TContract)Resolve(typeof(TContract));
 		}
 
+		public IEnumerable<object> ResolveAll(InjectionContext context)
+		{
+			if (container.Parent == null)
+				return container.Binder.GetBindings(context)
+					.Select(b => b.Factory.Create(context));
+			else
+				return container.Binder.GetBindings(context)
+					.Select(b => b.Factory.Create(context))
+					.Concat(container.Parent.Resolver.ResolveAll(context));
+		}
+
 		public IEnumerable<object> ResolveAll(Type contractType)
 		{
 			var context = new InjectionContext
 			{
-				Binder = binder,
+				Container = container,
 				ContractType = contractType
 			};
 
-			if (binder.Parent == null)
-				return GetFactoryDataList(contractType)
-					.Select(data => data.Factory.Create(context));
+			if (container.Parent == null)
+				return container.Binder.GetBindings(contractType)
+					.Select(b => b.Factory.Create(context));
 			else
-				return GetFactoryDataList(contractType)
-					.Select(data => data.Factory.Create(context))
-					.Concat(binder.Parent.Resolver.ResolveAll(contractType));
+				return container.Binder.GetBindings(contractType)
+					.Select(b => b.Factory.Create(context))
+					.Concat(container.Parent.Resolver.ResolveAll(contractType));
 		}
 
 		public IEnumerable<TContract> ResolveAll<TContract>()
 		{
 			var context = new InjectionContext
 			{
-				Binder = binder,
+				Container = container,
 				ContractType = typeof(TContract)
 			};
 
-			if (binder.Parent == null)
-				return GetFactoryDataList(typeof(TContract))
+			if (container.Parent == null)
+				return container.Binder.GetBindings(context)
 					.Select(data => (TContract)data.Factory.Create(context));
 			else
-				return GetFactoryDataList(typeof(TContract))
+				return container.Binder.GetBindings(context)
 					.Select(data => (TContract)data.Factory.Create(context))
-					.Concat(binder.Parent.Resolver.ResolveAll<TContract>());
-		}
-
-		public bool CanResolve(Type contractType)
-		{
-			return
-				GetValidData(contractType) != null ||
-				(binder.Parent != null && binder.Parent.Resolver.CanResolve(contractType));
-		}
-
-		public bool CanResolve(params Type[] contractTypes)
-		{
-			for (int i = 0; i < contractTypes.Length; i++)
-			{
-				if (!CanResolve(contractTypes[i]))
-					return false;
-			}
-
-			return true;
+					.Concat(container.Parent.Resolver.ResolveAll<TContract>());
 		}
 
 		public bool CanResolve(InjectionContext context)
 		{
 			return
-				GetValidData(ref context) != null ||
-				(binder.Parent != null && binder.Parent.Resolver.CanResolve(context));
+				container.Binder.GetBinding(context) != null ||
+				(container.Parent != null && container.Parent.Resolver.CanResolve(context));
 		}
 
-		public void AddFactory(Type contractType, FactoryData data)
+		public bool CanResolve(Type contractType)
 		{
-			GetFactoryDataList(contractType).Add(data);
+			return
+				container.Binder.HasBinding(contractType) ||
+				(container.Parent != null && container.Parent.Resolver.CanResolve(contractType));
 		}
 
-		public void RemoveFactory(Type contractType, FactoryData data)
+		public bool CanResolve<TContract>()
 		{
-			GetFactoryDataList(contractType).Remove(data);
-		}
-
-		public void RemoveFactories(Type contractType)
-		{
-			typeToFactoryData.Remove(contractType);
-		}
-
-		public void RemoveAllFactories()
-		{
-			typeToFactoryData.Clear();
-		}
-
-		FactoryData GetValidData(Type contractType)
-		{
-			List<FactoryData> dataList;
-
-			if (typeToFactoryData.TryGetValue(contractType, out dataList))
-				return dataList.Last();
-
-			return null;
-		}
-
-		FactoryData GetValidData(ref InjectionContext context)
-		{
-			List<FactoryData> dataList;
-
-			if (typeToFactoryData.TryGetValue(context.ContractType, out dataList))
-			{
-				for (int i = 0; i < dataList.Count; i++)
-				{
-					var data = dataList[i];
-
-					if (data.Condition(context))
-						return data;
-				}
-			}
-
-			return null;
-		}
-
-		List<FactoryData> GetFactoryDataList(Type contractType)
-		{
-			List<FactoryData> dataList;
-
-			if (!typeToFactoryData.TryGetValue(contractType, out dataList))
-			{
-				dataList = new List<FactoryData>();
-				typeToFactoryData[contractType] = dataList;
-			}
-
-			return dataList;
+			return CanResolve(typeof(TContract));
 		}
 	}
 }

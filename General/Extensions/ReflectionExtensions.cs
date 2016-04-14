@@ -11,25 +11,19 @@ namespace Pseudo.Internal
 {
 	public static class ReflectionExtensions
 	{
-		public const BindingFlags AllFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-		public const BindingFlags PublicFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-		public const BindingFlags NonPublicFlags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
-		public const BindingFlags StaticFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
-		public const BindingFlags InstanceFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
-
 		public static object[] GetDefaultParameters(this MethodInfo method)
 		{
 			return method.GetParameters().Convert(p => TypeUtility.GetDefaultValue(p.ParameterType));
 		}
 
-		public static MemberInfo GetMemberInfo(this object obj, string memberName)
+		public static MemberInfo GetFieldOrPropertyInfo(this object obj, string memberName)
 		{
-			var field = obj.GetType().GetField(memberName, AllFlags);
+			var field = obj.GetType().GetField(memberName, ReflectionUtility.AllFlags);
 
 			if (field != null)
 				return field;
 
-			var property = obj.GetType().GetProperty(memberName, AllFlags);
+			var property = obj.GetType().GetProperty(memberName, ReflectionUtility.AllFlags);
 
 			if (property != null)
 				return property;
@@ -97,7 +91,7 @@ namespace Pseudo.Internal
 			int separatorIndex = memberPath.IndexOf('.');
 
 			if (separatorIndex == -1)
-				return obj.GetMemberInfo(memberPath);
+				return obj.GetFieldOrPropertyInfo(memberPath);
 
 			var value = obj.GetValueFromMember(memberPath.Substring(offset, separatorIndex - offset));
 			offset = separatorIndex + 1;
@@ -110,7 +104,7 @@ namespace Pseudo.Internal
 				separatorIndex = memberPath.IndexOf('.', offset);
 			}
 
-			return value.GetMemberInfo(memberPath.Substring(offset));
+			return value.GetFieldOrPropertyInfo(memberPath.Substring(offset));
 		}
 
 		public static T GetValueFromMember<T>(this object obj, string memberName)
@@ -123,7 +117,7 @@ namespace Pseudo.Internal
 			if (obj is IList)
 				return ((IList)obj)[int.Parse(memberName)];
 
-			var member = obj.GetMemberInfo(memberName);
+			var member = obj.GetFieldOrPropertyInfo(memberName);
 
 			return member.GetMemberValue(obj);
 		}
@@ -159,8 +153,7 @@ namespace Pseudo.Internal
 
 		public static void SetValueToMember(this object obj, string memberName, object value)
 		{
-			MemberInfo member = obj.GetMemberInfo(memberName);
-
+			var member = obj.GetFieldOrPropertyInfo(memberName);
 			member.SetMemberValue(obj, value);
 		}
 
@@ -183,7 +176,7 @@ namespace Pseudo.Internal
 
 		public static object InvokeMethod(this object obj, string methodName, params object[] arguments)
 		{
-			MethodInfo[] methods = obj.GetType().GetMethods(AllFlags);
+			MethodInfo[] methods = obj.GetType().GetMethods(ReflectionUtility.AllFlags);
 
 			for (int i = 0; i < methods.Length; i++)
 			{
@@ -203,7 +196,7 @@ namespace Pseudo.Internal
 
 		public static string[] GetFieldsPropertiesNames(this object obj, params Type[] filter)
 		{
-			return obj.GetType().GetFieldsAndPropertiesNames(AllFlags, filter);
+			return obj.GetType().GetFieldsAndPropertiesNames(ReflectionUtility.AllFlags, filter);
 		}
 
 		public static string GetTypeName(this object obj)
@@ -239,7 +232,7 @@ namespace Pseudo.Internal
 
 		public static string[] GetFieldsAndPropertiesNames(this Type type, params Type[] filter)
 		{
-			return GetFieldsAndPropertiesNames(type, AllFlags, filter);
+			return GetFieldsAndPropertiesNames(type, ReflectionUtility.AllFlags, filter);
 		}
 
 		public static object GetValueFromField(this object obj, string fieldName)
@@ -247,7 +240,7 @@ namespace Pseudo.Internal
 			if (obj is IList)
 				return ((IList)obj)[int.Parse(fieldName)];
 			else
-				return obj.GetType().GetField(fieldName, AllFlags).GetValue(obj);
+				return obj.GetType().GetField(fieldName, ReflectionUtility.AllFlags).GetValue(obj);
 		}
 
 		public static object GetValueFromFieldAtPath(this object obj, string path)
@@ -283,7 +276,7 @@ namespace Pseudo.Internal
 			if (obj is IList)
 				((IList)obj)[int.Parse(fieldName)] = value;
 			else
-				obj.GetType().GetField(fieldName, AllFlags).SetValue(obj, value);
+				obj.GetType().GetField(fieldName, ReflectionUtility.AllFlags).SetValue(obj, value);
 		}
 
 		public static void SetValueToFieldAtPath(this object obj, string path, object value)
@@ -337,7 +330,7 @@ namespace Pseudo.Internal
 
 		public static PropertyInfo GetAutoProperty(this FieldInfo field)
 		{
-			return field.DeclaringType.GetProperty(field.Name.GetRange(1, '>'), AllFlags);
+			return field.DeclaringType.GetProperty(field.Name.GetRange(1, '>'), ReflectionUtility.AllFlags);
 		}
 
 		public static bool IsStatic(this PropertyInfo property)
@@ -376,12 +369,27 @@ namespace Pseudo.Internal
 
 		public static FieldInfo GetBackingField(this PropertyInfo property)
 		{
-			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", AllFlags);
+			return property.DeclaringType.GetField("<" + property.Name + ">k__BackingField", ReflectionUtility.AllFlags);
 		}
 
 		public static bool IsOperator(this MethodInfo method)
 		{
 			return method.IsStatic && method.IsSpecialName && method.Name.StartsWith("op_");
+		}
+
+		public static bool IsDefined<T>(this ICustomAttributeProvider provider, bool inherit) where T : Attribute
+		{
+			return provider.IsDefined(typeof(T), inherit);
+		}
+
+		public static T GetAttribute<T>(this ICustomAttributeProvider provider, bool inherit) where T : Attribute
+		{
+			return (T)provider.GetCustomAttributes(typeof(T), inherit).First();
+		}
+
+		public static T[] GetAttributes<T>(this ICustomAttributeProvider provider, bool inherit) where T : Attribute
+		{
+			return provider.GetCustomAttributes(typeof(T), inherit).Cast<T>().ToArray();
 		}
 	}
 }

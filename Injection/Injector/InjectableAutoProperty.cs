@@ -9,39 +9,40 @@ using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableAutoProperty : IInjectableMember
+	public class InjectableAutoProperty : InjectableMemberBase<PropertyInfo>, IInjectableProperty
 	{
-		public MemberInfo Member
+		public PropertyInfo Property
 		{
-			get { return property; }
+			get { return member; }
 		}
 
-		readonly PropertyInfo property;
 		readonly FieldInfo backingField;
-		readonly InjectAttribute attribute;
 
-		public InjectableAutoProperty(PropertyInfo property)
+		public InjectableAutoProperty(PropertyInfo property) : base(property)
 		{
-			this.property = property;
-
 			backingField = property.GetBackingField();
-			attribute = (InjectAttribute)property.GetCustomAttributes(typeof(InjectAttribute), true).First() ?? new InjectAttribute();
 		}
 
-		public void Inject(InjectionContext context)
+		public override bool CanInject(InjectionContext context)
 		{
-			SetupContext(ref context);
-
-			if (!attribute.Optional || context.Binder.Resolver.CanResolve(context))
-				backingField.SetValue(context.Instance, context.Binder.Resolver.Resolve(context));
+			return context.Container.Resolver.CanResolve(context);
 		}
 
-		void SetupContext(ref InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
 			context.ContextType = InjectionContext.ContextTypes.AutoProperty;
-			context.ContractType = property.PropertyType;
-			context.Member = property;
-			context.Attribute = attribute;
+			context.ContractType = member.PropertyType;
+			context.DeclaringType = member.DeclaringType;
+			context.Identifier = attribute.Identifier;
+			context.Optional = attribute.Optional;
+		}
+
+		protected override object Inject(ref InjectionContext context)
+		{
+			var value = context.Container.Resolver.Resolve(context);
+			backingField.SetValue(context.Instance, value);
+
+			return value;
 		}
 	}
 }

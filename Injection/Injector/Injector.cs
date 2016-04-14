@@ -10,50 +10,54 @@ namespace Pseudo.Injection.Internal
 {
 	public class Injector : IInjector
 	{
-		public IBinder Binder
+		public IContainer Container
 		{
-			get { return binder; }
+			get { return container; }
 		}
 
-		readonly IBinder binder;
+		readonly IContainer container;
 
-		public Injector(IBinder binder)
+		public Injector(IContainer container)
 		{
-			this.binder = binder;
-		}
-
-		public void Inject(object instance)
-		{
-			Inject(new InjectionContext
-			{
-				Binder = binder,
-				Instance = instance,
-			});
-		}
-
-		public void Inject(params object[] instances)
-		{
-			for (int i = 0; i < instances.Length; i++)
-				Inject(instances[i]);
+			this.container = container;
 		}
 
 		public void Inject(InjectionContext context)
 		{
-			Assert.IsNotNull(context.Binder);
+			Assert.IsNotNull(context.Container);
 			Assert.IsNotNull(context.Instance);
 
-			bool isInjectable = context.Instance is IInjectable;
+			var info = InjectionUtility.GetInjectionInfo(context.Instance.GetType());
+			var interceptor = context.Instance as IInjectionInterceptor;
 
-			if (isInjectable)
-				((IInjectable)context.Instance).OnPreInject(binder);
+			if (interceptor == null)
+			{
+				// Inject Fields
+				for (int i = 0; i < info.Fields.Length; i++)
+					info.Fields[i].Inject(context);
 
-			var injectables = InjectionUtility.GetInjectableMembers(context.Instance.GetType());
+				// Inject Properties
+				for (int i = 0; i < info.Properties.Length; i++)
+					info.Properties[i].Inject(context);
 
-			for (int i = 0; i < injectables.Length; i++)
-				injectables[i].Inject(context);
+				// Inject Methods
+				for (int i = 0; i < info.Methods.Length; i++)
+					info.Methods[i].Inject(context);
+			}
+			else
+				interceptor.OnInject(context, info);
+		}
 
-			if (isInjectable)
-				((IInjectable)context.Instance).OnPostInject(binder);
+		public void Inject(object instance)
+		{
+			Assert.IsNotNull(instance);
+
+			Inject(new InjectionContext
+			{
+				Container = container,
+				Instance = instance,
+				DeclaringType = instance.GetType()
+			});
 		}
 	}
 }
