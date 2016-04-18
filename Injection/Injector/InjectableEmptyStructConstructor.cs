@@ -9,32 +9,30 @@ using System.Runtime.Serialization;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableEmptyStructConstructor : InjectableMemberBase<ConstructorInfo>, IInjectableConstructor
+	public class InjectableEmptyStructConstructor : InjectableElementBase, IInjectableConstructor
 	{
-		static readonly IInjectableParameter[] emptyParameters = new IInjectableParameter[0];
+		static readonly ICustomAttributeProvider emptyAttributeProvider = new EmptyAttributeProvider();
 
-		public ConstructorInfo Constructor
+		public ConstructorInfo Member
 		{
 			get { return null; }
 		}
 		public IInjectableParameter[] Parameters
 		{
-			get { return emptyParameters; }
+			get { return InjectionUtility.EmptyParameters; }
 		}
 
 		readonly Type concreteType;
 
-		public InjectableEmptyStructConstructor(Type concreteType) : base(null)
+		public InjectableEmptyStructConstructor(Type concreteType) : base(emptyAttributeProvider)
 		{
 			this.concreteType = concreteType;
 		}
 
-		public override bool CanInject(InjectionContext context)
+		protected override bool CanInject(ref InjectionContext context)
 		{
 			return true;
 		}
-
-		protected override void SetupContext(ref InjectionContext context) { }
 
 		protected override object Inject(ref InjectionContext context)
 		{

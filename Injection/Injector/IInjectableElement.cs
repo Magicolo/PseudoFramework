@@ -8,43 +8,33 @@ using System.Reflection;
 
 namespace Pseudo.Injection
 {
-	public interface IInjectableElement
+	public interface IInjectableElement : ICustomAttributeProvider
 	{
 		object Inject(InjectionContext context);
 		bool CanInject(InjectionContext context);
 	}
 
-	public interface IInjectableMember : IInjectableElement
+	public interface IInjectableMember<TMember> : IInjectableElement where TMember : MemberInfo
 	{
-		MemberInfo Member { get; }
-		InjectAttribute Attribute { get; }
+		TMember Member { get; }
 	}
 
-	public interface IInjectableConstructor : IInjectableMember
+	public interface IInjectableConstructor : IInjectableMember<ConstructorInfo>
 	{
-		ConstructorInfo Constructor { get; }
 		IInjectableParameter[] Parameters { get; }
 	}
 
-	public interface IInjectableField : IInjectableMember
-	{
-		FieldInfo Field { get; }
-	}
+	public interface IInjectableField : IInjectableMember<FieldInfo> { }
 
-	public interface IInjectableProperty : IInjectableMember
-	{
-		PropertyInfo Property { get; }
-	}
+	public interface IInjectableProperty : IInjectableMember<PropertyInfo> { }
 
-	public interface IInjectableMethod : IInjectableMember
+	public interface IInjectableMethod : IInjectableMember<MethodInfo>
 	{
-		MethodInfo Method { get; }
 		IInjectableParameter[] Parameters { get; }
 	}
 
 	public interface IInjectableParameter : IInjectableElement
 	{
 		ParameterInfo Parameter { get; }
-		InjectAttribute Attribute { get; }
 	}
 }

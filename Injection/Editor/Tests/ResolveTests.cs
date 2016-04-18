@@ -11,16 +11,16 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void ResolveAll()
 		{
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>();
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>();
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>();
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy2>();
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy3>();
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy4>();
-			Container.Binder.Bind<DummyField>().ToSingleton();
-			Container.Binder.Bind<DummyProperty>().ToSingleton();
-			Container.Binder.Bind<DummySubField>().ToSingleton();
-			Container.Binder.Bind<DummySubProperty>().ToSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy1>().AsSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy1>().AsSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy1>().AsSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy2>().AsSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy3>().AsSingleton();
+			Container.Binder.Bind<IDummy>().To<Dummy4>().AsSingleton();
+			Container.Binder.Bind<DummyField>().ToSelf().AsSingleton();
+			Container.Binder.Bind<DummyProperty>().ToSelf().AsSingleton();
+			Container.Binder.Bind<DummySubField>().ToSelf().AsSingleton();
+			Container.Binder.Bind<DummySubProperty>().ToSelf().AsSingleton();
 
 			var dummies1 = Container.Resolver.ResolveAll<IDummy>();
 			var dummies2 = Container.Resolver.ResolveAll<IDummy>();

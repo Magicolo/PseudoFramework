@@ -9,11 +9,9 @@ namespace Pseudo.Injection.Internal
 {
 	public abstract class InvokerBase
 	{
-		static readonly object[] emptyArguments = new object[0];
-
 		public virtual void Invoke(object instance)
 		{
-			Invoke(instance, emptyArguments);
+			Invoke(instance, InjectionUtility.EmptyObjects);
 		}
 
 		public abstract void Invoke(object instance, params object[] arguments);

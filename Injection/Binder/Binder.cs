@@ -11,12 +11,21 @@ namespace Pseudo.Injection.Internal
 {
 	public class Binder : IBinder
 	{
+		static readonly IBindingSelector defaultSelector = new BindingSelector();
+
 		public IContainer Container
 		{
 			get { return container; }
 		}
+		public IBindingSelector BindingSelector
+		{
+			get { return selector; }
+			set { selector = value ?? defaultSelector; }
+		}
 
 		readonly IContainer container;
+		IBindingSelector selector = defaultSelector;
+		readonly HashSet<IBinding> allBindings = new HashSet<IBinding>();
 		readonly Dictionary<Type, List<IBinding>> contractTypeToBindings = new Dictionary<Type, List<IBinding>>();
 
 		public Binder(IContainer container)
@@ -28,7 +37,13 @@ namespace Pseudo.Injection.Internal
 		{
 			Assert.IsNotNull(binding);
 
-			GetBindingList(binding.ContractType).Add(binding);
+			if (allBindings.Add(binding))
+			{
+				GetBindingList(binding.ContractType).Add(binding);
+
+				for (int i = 0; i < binding.BaseTypes.Length; i++)
+					GetBindingList(binding.BaseTypes[i]).Add(binding);
+			}
 		}
 
 		public void Bind(Assembly assembly)
@@ -39,65 +54,38 @@ namespace Pseudo.Injection.Internal
 
 			for (int i = 0; i < types.Length; i++)
 			{
-				var installers = InjectionUtility.GetInjectionInfo(types[i]).Installers;
+				var installers = container.Analyzer.Analyze(types[i]).Installers;
 
 				for (int j = 0; j < installers.Length; j++)
 					installers[j].Install(container);
 			}
 		}
 
-		public IBindingContext Bind(Type contractType)
-		{
-			Assert.IsNotNull(contractType);
-
-			return new BindingContext(contractType, container);
-		}
-
-		public IBindingContext<TContract> Bind<TContract>()
-		{
-			return new BindingContext<TContract>(container);
-		}
-
-		public IBindingContext Bind(Type contractType, params Type[] baseTypes)
+		public IBindingContract Bind(Type contractType, params Type[] baseTypes)
 		{
 			Assert.IsNotNull(contractType);
 			Assert.IsNotNull(baseTypes);
 			Assert.IsTrue(Array.TrueForAll(baseTypes, t => contractType.Is(t)));
 
-			return new MultipleBindingContext(contractType, baseTypes, container);
+			return new BindingContract(contractType, baseTypes, container);
 		}
 
-		public IBindingContext<TContract> Bind<TContract, TBase>() where TContract : TBase
-		{
-			return Bind<TContract>(typeof(TBase));
-		}
-
-		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : TBase1, TBase2
-		{
-			return Bind<TContract>(typeof(TBase1), typeof(TBase2));
-		}
-
-		public IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : TBase1, TBase2, TBase3
-		{
-			return Bind<TContract>(typeof(TBase1), typeof(TBase2), typeof(TBase3));
-		}
-
-		public IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes)
+		public IBindingContract<TContract> Bind<TContract>(params Type[] baseTypes)
 		{
 			Assert.IsNotNull(baseTypes);
 			Assert.IsTrue(Array.TrueForAll(baseTypes, t => typeof(TContract).Is(t)));
 
-			return new MultipleBindingContext<TContract>(baseTypes, container);
+			return new BindingContract<TContract>(baseTypes, container);
 		}
 
-		public IBindingContext BindAll(Type contractType)
+		public IBindingContract BindAll(Type contractType)
 		{
 			Assert.IsNotNull(contractType);
 
 			return Bind(contractType, TypeUtility.GetBaseTypes(contractType, false, true).ToArray());
 		}
 
-		public IBindingContext<TContract> BindAll<TContract>()
+		public IBindingContract<TContract> BindAll<TContract>()
 		{
 			return Bind<TContract>(TypeUtility.GetBaseTypes(typeof(TContract), false, true).ToArray());
 		}
@@ -106,7 +94,13 @@ namespace Pseudo.Injection.Internal
 		{
 			Assert.IsNotNull(binding);
 
-			GetBindingList(binding.ContractType).Remove(binding);
+			if (allBindings.Remove(binding))
+			{
+				GetBindingList(binding.ContractType).Remove(binding);
+
+				for (int i = 0; i < binding.BaseTypes.Length; i++)
+					GetBindingList(binding.BaseTypes[i]).Remove(binding);
+			}
 		}
 
 		public void Unbind(Type contractType)
@@ -124,100 +118,49 @@ namespace Pseudo.Injection.Internal
 				Unbind(contractTypes[i]);
 		}
 
-		public void Unbind<TContract>()
-		{
-			Unbind(typeof(TContract));
-		}
-
 		public void UnbindAll(Type contractType)
 		{
 			Assert.IsNotNull(contractType);
 
 			Unbind(contractType);
-			Unbind(contractType.GetInterfaces());
-		}
-
-		public void UnbindAll<TContract>()
-		{
-			UnbindAll(typeof(TContract));
+			Unbind(TypeUtility.GetBaseTypes(contractType, false, true).ToArray());
 		}
 
 		public void UnbindAll()
 		{
+			allBindings.Clear();
 			contractTypeToBindings.Clear();
-		}
-
-		public bool HasBinding(Type contractType)
-		{
-			Assert.IsNotNull(contractType);
-
-			return GetBindingList(contractType).Count > 0;
-		}
-
-		public bool HasBinding<TContract>()
-		{
-			return HasBinding(typeof(TContract));
 		}
 
 		public bool HasBinding(IBinding binding)
 		{
-			return GetBindingList(binding.ContractType).Contains(binding);
+			return allBindings.Contains(binding);
+		}
+
+		public bool HasBinding(InjectionContext context)
+		{
+			Assert.IsNotNull(context.ContractType);
+
+			return GetBindingList(context.ContractType).Count > 0;
 		}
 
 		public IBinding GetBinding(InjectionContext context)
 		{
 			Assert.IsNotNull(context.ContractType);
 
-			var bindings = GetBindingList(context.ContractType);
-
-			for (int i = 0; i < bindings.Count; i++)
-			{
-				var binding = bindings[i];
-
-				if (binding.Condition(context))
-					return binding;
-			}
-
-			return null;
-		}
-
-		public IBinding GetBinding(Type contractType)
-		{
-			Assert.IsNotNull(contractType);
-
-			return GetBindingList(contractType).Last();
-		}
-
-		public IBinding GetBinding<TContract>()
-		{
-			return GetBinding(typeof(TContract));
+			return selector.Select(context, GetBindingList(context.ContractType));
 		}
 
 		public IEnumerable<IBinding> GetBindings(InjectionContext context)
 		{
 			Assert.IsNotNull(context.ContractType);
 
-			return GetBindingList(context.ContractType)
-				.Where(b => b.Condition(context));
-		}
-
-		public IEnumerable<IBinding> GetBindings(Type contractType)
-		{
-			Assert.IsNotNull(contractType);
-
-			return GetBindingList(contractType)
-				.AsEnumerable();
-		}
-
-		public IEnumerable<IBinding> GetBindings<TContract>()
-		{
-			return GetBindings(typeof(TContract));
+			return selector.SelectAll(context, GetBindingList(context.ContractType));
 		}
 
 		public IEnumerable<IBinding> GetAllBindings()
 		{
-			return contractTypeToBindings
-				.SelectMany(pair => pair.Value);
+			return allBindings.AsEnumerable();
 		}
 
 		List<IBinding> GetBindingList(Type contractType)

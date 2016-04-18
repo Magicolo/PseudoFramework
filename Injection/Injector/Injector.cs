@@ -10,12 +10,19 @@ namespace Pseudo.Injection.Internal
 {
 	public class Injector : IInjector
 	{
+		static readonly IInjectionInterceptor defaultInterceptor = new InjectionInterceptor();
+
 		public IContainer Container
 		{
 			get { return container; }
 		}
+		public List<IInjectionInterceptor> Interceptors
+		{
+			get { return interceptors; }
+		}
 
 		readonly IContainer container;
+		readonly List<IInjectionInterceptor> interceptors = new List<IInjectionInterceptor>();
 
 		public Injector(IContainer container)
 		{
@@ -27,37 +34,22 @@ namespace Pseudo.Injection.Internal
 			Assert.IsNotNull(context.Container);
 			Assert.IsNotNull(context.Instance);
 
-			var info = InjectionUtility.GetInjectionInfo(context.Instance.GetType());
-			var interceptor = context.Instance as IInjectionInterceptor;
-
-			if (interceptor == null)
-			{
-				// Inject Fields
-				for (int i = 0; i < info.Fields.Length; i++)
-					info.Fields[i].Inject(context);
-
-				// Inject Properties
-				for (int i = 0; i < info.Properties.Length; i++)
-					info.Properties[i].Inject(context);
-
-				// Inject Methods
-				for (int i = 0; i < info.Methods.Length; i++)
-					info.Methods[i].Inject(context);
-			}
-			else
-				interceptor.OnInject(context, info);
+			var info = context.Container.Analyzer.Analyze(context.Instance.GetType());
+			var interceptor = GetInterceptor(ref context, info);
+			interceptor.Inject(context, info);
 		}
 
-		public void Inject(object instance)
+		IInjectionInterceptor GetInterceptor(ref InjectionContext context, ITypeInfo info)
 		{
-			Assert.IsNotNull(instance);
-
-			Inject(new InjectionContext
+			for (int i = 0; i < interceptors.Count; i++)
 			{
-				Container = container,
-				Instance = instance,
-				DeclaringType = instance.GetType()
-			});
+				var interceptor = interceptors[i];
+
+				if (interceptor.CanInject(context, info))
+					return interceptor;
+			}
+
+			return defaultInterceptor;
 		}
 	}
 }

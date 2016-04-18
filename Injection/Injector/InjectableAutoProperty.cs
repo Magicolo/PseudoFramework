@@ -11,11 +11,6 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableAutoProperty : InjectableMemberBase<PropertyInfo>, IInjectableProperty
 	{
-		public PropertyInfo Property
-		{
-			get { return member; }
-		}
-
 		readonly FieldInfo backingField;
 
 		public InjectableAutoProperty(PropertyInfo property) : base(property)
@@ -23,18 +18,17 @@ namespace Pseudo.Injection.Internal
 			backingField = property.GetBackingField();
 		}
 
-		public override bool CanInject(InjectionContext context)
-		{
-			return context.Container.Resolver.CanResolve(context);
-		}
-
 		protected override void SetupContext(ref InjectionContext context)
 		{
-			context.ContextType = InjectionContext.ContextTypes.AutoProperty;
+			base.SetupContext(ref context);
+
+			context.Type = ContextTypes.AutoProperty;
 			context.ContractType = member.PropertyType;
-			context.DeclaringType = member.DeclaringType;
-			context.Identifier = attribute.Identifier;
-			context.Optional = attribute.Optional;
+		}
+
+		protected override bool CanInject(ref InjectionContext context)
+		{
+			return context.Container.Resolver.CanResolve(context);
 		}
 
 		protected override object Inject(ref InjectionContext context)

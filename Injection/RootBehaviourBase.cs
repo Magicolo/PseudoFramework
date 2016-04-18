@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo.Injection.Internal
 {
-	public abstract class RootBehaviourBase : MonoBehaviour, IRoot
+	public abstract class RootBehaviourBase : MonoBehaviour, IRoot, ISerializationCallbackReceiver
 	{
 		[SerializeField]
 		BehaviourInstallerBase[] installers;
@@ -19,13 +19,13 @@ namespace Pseudo.Injection.Internal
 		{
 			get { return container; }
 		}
-		public IEnumerable<IBindingInstaller> Installers
+		public List<IBindingInstaller> Installers
 		{
-			get { return installers.Concat(additionnalInstallers); }
+			get { return allInstallers; }
 		}
 
 		IContainer container;
-		readonly List<IBindingInstaller> additionnalInstallers = new List<IBindingInstaller>();
+		List<IBindingInstaller> allInstallers = new List<IBindingInstaller>();
 
 		public virtual void InstallAll()
 		{
@@ -35,18 +35,18 @@ namespace Pseudo.Injection.Internal
 			for (int i = 0; i < installers.Length; i++)
 				installers[i].Install(container);
 
-			for (int i = 0; i < additionnalInstallers.Count; i++)
-				additionnalInstallers[i].Install(container);
+			for (int i = 0; i < allInstallers.Count; i++)
+				allInstallers[i].Install(container);
 		}
 
 		public void AddInstaller(IBindingInstaller installer)
 		{
-			additionnalInstallers.Add(installer);
+			allInstallers.Add(installer);
 		}
 
 		public void RemoveInstaller(IBindingInstaller installer)
 		{
-			additionnalInstallers.Remove(installer);
+			allInstallers.Remove(installer);
 		}
 
 		protected virtual void Awake()
@@ -70,7 +70,7 @@ namespace Pseudo.Injection.Internal
 
 			// Injection
 			for (int i = 0; i < injectables.Length; i++)
-				container.Injector.Inject(injectables[i]);
+				container.Injector.Inject(new InjectionContext { Container = container, Instance = injectables[i] });
 
 			// Post-scene injection callback
 			for (int i = 0; i < injectables.Length; i++)
@@ -84,5 +84,12 @@ namespace Pseudo.Injection.Internal
 
 		public abstract void InjectAll();
 		protected abstract IContainer CreateContainer();
+
+		void ISerializationCallbackReceiver.OnBeforeSerialize() { }
+
+		void ISerializationCallbackReceiver.OnAfterDeserialize()
+		{
+			allInstallers = new List<IBindingInstaller>(installers);
+		}
 	}
 }

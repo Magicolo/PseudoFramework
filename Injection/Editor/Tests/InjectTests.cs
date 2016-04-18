@@ -11,9 +11,9 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionField()
 		{
-			Container.Binder.Bind<Dummy1>().ToTransient();
-			Container.Binder.Bind<DummyField>().ToTransient();
-			Container.Binder.Bind<DummySubField>().ToTransient();
+			Container.Binder.Bind<Dummy1>().ToSelf();
+			Container.Binder.Bind<DummyField>().ToSelf();
+			Container.Binder.Bind<DummySubField>().ToSelf();
 
 			var instance = Container.Resolver.Resolve<Dummy1>();
 
@@ -25,9 +25,9 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionProperty()
 		{
-			Container.Binder.Bind<Dummy1>().ToTransient();
-			Container.Binder.Bind<DummyProperty>().ToTransient();
-			Container.Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy1>().ToSelf();
+			Container.Binder.Bind<DummyProperty>().ToSelf();
+			Container.Binder.Bind<DummySubProperty>().ToSelf();
 
 			var instance = Container.Resolver.Resolve<Dummy1>();
 
@@ -39,11 +39,11 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionConstructor()
 		{
-			Container.Binder.Bind<Dummy2>().ToTransient();
-			Container.Binder.Bind<DummyField>().ToTransient();
-			Container.Binder.Bind<DummySubField>().ToTransient();
-			Container.Binder.Bind<DummyProperty>().ToTransient();
-			Container.Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy2>().ToSelf();
+			Container.Binder.Bind<DummyField>().ToSelf();
+			Container.Binder.Bind<DummySubField>().ToSelf();
+			Container.Binder.Bind<DummyProperty>().ToSelf();
+			Container.Binder.Bind<DummySubProperty>().ToSelf();
 
 			var instance = Container.Resolver.Resolve<Dummy2>();
 
@@ -58,11 +58,11 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionMethod()
 		{
-			Container.Binder.Bind<Dummy3>().ToTransient();
-			Container.Binder.Bind<DummyField>().ToTransient();
-			Container.Binder.Bind<DummySubField>().ToTransient();
-			Container.Binder.Bind<DummyProperty>().ToTransient();
-			Container.Binder.Bind<DummySubProperty>().ToTransient();
+			Container.Binder.Bind<Dummy3>().ToSelf();
+			Container.Binder.Bind<DummyField>().ToSelf();
+			Container.Binder.Bind<DummySubField>().ToSelf();
+			Container.Binder.Bind<DummyProperty>().ToSelf();
+			Container.Binder.Bind<DummySubProperty>().ToSelf();
 
 			var instance = Container.Resolver.Resolve<Dummy3>();
 
@@ -76,14 +76,14 @@ namespace Pseudo.Injection.Tests
 		[Test]
 		public void InjectionConditional()
 		{
-			Container.Binder.Bind<Dummy4>().ToTransient();
-			Container.Binder.Bind<DummyField>().ToTransient();
-			Container.Binder.Bind<DummySubField>().ToTransient();
-			Container.Binder.Bind<DummyProperty>().ToTransient();
-			Container.Binder.Bind<DummySubProperty>().ToTransient();
-			Container.Binder.Bind<Dummy1>().ToSingleton().WhenInjectedInto(typeof(Dummy2));
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy1>().When(c => c.ContextType == InjectionContext.ContextTypes.Field);
-			Container.Binder.Bind<IDummy>().ToSingleton<Dummy2>().When("Boba");
+			Container.Binder.Bind<Dummy4>().ToSelf();
+			Container.Binder.Bind<DummyField>().ToSelf();
+			Container.Binder.Bind<DummySubField>().ToSelf();
+			Container.Binder.Bind<DummyProperty>().ToSelf();
+			Container.Binder.Bind<DummySubProperty>().ToSelf();
+			Container.Binder.Bind<Dummy1>().ToSelf().AsSingleton().WhenInto(typeof(Dummy2));
+			Container.Binder.Bind<IDummy>().To<Dummy1>().AsSingleton().When(c => c.Type == ContextTypes.Field);
+			Container.Binder.Bind<IDummy>().To<Dummy2>().AsSingleton().WhenHas("Boba");
 
 			var instance = Container.Resolver.Resolve<Dummy4>();
 

@@ -12,13 +12,13 @@ namespace Pseudo.Injection.Internal
 {
 	public class Instantiator : IInstantiator
 	{
-		static readonly ConstructorSelector defaultSelector = new ConstructorSelector();
+		static readonly IConstructorSelector defaultSelector = new ConstructorSelector();
 
 		public IContainer Container
 		{
 			get { return container; }
 		}
-		public IConstructorSelector Selector
+		public IConstructorSelector ConstructorSelector
 		{
 			get { return selector; }
 			set { selector = value ?? defaultSelector; }
@@ -34,61 +34,27 @@ namespace Pseudo.Injection.Internal
 
 		public object Instantiate(InjectionContext context)
 		{
+			Assert.IsNotNull(context.Container);
 			Assert.IsNotNull(context.DeclaringType);
 			Assert.IsTrue(context.DeclaringType.IsConcrete());
 
-			var constructor = GetValidConstructor(ref context);
+			var constructor = selector.Select(context, context.Container.Analyzer.Analyze(context.DeclaringType).Constructors);
 
 			if (constructor == null)
 				throw new ArgumentException(string.Format("No valid constructor was found for type {0}.", context.DeclaringType.Name));
 
 			context.Instance = constructor.Inject(context);
-			container.Injector.Inject(context);
+			context.Container.Injector.Inject(context);
 
 			return context.Instance;
 		}
 
-		public object Instantiate(Type concreteType)
-		{
-			return Instantiate(new InjectionContext
-			{
-				ContextType = InjectionContext.ContextTypes.Constructor,
-				DeclaringType = concreteType,
-				Container = container
-			});
-		}
-
-		public TConcrete Instantiate<TConcrete>()
-		{
-			return (TConcrete)Instantiate(typeof(TConcrete));
-		}
-
 		public bool CanInstantiate(InjectionContext context)
 		{
-			if (context.DeclaringType == null || !context.DeclaringType.IsConcrete())
+			if (context.Container == null || context.DeclaringType == null || !context.DeclaringType.IsConcrete())
 				return false;
 
-			return GetValidConstructor(ref context) != null;
-		}
-
-		public bool CanInstantiate(Type concreteType)
-		{
-			return CanInstantiate(new InjectionContext
-			{
-				ContextType = InjectionContext.ContextTypes.Constructor,
-				DeclaringType = concreteType,
-				Container = container
-			});
-		}
-
-		public bool CanInstantiate<TConcrete>()
-		{
-			return CanInstantiate(typeof(TConcrete));
-		}
-
-		IInjectableConstructor GetValidConstructor(ref InjectionContext context)
-		{
-			return selector.Select(context, InjectionUtility.GetInjectionInfo(context.DeclaringType).Constructors);
+			return selector.Select(context, context.Container.Analyzer.Analyze(context.DeclaringType).Constructors) != null;
 		}
 	}
 }

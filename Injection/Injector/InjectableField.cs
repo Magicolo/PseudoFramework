@@ -11,25 +11,19 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableField : InjectableMemberBase<FieldInfo>, IInjectableField
 	{
-		public FieldInfo Field
-		{
-			get { return member; }
-		}
-
 		public InjectableField(FieldInfo field) : base(field) { }
-
-		public override bool CanInject(InjectionContext context)
-		{
-			return context.Container.Resolver.CanResolve(context);
-		}
 
 		protected override void SetupContext(ref InjectionContext context)
 		{
-			context.ContextType = InjectionContext.ContextTypes.Field;
+			base.SetupContext(ref context);
+
+			context.Type = ContextTypes.Field;
 			context.ContractType = member.FieldType;
-			context.DeclaringType = member.DeclaringType;
-			context.Identifier = attribute.Identifier;
-			context.Optional = attribute.Optional;
+		}
+
+		protected override bool CanInject(ref InjectionContext context)
+		{
+			return context.Container.Resolver.CanResolve(context);
 		}
 
 		protected override object Inject(ref InjectionContext context)

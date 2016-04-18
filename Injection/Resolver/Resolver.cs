@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Injection.Internal
 {
@@ -23,99 +24,39 @@ namespace Pseudo.Injection.Internal
 
 		public object Resolve(InjectionContext context)
 		{
-			var binding = container.Binder.GetBinding(context);
+			Assert.IsNotNull(context.Container);
+
+			var binding = context.Container.Binder.GetBinding(context);
 
 			if (binding != null)
-				return binding.Factory.Create(context);
-			else if (container.Parent != null)
-				return container.Parent.Resolver.Resolve(context);
+				return binding.Scope.GetInstance(binding.Factory, context);
+			else if (context.Container.Parent != null)
+				return context.Container.Parent.Resolver.Resolve(context);
 
 			throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
 		}
 
-		public object Resolve(Type contractType)
-		{
-			var binding = container.Binder.GetBinding(contractType);
-
-			if (binding != null)
-				return binding.Factory.Create(new InjectionContext
-				{
-					Container = container,
-					ContractType = contractType
-				});
-			else if (container.Parent != null)
-				return container.Parent.Resolver.Resolve(contractType);
-
-			throw new ArgumentException(string.Format("No binding was found for type {0}.", contractType.Name));
-		}
-
-		public TContract Resolve<TContract>()
-		{
-			return (TContract)Resolve(typeof(TContract));
-		}
-
 		public IEnumerable<object> ResolveAll(InjectionContext context)
 		{
-			if (container.Parent == null)
-				return container.Binder.GetBindings(context)
-					.Select(b => b.Factory.Create(context));
+			Assert.IsNotNull(context.Container);
+
+			if (context.Container.Parent == null)
+				return context.Container.Binder.GetBindings(context)
+					.Select(b => b.Scope.GetInstance(b.Factory, context));
 			else
-				return container.Binder.GetBindings(context)
-					.Select(b => b.Factory.Create(context))
-					.Concat(container.Parent.Resolver.ResolveAll(context));
-		}
-
-		public IEnumerable<object> ResolveAll(Type contractType)
-		{
-			var context = new InjectionContext
-			{
-				Container = container,
-				ContractType = contractType
-			};
-
-			if (container.Parent == null)
-				return container.Binder.GetBindings(contractType)
-					.Select(b => b.Factory.Create(context));
-			else
-				return container.Binder.GetBindings(contractType)
-					.Select(b => b.Factory.Create(context))
-					.Concat(container.Parent.Resolver.ResolveAll(contractType));
-		}
-
-		public IEnumerable<TContract> ResolveAll<TContract>()
-		{
-			var context = new InjectionContext
-			{
-				Container = container,
-				ContractType = typeof(TContract)
-			};
-
-			if (container.Parent == null)
-				return container.Binder.GetBindings(context)
-					.Select(data => (TContract)data.Factory.Create(context));
-			else
-				return container.Binder.GetBindings(context)
-					.Select(data => (TContract)data.Factory.Create(context))
-					.Concat(container.Parent.Resolver.ResolveAll<TContract>());
+				return context.Container.Binder.GetBindings(context)
+					.Select(b => b.Scope.GetInstance(b.Factory, context))
+					.Concat(context.Container.Parent.Resolver.ResolveAll(context));
 		}
 
 		public bool CanResolve(InjectionContext context)
 		{
-			return
-				container.Binder.GetBinding(context) != null ||
-				(container.Parent != null && container.Parent.Resolver.CanResolve(context));
-		}
+			if (context.Container == null)
+				return false;
 
-		public bool CanResolve(Type contractType)
-		{
 			return
-				container.Binder.HasBinding(contractType) ||
-				(container.Parent != null && container.Parent.Resolver.CanResolve(contractType));
-		}
-
-		public bool CanResolve<TContract>()
-		{
-			return CanResolve(typeof(TContract));
+				context.Container.Binder.GetBinding(context) != null ||
+				(context.Container.Parent != null && context.Container.Parent.Resolver.CanResolve(context));
 		}
 	}
 }

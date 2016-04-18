@@ -9,10 +9,10 @@ namespace Pseudo.Injection.Internal
 {
 	public class BindAttributeInstaller : IBindingInstaller
 	{
-		readonly BindAttribute attribute;
+		readonly BindAttributeBase attribute;
 		readonly Type concreteType;
 
-		public BindAttributeInstaller(BindAttribute attribute, Type concreteType)
+		public BindAttributeInstaller(BindAttributeBase attribute, Type concreteType)
 		{
 			this.attribute = attribute;
 			this.concreteType = concreteType;
@@ -20,24 +20,7 @@ namespace Pseudo.Injection.Internal
 
 		public void Install(IContainer container)
 		{
-			var context = container.Binder.Bind(attribute.ContractType, attribute.BaseTypes);
-			IBindingCondition bindingCondition;
-
-			switch (attribute.BindingType)
-			{
-				default:
-				case BindingType.Singleton:
-					bindingCondition = context.ToSingleton(concreteType);
-					break;
-				case BindingType.Transient:
-					bindingCondition = context.ToTransient(concreteType);
-					break;
-				case BindingType.Factory:
-					bindingCondition = context.ToFactory(concreteType);
-					break;
-			}
-
-			bindingCondition.When(attribute.Condition);
+			attribute.Install(container, concreteType);
 		}
 
 		public override string ToString()

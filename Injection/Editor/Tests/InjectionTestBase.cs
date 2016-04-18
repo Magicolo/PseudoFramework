@@ -98,31 +98,6 @@ namespace Pseudo.Injection.Tests
 
 	public interface IDummy { }
 
-	[Bind(typeof(DummyAttribute1), BindingType.Transient)]
-	[Bind(typeof(IDummyAttribute), BindingType.Singleton)]
-	public class DummyAttribute1 : IDummyAttribute { }
-
-	[Bind(typeof(DummyAttribute2), BindingType.Singleton, ConditionSource.Identifier, ConditionComparer.Equals, "Boba")]
-	[Bind(typeof(DummyAttribute2), BindingType.Singleton, ConditionSource.Identifier, ConditionComparer.Equals, "Fett")]
-	public class DummyAttribute2 : IDummyAttribute { }
-
-	public class DummyAttribute3 : IDummyAttribute { }
-
-	[Bind(typeof(DummyAttribute3), BindingType.Factory)]
-	public class DummyFactory : IInjectionFactory
-	{
-		public int Calls;
-
-		public object Create(InjectionContext context)
-		{
-			Calls++;
-
-			return new DummyAttribute3();
-		}
-	}
-
-	public interface IDummyAttribute { }
-
 	public class DummyField
 	{
 		[Inject(optional: true)]

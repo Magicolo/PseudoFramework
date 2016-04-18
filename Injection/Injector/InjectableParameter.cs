@@ -9,50 +9,43 @@ using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableParameter : IInjectableParameter
+	public class InjectableParameter : InjectableElementBase, IInjectableParameter
 	{
 		public ParameterInfo Parameter
 		{
 			get { return parameter; }
 		}
-		public InjectAttribute Attribute
-		{
-			get { return attribute; }
-		}
 
 		readonly ParameterInfo parameter;
-		readonly InjectAttribute attribute;
 
-		public InjectableParameter(ParameterInfo parameter)
+		public InjectableParameter(ParameterInfo parameter) : base(parameter)
 		{
 			this.parameter = parameter;
-
-			attribute = parameter.GetAttribute<InjectAttribute>(true) ?? new InjectAttribute();
 		}
 
-		public object Inject(InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
-			SetupContext(ref context);
+			base.SetupContext(ref context);
 
-			if (!attribute.Optional || CanInject(context))
+			context.Type |= ContextTypes.Parameter;
+			context.ContractType = parameter.ParameterType;
+		}
+
+		protected override bool CanInject(ref InjectionContext context)
+		{
+			return parameter.IsOptional || context.Container.Resolver.CanResolve(context);
+		}
+
+		protected override object Inject(ref InjectionContext context)
+		{
+			if (context.Container.Resolver.CanResolve(context))
+				return context.Container.Resolver.Resolve(context);
+			else if (parameter.IsOptional)
+				return parameter.DefaultValue;
+			else if (!attribute.Optional)
 				return context.Container.Resolver.Resolve(context);
 
 			return null;
-		}
-
-		public bool CanInject(InjectionContext context)
-		{
-			SetupContext(ref context);
-
-			return context.Container.Resolver.CanResolve(context);
-		}
-
-		void SetupContext(ref InjectionContext context)
-		{
-			context.ContextType |= InjectionContext.ContextTypes.Parameter;
-			context.ContractType = parameter.ParameterType;
-			context.Identifier = attribute.Identifier;
-			context.Optional = attribute.Optional;
 		}
 	}
 }

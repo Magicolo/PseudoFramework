@@ -43,14 +43,6 @@ namespace Pseudo.EntityFramework
 		Hierarchy = 1 << 7 | Self | Root | Ancestors | Descendants | Siblings,
 	}
 
-	public static class HierarchyScopesExtentions
-	{
-		public static bool Contains(this HierarchyScopes scope, HierarchyScopes other)
-		{
-			return (scope & other) == other;
-		}
-	}
-
 	public interface IEntity
 	{
 		bool Active { get; set; }

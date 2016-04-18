@@ -14,10 +14,8 @@ namespace Pseudo.Injection
 		IResolver Resolver { get; }
 		IInjector Injector { get; }
 		IInstantiator Instantiator { get; }
+		ITypeAnalyzer Analyzer { get; set; }
 
-		T Get<T>(InjectionContext context);
-		T Get<T>();
 		object Get(InjectionContext context);
-		object Get(Type type);
 	}
 }

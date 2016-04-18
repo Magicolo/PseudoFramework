@@ -7,47 +7,28 @@ using System.Reflection;
 
 namespace Pseudo.Injection
 {
-	public enum BindingType
-	{
-		Singleton,
-		Transient,
-		Factory
-	}
-
 	public interface IBinder
 	{
 		IContainer Container { get; }
+		IBindingSelector BindingSelector { get; set; }
 
 		void Bind(IBinding binding);
 		void Bind(Assembly assembly);
-		IBindingContext Bind(Type contractType);
-		IBindingContext Bind(Type contractType, params Type[] baseTypes);
-		IBindingContext<TContract> Bind<TContract>();
-		IBindingContext<TContract> Bind<TContract, TBase>() where TContract : TBase;
-		IBindingContext<TContract> Bind<TContract, TBase1, TBase2>() where TContract : TBase1, TBase2;
-		IBindingContext<TContract> Bind<TContract, TBase1, TBase2, TBase3>() where TContract : TBase1, TBase2, TBase3;
-		IBindingContext<TContract> Bind<TContract>(params Type[] baseTypes);
-		IBindingContext BindAll(Type contractType);
-		IBindingContext<TContract> BindAll<TContract>();
+		IBindingContract Bind(Type contractType, params Type[] baseTypes);
+		IBindingContract<TContract> Bind<TContract>(params Type[] baseTypes);
+		IBindingContract BindAll(Type contractType);
+		IBindingContract<TContract> BindAll<TContract>();
 
 		void Unbind(IBinding binding);
 		void Unbind(Type contractType);
 		void Unbind(params Type[] contractTypes);
 		void UnbindAll(Type contractType);
-		void Unbind<TContract>();
-		void UnbindAll<TContract>();
 		void UnbindAll();
 
 		bool HasBinding(IBinding binding);
-		bool HasBinding(Type contractType);
-		bool HasBinding<TContract>();
-
+		bool HasBinding(InjectionContext context);
 		IBinding GetBinding(InjectionContext context);
-		IBinding GetBinding(Type contractType);
-		IBinding GetBinding<TContract>();
 		IEnumerable<IBinding> GetBindings(InjectionContext context);
-		IEnumerable<IBinding> GetBindings(Type contractType);
-		IEnumerable<IBinding> GetBindings<TContract>();
 		IEnumerable<IBinding> GetAllBindings();
 	}
 }

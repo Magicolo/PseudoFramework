@@ -11,10 +11,6 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableConstructor : InjectableMemberBase<ConstructorInfo>, IInjectableConstructor
 	{
-		public ConstructorInfo Constructor
-		{
-			get { return member; }
-		}
 		public IInjectableParameter[] Parameters
 		{
 			get { return parameters; }
@@ -30,10 +26,15 @@ namespace Pseudo.Injection.Internal
 			arguments = new object[parameters.Length];
 		}
 
-		public override bool CanInject(InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
-			SetupContext(ref context);
+			base.SetupContext(ref context);
 
+			context.Type = ContextTypes.Constructor;
+		}
+
+		protected override bool CanInject(ref InjectionContext context)
+		{
 			for (int i = 0; i < parameters.Length; i++)
 			{
 				if (!parameters[i].CanInject(context))
@@ -43,19 +44,9 @@ namespace Pseudo.Injection.Internal
 			return true;
 		}
 
-		protected override void SetupContext(ref InjectionContext context)
-		{
-			context.ContextType = InjectionContext.ContextTypes.Constructor;
-			context.DeclaringType = member.DeclaringType;
-			context.Identifier = attribute.Identifier;
-			context.Optional = attribute.Optional;
-		}
-
 		protected override object Inject(ref InjectionContext context)
 		{
-			SetupContext(ref context);
-
-			for (int i = 0; i < parameters.Length; i++)
+			for (int i = 0; i < arguments.Length; i++)
 				arguments[i] = parameters[i].Inject(context);
 
 			var instance = member.Invoke(arguments);

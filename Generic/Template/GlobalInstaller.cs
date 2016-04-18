@@ -21,10 +21,10 @@ namespace Pseudo
 
 		public override void Install(IContainer container)
 		{
-			container.Binder.Bind<GameManager, IGameManager>().ToSingletonMethod(c => InstantiateOrFind(GameManager));
-			container.Binder.Bind<AudioManager, IAudioManager>().ToSingletonMethod(c => InstantiateOrFind(AudioManager));
-			container.Binder.Bind<ParticleManager, IParticleManager>().ToSingletonMethod(c => InstantiateOrFind(ParticleManager));
-			container.Binder.Bind<InputManager, Input.IInputManager>().ToSingletonMethod(c => InstantiateOrFind(InputManager));
+			container.Binder.Bind<GameManager, IGameManager>().ToMethod(c => InstantiateOrFind(GameManager)).AsSingleton();
+			container.Binder.Bind<AudioManager, IAudioManager>().ToMethod(c => InstantiateOrFind(AudioManager)).AsSingleton();
+			container.Binder.Bind<ParticleManager, IParticleManager>().ToMethod(c => InstantiateOrFind(ParticleManager)).AsSingleton();
+			container.Binder.Bind<InputManager, IInputManager>().ToMethod(c => InstantiateOrFind(InputManager)).AsSingleton();
 		}
 
 		T InstantiateOrFind<T>(T prefab) where T : Component

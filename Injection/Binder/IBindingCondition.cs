@@ -9,7 +9,11 @@ namespace Pseudo.Injection
 {
 	public enum ConditionSource
 	{
+		Container,
+		Element,
 		ContextType,
+		Instance,
+		Arguments,
 		ContractType,
 		DeclaringType,
 		Identifier,
@@ -24,10 +28,9 @@ namespace Pseudo.Injection
 
 	public interface IBindingCondition
 	{
-		void When(Predicate<InjectionContext> condition);
-		void When(string identifier);
-		void When(InjectionContext.ContextTypes contextType);
-		void WhenInjectedInto(Type declaringType);
-		void WhenInjectedInto(object instance);
+		IBinding Binding { get; }
+
+		IBinding When(Predicate<InjectionContext> condition);
+		IBinding When(ConditionSource conditionSource, ConditionComparer conditionComparer, object conditionTarget);
 	}
 }

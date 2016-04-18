@@ -9,43 +9,25 @@ using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public abstract class InjectableMemberBase<TMember> : IInjectableMember where TMember : MemberInfo
+	public abstract class InjectableMemberBase<TMember> : InjectableElementBase, IInjectableMember<TMember> where TMember : MemberInfo
 	{
-		public MemberInfo Member
+		public TMember Member
 		{
 			get { return member; }
 		}
-		public InjectAttribute Attribute
-		{
-			get { return attribute; }
-		}
 
 		protected readonly TMember member;
-		protected readonly InjectAttribute attribute;
 
-		protected InjectableMemberBase(TMember member)
+		protected InjectableMemberBase(TMember member) : base(member)
 		{
 			this.member = member;
-
-			if (this.member == null)
-				attribute = new InjectAttribute();
-			else
-				attribute = member.GetAttribute<InjectAttribute>(true) ?? new InjectAttribute();
 		}
 
-		public object Inject(InjectionContext context)
+		protected override void SetupContext(ref InjectionContext context)
 		{
-			SetupContext(ref context);
+			base.SetupContext(ref context);
 
-			if (!attribute.Optional || CanInject(context))
-				return Inject(ref context);
-
-			return null;
+			context.DeclaringType = member == null ? null : member.DeclaringType;
 		}
-
-		public abstract bool CanInject(InjectionContext context);
-
-		protected abstract void SetupContext(ref InjectionContext context);
-		protected abstract object Inject(ref InjectionContext context);
 	}
 }

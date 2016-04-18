@@ -9,6 +9,7 @@ namespace Pseudo.Injection
 {
 	public interface IInjectionInterceptor
 	{
-		void OnInject(InjectionContext context, ITypeInfo info);
+		void Inject(InjectionContext context, ITypeInfo info);
+		bool CanInject(InjectionContext context, ITypeInfo info);
 	}
 }

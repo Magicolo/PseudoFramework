@@ -10,13 +10,9 @@ namespace Pseudo.Injection
 	public interface IInstantiator
 	{
 		IContainer Container { get; }
-		IConstructorSelector Selector { get; set; }
+		IConstructorSelector ConstructorSelector { get; set; }
 
 		object Instantiate(InjectionContext context);
-		object Instantiate(Type concreteType);
-		T Instantiate<T>();
 		bool CanInstantiate(InjectionContext context);
-		bool CanInstantiate(Type concreteType);
-		bool CanInstantiate<T>();
 	}
 }

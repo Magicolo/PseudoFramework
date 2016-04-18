@@ -10,8 +10,8 @@ namespace Pseudo.Injection
 	public interface IInjector
 	{
 		IContainer Container { get; }
+		List<IInjectionInterceptor> Interceptors { get; }
 
 		void Inject(InjectionContext context);
-		void Inject(object instance);
 	}
 }

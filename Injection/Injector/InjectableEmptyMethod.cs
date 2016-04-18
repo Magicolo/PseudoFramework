@@ -11,15 +11,9 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableEmptyMethod : InjectableMemberBase<MethodInfo>, IInjectableMethod
 	{
-		static readonly IInjectableParameter[] emptyParameters = new IInjectableParameter[0];
-
-		public MethodInfo Method
-		{
-			get { return member; }
-		}
 		public IInjectableParameter[] Parameters
 		{
-			get { return emptyParameters; }
+			get { return InjectionUtility.EmptyParameters; }
 		}
 
 		readonly InvokerBase invoker;
@@ -30,12 +24,10 @@ namespace Pseudo.Injection.Internal
 			invoker = (InvokerBase)Activator.CreateInstance(typeof(Invoker<>).MakeGenericType(member.DeclaringType), action);
 		}
 
-		public override bool CanInject(InjectionContext context)
+		protected override bool CanInject(ref InjectionContext context)
 		{
 			return true;
 		}
-
-		protected override void SetupContext(ref InjectionContext context) { }
 
 		protected override object Inject(ref InjectionContext context)
 		{

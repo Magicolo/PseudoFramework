@@ -37,7 +37,7 @@ namespace Pseudo.Injection.Internal
 
 		IBindingInstaller[] CreateAttributeInstallers()
 		{
-			return Type.GetAttributes<BindAttribute>(true)
+			return Type.GetAttributes<BindAttributeBase>(true)
 				.Select(a => CreateAttributeInstaller(a))
 				.ToArray();
 		}
@@ -57,12 +57,13 @@ namespace Pseudo.Injection.Internal
 				injectableConstructors.AddRange(constructors
 					.Select(c => CreateInjectableConstructor(c)));
 
-				// Should be added last to be evaluated after all other constructors.
 				if (Type.IsValueType)
 					injectableConstructors.Add(CreateInjectableConstructor(Type));
 			}
 
-			return injectableConstructors.ToArray();
+			return injectableConstructors
+				.OrderByDescending(c => c.Parameters.Length)
+				.ToArray();
 		}
 
 		IInjectableField[] CreateInjectableFields()
@@ -98,7 +99,7 @@ namespace Pseudo.Injection.Internal
 				.ToArray();
 		}
 
-		IBindingInstaller CreateAttributeInstaller(BindAttribute attribute)
+		IBindingInstaller CreateAttributeInstaller(BindAttributeBase attribute)
 		{
 			return new BindAttributeInstaller(attribute, Type);
 		}
