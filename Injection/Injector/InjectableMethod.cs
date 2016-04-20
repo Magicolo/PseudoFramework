@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
@@ -17,12 +18,14 @@ namespace Pseudo.Injection.Internal
 		}
 
 		readonly IInjectableParameter[] parameters;
+		readonly IMethodWrapper invoker;
 		readonly object[] arguments;
 
 		public InjectableMethod(MethodInfo method, IInjectableParameter[] parameters) : base(method)
 		{
 			this.parameters = parameters;
 
+			invoker = ReflectionUtility.CreateWrapper(method);
 			arguments = new object[parameters.Length];
 		}
 
@@ -49,10 +52,9 @@ namespace Pseudo.Injection.Internal
 			for (int i = 0; i < parameters.Length; i++)
 				arguments[i] = parameters[i].Inject(context);
 
-			var returnValue = member.Invoke(context.Instance, arguments);
-			arguments.Clear();
+			var result = invoker.Invoke(ref context.Instance, arguments);
 
-			return returnValue;
+			return result;
 		}
 	}
 }

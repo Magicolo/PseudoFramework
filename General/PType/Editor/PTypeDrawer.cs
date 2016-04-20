@@ -30,10 +30,7 @@ namespace Pseudo.Internal
 				return (namespace1 + t1.FullName).CompareTo(namespace2 + t2.FullName);
 			});
 
-			typeLabels = types.Convert(t =>
-			{
-				return (t.Assembly.GetName().Name + "/" + (t.Namespace == null ? "" : t.Namespace.Replace('.', '/') + "/") + t.Name).ToGUIContent();
-			});
+			typeLabels = types.Convert(t => (t.Assembly.GetName().Name + "/" + (t.Namespace == null ? "" : t.Namespace.Replace('.', '/') + "/") + t.Name).ToGUIContent());
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

@@ -22,4 +22,9 @@ namespace Pseudo.Injection
 		IBindingCondition As(BindScope scope);
 		IBindingCondition As(IInjectionScope scope);
 	}
+
+	public interface IBindingScope<TConcrete> : IBindingScope
+	{
+		IBindingCondition As(IInjectionScope<TConcrete> scope);
+	}
 }

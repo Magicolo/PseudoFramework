@@ -6,6 +6,7 @@ using Pseudo;
 using System;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Editor.Internal
 {

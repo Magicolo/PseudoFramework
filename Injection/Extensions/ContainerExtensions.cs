@@ -27,5 +27,19 @@ namespace Pseudo.Injection
 		{
 			return (T)container.Get(typeof(T));
 		}
+
+		public static bool CanGet(this IContainer container, Type type)
+		{
+			return
+				container.Resolver.CanResolve(type) ||
+				(container.Parent != null && container.Parent.Resolver.CanResolve(type)) ||
+				container.Instantiator.CanInstantiate(type) ||
+				(container.Parent != null && container.Parent.Instantiator.CanInstantiate(type));
+		}
+
+		public static bool CanGet<T>(this IContainer container)
+		{
+			return container.CanGet(typeof(T));
+		}
 	}
 }

@@ -6,12 +6,13 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using System.Runtime.Serialization;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableEmptyStructConstructor : InjectableElementBase, IInjectableConstructor
+	public class InjectableEmptyConstructor : InjectableElementBase<EmptyAttributeProvider>, IInjectableConstructor
 	{
-		static readonly ICustomAttributeProvider emptyAttributeProvider = new EmptyAttributeProvider();
+		static readonly EmptyAttributeProvider emptyAttributeProvider = new EmptyAttributeProvider();
 
 		public ConstructorInfo Member
 		{
@@ -22,11 +23,11 @@ namespace Pseudo.Injection.Internal
 			get { return InjectionUtility.EmptyParameters; }
 		}
 
-		readonly Type concreteType;
+		readonly IConstructorWrapper wrapper;
 
-		public InjectableEmptyStructConstructor(Type concreteType) : base(emptyAttributeProvider)
+		public InjectableEmptyConstructor(Type concreteType) : base(emptyAttributeProvider)
 		{
-			this.concreteType = concreteType;
+			wrapper = ReflectionUtility.CreateWrapper(concreteType);
 		}
 
 		protected override bool CanInject(ref InjectionContext context)
@@ -36,7 +37,7 @@ namespace Pseudo.Injection.Internal
 
 		protected override object Inject(ref InjectionContext context)
 		{
-			return FormatterServices.GetUninitializedObject(concreteType);
+			return wrapper.Construct();
 		}
 	}
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo
 {

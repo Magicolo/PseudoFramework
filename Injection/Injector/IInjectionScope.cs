@@ -11,4 +11,9 @@ namespace Pseudo.Injection
 	{
 		object GetInstance(IInjectionFactory factory, InjectionContext context);
 	}
+
+	public interface IInjectionScope<T> : IInjectionScope
+	{
+		T GetInstance(IInjectionFactory<T> factory, InjectionContext context);
+	}
 }

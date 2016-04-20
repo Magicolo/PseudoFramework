@@ -17,5 +17,6 @@ namespace Pseudo.Injection
 		ITypeAnalyzer Analyzer { get; set; }
 
 		object Get(InjectionContext context);
+		bool CanGet(InjectionContext context);
 	}
 }

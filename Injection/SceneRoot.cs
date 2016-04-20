@@ -44,7 +44,7 @@ namespace Pseudo.Injection
 
 			if (root == null)
 			{
-				var rootPrefab = UnityEngine.Resources.Load<GlobalRoot>("GlobalRoot");
+				var rootPrefab = Resources.Load<GlobalRoot>("GlobalRoot");
 
 				if (rootPrefab != null)
 					root = Instantiate(rootPrefab);

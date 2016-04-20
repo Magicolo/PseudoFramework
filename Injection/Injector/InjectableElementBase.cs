@@ -6,15 +6,16 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
-	public abstract class InjectableElementBase : IInjectableElement
+	public abstract class InjectableElementBase<TProvider> : IInjectableElement where TProvider : ICustomAttributeProvider
 	{
-		protected readonly ICustomAttributeProvider provider;
+		protected readonly TProvider provider;
 		protected readonly InjectAttribute attribute;
 
-		protected InjectableElementBase(ICustomAttributeProvider provider)
+		protected InjectableElementBase(TProvider provider)
 		{
 			this.provider = provider;
 
@@ -59,7 +60,10 @@ namespace Pseudo.Injection.Internal
 			context.Identifier = attribute.Identifier;
 			context.Optional = attribute.Optional;
 		}
-		protected abstract bool CanInject(ref InjectionContext context);
+		protected virtual bool CanInject(ref InjectionContext context)
+		{
+			return context.Container.Resolver.CanResolve(context);
+		}
 		protected abstract object Inject(ref InjectionContext context);
 	}
 }

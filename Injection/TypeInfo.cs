@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
@@ -109,9 +110,9 @@ namespace Pseudo.Injection.Internal
 			return new InjectableConstructor(constructor, CreateInjectableParameters(constructor.GetParameters()));
 		}
 
-		IInjectableConstructor CreateInjectableConstructor(Type valueType)
+		IInjectableConstructor CreateInjectableConstructor(Type type)
 		{
-			return new InjectableEmptyStructConstructor(valueType);
+			return new InjectableEmptyConstructor(type);
 		}
 
 		IInjectableField CreateInjectableField(FieldInfo field)
@@ -121,18 +122,12 @@ namespace Pseudo.Injection.Internal
 
 		IInjectableProperty CreateInjectableProperty(PropertyInfo property)
 		{
-			if (property.IsAutoProperty())
-				return new InjectableAutoProperty(property);
-			else
-				return new InjectableProperty(property);
+			return new InjectableProperty(property);
 		}
 
 		IInjectableMethod CreateInjectableMethod(MethodInfo method)
 		{
-			if (method.ReturnType == typeof(void) && method.GetParameters().Length == 0)
-				return new InjectableEmptyMethod(method);
-			else
-				return new InjectableMethod(method, CreateInjectableParameters(method.GetParameters()));
+			return new InjectableMethod(method, CreateInjectableParameters(method.GetParameters()));
 		}
 
 		IInjectableParameter[] CreateInjectableParameters(IEnumerable<ParameterInfo> parameters)

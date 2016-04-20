@@ -4,6 +4,7 @@ using System.Runtime.Remoting;
 using UnityEngine;
 using UnityEditor;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Editor.Internal
 {

@@ -7,7 +7,7 @@ using Pseudo;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-namespace Pseudo.Internal
+namespace Pseudo.Reflection
 {
 	public static class ReflectionExtensions
 	{

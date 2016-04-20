@@ -9,6 +9,7 @@ using System.Reflection.Emit;
 using System.Reflection;
 using UnityEditor;
 using Pseudo.Editor.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Editor.Internal
 {

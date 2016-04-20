@@ -55,7 +55,6 @@ namespace Pseudo.Internal
 		IExpressionNode[] CreateNodes(string code)
 		{
 			var block = NRefactoryUtility.ParseBlock(code);
-			PDebug.Log(block);
 
 			return CreateNodes(block.Children);
 		}

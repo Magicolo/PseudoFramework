@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Mechanics.Internal
 {

@@ -7,6 +7,7 @@ using Pseudo;
 using UnityEditor;
 using Pseudo.Editor.Internal;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.EntityFramework.Internal
 {

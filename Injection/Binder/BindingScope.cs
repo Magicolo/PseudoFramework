@@ -45,4 +45,14 @@ namespace Pseudo.Injection.Internal
 			return new BindingCondition(Binding);
 		}
 	}
+
+	public class BindingScope<TConcrete> : BindingScope, IBindingScope<TConcrete>
+	{
+		public BindingScope(IBinding binding) : base(binding) { }
+
+		public IBindingCondition As(IInjectionScope<TConcrete> scope)
+		{
+			return base.As(scope);
+		}
+	}
 }

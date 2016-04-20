@@ -6,37 +6,38 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
 	public class InjectableField : InjectableMemberBase<FieldInfo>, IInjectableField
 	{
-		public InjectableField(FieldInfo field) : base(field) { }
+		readonly IMemberWrapper wrapper;
+
+		public InjectableField(FieldInfo field) : base(field)
+		{
+			wrapper = ReflectionUtility.CreateWrapper(field);
+		}
 
 		protected override void SetupContext(ref InjectionContext context)
 		{
 			base.SetupContext(ref context);
 
 			context.Type = ContextTypes.Field;
-			context.ContractType = member.FieldType;
-		}
-
-		protected override bool CanInject(ref InjectionContext context)
-		{
-			return context.Container.Resolver.CanResolve(context);
+			context.ContractType = provider.FieldType;
 		}
 
 		protected override object Inject(ref InjectionContext context)
 		{
 			var value = context.Container.Resolver.Resolve(context);
-			member.SetValue(context.Instance, value);
+			wrapper.Set(ref context.Instance, value);
 
 			return value;
 		}
 
 		public override string ToString()
 		{
-			return string.Format("{0}({1}.{2})", GetType().Name, member.DeclaringType.Name, member.Name);
+			return string.Format("{0}({1}.{2})", GetType().Name, provider.DeclaringType.Name, provider.Name);
 		}
 	}
 }

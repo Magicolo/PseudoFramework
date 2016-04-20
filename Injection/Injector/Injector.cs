@@ -31,12 +31,18 @@ namespace Pseudo.Injection.Internal
 
 		public void Inject(InjectionContext context)
 		{
-			Assert.IsNotNull(context.Container);
 			Assert.IsNotNull(context.Instance);
+
+			SetupContext(ref context);
 
 			var info = context.Container.Analyzer.Analyze(context.Instance.GetType());
 			var interceptor = GetInterceptor(ref context, info);
 			interceptor.Inject(context, info);
+		}
+
+		void SetupContext(ref InjectionContext context)
+		{
+			context.Container = container;
 		}
 
 		IInjectionInterceptor GetInterceptor(ref InjectionContext context, ITypeInfo info)

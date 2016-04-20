@@ -42,7 +42,6 @@ namespace Pseudo.Injection.Internal
 		readonly IResolver resolver;
 		readonly IInjector injector;
 		readonly IInstantiator instantiator;
-
 		ITypeAnalyzer analyzer = defaultAnalyzer;
 
 		public Container() : this(null, null, null, null, null) { }
@@ -76,6 +75,15 @@ namespace Pseudo.Injection.Internal
 				return parent.Instantiator.Instantiate(context);
 			else
 				return null;
+		}
+
+		public bool CanGet(InjectionContext context)
+		{
+			return
+				resolver.CanResolve(context) ||
+				(parent != null && parent.Resolver.CanResolve(context)) ||
+				instantiator.CanInstantiate(context) ||
+				(parent != null && parent.Instantiator.CanInstantiate(context));
 		}
 	}
 }

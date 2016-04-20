@@ -24,21 +24,22 @@ namespace Pseudo.Injection.Internal
 
 		public object Resolve(InjectionContext context)
 		{
-			Assert.IsNotNull(context.Container);
+			SetupContext(ref context);
 
-			var binding = context.Container.Binder.GetBinding(context);
+			var binding = GetBinding(ref context);
 
 			if (binding != null)
 				return binding.Scope.GetInstance(binding.Factory, context);
+			// Try resolving with parent.
 			else if (context.Container.Parent != null)
 				return context.Container.Parent.Resolver.Resolve(context);
-
-			throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
+			else
+				throw new ArgumentException(string.Format("No binding was found for context {0}.", context));
 		}
 
 		public IEnumerable<object> ResolveAll(InjectionContext context)
 		{
-			Assert.IsNotNull(context.Container);
+			SetupContext(ref context);
 
 			if (context.Container.Parent == null)
 				return context.Container.Binder.GetBindings(context)
@@ -51,12 +52,24 @@ namespace Pseudo.Injection.Internal
 
 		public bool CanResolve(InjectionContext context)
 		{
-			if (context.Container == null)
-				return false;
+			SetupContext(ref context);
 
 			return
-				context.Container.Binder.GetBinding(context) != null ||
+				GetBinding(ref context) != null ||
 				(context.Container.Parent != null && context.Container.Parent.Resolver.CanResolve(context));
+		}
+
+		void SetupContext(ref InjectionContext context)
+		{
+			context.Container = container;
+		}
+
+		IBinding GetBinding(ref InjectionContext context)
+		{
+			if (context.ContractType == null)
+				return null;
+
+			return context.Container.Binder.GetBinding(context);
 		}
 	}
 }

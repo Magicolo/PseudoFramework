@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
+using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
 {
@@ -17,12 +18,14 @@ namespace Pseudo.Injection.Internal
 		}
 
 		readonly IInjectableParameter[] parameters;
+		readonly IConstructorWrapper wrapper;
 		readonly object[] arguments;
 
 		public InjectableConstructor(ConstructorInfo constructor, IInjectableParameter[] parameters) : base(constructor)
 		{
 			this.parameters = parameters;
 
+			wrapper = ReflectionUtility.CreateWrapper(constructor);
 			arguments = new object[parameters.Length];
 		}
 
@@ -49,8 +52,7 @@ namespace Pseudo.Injection.Internal
 			for (int i = 0; i < arguments.Length; i++)
 				arguments[i] = parameters[i].Inject(context);
 
-			var instance = member.Invoke(arguments);
-			arguments.Clear();
+			var instance = wrapper.Construct(arguments);
 
 			return instance;
 		}

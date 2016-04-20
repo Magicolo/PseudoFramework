@@ -15,16 +15,10 @@ namespace Pseudo.Injection
 			Assert.IsNotNull(prefab);
 			Assert.IsTrue(prefab.GetType().Is(contract.ContractType));
 
-			return contract.ToMethod(c =>
-			{
-				var instance = UnityEngine.Object.Instantiate(prefab);
-				c.Container.Injector.Inject(instance);
-
-				return instance;
-			});
+			return contract.ToMethod(c => UnityEngine.Object.Instantiate(prefab));
 		}
 
-		public static IBindingScope ToPrefab(this IBindingContract contract, GameObject prefab)
+		public static IBindingScope ToPrefab(this IBindingContract contract, GameObject prefab, bool injectHierarchy = true)
 		{
 			Assert.IsNotNull(prefab);
 			Assert.IsTrue(contract.ContractType.Is<GameObject>() || prefab.GetComponent(contract.ContractType) != null);
@@ -32,10 +26,14 @@ namespace Pseudo.Injection
 			return contract.ToMethod(c =>
 			{
 				var instance = UnityEngine.Object.Instantiate(prefab);
-				var components = instance.GetComponentsInChildren<MonoBehaviour>();
 
-				for (int i = 0; i < components.Length; i++)
-					c.Container.Injector.Inject(components[i]);
+				if (injectHierarchy)
+				{
+					var components = instance.GetComponentsInChildren<MonoBehaviour>();
+
+					for (int i = 0; i < components.Length; i++)
+						c.Container.Injector.Inject(components[i]);
+				}
 
 				if (contract.ContractType.Is<GameObject>())
 					return instance;

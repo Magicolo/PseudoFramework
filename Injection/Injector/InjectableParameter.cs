@@ -9,39 +9,34 @@ using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
-	public class InjectableParameter : InjectableElementBase, IInjectableParameter
+	public class InjectableParameter : InjectableElementBase<ParameterInfo>, IInjectableParameter
 	{
 		public ParameterInfo Parameter
 		{
-			get { return parameter; }
+			get { return provider; }
 		}
 
-		readonly ParameterInfo parameter;
-
-		public InjectableParameter(ParameterInfo parameter) : base(parameter)
-		{
-			this.parameter = parameter;
-		}
+		public InjectableParameter(ParameterInfo parameter) : base(parameter) { }
 
 		protected override void SetupContext(ref InjectionContext context)
 		{
 			base.SetupContext(ref context);
 
 			context.Type |= ContextTypes.Parameter;
-			context.ContractType = parameter.ParameterType;
+			context.ContractType = provider.ParameterType;
 		}
 
 		protected override bool CanInject(ref InjectionContext context)
 		{
-			return parameter.IsOptional || context.Container.Resolver.CanResolve(context);
+			return provider.IsOptional || base.CanInject(ref context);
 		}
 
 		protected override object Inject(ref InjectionContext context)
 		{
 			if (context.Container.Resolver.CanResolve(context))
 				return context.Container.Resolver.Resolve(context);
-			else if (parameter.IsOptional)
-				return parameter.DefaultValue;
+			else if (provider.IsOptional)
+				return provider.DefaultValue;
 			else if (!attribute.Optional)
 				return context.Container.Resolver.Resolve(context);
 

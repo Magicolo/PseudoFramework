@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Collections;
 using Pseudo.Internal;
 using System.Reflection;
+using Pseudo.Reflection;
 
 namespace Pseudo.Editor.Internal
 {

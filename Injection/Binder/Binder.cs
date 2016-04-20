@@ -54,6 +54,12 @@ namespace Pseudo.Injection.Internal
 
 			for (int i = 0; i < types.Length; i++)
 			{
+				var type = types[i];
+
+				// Prevents expensive and useless analysis of types that have no BindAttributeBase.
+				if (!type.IsDefined(typeof(BindAttributeBase), true))
+					continue;
+
 				var installers = container.Analyzer.Analyze(types[i]).Installers;
 
 				for (int j = 0; j < installers.Length; j++)

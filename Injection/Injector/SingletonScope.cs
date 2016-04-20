@@ -23,4 +23,12 @@ namespace Pseudo.Injection.Internal
 			return instance;
 		}
 	}
+
+	public class SingletonScope<TConcrete> : SingletonScope, IInjectionScope<TConcrete>
+	{
+		public TConcrete GetInstance(IInjectionFactory<TConcrete> factory, InjectionContext context)
+		{
+			return (TConcrete)GetInstance((IInjectionFactory)factory, context);
+		}
+	}
 }

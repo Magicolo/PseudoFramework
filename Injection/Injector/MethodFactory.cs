@@ -16,14 +16,17 @@ namespace Pseudo.Injection.Internal
 			this.method = method;
 		}
 
-		public TConcrete Create(InjectionContext context)
+		public object Create(InjectionContext context)
 		{
-			return method(context);
+			context.Instance = method(context);
+			context.Container.Injector.Inject(context);
+
+			return context.Instance;
 		}
 
-		object IInjectionFactory.Create(InjectionContext context)
+		TConcrete IInjectionFactory<TConcrete>.Create(InjectionContext context)
 		{
-			return Create(context);
+			return (TConcrete)Create(context);
 		}
 	}
 }

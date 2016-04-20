@@ -14,4 +14,12 @@ namespace Pseudo.Injection.Internal
 			return factory.Create(context);
 		}
 	}
+
+	public class TransientScope<TConcrete> : TransientScope, IInjectionScope<TConcrete>
+	{
+		public TConcrete GetInstance(IInjectionFactory<TConcrete> factory, InjectionContext context)
+		{
+			return (TConcrete)GetInstance((IInjectionFactory)factory, context);
+		}
+	}
 }
