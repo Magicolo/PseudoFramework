@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Pseudo.Injection.Tests
 {
-	public class InstantiateTests : InjectionTestBase
+	public class InstantiateTests : InjectionTestsBase
 	{
 		[Test]
 		public void Instantiate()

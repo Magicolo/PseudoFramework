@@ -29,7 +29,6 @@ namespace Pseudo.Injection
 		public IInjectableElement Element;
 		public ContextTypes Type;
 		public object Instance;
-		public object[] Arguments;
 		public Type ContractType;
 		public Type DeclaringType;
 		public string Identifier;

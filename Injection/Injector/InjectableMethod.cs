@@ -25,7 +25,7 @@ namespace Pseudo.Injection.Internal
 		{
 			this.parameters = parameters;
 
-			invoker = ReflectionUtility.CreateWrapper(method);
+			invoker = method.CreateWrapper();
 			arguments = new object[parameters.Length];
 		}
 

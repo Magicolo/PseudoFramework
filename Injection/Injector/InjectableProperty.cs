@@ -12,11 +12,11 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableProperty : InjectableMemberBase<PropertyInfo>, IInjectableProperty
 	{
-		readonly IMemberWrapper wrapper;
+		readonly IFieldOrPropertyWrapper wrapper;
 
 		public InjectableProperty(PropertyInfo property) : base(property)
 		{
-			wrapper = ReflectionUtility.CreateWrapper(property);
+			wrapper = property.CreateWrapper();
 		}
 
 		protected override void SetupContext(ref InjectionContext context)

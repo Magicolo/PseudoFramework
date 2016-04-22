@@ -9,14 +9,14 @@ using NUnit.Framework;
 
 namespace Pseudo.Reflection.Tests
 {
-	public class FieldWrapperTests : ReflectionTestBase
+	public class FieldWrapperTests : ReflectionTestsBase
 	{
 		object dummyClass;
 		object dummyStruct;
-		IMemberWrapper classValueWrapper;
-		IMemberWrapper classReferenceWrapper;
-		IMemberWrapper structValueWrapper;
-		IMemberWrapper structReferenceWrapper;
+		IFieldOrPropertyWrapper classValueWrapper;
+		IFieldOrPropertyWrapper classReferenceWrapper;
+		IFieldOrPropertyWrapper structValueWrapper;
+		IFieldOrPropertyWrapper structReferenceWrapper;
 
 		public override void Setup()
 		{
@@ -24,10 +24,10 @@ namespace Pseudo.Reflection.Tests
 
 			dummyClass = new DummyClass { Value = 1, Reference = "2" };
 			dummyStruct = new DummyStruct { Value = 3, Reference = "4" };
-			classValueWrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetField("Value"));
-			classReferenceWrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetField("Reference"));
-			structValueWrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetField("Value"));
-			structReferenceWrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetField("Reference"));
+			classValueWrapper = ReflectionUtility.CreateFieldWrapper(typeof(DummyClass).GetField("Value"));
+			classReferenceWrapper = ReflectionUtility.CreateFieldWrapper(typeof(DummyClass).GetField("Reference"));
+			structValueWrapper = ReflectionUtility.CreateFieldWrapper(typeof(DummyStruct).GetField("Value"));
+			structReferenceWrapper = ReflectionUtility.CreateFieldWrapper(typeof(DummyStruct).GetField("Reference"));
 		}
 
 		public override void TearDown()

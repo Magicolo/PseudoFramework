@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Pseudo;
 
-public class AmeCameraControl : MonoBehaviour 
+public class AmeCameraControl : MonoBehaviour
 {
 
 	public Camera Cam;
@@ -12,13 +12,13 @@ public class AmeCameraControl : MonoBehaviour
 	public float CamMouvementFactor = 0.01f;
 	public float ArrowCamMouvementSpeed = 2f;
 
-	void Start () 
+	void Start()
 	{
-	
+
 	}
-	
-	
-	void Update () 
+
+
+	void Update()
 	{
 		handleArrowCamMouvement();
 		handleMiddleMouse();

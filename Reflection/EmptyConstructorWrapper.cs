@@ -8,8 +8,17 @@ using System.Runtime.Serialization;
 
 namespace Pseudo.Reflection.Internal
 {
-	public class EmptyConstructorWrapper : ConstructorWrapperBase
+	public class EmptyConstructorWrapper : IConstructorWrapper
 	{
+		public string Name
+		{
+			get { return type.Name; }
+		}
+		public Type Type
+		{
+			get { return type; }
+		}
+
 		readonly Type type;
 
 		public EmptyConstructorWrapper(Type type)
@@ -17,7 +26,12 @@ namespace Pseudo.Reflection.Internal
 			this.type = type;
 		}
 
-		public override object Construct(params object[] arguments)
+		public object Invoke()
+		{
+			return Invoke(ReflectionUtility.EmptyArguments);
+		}
+
+		public object Invoke(params object[] arguments)
 		{
 			return FormatterServices.GetSafeUninitializedObject(type);
 		}

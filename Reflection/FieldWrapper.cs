@@ -9,8 +9,17 @@ using System.Reflection.Emit;
 
 namespace Pseudo.Reflection.Internal
 {
-	public class FieldWrapper : IMemberWrapper
+	public class FieldWrapper : IFieldOrPropertyWrapper
 	{
+		public string Name
+		{
+			get { return field.Name; }
+		}
+		public Type Type
+		{
+			get { return field.FieldType; }
+		}
+
 		readonly FieldInfo field;
 
 		public FieldWrapper(FieldInfo field)
@@ -29,13 +38,25 @@ namespace Pseudo.Reflection.Internal
 		}
 	}
 
-	public class FieldWrapper<TTarget, TValue> : IMemberWrapper
+	public class FieldWrapper<TTarget, TValue> : IFieldOrPropertyWrapper
 	{
+		public string Name
+		{
+			get { return field.Name; }
+		}
+		public Type Type
+		{
+			get { return field.FieldType; }
+		}
+
+		readonly FieldInfo field;
 		readonly Getter<TTarget, TValue> getter;
 		readonly Setter<TTarget, TValue> setter;
 
 		public FieldWrapper(FieldInfo field)
 		{
+			this.field = field;
+
 			getter = CreateGetter(field);
 			setter = CreateSetter(field);
 		}

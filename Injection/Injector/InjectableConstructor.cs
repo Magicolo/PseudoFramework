@@ -25,7 +25,7 @@ namespace Pseudo.Injection.Internal
 		{
 			this.parameters = parameters;
 
-			wrapper = ReflectionUtility.CreateWrapper(constructor);
+			wrapper = constructor.CreateWrapper();
 			arguments = new object[parameters.Length];
 		}
 
@@ -52,7 +52,7 @@ namespace Pseudo.Injection.Internal
 			for (int i = 0; i < arguments.Length; i++)
 				arguments[i] = parameters[i].Inject(context);
 
-			var instance = wrapper.Construct(arguments);
+			var instance = wrapper.Invoke(arguments);
 
 			return instance;
 		}

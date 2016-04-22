@@ -43,8 +43,6 @@ namespace Pseudo.Injection.Internal
 						return ConditionComparer(c.Type, (ContextTypes)target, comparer);
 					case ConditionSource.Instance:
 						return ConditionComparer(c.Instance, target, comparer);
-					case ConditionSource.Arguments:
-						return ConditionComparer(c.Arguments, (object[])target, comparer);
 					case ConditionSource.ContractType:
 						return ConditionComparer(c.ContractType, (Type)target, comparer);
 					case ConditionSource.DeclaringType:

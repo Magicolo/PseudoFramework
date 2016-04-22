@@ -5,164 +5,201 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Pooling.Internal
+namespace Pseudo.Pooling2.Internal
 {
 	public abstract class PoolBase : IPool
 	{
-		public Type Type { get; private set; }
+		public IPoolingFactory Factory
+		{
+			get { return factory; }
+		}
+		public IPoolingUpdater Updater
+		{
+			get { return updater; }
+		}
+		public IInitializer Initializer
+		{
+			get { return initializer; }
+		}
+		public Type Type
+		{
+			get { return reference.GetType(); }
+		}
 		public int Size
 		{
 			get { return hashedInstances.Count; }
 		}
 
-		protected readonly object reference;
-
-		readonly Constructor constructor;
-		readonly Destructor destructor;
+		readonly object reference;
+		readonly IPoolingFactory factory;
+		readonly IPoolingUpdater updater;
+		readonly IInitializer initializer;
 		readonly int startSize;
-		readonly bool isPoolable;
-		readonly HashSet<object> hashedInstances;
-		IPoolUpdater updater;
-		bool updating;
+		readonly HashSet<object> hashedInstances = new HashSet<object>();
 
-		protected PoolBase(object reference, Type type, Constructor constructor, Destructor destructor, int startSize, bool initialize)
+		//readonly Constructor constructor;
+		//readonly Destructor destructor;
+		//readonly bool isPoolable;
+		//readonly IPoolUpdater updater;
+		//bool updating;
+
+		protected PoolBase(object reference, IPoolingFactory factory, IPoolingUpdater updater, IInitializer initializer, int startSize)
 		{
-			PoolUtility.InitializeJanitor();
-
 			this.reference = reference;
-			this.constructor = constructor ?? Construct;
-			this.destructor = destructor ?? Destroy;
+			this.factory = factory;
+			this.updater = updater;
+			this.initializer = initializer;
 			this.startSize = startSize;
-
-			Type = type;
-			isPoolable = reference is IPoolable;
-			hashedInstances = new HashSet<object>();
-
-			if (ApplicationUtility.IsMultiThreaded)
-				updater = new AsyncPoolUpdater();
-			else
-				updater = new SyncPoolUpdater();
-
-			if (initialize)
-				Initialize();
 		}
 
-		public virtual object Create()
-		{
-			return CreateObject();
-		}
+		//protected PoolBase(object reference, Type type, Constructor constructor, Destructor destructor, int startSize, bool initialize)
+		//{
+		//	this.reference = reference;
+		//	this.constructor = constructor ?? Construct;
+		//	this.destructor = destructor ?? Destroy;
+		//	this.startSize = startSize;
 
-		public virtual void Recycle(object instance)
-		{
-			if (instance == null)
-				return;
+		//	Type = type;
+		//	hashedInstances = new HashSet<object>();
+		//	updater = ApplicationUtility.IsMultiThreaded ? new AsyncPoolUpdater() : new SyncPoolUpdater();
+		//}
 
-			if (instance.GetType() != Type)
-				throw new ArgumentException(string.Format("The type of the instance ({0}) doesn't match the pool type ({1}).", instance.GetType().Name, Type.Name));
+		//public virtual object Create()
+		//{
+		//	return CreateObject();
+		//}
 
-			if (hashedInstances.Contains(instance))
-				return;
+		//public virtual void Recycle(object instance)
+		//{
+		//	if (instance == null)
+		//		return;
 
-			if (isPoolable)
-				((IPoolable)instance).OnRecycle();
+		//	if (instance.GetType() != Type)
+		//		throw new ArgumentException(string.Format("The type of the instance ({0}) doesn't match the pool type ({1}).", instance.GetType().Name, Type.Name));
 
-			Enqueue(instance, true);
-			updater.Update();
-		}
+		//	if (hashedInstances.Contains(instance))
+		//		return;
 
-		public virtual void RecycleElements(IList elements)
-		{
-			if (elements == null)
-				return;
+		//	if (isPoolable)
+		//		((IPoolable)instance).OnRecycle();
 
-			for (int i = 0; i < elements.Count; i++)
-				Recycle(elements[i]);
+		//	Enqueue(instance, true);
+		//	updater.Update();
+		//}
 
-			elements.Clear();
-		}
+		//public virtual void RecycleElements(IList elements)
+		//{
+		//	if (elements == null)
+		//		return;
 
-		public virtual bool Contains(object instance)
+		//	for (int i = 0; i < elements.Count; i++)
+		//		Recycle(elements[i]);
+
+		//	elements.Clear();
+		//}
+
+		public bool Contains(object instance)
 		{
 			return hashedInstances.Contains(instance);
 		}
 
-		public virtual void Clear()
+		public object Create()
 		{
-			updater.Clear();
-
-			var enumerator = hashedInstances.GetEnumerator();
-
-			while (enumerator.MoveNext())
-				destructor(enumerator.Current);
-
-			enumerator.Dispose();
-
-			hashedInstances.Clear();
+			throw new NotImplementedException();
 		}
 
-		public virtual void Reset()
+		public void Recycle(object instance)
 		{
-			Initialize();
-			updater.Reset();
+			throw new NotImplementedException();
 		}
 
-		protected void Initialize()
+		public void Clear()
 		{
-			updater.Initializer = PoolUtility.GetPoolInitializer(reference);
-
-			while (Size < startSize)
-				Enqueue(CreateInstance(), false);
+			throw new NotImplementedException();
 		}
 
-		protected virtual object CreateObject()
+		public void Reset()
 		{
-			var instance = GetInstance();
-
-			if (isPoolable)
-				((IPoolable)instance).OnCreate();
-
-			updater.Update();
-
-			return instance;
+			throw new NotImplementedException();
 		}
 
-		protected virtual object GetInstance()
-		{
-			var instance = Dequeue();
+		//public virtual void Clear()
+		//{
+		//	updater.Clear();
 
-			if (instance == null)
-				instance = CreateInstance();
+		//	var enumerator = hashedInstances.GetEnumerator();
 
-			return instance;
-		}
+		//	while (enumerator.MoveNext())
+		//		destructor(enumerator.Current);
 
-		protected virtual object CreateInstance()
-		{
-			var instance = constructor();
-			updater.Initializer.InitializeFields(instance);
+		//	enumerator.Dispose();
 
-			return instance;
-		}
+		//	hashedInstances.Clear();
+		//}
 
-		protected virtual void Enqueue(object instance, bool initialize)
-		{
-			if (hashedInstances.Add(instance))
-				updater.Enqueue(instance, initialize);
-		}
+		//public virtual void Reset()
+		//{
+		//	Initialize();
+		//	updater.Reset();
+		//}
 
-		protected virtual object Dequeue()
-		{
-			var instance = updater.Dequeue();
-			hashedInstances.Remove(instance);
+		//protected void Initialize()
+		//{
+		//	updater.Initializer = PoolUtility.GetPoolInitializer(reference);
 
-			return instance;
-		}
+		//	while (Size < startSize)
+		//		Enqueue(CreateInstance(), false);
+		//}
 
-		protected virtual object Construct()
-		{
-			return Activator.CreateInstance(Type);
-		}
+		//protected virtual object CreateObject()
+		//{
+		//	var instance = GetInstance();
 
-		protected virtual void Destroy(object instance) { }
+		//	if (isPoolable)
+		//		((IPoolable)instance).OnCreate();
+
+		//	updater.Update();
+
+		//	return instance;
+		//}
+
+		//protected virtual object GetInstance()
+		//{
+		//	var instance = Dequeue();
+
+		//	if (instance == null)
+		//		instance = CreateInstance();
+
+		//	return instance;
+		//}
+
+		//protected virtual object CreateInstance()
+		//{
+		//	var instance = constructor();
+		//	updater.Initializer.InitializeFields(instance);
+
+		//	return instance;
+		//}
+
+		//protected virtual void Enqueue(object instance, bool initialize)
+		//{
+		//	if (hashedInstances.Add(instance))
+		//		updater.Enqueue(instance, initialize);
+		//}
+
+		//protected virtual object Dequeue()
+		//{
+		//	var instance = updater.Dequeue();
+		//	hashedInstances.Remove(instance);
+
+		//	return instance;
+		//}
+
+		//protected virtual object Construct()
+		//{
+		//	return Activator.CreateInstance(Type);
+		//}
+
+		//protected virtual void Destroy(object instance) { }
 	}
 }

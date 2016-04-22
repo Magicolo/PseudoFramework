@@ -9,8 +9,17 @@ using System.Reflection.Emit;
 
 namespace Pseudo.Reflection.Internal
 {
-	public class PropertyWrapper : IMemberWrapper
+	public class PropertyWrapper : IFieldOrPropertyWrapper
 	{
+		public string Name
+		{
+			get { return property.Name; }
+		}
+		public Type Type
+		{
+			get { return property.PropertyType; }
+		}
+
 		readonly PropertyInfo property;
 
 		public PropertyWrapper(PropertyInfo property)
@@ -29,13 +38,25 @@ namespace Pseudo.Reflection.Internal
 		}
 	}
 
-	public class PropertyWrapper<TTarget, TValue> : IMemberWrapper
+	public class PropertyWrapper<TTarget, TValue> : IFieldOrPropertyWrapper
 	{
+		public string Name
+		{
+			get { return property.Name; }
+		}
+		public Type Type
+		{
+			get { return property.PropertyType; }
+		}
+
+		readonly PropertyInfo property;
 		readonly Getter<TTarget, TValue> getter;
 		readonly Setter<TTarget, TValue> setter;
 
 		public PropertyWrapper(PropertyInfo property)
 		{
+			this.property = property;
+
 			getter = CreateGetter(property);
 			setter = CreateSetter(property);
 		}
@@ -58,6 +79,9 @@ namespace Pseudo.Reflection.Internal
 
 		static Getter<TTarget, TValue> CreateGetter(PropertyInfo property)
 		{
+			if (!property.CanRead)
+				return null;
+
 			var dynamicMethodName = string.Format("{0}.{1}.{2}___GeneratedPropertyGetter", property.DeclaringType.FullName, property.PropertyType.FullName, property.Name);
 			var dynamicMethod = new DynamicMethod(dynamicMethodName, property.PropertyType, new Type[] { property.DeclaringType.MakeByRefType() }, property.DeclaringType, true);
 			var generator = dynamicMethod.GetILGenerator();
@@ -79,6 +103,9 @@ namespace Pseudo.Reflection.Internal
 
 		static Setter<TTarget, TValue> CreateSetter(PropertyInfo property)
 		{
+			if (!property.CanWrite)
+				return null;
+
 			var dynamicMethodName = string.Format("{0}.{1}.{2}___GeneratedPropertySetter", property.DeclaringType.FullName, property.PropertyType.FullName, property.Name);
 			var dynamicMethod = new DynamicMethod(dynamicMethodName, typeof(void), new Type[] { property.DeclaringType.MakeByRefType(), property.PropertyType }, property.DeclaringType, true);
 			var generator = dynamicMethod.GetILGenerator();

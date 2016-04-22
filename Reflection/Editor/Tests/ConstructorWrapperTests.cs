@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Pseudo.Reflection.Tests
 {
-	public class ConstructorWrapperTests : ReflectionTestBase
+	public class ConstructorWrapperTests : ReflectionTestsBase
 	{
 		IConstructorWrapper classConstructor1Wrapper;
 		IConstructorWrapper classConstructor2Wrapper;
@@ -24,15 +24,15 @@ namespace Pseudo.Reflection.Tests
 		{
 			base.Setup();
 
-			classConstructor1Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass));
-			classConstructor2Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int) }));
-			classConstructor3Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string) }));
-			classConstructor4Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));
+			classConstructor1Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass));
+			classConstructor2Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int) }));
+			classConstructor3Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string) }));
+			classConstructor4Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));
 
-			structConstructor1Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct));
-			structConstructor2Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int) }));
-			structConstructor3Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string) }));
-			structConstructor4Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));
+			structConstructor1Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct));
+			structConstructor2Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int) }));
+			structConstructor3Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string) }));
+			structConstructor4Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));
 		}
 
 		public override void TearDown()
@@ -53,10 +53,10 @@ namespace Pseudo.Reflection.Tests
 		[Test]
 		public void ConstructClass()
 		{
-			var instance1 = (DummyClass)classConstructor1Wrapper.Construct();
-			var instance2 = (DummyClass)classConstructor2Wrapper.Construct(1);
-			var instance3 = (DummyClass)classConstructor3Wrapper.Construct(2, "2");
-			var instance4 = (DummyClass)classConstructor4Wrapper.Construct(3, "3", instance1);
+			var instance1 = (DummyClass)classConstructor1Wrapper.Invoke();
+			var instance2 = (DummyClass)classConstructor2Wrapper.Invoke(1);
+			var instance3 = (DummyClass)classConstructor3Wrapper.Invoke(2, "2");
+			var instance4 = (DummyClass)classConstructor4Wrapper.Invoke(3, "3", instance1);
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);
@@ -83,10 +83,10 @@ namespace Pseudo.Reflection.Tests
 		[Test]
 		public void ConstructStruct()
 		{
-			var instance1 = (DummyStruct)structConstructor1Wrapper.Construct();
-			var instance2 = (DummyStruct)structConstructor2Wrapper.Construct(1);
-			var instance3 = (DummyStruct)structConstructor3Wrapper.Construct(2, "2");
-			var instance4 = (DummyStruct)structConstructor4Wrapper.Construct(3, "3", instance1);
+			var instance1 = (DummyStruct)structConstructor1Wrapper.Invoke();
+			var instance2 = (DummyStruct)structConstructor2Wrapper.Invoke(1);
+			var instance3 = (DummyStruct)structConstructor3Wrapper.Invoke(2, "2");
+			var instance4 = (DummyStruct)structConstructor4Wrapper.Invoke(3, "3", instance1);
 
 			Assert.IsNotNull(instance1);
 			Assert.IsNotNull(instance2);

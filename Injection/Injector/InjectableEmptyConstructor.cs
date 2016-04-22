@@ -27,7 +27,7 @@ namespace Pseudo.Injection.Internal
 
 		public InjectableEmptyConstructor(Type concreteType) : base(emptyAttributeProvider)
 		{
-			wrapper = ReflectionUtility.CreateWrapper(concreteType);
+			wrapper = ReflectionUtility.CreateConstructorWrapper(concreteType);
 		}
 
 		protected override bool CanInject(ref InjectionContext context)
@@ -37,7 +37,7 @@ namespace Pseudo.Injection.Internal
 
 		protected override object Inject(ref InjectionContext context)
 		{
-			return wrapper.Construct();
+			return wrapper.Invoke();
 		}
 	}
 }

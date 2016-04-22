@@ -13,7 +13,6 @@ namespace Pseudo.Injection
 		Element,
 		ContextType,
 		Instance,
-		Arguments,
 		ContractType,
 		DeclaringType,
 		Identifier,

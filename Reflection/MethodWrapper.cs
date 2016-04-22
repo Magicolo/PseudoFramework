@@ -10,12 +10,7 @@ namespace Pseudo.Reflection.Internal
 {
 	public class MethodWrapper : MethodWrapperBase
 	{
-		readonly MethodInfo method;
-
-		public MethodWrapper(MethodInfo method)
-		{
-			this.method = method;
-		}
+		public MethodWrapper(MethodInfo method) : base(method) { }
 
 		public override object Invoke(ref object target, params object[] arguments)
 		{
@@ -30,7 +25,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			method(ref castedTarget);
+			invoker(ref castedTarget);
 			target = castedTarget;
 
 			return null;
@@ -49,7 +44,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			method(ref castedTarget, (TIn)arguments[0]);
+			invoker(ref castedTarget, (TIn)arguments[0]);
 			target = castedTarget;
 
 			return null;
@@ -68,7 +63,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			method(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1]);
+			invoker(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1]);
 			target = castedTarget;
 
 			return null;
@@ -87,7 +82,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			method(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
+			invoker(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
 			target = castedTarget;
 
 			return null;
@@ -101,7 +96,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			var result = method(ref castedTarget);
+			var result = invoker(ref castedTarget);
 			target = castedTarget;
 
 			return result;
@@ -120,7 +115,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			var result = method(ref castedTarget, (TIn)arguments[0]);
+			var result = invoker(ref castedTarget, (TIn)arguments[0]);
 			target = castedTarget;
 
 			return result;
@@ -139,7 +134,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			var result = method(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1]);
+			var result = invoker(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1]);
 			target = castedTarget;
 
 			return result;
@@ -158,7 +153,7 @@ namespace Pseudo.Reflection.Internal
 		public override object Invoke(ref object target, params object[] arguments)
 		{
 			var castedTarget = (TTarget)target;
-			var result = method(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
+			var result = invoker(ref castedTarget, (TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
 			target = castedTarget;
 
 			return result;

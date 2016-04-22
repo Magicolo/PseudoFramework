@@ -11,24 +11,40 @@ namespace Pseudo.Reflection.Internal
 {
 	public abstract class ConstructorWrapperBase : IConstructorWrapper
 	{
-		public virtual object Construct()
+		public string Name
 		{
-			return Construct(ReflectionUtility.EmptyArguments);
+			get { return constructor.Name; }
+		}
+		public Type Type
+		{
+			get { return constructor.DeclaringType; }
 		}
 
-		public abstract object Construct(params object[] arguments);
+		protected readonly ConstructorInfo constructor;
+
+		protected ConstructorWrapperBase(ConstructorInfo constructor)
+		{
+			this.constructor = constructor;
+		}
+
+		public virtual object Invoke()
+		{
+			return Invoke(ReflectionUtility.EmptyArguments);
+		}
+
+		public abstract object Invoke(params object[] arguments);
 	}
 
 	public abstract class ConstructorWrapperBase<TDelegate> : ConstructorWrapperBase where TDelegate : class
 	{
-		protected readonly TDelegate constructor;
+		protected readonly TDelegate invoker;
 
-		protected ConstructorWrapperBase(ConstructorInfo constructor)
+		protected ConstructorWrapperBase(ConstructorInfo constructor) : base(constructor)
 		{
-			this.constructor = CreateConstructor(constructor);
+			invoker = CreateInvoker(constructor);
 		}
 
-		static TDelegate CreateConstructor(ConstructorInfo constructor)
+		static TDelegate CreateInvoker(ConstructorInfo constructor)
 		{
 			var parameterTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
 			var dynamicMethodName = string.Format("{0}.{1}___GeneratedConstructor", constructor.DeclaringType.FullName, constructor.Name);

@@ -11,6 +11,22 @@ namespace Pseudo.Reflection.Internal
 {
 	public abstract class MethodWrapperBase : IMethodWrapper
 	{
+		public string Name
+		{
+			get { return method.Name; }
+		}
+		public Type Type
+		{
+			get { return method.ReturnType; }
+		}
+
+		protected readonly MethodInfo method;
+
+		protected MethodWrapperBase(MethodInfo method)
+		{
+			this.method = method;
+		}
+
 		public virtual object Invoke(ref object target)
 		{
 			return Invoke(ref target, ReflectionUtility.EmptyArguments);
@@ -21,15 +37,14 @@ namespace Pseudo.Reflection.Internal
 
 	public abstract class MethodWrapperBase<TDelegate> : MethodWrapperBase where TDelegate : class
 	{
-		protected readonly TDelegate method;
+		protected readonly TDelegate invoker;
 
-		protected MethodWrapperBase(MethodInfo method)
+		protected MethodWrapperBase(MethodInfo method) : base(method)
 		{
-			//this.method = Delegate.CreateDelegate(typeof(TDelegate), method) as TDelegate;
-			this.method = CreateDelegate(method);
+			this.invoker = CreateInvoker(method);
 		}
 
-		static TDelegate CreateDelegate(MethodInfo method)
+		static TDelegate CreateInvoker(MethodInfo method)
 		{
 			var parameterTypes = method.GetParameters().Select(p => p.ParameterType).ToArray();
 			var dynamicMethodName = string.Format("{0}.{1}___GeneratedMethod", method.DeclaringType.FullName, method.Name);

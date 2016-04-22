@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pseudo.Injection.Tests
 {
-	public class ResolveTests : InjectionTestBase
+	public class ResolveTests : InjectionTestsBase
 	{
 		[Test]
 		public void ResolveAll()

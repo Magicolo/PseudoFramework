@@ -377,6 +377,31 @@ namespace Pseudo.Reflection
 			return method.IsStatic && method.IsSpecialName && method.Name.StartsWith("op_");
 		}
 
+		public static ITypeWrapper CreateWrapper(this Type type, BindingFlags flags = ReflectionUtility.InstanceFlags, Func<MemberInfo, bool> filter = null)
+		{
+			return ReflectionUtility.CreateTypeWrapper(type, flags, filter);
+		}
+
+		public static IFieldOrPropertyWrapper CreateWrapper(this FieldInfo field)
+		{
+			return ReflectionUtility.CreateFieldWrapper(field);
+		}
+
+		public static IFieldOrPropertyWrapper CreateWrapper(this PropertyInfo property)
+		{
+			return ReflectionUtility.CreatePropertyWrapper(property);
+		}
+
+		public static IMethodWrapper CreateWrapper(this MethodInfo method)
+		{
+			return ReflectionUtility.CreateMethodWrapper(method);
+		}
+
+		public static IConstructorWrapper CreateWrapper(this ConstructorInfo constructor)
+		{
+			return ReflectionUtility.CreateConstructorWrapper(constructor);
+		}
+
 		public static bool IsDefined<T>(this ICustomAttributeProvider provider, bool inherit) where T : Attribute
 		{
 			return provider.IsDefined(typeof(T), inherit);

@@ -8,12 +8,13 @@ using Pseudo;
 namespace Pseudo.Internal
 {
 	public class ReferenceCaster<TIn, TOut> : Caster<TIn, TOut>
-		where TIn : class
-		where TOut : class
 	{
 		public override TOut Cast(TIn value)
 		{
-			return value as TOut;
+			if (value is TOut)
+				return (TOut)(object)value;
+			else
+				return default(TOut);
 		}
 	}
 }

@@ -10,19 +10,20 @@ namespace Pseudo.Injection.Internal
 {
 	public class Injector : IInjector
 	{
-		static readonly IInjectionInterceptor defaultInterceptor = new InjectionInterceptor();
+		static readonly IInjectorSelector defaultSelector = new InjectorSelector();
 
 		public IContainer Container
 		{
 			get { return container; }
 		}
-		public List<IInjectionInterceptor> Interceptors
+		public IInjectorSelector InjectorSelector
 		{
-			get { return interceptors; }
+			get { return injectorSelector; }
+			set { injectorSelector = value ?? defaultSelector; }
 		}
 
 		readonly IContainer container;
-		readonly List<IInjectionInterceptor> interceptors = new List<IInjectionInterceptor>();
+		IInjectorSelector injectorSelector = defaultSelector;
 
 		public Injector(IContainer container)
 		{
@@ -36,26 +37,13 @@ namespace Pseudo.Injection.Internal
 			SetupContext(ref context);
 
 			var info = context.Container.Analyzer.Analyze(context.Instance.GetType());
-			var interceptor = GetInterceptor(ref context, info);
-			interceptor.Inject(context, info);
+			var injector = InjectorSelector.Select(context, info);
+			injector.Inject(context, info);
 		}
 
 		void SetupContext(ref InjectionContext context)
 		{
 			context.Container = container;
-		}
-
-		IInjectionInterceptor GetInterceptor(ref InjectionContext context, ITypeInfo info)
-		{
-			for (int i = 0; i < interceptors.Count; i++)
-			{
-				var interceptor = interceptors[i];
-
-				if (interceptor.CanInject(context, info))
-					return interceptor;
-			}
-
-			return defaultInterceptor;
 		}
 	}
 }

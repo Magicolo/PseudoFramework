@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Pseudo.Injection.Tests
 {
-	public class InjectTests : InjectionTestBase
+	public class InjectTests : InjectionTestsBase
 	{
 		[Test]
 		public void InjectionField()

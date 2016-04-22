@@ -10,14 +10,9 @@ namespace Pseudo.Reflection.Internal
 {
 	public class ConstructorWrapper : ConstructorWrapperBase
 	{
-		readonly ConstructorInfo constructor;
+		public ConstructorWrapper(ConstructorInfo constructor) : base(constructor) { }
 
-		public ConstructorWrapper(ConstructorInfo constructor)
-		{
-			this.constructor = constructor;
-		}
-
-		public override object Construct(params object[] arguments)
+		public override object Invoke(params object[] arguments)
 		{
 			return constructor.Invoke(arguments);
 		}
@@ -27,9 +22,9 @@ namespace Pseudo.Reflection.Internal
 	{
 		public ConstructorWrapper(ConstructorInfo constructor) : base(constructor) { }
 
-		public override object Construct(params object[] arguments)
+		public override object Invoke(params object[] arguments)
 		{
-			return constructor();
+			return invoker();
 		}
 	}
 
@@ -37,14 +32,14 @@ namespace Pseudo.Reflection.Internal
 	{
 		public ConstructorWrapper(ConstructorInfo constructor) : base(constructor) { }
 
-		public override object Construct()
+		public override object Invoke()
 		{
-			return Construct(default(TIn));
+			return Invoke(default(TIn));
 		}
 
-		public override object Construct(params object[] arguments)
+		public override object Invoke(params object[] arguments)
 		{
-			return constructor((TIn)arguments[0]);
+			return invoker((TIn)arguments[0]);
 		}
 	}
 
@@ -52,14 +47,14 @@ namespace Pseudo.Reflection.Internal
 	{
 		public ConstructorWrapper(ConstructorInfo constructor) : base(constructor) { }
 
-		public override object Construct()
+		public override object Invoke()
 		{
-			return Construct(default(TIn1), default(TIn2));
+			return Invoke(default(TIn1), default(TIn2));
 		}
 
-		public override object Construct(params object[] arguments)
+		public override object Invoke(params object[] arguments)
 		{
-			return constructor((TIn1)arguments[0], (TIn2)arguments[1]);
+			return invoker((TIn1)arguments[0], (TIn2)arguments[1]);
 		}
 	}
 
@@ -67,14 +62,14 @@ namespace Pseudo.Reflection.Internal
 	{
 		public ConstructorWrapper(ConstructorInfo constructor) : base(constructor) { }
 
-		public override object Construct()
+		public override object Invoke()
 		{
-			return Construct(default(TIn1), default(TIn2), default(TIn3));
+			return Invoke(default(TIn1), default(TIn2), default(TIn3));
 		}
 
-		public override object Construct(params object[] arguments)
+		public override object Invoke(params object[] arguments)
 		{
-			return constructor((TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
+			return invoker((TIn1)arguments[0], (TIn2)arguments[1], (TIn3)arguments[2]);
 		}
 	}
 }

@@ -43,9 +43,9 @@ namespace Pseudo
 			value = default(T);
 		}
 
-		public static implicit operator T(Lazy<T> cachedValue)
+		public static implicit operator T(Lazy<T> value)
 		{
-			return cachedValue.Value;
+			return value.Value;
 		}
 	}
 }

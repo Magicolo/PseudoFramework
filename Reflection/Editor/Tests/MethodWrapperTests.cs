@@ -9,7 +9,7 @@ using NUnit.Framework;
 
 namespace Pseudo.Reflection.Tests
 {
-	public class MethodWrapperTests : ReflectionTestBase
+	public class MethodWrapperTests : ReflectionTestsBase
 	{
 		object dummyClass;
 		object dummyStruct;
@@ -39,23 +39,23 @@ namespace Pseudo.Reflection.Tests
 			dummyClass = new DummyClass();
 			dummyStruct = new DummyStruct();
 
-			classMethod1Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method1"));
-			classMethod2Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method2"));
-			classMethod3Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method3"));
-			classMethod4Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method4"));
-			classMethod5Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method5"));
-			classMethod6Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method6"));
-			classMethod7Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method7"));
-			classMethod8Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyClass).GetMethod("Method8"));
+			classMethod1Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method1"));
+			classMethod2Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method2"));
+			classMethod3Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method3"));
+			classMethod4Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method4"));
+			classMethod5Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method5"));
+			classMethod6Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method6"));
+			classMethod7Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method7"));
+			classMethod8Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyClass).GetMethod("Method8"));
 
-			structMethod1Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method1"));
-			structMethod2Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method2"));
-			structMethod3Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method3"));
-			structMethod4Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method4"));
-			structMethod5Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method5"));
-			structMethod6Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method6"));
-			structMethod7Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method7"));
-			structMethod8Wrapper = ReflectionUtility.CreateWrapper(typeof(DummyStruct).GetMethod("Method8"));
+			structMethod1Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method1"));
+			structMethod2Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method2"));
+			structMethod3Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method3"));
+			structMethod4Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method4"));
+			structMethod5Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method5"));
+			structMethod6Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method6"));
+			structMethod7Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method7"));
+			structMethod8Wrapper = ReflectionUtility.CreateMethodWrapper(typeof(DummyStruct).GetMethod("Method8"));
 		}
 
 		public override void TearDown()

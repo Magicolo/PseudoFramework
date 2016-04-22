@@ -26,7 +26,7 @@ namespace Pseudo
 		public static readonly ITimeChannel Player = new GlobalTimeChannel(TimeChannels.Player);
 		public static readonly ITimeChannel Enemy = new GlobalTimeChannel(TimeChannels.Enemy);
 
-		static ITimeChannel[] channels =
+		static readonly ITimeChannel[] channels =
 		{
 			Unity,
 			Game,

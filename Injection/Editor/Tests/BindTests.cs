@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Pseudo.Injection.Tests
 {
-	public class BindTests : InjectionTestBase
+	public class BindTests : InjectionTestsBase
 	{
 		[Test]
 		public void BindToSingle()

@@ -51,7 +51,7 @@ namespace Pseudo
 				else if (typeIn.Is<IConvertible>() && typeOut.Is<IConvertible>())
 					return CreateConvertibleCaster();
 				else if (typeIn.IsClass && typeOut.IsClass)
-					return CreateCaster(typeof(ReferenceCaster<,>).MakeGenericType(typeIn, typeOut));
+					return new ReferenceCaster<TIn, TOut>();
 				else if (typeIn.IsClass != typeOut.IsClass)
 					return new DefaultCaster<TIn, TOut>();
 				else

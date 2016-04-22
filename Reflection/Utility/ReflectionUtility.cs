@@ -15,11 +15,91 @@ namespace Pseudo.Reflection
 		public const BindingFlags PublicFlags = BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 		public const BindingFlags NonPublicFlags = BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.FlattenHierarchy;
 		public const BindingFlags StaticFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.FlattenHierarchy;
-		public const BindingFlags InstanceFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy;
+		public const BindingFlags InstanceFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
 		public static readonly object[] EmptyArguments = new object[0];
 
-		public static IMemberWrapper CreateWrapper(FieldInfo field)
+		public static ITypeWrapper CreateTypeWrapper(Type type, BindingFlags flags = InstanceFlags, Func<MemberInfo, bool> filter = null)
+		{
+			filter = filter ?? delegate { return true; };
+
+			return new TypeWrapper
+			{
+				Type = type,
+				Constructors = CreateConstructorWrappers(type, flags, c => filter(c)).ToArray(),
+				Fields = CreateFieldWrappers(type, flags, f => filter(f)).ToArray(),
+				Properties = CreatePropertyWrappers(type, flags, p => filter(p)).ToArray(),
+				Methods = CreateMethodWrappers(type, flags, m => filter(m)).ToArray(),
+			};
+		}
+
+		public static IEnumerable<IConstructorWrapper> CreateConstructorWrappers(Type type, BindingFlags flags = InstanceFlags, Func<ConstructorInfo, bool> filter = null)
+		{
+			filter = filter ?? delegate { return true; };
+
+			return type.GetConstructors(flags)
+				.Where(filter)
+				.Select(c => CreateConstructorWrapper(c));
+		}
+
+		public static IConstructorWrapper CreateConstructorWrapper(ConstructorInfo constructor)
+		{
+			var parameters = constructor.GetParameters();
+
+			if (ApplicationUtility.IsAOT)
+				return new ConstructorWrapper(constructor);
+			else
+			{
+				Type wrapperType;
+				var genericArguments = new[] { constructor.DeclaringType }
+					.Concat(parameters
+					.Select(p => p.ParameterType))
+					.ToArray();
+
+				switch (parameters.Length)
+				{
+					default:
+						return new ConstructorWrapper(constructor);
+					case 0:
+						wrapperType = typeof(ConstructorWrapper<>);
+						break;
+					case 1:
+						wrapperType = typeof(ConstructorWrapper<,>);
+						break;
+					case 2:
+						wrapperType = typeof(ConstructorWrapper<,,>);
+						break;
+					case 3:
+						wrapperType = typeof(ConstructorWrapper<,,,>);
+						break;
+				}
+
+				return (IConstructorWrapper)Activator.CreateInstance(wrapperType.MakeGenericType(genericArguments), constructor);
+			}
+		}
+
+		public static IConstructorWrapper CreateConstructorWrapper(Type type)
+		{
+			if (type.IsValueType)
+				return new EmptyConstructorWrapper(type);
+			else
+			{
+				var constructor = type.GetConstructor(Type.EmptyTypes);
+
+				return constructor == null ? null : CreateConstructorWrapper(constructor);
+			}
+		}
+
+		public static IEnumerable<IFieldOrPropertyWrapper> CreateFieldWrappers(Type type, BindingFlags flags = InstanceFlags, Func<FieldInfo, bool> filter = null)
+		{
+			filter = filter ?? delegate { return true; };
+
+			return type.GetFields(flags)
+				.Where(filter)
+				.Select(f => CreateFieldWrapper(f));
+		}
+
+		public static IFieldOrPropertyWrapper CreateFieldWrapper(FieldInfo field)
 		{
 			if (ApplicationUtility.IsAOT)
 				return new FieldWrapper(field);
@@ -27,25 +107,43 @@ namespace Pseudo.Reflection
 			{
 				var wrapperType = typeof(FieldWrapper<,>).MakeGenericType(field.DeclaringType, field.FieldType);
 
-				return (IMemberWrapper)Activator.CreateInstance(wrapperType, field);
+				return (IFieldOrPropertyWrapper)Activator.CreateInstance(wrapperType, field);
 			}
 		}
 
-		public static IMemberWrapper CreateWrapper(PropertyInfo property)
+		public static IEnumerable<IFieldOrPropertyWrapper> CreatePropertyWrappers(Type type, BindingFlags flags = InstanceFlags, Func<PropertyInfo, bool> filter = null)
+		{
+			filter = filter ?? delegate { return true; };
+
+			return type.GetProperties(flags)
+				.Where(filter)
+				.Select(p => CreatePropertyWrapper(p));
+		}
+
+		public static IFieldOrPropertyWrapper CreatePropertyWrapper(PropertyInfo property)
 		{
 			if (property.IsAutoProperty())
-				return CreateWrapper(property.GetBackingField());
+				return CreateFieldWrapper(property.GetBackingField());
 			else if (ApplicationUtility.IsAOT)
 				return new PropertyWrapper(property);
 			else
 			{
 				var wrapperType = typeof(PropertyWrapper<,>).MakeGenericType(property.DeclaringType, property.PropertyType);
 
-				return (IMemberWrapper)Activator.CreateInstance(wrapperType, property);
+				return (IFieldOrPropertyWrapper)Activator.CreateInstance(wrapperType, property);
 			}
 		}
 
-		public static IMethodWrapper CreateWrapper(MethodInfo method)
+		public static IEnumerable<IMethodWrapper> CreateMethodWrappers(Type type, BindingFlags flags = InstanceFlags, Func<MethodInfo, bool> filter = null)
+		{
+			filter = filter ?? delegate { return true; };
+
+			return type.GetMethods(flags)
+				.Where(filter)
+				.Select(m => CreateMethodWrapper(m));
+		}
+
+		public static IMethodWrapper CreateMethodWrapper(MethodInfo method)
 		{
 			var parameters = method.GetParameters();
 			Type wrapperType;
@@ -104,54 +202,6 @@ namespace Pseudo.Reflection
 			}
 
 			return (IMethodWrapper)Activator.CreateInstance(wrapperType.MakeGenericType(genericArguments), method);
-		}
-
-		public static IConstructorWrapper CreateWrapper(ConstructorInfo constructor)
-		{
-			var parameters = constructor.GetParameters();
-
-			if (ApplicationUtility.IsAOT)
-				return new ConstructorWrapper(constructor);
-			else
-			{
-				Type wrapperType;
-				var genericArguments = new[] { constructor.DeclaringType }
-					.Concat(parameters
-					.Select(p => p.ParameterType))
-					.ToArray();
-
-				switch (parameters.Length)
-				{
-					default:
-						return new ConstructorWrapper(constructor);
-					case 0:
-						wrapperType = typeof(ConstructorWrapper<>);
-						break;
-					case 1:
-						wrapperType = typeof(ConstructorWrapper<,>);
-						break;
-					case 2:
-						wrapperType = typeof(ConstructorWrapper<,,>);
-						break;
-					case 3:
-						wrapperType = typeof(ConstructorWrapper<,,,>);
-						break;
-				}
-
-				return (IConstructorWrapper)Activator.CreateInstance(wrapperType.MakeGenericType(genericArguments), constructor);
-			}
-		}
-
-		public static IConstructorWrapper CreateWrapper(Type type)
-		{
-			if (type.IsValueType)
-				return new EmptyConstructorWrapper(type);
-			else
-			{
-				var constructor = type.GetConstructor(Type.EmptyTypes);
-
-				return constructor == null ? null : CreateWrapper(constructor);
-			}
 		}
 	}
 }

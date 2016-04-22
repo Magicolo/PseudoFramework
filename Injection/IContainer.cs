@@ -7,6 +7,9 @@ using Pseudo;
 
 namespace Pseudo.Injection
 {
+	/// <summary>
+	/// Core module that gives access to other submodules.
+	/// </summary>
 	public interface IContainer
 	{
 		IContainer Parent { get; }

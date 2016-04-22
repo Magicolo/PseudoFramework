@@ -59,27 +59,8 @@ namespace Pseudo.Injection.Internal
 
 		protected virtual void Inject(MonoBehaviour[] injectables)
 		{
-			// Pre-scene injection callback
-			for (int i = 0; i < injectables.Length; i++)
-			{
-				var injectable = injectables[i] as IRootInjectable;
-
-				if (injectable != null)
-					injectable.OnPreRootInject(this);
-			}
-
-			// Injection
 			for (int i = 0; i < injectables.Length; i++)
 				container.Injector.Inject(new InjectionContext { Container = container, Instance = injectables[i] });
-
-			// Post-scene injection callback
-			for (int i = 0; i < injectables.Length; i++)
-			{
-				var injectable = injectables[i] as IRootInjectable;
-
-				if (injectable != null)
-					injectable.OnPostRootInject(this);
-			}
 		}
 
 		public abstract void InjectAll();
