@@ -13,8 +13,14 @@ namespace Pseudo
 
 		public Architect Architect;
 		public UISkin Skin;
+		public UIFactory UIFactory;
 
-		public GameObject BaseMapRoot;
+		//ArchitectMenus menus;
+		LayerPanel layerPanel;
+		TilesetItemsPanel tilesetPanel;
+
+
+		public TileType ActiveTileType;
 
 		public ArchitectBehavior()
 		{
@@ -23,7 +29,16 @@ namespace Pseudo
 
 		void Awake()
 		{
-			BaseMapRoot = new GameObject("MapRoot");
+			Architect.MapData = null;
+			//menus = GetComponentInChildren<ArchitectMenus>();
+			layerPanel = GetComponentInChildren<LayerPanel>();
+		}
+
+		public void CreateNewMap(string text, int width, int height)
+		{
+			Architect.CreateNewMap(text, width, height);
+			layerPanel.RefreshUI();
+			tilesetPanel.Refresh();
 		}
 	}
 }

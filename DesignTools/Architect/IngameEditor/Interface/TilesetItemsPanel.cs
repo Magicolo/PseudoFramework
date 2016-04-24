@@ -7,17 +7,22 @@ using UnityEngine.Events;
 
 public class TilesetItemsPanel : MonoBehaviour
 {
-	private ArchitectOld architect;
+	ArchitectBehavior architectBehavior;
+	Architect architect;
+	DrawingControlerView DrawingControler;
 
-	private List<Button> tilesetButtons = new List<Button>();
+	List<Button> tilesetButtons = new List<Button>();
 
-	public Color SelectedColor;
-	public Color BaseColor;
+	Color SelectedColor { get { return architectBehavior.Skin.SelectedButtonBackground; } }
+	Color BaseColor { get { return architectBehavior.Skin.EnabledButtonBackground; } }
+
 	int currentSelectId;
 
 	void Awake()
 	{
-		architect = GetComponentInParent<ArchitectOld>();
+		architectBehavior = GetComponentInParent<ArchitectBehavior>();
+		architect = architectBehavior.Architect;
+		DrawingControler = architectBehavior.GetComponent<DrawingControlerView>();
 	}
 
 	void Start()
@@ -32,32 +37,19 @@ public class TilesetItemsPanel : MonoBehaviour
 
 	void showTileset(TileSet tileset)
 	{
-
-		float width = GetComponent<RectTransform>().rect.width;
-		int x = 20; int y = -20;
-		Vector2 dimension = new Vector2(32, 32);
-
 		for (int i = 0; i < tileset.Tiles.Count; i++)
 		{
 			TileType tileType = tileset[i];
-			Vector3 position = new Vector3(x, y);
 			UnityAction action = () => buttonClicked(tileType.Id);
-			Button button = architect.UiFactory.CreateImageButton(transform, position, dimension, tileType.PreviewSprite, BaseColor, action);
+			Button button = architectBehavior.UIFactory.CreateImageButton(transform, Vector3.zero, Vector3.zero, tileType.PreviewSprite, BaseColor, action);
 			button.GetComponent<RectTransform>().localScale = Vector3.one;
 			tilesetButtons.Add(button);
-
-			x += 40;
-			if (x + 40 >= width)
-			{
-				x = 20;
-				y -= 40;
-			}
 		}
 	}
 
 	void buttonClicked(int id)
 	{
-		architect.setSelectedTile(id);
+		DrawingControlerView.SetSelectedTile(id);
 	}
 
 	public void Refresh()

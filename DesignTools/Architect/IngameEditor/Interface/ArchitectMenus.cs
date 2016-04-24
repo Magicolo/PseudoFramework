@@ -51,7 +51,7 @@ namespace Pseudo
 			int width = InputFieldUtility.GetInt(NewMapWidth);
 			int height = InputFieldUtility.GetInt(NewMapHeight);
 
-			architectBehavior.Architect.CreateNewMap(NewMapName.text, width, height);
+			architectBehavior.CreateNewMap(NewMapName.text, width, height);
 
 			NewFile.SetActive(false);
 		}

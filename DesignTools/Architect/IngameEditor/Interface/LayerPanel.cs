@@ -58,10 +58,13 @@ namespace Pseudo
 			}
 			layerButtons.Clear();
 
-			for (int i = 0; i < Layers.Count; i++)
+			if (architect.MapData != null)
 			{
-				LayerData layer = Layers[i];
-				crateLayerButtonItem(layer, i);
+				for (int i = 0; i < Layers.Count; i++)
+				{
+					LayerData layer = Layers[i];
+					crateLayerButtonItem(layer, i);
+				}
 			}
 		}
 
@@ -117,7 +120,11 @@ namespace Pseudo
 
 		private void adjustButtons()
 		{
-			if (Layers.Count == 0)
+			if (architect.MapData == null)
+			{
+				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
+			}
+			else if (Layers.Count == 0)
 			{
 				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton);
 				skin.Enable(AddLayerButton);

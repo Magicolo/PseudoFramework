@@ -11,7 +11,7 @@ namespace Pseudo
 	public class Architect
 	{
 		public MapData MapData;
-
+		public ArchitectLinker Linker;
 
 		public void CreateNewMap(string text, int width, int height)
 		{
