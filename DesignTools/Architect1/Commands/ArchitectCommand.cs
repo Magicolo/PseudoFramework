@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	public abstract class ArchitectCommand
 	{
-		protected ArchitectOld architect;
-
-		protected ArchitectCommand(ArchitectOld architect)
+		protected ArchitectCommand()
 		{
-			this.architect = architect;
 		}
 
 		public abstract bool Do();

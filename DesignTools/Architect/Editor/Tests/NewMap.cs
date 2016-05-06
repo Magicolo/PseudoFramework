@@ -6,17 +6,18 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Architect;
 
-namespace Pseudo.Tests.ArchitectTests
+namespace Pseudo.ArchitectTest.Tests
 {
 	public class NewMap
 	{
-		Architect architect;
+		ArchitectControler architect;
 
 		[SetUp]
 		public void Setup()
 		{
-			architect = new Architect();
+			architect = new ArchitectControler();
 		}
 
 		[TearDown]

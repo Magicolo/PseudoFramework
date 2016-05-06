@@ -39,7 +39,7 @@ namespace Pseudo
 
 		public void DestroyAndRemoveAllLayers()
 		{
-			while (Layers.Count != 0)
+			while (Layers != null && Layers.Count != 0)
 				DestroyAndRemoveLayer(Layers[Layers.Count-1]);
 			if(ParentTransform != null)
 				ParentTransform.gameObject.Destroy();

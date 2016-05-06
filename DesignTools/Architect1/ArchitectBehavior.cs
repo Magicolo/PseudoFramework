@@ -5,31 +5,33 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	[Serializable]
 	public class ArchitectBehavior : MonoBehaviour
 	{
 
-		public Architect Architect;
+		public ArchitectControler Architect;
 		public UISkin Skin;
 		public UIFactory UIFactory;
+		public ArchitectLinker Linker;
+		public Camera MapCam;
+		public Camera UICam;
 
 		//ArchitectMenus menus;
 		LayerPanel layerPanel;
-		TilesetItemsPanel tilesetPanel;
-
-
-		public TileType ActiveTileType;
+		
 
 		public ArchitectBehavior()
 		{
-			Architect = new Architect();
+			Architect = new ArchitectControler();
 		}
 
 		void Awake()
 		{
 			Architect.MapData = null;
+			Architect.MapCam = MapCam;
+			Architect.UICam = UICam;
 			//menus = GetComponentInChildren<ArchitectMenus>();
 			layerPanel = GetComponentInChildren<LayerPanel>();
 		}
@@ -38,7 +40,6 @@ namespace Pseudo
 		{
 			Architect.CreateNewMap(text, width, height);
 			layerPanel.RefreshUI();
-			tilesetPanel.Refresh();
 		}
 	}
 }

@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System;
 using UnityEngine.Events;
+using Pseudo.Injection;
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	[System.Serializable]
 	public class LayerPanel : MonoBehaviour
 	{
-		private Architect architect;
-        private ArchitectBehavior architectBehavior;
+		[Inject()]
+		ArchitectControler Architect;
+		[Inject()]
+		ArchitectBehavior ArchitectBehavior;
+		[Inject()]
+		ArchitectLayerControler LayerControler;
 
 		int ActiveLayerIndex = -1;
-		LayerData ActiveLayer { get { return architect.MapData.Layers[ActiveLayerIndex]; } }
+		LayerData ActiveLayer { get { return LayerControler.SelectedLayer; } }
 
 		public GameObject LayerLinePrefab;
 
@@ -27,25 +32,29 @@ namespace Pseudo
 		public Button MoveDownLayerButton;
 		public Button DuplicateLayerButton;
 
-		private UISkin skin { get { return architectBehavior.Skin; } }
+		private UISkin skin { get { return ArchitectBehavior.Skin; } }
 
-		private List<LayerData> Layers { get { return architect.MapData.Layers; } }
-
-		void Awake()
-		{
-			architectBehavior = GetComponentInParent<ArchitectBehavior>();
-			architect = architectBehavior.Architect;
-		}
+		private List<LayerData> Layers { get { return Architect.MapData.Layers; } }
 
 		void Start()
 		{
+			Debug.Log(Architect == null);
+			Architect.OnMapDataChanged += HandleMapDataChanged;
+			RefreshUI();
+		}
+
+		private void HandleMapDataChanged(MapData mapData) {
+			if (mapData.Layers.Count == 0)
+				ActiveLayerIndex = -1;
+			else if (ActiveLayerIndex == -1 && mapData.Layers.Count > 0)
+				ActiveLayerIndex = 0;
+
 			RefreshUI();
 		}
 
 		public void RefreshUI()
 		{
 			refreshUILayerLines();
-
 			switchLayerSelection(ActiveLayerIndex);
 			adjustButtons();
 		}
@@ -58,7 +67,7 @@ namespace Pseudo
 			}
 			layerButtons.Clear();
 
-			if (architect.MapData != null)
+			if (Architect.MapData != null)
 			{
 				for (int i = 0; i < Layers.Count; i++)
 				{
@@ -95,32 +104,19 @@ namespace Pseudo
 
 			ActiveLayerIndex = index;
 
-			if (ActiveLayerIndex != -1 && ActiveLayerIndex < Layers.Count)
+			if (ActiveLayerIndex != -1 && ActiveLayerIndex < Layers.Count) 
+			{
 				layerButtons[ActiveLayerIndex].GetComponent<Image>().color = skin.SelectedButtonBackground;
+				LayerControler.SelectedLayer = Layers[index];
+			}
+				
 
 			adjustButtons();
-		}
-
-		public void AddLayer()
-		{
-			LayerData newLayer = architect.AddLayerData("New Layer");
-			refreshUILayerLines();
-			switchLayer(newLayer);
-			adjustButtons();
-		}
-
-		public void RemoveSelectedLayer()
-		{
-			if (ActiveLayerIndex == -1) return;
-
-			architect.RemoveLayerData(ActiveLayer);
-			ActiveLayerIndex-=1;
-			RefreshUI();
 		}
 
 		private void adjustButtons()
 		{
-			if (architect.MapData == null)
+			if (Architect.MapData == null)
 			{
 				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
 			}
@@ -150,19 +146,53 @@ namespace Pseudo
 			}
 		}
 
+
+// Button Handles
+		public void AddLayer()
+		{
+			LayerData newLayer = Architect.AddLayerData("New Layer");
+			switchLayer(newLayer);
+		}
+
+		public void RemoveSelectedLayer()
+		{
+			if (ActiveLayerIndex == -1) return;
+
+			int newSelectIndex = ActiveLayerIndex - 1 ;
+			ActiveLayerIndex -= 1;
+			Architect.RemoveLayerData(ActiveLayer);
+			switchLayerSelection(newSelectIndex);
+		}
+
 		public void MoveUpSelectedLayer()
 		{
-			/*architect.MoveUpSelectedLayer();
-			switchLayerSelection(selectedIndex - 1);
-			RefreshLayers();*/
-
+			MoveUpLayer(ActiveLayerIndex);
+			switchLayerSelection(ActiveLayerIndex - 1);
+			//RefreshLayers();
+			RefreshUI();
 		}
+
+		public void MoveUpLayer(int index)
+		{
+			if (index == 0) return;
+			Layers.Switch(index, index - 1);
+			ActiveLayer.LayerTransform.SetSiblingIndex(ActiveLayer.LayerTransform.GetSiblingIndex() - 1);
+		}
+
 
 		public void MoveDownSelectedLayer()
 		{
-			/*architect.MoveDownSelectedLayer();
-			switchLayerSelection(selectedIndex + 1);
-			RefreshLayers();*/
+			MoveDownLayer(ActiveLayerIndex);
+			switchLayerSelection(ActiveLayerIndex + 1);
+			RefreshUI();
+		}
+
+		public void MoveDownLayer(int index)
+		{
+			if (index == Layers.Count - 1) return;
+			Layers.Switch(index, index + 1);
+			ActiveLayer.LayerTransform.SetSiblingIndex(ActiveLayer.LayerTransform.GetSiblingIndex() + 1);
+			RefreshUI();
 		}
 
 		public void DuplicateSelectedLayer()

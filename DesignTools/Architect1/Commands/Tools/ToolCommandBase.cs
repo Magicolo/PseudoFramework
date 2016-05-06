@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	[System.Serializable]
 	public abstract class ToolCommandBase : ArchitectCommand
@@ -13,7 +13,7 @@ namespace Pseudo
 		protected Point2 TilePosition { get { return tilePositionGetter.TilePosition; } }
 		protected Vector3 TileWorldPosition { get { return tilePositionGetter.TileWorldPosition; } }
 
-		protected ToolCommandBase(ArchitectOld architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect)
+		protected ToolCommandBase(ArchitectTilePositionGetter tilePositionGetter)
 		{
 			this.tilePositionGetter = tilePositionGetter;
 		}

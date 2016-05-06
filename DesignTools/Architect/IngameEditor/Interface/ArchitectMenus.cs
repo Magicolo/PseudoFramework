@@ -4,12 +4,10 @@ using Pseudo.Input.Internal;
 using UnityEngine.UI;
 using Pseudo.UI.Internal;
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
-	public class ArchitectMenus : MonoBehaviour
+	public class ArchitectMenus : ArchitectControlerBase
 	{
-
-		private ArchitectBehavior architectBehavior;
 
 		public Button SaveButton;
 		public Button OpenButton;
@@ -22,11 +20,6 @@ namespace Pseudo
 		public InputField NewMapName;
 		public InputField NewMapWidth;
 		public InputField NewMapHeight;
-
-		void Awake()
-		{
-			architectBehavior = GetComponentInParent<ArchitectBehavior>();
-		}
 
 		public void Save()
 		{
@@ -51,8 +44,8 @@ namespace Pseudo
 			int width = InputFieldUtility.GetInt(NewMapWidth);
 			int height = InputFieldUtility.GetInt(NewMapHeight);
 
-			architectBehavior.CreateNewMap(NewMapName.text, width, height);
-
+			ArchitectBehavior.CreateNewMap(NewMapName.text, width, height);
+			
 			NewFile.SetActive(false);
 		}
 

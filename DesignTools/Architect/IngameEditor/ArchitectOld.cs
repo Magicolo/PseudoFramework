@@ -14,40 +14,39 @@ namespace Pseudo
 
 		public SpriteRenderer PreviewSprite;
 
-		public RectTransform drawingRect;
-		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, UnityEngine.Input.mousePosition, UICam); } }
+		/*done*/public RectTransform drawingRect;
+		/*done*/public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(drawingRect, UnityEngine.Input.mousePosition, UICam); } }
 
 
-		public Camera Cam;
-		public Camera UICam;
+		/*Done*/public Camera Cam;
+		/*Done*/public Camera UICam;
 
-		public LayerData SelectedLayer;
+		/*Done*/public LayerData SelectedLayer;
 		public List<LayerData> Layers = new List<LayerData>();
 
-		ArchitectHistory architectHistory = new ArchitectHistory();
+		/*Done*///ArchitectHistory architectHistory = new ArchitectHistory();
+		/*Done*///public bool HasHistory { get { return architectHistory.History.Count > 0; } }
+		/*Done*////public bool HasRedoHistory { get { return architectHistory.HistoryRedo.Count > 0; } }
 
 
-		public ArchitectRotationFlip RotationFlip { get { return toolControler.RotationFlip; } }
+		//public ArchitectRotationFlip RotationFlip { get { return toolControler.RotationFlip; } }
 
 		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
-
-		public bool HasHistory { get { return architectHistory.History.Count > 0; } }
-		public bool HasRedoHistory { get { return architectHistory.HistoryRedo.Count > 0; } }
 
 		public GridScallerTiller Grid;
 
 
 		public UISkin UISkin { get; private set; }
 
-		ArchitectToolControler toolControler;
+		//ArchitectToolControler toolControler;
 
 		string FileName;
 		Point2 mapDimension;
 
-		ArchitectMenus Menu;
+		//ArchitectMenus Menu;
 		ToolbarPanel Toolbar;
-		TilesetItemsPanel TilesetPanel;
-		LayerPanel LayerPanel;
+		//TilesetItemsPanel TilesetPanel;
+		//LayerPanel LayerPanel;
 
 
 		public OpenFileBrowser OpenFileBrowser;
@@ -55,7 +54,7 @@ namespace Pseudo
 		Transform MapParent;
 
 
-		public ToolFactory.ToolType SelectedToolType
+		/*public ToolFactory.ToolType SelectedToolType
 		{
 			get { return toolControler.SelectedToolType; }
 			set
@@ -72,27 +71,27 @@ namespace Pseudo
 				toolControler.SelectedTileType = value;
 				updatePreviewSprite();
 				SelectedToolType = ToolFactory.ToolType.Brush;
-				TilesetPanel.Refresh();
+				//TilesetPanel.Refresh();
 			}
-		}
+		}*/
 
 		void Awake()
 		{
-			Menu = GetComponentInChildren<ArchitectMenus>();
+			//Menu = GetComponentInChildren<ArchitectMenus>();
 			Toolbar = GetComponentInChildren<ToolbarPanel>();
-			TilesetPanel = GetComponentInChildren<TilesetItemsPanel>();
-			LayerPanel = GetComponentInChildren<LayerPanel>();
+			//TilesetPanel = GetComponentInChildren<TilesetItemsPanel>();
+			//LayerPanel = GetComponentInChildren<LayerPanel>();
 			UISkin = GetComponentInChildren<UISkin>();
-			toolControler = GetComponentInChildren<ArchitectToolControler>();
-			toolControler.SelectedTileType = Linker.Tilesets[0].Tiles[0];
+			//toolControler = GetComponentInChildren<ArchitectToolControler>();
+			//toolControler.SelectedTileType = Linker.Tilesets[0].Tiles[0];
 		}
 		void Start()
 		{
-			toolControler.SelectedToolType = ToolFactory.ToolType.Brush;
+			//toolControler.SelectedToolType = ToolFactory.ToolType.Brush;
 			New();
 		}
 
-		private void updatePreviewSprite()
+		/*private void updatePreviewSprite()
 		{
 			PreviewSprite.transform.Reset();
 			PreviewSprite.enabled = SelectedLayer.IsActive;
@@ -112,7 +111,7 @@ namespace Pseudo
 			{
 				PreviewSprite.enabled = false;
 			}
-		}
+		}*/
 
 		public void Save()
 		{
@@ -135,7 +134,7 @@ namespace Pseudo
 			mapDimension = new Point2(layers[0].LayerWidth, layers[0].LayerHeight);
 			Layers.AddRange(layers);
 			SelectedLayer = layers[0];
-			LayerPanel.RefreshUI();
+			//LayerPanel.RefreshUI();
 			ResetGridSize();
 
 		}
@@ -146,7 +145,7 @@ namespace Pseudo
 			addLayer();
 			SelectedLayer = Layers[0];
 			ResetGridSize();
-			LayerPanel.RefreshUI();
+			//LayerPanel.RefreshUI();
 		}
 
 		public void New(string text, int width, int height)
@@ -169,6 +168,7 @@ namespace Pseudo
 			MapParent = new GameObject("Map").transform;
 		}
 
+		/*
 		void Update()
 		{
 			UpdateTileGetter();
@@ -179,9 +179,9 @@ namespace Pseudo
 				HandlePipette();
 
 			//Menu.Refresh();
-		}
+		}*/
 
-		public void FlipX()
+		/*public void FlipX()
 		{
 			toolControler.FlipX = !toolControler.FlipX;
 			updatePreviewSprite();
@@ -198,9 +198,9 @@ namespace Pseudo
 			toolControler.Rotation -= 90;
 			toolControler.Rotation %= 360;
 			updatePreviewSprite();
-		}
+		}*/
 
-		private void UpdateTileGetter()
+		/*private void UpdateTileGetter()
 		{
 			ArchitectTilePositionGetter newTilePositionGetter = new ArchitectTilePositionGetter(Cam.GetMouseWorldPosition(), SelectedLayer);
 			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
@@ -208,43 +208,39 @@ namespace Pseudo
 				tilePositionGetter = newTilePositionGetter;
 				updatePreviewSprite();
 			}
-		}
+		}*/
 
-		public void HandleLeftMouse()
+
+		//done
+		/*public void HandleLeftMouse()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition) && SelectedLayer.IsActive)
-			{
 				architectHistory.Do(ToolFactory.Create(toolControler.SelectedToolType, this, tilePositionGetter));
-			}
-
-
 		}
 
+		//done
 		public void HandlePipette()
 		{
 			if (IsMouseInDrawingRegion && SelectedLayer.IsInArrayBound(tilePositionGetter.TilePosition))
-			{
 				toolControler.SelectedTileType = SelectedLayer[tilePositionGetter.TilePosition].TileType;
-			}
-
-		}
+		}*/
 
 
 
 
 		public void Undo()
 		{
-			architectHistory.Undo();
-			Menu.Refresh();
+			//architectHistory.Undo();
+			//Menu.Refresh();
 		}
 
 		public void Redo()
 		{
-			architectHistory.Redo();
-			Menu.Refresh();
+			//architectHistory.Redo();
+			//Menu.Refresh();
 		}
 
-		public void setSelectedTile(int id)
+		/*public void setSelectedTile(int id)
 		{
 			SelectedTileType = Linker.Tilesets[0].Tiles[id - 1];
 		}
@@ -252,12 +248,12 @@ namespace Pseudo
 		public void AddSelectedTileType(LayerData layer, Vector3 worldP, Point2 tilePoint)
 		{
 			layer.AddTile(tilePoint, toolControler.SelectedTileType, toolControler.RotationFlip);
-		}
+		}*/
 
-		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
+		/*public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType)
 		{
 			layer.AddTile(tilePoint, tileType, toolControler.RotationFlip);
-		}
+		}*/
 
 		public void AddTile(LayerData layer, Vector3 worldP, Point2 tilePoint, TileType tileType, ArchitectRotationFlip RotationFlip)
 		{

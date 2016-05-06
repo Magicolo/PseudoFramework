@@ -29,12 +29,12 @@ namespace Pseudo
 
 		public void SwitchToBrush()
 		{
-			Architect.SelectedToolType = ToolFactory.ToolType.Brush;
+			//Architect.SelectedToolType = ToolFactory.ToolType.Brush;
 		}
 
 		public void SwitchToEraser()
 		{
-			Architect.SelectedToolType = ToolFactory.ToolType.Eraser;
+			//Architect.SelectedToolType = ToolFactory.ToolType.Eraser;
 		}
 
 		private void SwitchTo(Button button)
@@ -46,7 +46,7 @@ namespace Pseudo
 
 		public void Refresh()
 		{
-			switch (Architect.SelectedToolType)
+			/*switch (Architect.SelectedToolType)
 			{
 				case ToolFactory.ToolType.Brush:
 					SwitchTo(BrushButton);
@@ -55,7 +55,7 @@ namespace Pseudo
 				case ToolFactory.ToolType.Eraser:
 					SwitchTo(EraserButton);
 					break;
-			}
+			}*/
 		}
 	}
 

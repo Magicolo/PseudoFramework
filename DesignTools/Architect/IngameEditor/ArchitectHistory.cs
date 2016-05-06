@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	[System.Serializable]
 	public class ArchitectHistory
