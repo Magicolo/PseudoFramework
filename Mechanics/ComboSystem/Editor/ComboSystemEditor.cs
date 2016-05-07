@@ -42,7 +42,6 @@ namespace Pseudo.Mechanics.Internal
 			base.OnEnable();
 
 			comboSystem = (ComboSystem)target;
-			comboSystem.SetExecutionOrder(-23);
 		}
 
 		public override void OnInspectorGUI()

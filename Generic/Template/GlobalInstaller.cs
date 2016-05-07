@@ -11,7 +11,7 @@ using Pseudo.Input;
 
 namespace Pseudo
 {
-	public class GlobalInstaller : BehaviourInstallerBase
+	public class GlobalInstaller : InstallerBehaviourBase
 	{
 		[Header("Prefabs")]
 		public GameManager GameManager;

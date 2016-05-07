@@ -11,9 +11,6 @@ namespace Pseudo.Editor.Internal
 	public class EnumFlagsDrawer : CustomAttributePropertyDrawerBase
 	{
 		Type enumType;
-		int enumValue;
-		ByteFlag byteFlag;
-		BigFlag bigFlag;
 		Array enumValues;
 		string[] enumNames;
 
@@ -40,6 +37,7 @@ namespace Pseudo.Editor.Internal
 		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 		{
 			base.GetPropertyHeight(property, label);
+
 			enumType = ((EnumFlagsAttribute)attribute).EnumType ?? fieldInfo.FieldType;
 			enumValues = Enum.GetValues(enumType);
 			enumNames = Enum.GetNames(enumType);
@@ -71,7 +69,7 @@ namespace Pseudo.Editor.Internal
 
 		void DrawNumericalFlag()
 		{
-			enumValue = currentProperty.GetValue<int>();
+			var enumValue = currentProperty.GetValue<int>();
 			var options = new FlagsOption[enumValues.Length];
 
 			for (int i = 0; i < options.Length; i++)
@@ -93,7 +91,7 @@ namespace Pseudo.Editor.Internal
 				return;
 			}
 
-			byteFlag = currentProperty.GetValue<ByteFlag>();
+			var byteFlag = currentProperty.GetValue<ByteFlag>();
 			var options = new FlagsOption[enumValues.Length];
 
 			for (int i = 0; i < options.Length; i++)
@@ -114,7 +112,7 @@ namespace Pseudo.Editor.Internal
 				return;
 			}
 
-			bigFlag = currentProperty.GetValue<BigFlag>();
+			var bigFlag = currentProperty.GetValue<BigFlag>();
 			var options = new FlagsOption[enumValues.Length];
 
 			for (int i = 0; i < options.Length; i++)
@@ -149,6 +147,8 @@ namespace Pseudo.Editor.Internal
 
 		void OnEnumFlagSelected(FlagsOption option, SerializedProperty property)
 		{
+			var enumValue = property.GetValue<int>();
+
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
@@ -172,6 +172,8 @@ namespace Pseudo.Editor.Internal
 
 		void OnByteFlagSelected(FlagsOption option, SerializedProperty property)
 		{
+			var byteFlag = property.GetValue<ByteFlag>();
+
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
@@ -190,6 +192,8 @@ namespace Pseudo.Editor.Internal
 
 		void OnBigFlagSelected(FlagsOption option, SerializedProperty property)
 		{
+			var bigFlag = property.GetValue<BigFlag>();
+
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:

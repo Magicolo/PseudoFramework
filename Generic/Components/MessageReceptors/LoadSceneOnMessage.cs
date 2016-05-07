@@ -19,7 +19,7 @@ namespace Pseudo
 		bool load;
 
 		[Inject]
-		readonly IGameManager gameManager = null;
+		IGameManager gameManager = null;
 
 		void LateUpdate()
 		{
