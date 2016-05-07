@@ -1,0 +1,124 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Pseudo.Injection.BindAttribute" Collapsed="true">
+    <Position X="11" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAEAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Attributes\BindAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Pseudo.Injection.BindFactoryAttribute" Collapsed="true">
+    <Position X="9.25" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAIEAAIAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Attributes\BindFactoryAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Pseudo.Injection.InjectAttribute" Collapsed="true">
+    <Position X="11" Y="3.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Attributes\InjectAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Pseudo.Injection.BindAllAttribute" Collapsed="true">
+    <Position X="9.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Attributes\BindAllAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="Pseudo.Injection.InjectionContext" Collapsed="true">
+    <Position X="9.25" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAABAAQAAAAAAAAEAAgAAAAAAAAAEAAAQQAAQAgAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\InjectionContext.cs</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Interface Name="Pseudo.Injection.IContainer">
+    <Position X="3.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAABAABAQAAAABAAAAAQAAAAAAAAAAAACAAAAAACAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\IContainer.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Binder" />
+      <Property Name="Resolver" />
+      <Property Name="Injector" />
+      <Property Name="Instantiator" />
+      <Property Name="Analyzer" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IBinder">
+    <Position X="3.75" Y="10" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CQAAoAQAAAAAAAAAAAABAAAAAAEAAAAAAAAEAAAAAAg=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Binder\IBinder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Container" />
+      <Property Name="BindingSelector" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IInjector">
+    <Position X="3.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAQAAAAAAACAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Injector\IInjector.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Container" />
+      <Property Name="InjectorSelector" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IInstantiator">
+    <Position X="6.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAABEQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Instantiator\IInstantiator.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Container" />
+      <Property Name="ConstructorSelector" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IResolver">
+    <Position X="0.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAQAAACAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Resolver\IResolver.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Container" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Pseudo.Injection.ITypeAnalyzer">
+    <Position X="6.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\ITypeAnalyzer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IInjectorSelector">
+    <Position X="3.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Injector\IInjectorSelector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IConstructorSelector">
+    <Position X="6.75" Y="9.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Instantiator\IConstructorSelector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Pseudo.Injection.IBindingSelector">
+    <Position X="0.75" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>Assets\Pseudo\Injection\Binder\IBindingSelector.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

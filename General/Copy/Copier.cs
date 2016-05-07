@@ -13,8 +13,6 @@ namespace Pseudo
 	{
 		public static readonly ICopier<T> Default = CopyUtility.GetCopier<T>();
 
-		protected static readonly bool isValueType = typeof(T).IsValueType;
-
 		public abstract void CopyTo(T source, T target);
 
 		public virtual void CopyTo(IList<T> source, IList<T> target)

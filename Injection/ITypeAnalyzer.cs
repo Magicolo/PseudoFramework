@@ -9,6 +9,6 @@ namespace Pseudo.Injection
 {
 	public interface ITypeAnalyzer
 	{
-		ITypeInfo Analyze(Type type);
+		ITypeInfo GetAnalysis(Type type);
 	}
 }

@@ -90,6 +90,11 @@ namespace Pseudo.Audio
 			Curve = reference.Curve;
 		}
 
+		public void CopyTo(AudioRTPC instance)
+		{
+			instance.Copy(this);
+		}
+
 		public static AudioValue<float> GetGlobalRTPCValue(string name)
 		{
 			AudioValue<float> value;

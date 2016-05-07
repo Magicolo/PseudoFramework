@@ -10,7 +10,18 @@ namespace Pseudo
 {
 	public abstract class PComparer<T> : IComparer<T>
 	{
-		public static readonly IComparer<T> Default = CreateComparer();
+		public static IComparer<T> Default
+		{
+			get
+			{
+				if (defaultComparer == null)
+					defaultComparer = CreateComparer();
+
+				return defaultComparer;
+			}
+		}
+
+		static IComparer<T> defaultComparer = CreateComparer();
 
 		static IComparer<T> CreateComparer()
 		{

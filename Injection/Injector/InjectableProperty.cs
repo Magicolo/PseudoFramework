@@ -12,7 +12,7 @@ namespace Pseudo.Injection.Internal
 {
 	public class InjectableProperty : InjectableMemberBase<PropertyInfo>, IInjectableProperty
 	{
-		readonly IFieldOrPropertyWrapper wrapper;
+		readonly IPropertyWrapper wrapper;
 
 		public InjectableProperty(PropertyInfo property) : base(property)
 		{

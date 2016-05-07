@@ -7,11 +7,11 @@ using Pseudo;
 using Pseudo.Reflection;
 using System.Reflection;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public class InitializableField : InitializableMemberBase<FieldInfo>, IInitializableField
 	{
-		readonly IFieldOrPropertyWrapper wrapper;
+		readonly IFieldWrapper wrapper;
 
 		public InitializableField(FieldInfo field) : base(field)
 		{

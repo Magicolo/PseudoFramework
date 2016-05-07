@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public abstract class PoolBase : IPool
 	{
@@ -34,7 +34,7 @@ namespace Pseudo.Pooling2.Internal
 		readonly IPoolingFactory factory;
 		readonly IPoolingUpdater updater;
 		readonly IInitializer initializer;
-		readonly int startSize;
+		//readonly int startSize;
 		readonly HashSet<object> hashedInstances = new HashSet<object>();
 
 		//readonly Constructor constructor;
@@ -49,7 +49,7 @@ namespace Pseudo.Pooling2.Internal
 			this.factory = factory;
 			this.updater = updater;
 			this.initializer = initializer;
-			this.startSize = startSize;
+			//this.startSize = startSize;
 		}
 
 		//protected PoolBase(object reference, Type type, Constructor constructor, Destructor destructor, int startSize, bool initialize)

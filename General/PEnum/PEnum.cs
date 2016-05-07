@@ -1,6 +1,7 @@
 ﻿using Pseudo.Internal;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -15,6 +16,7 @@ namespace Pseudo
 	/// </summary>
 	/// <typeparam name="TEnum">Type of the enum.</typeparam>
 	/// <typeparam name="TValue">Type of the value held by the enum.</typeparam>
+	[ImmutableObject(true)]
 	public abstract class PEnum<TEnum, TValue> : PEnum, IEnum, IEquatable<PEnum<TEnum, TValue>>, IEquatable<TEnum>
 		where TEnum : PEnum<TEnum, TValue>
 		where TValue : IEquatable<TValue>
@@ -24,7 +26,7 @@ namespace Pseudo
 		static readonly FieldInfo[] fields = typeof(TEnum).GetFields(BindingFlags.Public | BindingFlags.Static);
 		static readonly Dictionary<TValue, TEnum> valueToEnum = new Dictionary<TValue, TEnum>();
 		static readonly Dictionary<TValue, string> valueToName = new Dictionary<TValue, string>();
-		static readonly EqualityComparer<TValue> comparer = EqualityComparer<TValue>.Default;
+		static readonly IEqualityComparer<TValue> comparer = PEqualityComparer<TValue>.Default;
 		static bool initialized;
 
 		public TValue Value
@@ -156,7 +158,7 @@ namespace Pseudo
 			{
 				var field = fields[i];
 
-				if (field.IsPublic && field.IsStatic && field.IsInitOnly && typeof(TEnum).IsAssignableFrom(field.FieldType))
+				if (field.IsInitOnly && field.FieldType.Is<TEnum>())
 				{
 					var enumValue = field.GetValue(null) as TEnum;
 

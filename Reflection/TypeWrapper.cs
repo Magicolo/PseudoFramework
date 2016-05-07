@@ -12,8 +12,8 @@ namespace Pseudo.Reflection.Internal
 		public Type Type { get; set; }
 
 		public IConstructorWrapper[] Constructors { get; set; }
-		public IFieldOrPropertyWrapper[] Fields { get; set; }
-		public IFieldOrPropertyWrapper[] Properties { get; set; }
+		public IFieldWrapper[] Fields { get; set; }
+		public IPropertyWrapper[] Properties { get; set; }
 		public IMethodWrapper[] Methods { get; set; }
 	}
 }

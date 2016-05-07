@@ -47,5 +47,10 @@ namespace Pseudo.Audio.Internal
 			originalSettings = reference.originalSettings;
 			settings = reference.settings;
 		}
+
+		public void CopyTo(AudioRandomContainerItem instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

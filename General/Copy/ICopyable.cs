@@ -8,6 +8,7 @@ namespace Pseudo
 	public interface ICopyable<T>
 	{
 		void Copy(T reference);
+		void CopyTo(T instance);
 	}
 
 	public interface ICopyable

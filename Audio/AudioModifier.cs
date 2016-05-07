@@ -55,5 +55,10 @@ namespace Pseudo.Audio.Internal
 			rtpcModifier = reference.rtpcModifier;
 			OnValueChanged = reference.OnValueChanged;
 		}
+
+		public void CopyTo(AudioModifier instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

@@ -12,8 +12,8 @@ namespace Pseudo.Reflection
 		Type Type { get; }
 
 		IConstructorWrapper[] Constructors { get; }
-		IFieldOrPropertyWrapper[] Fields { get; }
-		IFieldOrPropertyWrapper[] Properties { get; }
+		IFieldWrapper[] Fields { get; }
+		IPropertyWrapper[] Properties { get; }
 		IMethodWrapper[] Methods { get; }
 	}
 }

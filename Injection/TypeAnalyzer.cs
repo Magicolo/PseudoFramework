@@ -12,13 +12,13 @@ namespace Pseudo.Injection.Internal
 	public class TypeAnalyzer : ITypeAnalyzer
 	{
 		static readonly Func<ConstructorInfo, bool> constructorFilter = c => c.IsDefined(typeof(InjectAttribute), true);
-		static readonly Func<FieldInfo, bool> fieldFilter = f => !f.IsSpecialName && f.IsDefined(typeof(InjectAttribute), true);
+		static readonly Func<FieldInfo, bool> fieldFilter = f => !f.IsSpecialName && !f.IsInitOnly && f.IsDefined(typeof(InjectAttribute), true);
 		static readonly Func<PropertyInfo, bool> propertyFilter = p => !p.IsSpecialName && p.CanWrite && p.IsDefined(typeof(InjectAttribute), true);
 		static readonly Func<MethodInfo, bool> methodFilter = m => !m.IsSpecialName && !m.IsConstructor && m.IsDefined(typeof(InjectAttribute), true);
 
 		readonly Dictionary<Type, ITypeInfo> typeToInjectionInfo = new Dictionary<Type, ITypeInfo>();
 
-		public ITypeInfo Analyze(Type type)
+		public ITypeInfo GetAnalysis(Type type)
 		{
 			ITypeInfo info;
 

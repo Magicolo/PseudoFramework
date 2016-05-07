@@ -474,6 +474,11 @@ namespace Pseudo.Audio
 			delay = reference.delay;
 		}
 
+		public void CopyTo(AudioOption instance)
+		{
+			instance.Copy(this);
+		}
+
 		void IPoolable.OnCreate()
 		{
 			value = TypePoolManager.Create<DynamicValue>();

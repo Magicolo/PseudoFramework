@@ -9,6 +9,8 @@ namespace Pseudo.Internal
 {
 	public class GenericCopier<T> : Copier<T> where T : ICopyable<T>
 	{
+		static readonly bool isValueType = typeof(T).IsValueType;
+
 		public override void CopyTo(T source, T target)
 		{
 			if (!isValueType && (source == null || target == null))

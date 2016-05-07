@@ -7,7 +7,7 @@ using Pseudo;
 using System.Reflection;
 using Pseudo.Reflection;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public class TypeAnalyzer : ITypeAnalyzer
 	{

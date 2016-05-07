@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public abstract class InitializableMemberBase<TMember> : IInitializableMember<TMember> where TMember : MemberInfo
 	{

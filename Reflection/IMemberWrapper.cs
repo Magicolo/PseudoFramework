@@ -31,7 +31,9 @@ namespace Pseudo.Reflection
 		Type Type { get; }
 	}
 
-	public interface IFieldOrPropertyWrapper : IMemberWrapper
+	public interface IFieldWrapper : IPropertyWrapper { }
+
+	public interface IPropertyWrapper : IMemberWrapper
 	{
 		object Get(ref object target);
 		void Set(ref object target, object value);

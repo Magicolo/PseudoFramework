@@ -171,5 +171,10 @@ namespace Pseudo.Audio.Internal
 			delay = reference.delay;
 			sourcesIndex = reference.sourcesIndex;
 		}
+
+		public void CopyTo(AudioSequenceContainerItem instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

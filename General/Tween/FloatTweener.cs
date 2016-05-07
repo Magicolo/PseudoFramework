@@ -126,5 +126,10 @@ namespace Pseudo
 			completion = reference.completion;
 			counter = reference.counter;
 		}
+
+		public void CopyTo(FloatTweener instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

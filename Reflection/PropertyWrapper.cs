@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 
 namespace Pseudo.Reflection.Internal
 {
-	public class PropertyWrapper : IFieldOrPropertyWrapper
+	public class PropertyWrapper : IPropertyWrapper
 	{
 		public string Name
 		{
@@ -38,7 +38,7 @@ namespace Pseudo.Reflection.Internal
 		}
 	}
 
-	public class PropertyWrapper<TTarget, TValue> : IFieldOrPropertyWrapper
+	public class PropertyWrapper<TTarget, TValue> : IPropertyWrapper
 	{
 		public string Name
 		{

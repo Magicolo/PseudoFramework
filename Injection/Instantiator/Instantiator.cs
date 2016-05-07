@@ -71,7 +71,7 @@ namespace Pseudo.Injection.Internal
 			if (context.DeclaringType == null || !context.DeclaringType.IsConcrete())
 				return null;
 
-			return selector.Select(context, context.Container.Analyzer.Analyze(context.DeclaringType).Constructors);
+			return selector.Select(context, context.Container.Analyzer.GetAnalysis(context.DeclaringType).Constructors);
 		}
 	}
 }

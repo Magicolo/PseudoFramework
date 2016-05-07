@@ -126,5 +126,10 @@ namespace Pseudo.Audio.Internal
 			deltaTime = reference.deltaTime;
 			lastTime = reference.lastTime;
 		}
+
+		public void CopyTo(AudioMixContainerItem instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }
