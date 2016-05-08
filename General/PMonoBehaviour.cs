@@ -18,7 +18,7 @@ namespace Pseudo
 
 		[Inject, DoNotInitialize]
 		IRoot root;
-		[DoNotInitialize]
+		[NonSerialized, DoNotInitialize]
 		bool injected;
 
 		protected PMonoBehaviour()
@@ -31,7 +31,7 @@ namespace Pseudo
 		{
 			root = root ?? SceneUtility.FindComponent<SceneRoot>(CachedGameObject.scene);
 
-			if (root == null)
+			if (root == null || root.Container == null)
 				return;
 
 			root.Container.Injector.Inject(this);
