@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public class Initializer : IInitializer
 	{

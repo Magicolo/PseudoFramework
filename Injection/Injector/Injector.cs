@@ -36,7 +36,7 @@ namespace Pseudo.Injection.Internal
 
 			SetupContext(ref context);
 
-			var info = context.Container.Analyzer.Analyze(context.Instance.GetType());
+			var info = context.Container.Analyzer.GetAnalysis(context.Instance.GetType());
 			var injector = InjectorSelector.Select(context, info);
 			injector.Inject(context, info);
 		}

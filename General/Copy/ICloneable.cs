@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Pseudo
 {
-	public interface IClonable<T>
+	public interface ICloneable<T>
 	{
 		T Clone();
 	}

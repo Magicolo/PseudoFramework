@@ -115,6 +115,11 @@ namespace Pseudo
 			CopyUtility.CopyTo(reference.objectValue, ref objectValue);
 		}
 
+		public void CopyTo(DynamicValue instance)
+		{
+			instance.Copy(this);
+		}
+
 		void SetValue(object value)
 		{
 			this.value = value;

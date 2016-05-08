@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Threading;
 
-namespace Pseudo.Pooling2.Internal
+namespace Pseudo.PoolingNOOOO.Internal
 {
 	public class AsyncPoolingUpdater : PoolingUpdaterBase
 	{

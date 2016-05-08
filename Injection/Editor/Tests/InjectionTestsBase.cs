@@ -78,9 +78,9 @@ namespace Pseudo.Injection.Tests
 	public class Dummy5 : IDummy
 	{
 		[Inject]
-		public readonly int Int;
+		public int Int;
 		[Inject]
-		public readonly long Long;
+		public long Long;
 		[Inject]
 		public IConvertible Float { get; set; }
 

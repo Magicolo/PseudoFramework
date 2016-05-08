@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Pooling2
+namespace Pseudo.PoolingNOOOO
 {
 	/// <summary>
 	/// Resets the members of an instance to a reference state.

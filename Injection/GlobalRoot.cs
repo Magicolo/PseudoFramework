@@ -8,6 +8,7 @@ using Pseudo.Injection.Internal;
 
 namespace Pseudo.Injection
 {
+	[ExecutionOrder(-9999)]
 	public class GlobalRoot : RootBehaviourBase
 	{
 		public override void InjectAll()
@@ -25,11 +26,6 @@ namespace Pseudo.Injection
 			base.Awake();
 
 			DontDestroyOnLoad(gameObject);
-		}
-
-		void Reset()
-		{
-			this.SetExecutionOrder(-9999);
 		}
 	}
 }

@@ -8,7 +8,7 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public class SceneInstaller : BehaviourInstallerBase
+	public class SceneInstaller : InstallerBehaviourBase
 	{
 		public Camera MainCamera;
 		public Camera UICamera;

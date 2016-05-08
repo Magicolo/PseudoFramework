@@ -13,7 +13,7 @@ namespace Pseudo.Pooling.Internal
 	{
 		readonly FieldInfo field;
 		readonly object value;
-		readonly IFieldOrPropertyWrapper wrapper;
+		readonly IFieldWrapper wrapper;
 
 		public PoolSetter(FieldInfo field, object value)
 		{

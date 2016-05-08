@@ -9,7 +9,7 @@ using System.Reflection.Emit;
 
 namespace Pseudo.Reflection.Internal
 {
-	public class FieldWrapper : IFieldOrPropertyWrapper
+	public class FieldWrapper : IFieldWrapper
 	{
 		public string Name
 		{
@@ -38,7 +38,7 @@ namespace Pseudo.Reflection.Internal
 		}
 	}
 
-	public class FieldWrapper<TTarget, TValue> : IFieldOrPropertyWrapper
+	public class FieldWrapper<TTarget, TValue> : IFieldWrapper
 	{
 		public string Name
 		{
@@ -64,10 +64,8 @@ namespace Pseudo.Reflection.Internal
 		public object Get(ref object target)
 		{
 			var castedTarget = (TTarget)target;
-			var result = getter(ref castedTarget);
-			target = castedTarget;
 
-			return result;
+			return getter(ref castedTarget);
 		}
 
 		public void Set(ref object target, object value)

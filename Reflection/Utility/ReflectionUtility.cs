@@ -90,7 +90,7 @@ namespace Pseudo.Reflection
 			}
 		}
 
-		public static IEnumerable<IFieldOrPropertyWrapper> CreateFieldWrappers(Type type, BindingFlags flags = InstanceFlags, Func<FieldInfo, bool> filter = null)
+		public static IEnumerable<IFieldWrapper> CreateFieldWrappers(Type type, BindingFlags flags = InstanceFlags, Func<FieldInfo, bool> filter = null)
 		{
 			filter = filter ?? delegate { return true; };
 
@@ -99,7 +99,7 @@ namespace Pseudo.Reflection
 				.Select(f => CreateFieldWrapper(f));
 		}
 
-		public static IFieldOrPropertyWrapper CreateFieldWrapper(FieldInfo field)
+		public static IFieldWrapper CreateFieldWrapper(FieldInfo field)
 		{
 			if (ApplicationUtility.IsAOT)
 				return new FieldWrapper(field);
@@ -107,11 +107,11 @@ namespace Pseudo.Reflection
 			{
 				var wrapperType = typeof(FieldWrapper<,>).MakeGenericType(field.DeclaringType, field.FieldType);
 
-				return (IFieldOrPropertyWrapper)Activator.CreateInstance(wrapperType, field);
+				return (IFieldWrapper)Activator.CreateInstance(wrapperType, field);
 			}
 		}
 
-		public static IEnumerable<IFieldOrPropertyWrapper> CreatePropertyWrappers(Type type, BindingFlags flags = InstanceFlags, Func<PropertyInfo, bool> filter = null)
+		public static IEnumerable<IPropertyWrapper> CreatePropertyWrappers(Type type, BindingFlags flags = InstanceFlags, Func<PropertyInfo, bool> filter = null)
 		{
 			filter = filter ?? delegate { return true; };
 
@@ -120,7 +120,7 @@ namespace Pseudo.Reflection
 				.Select(p => CreatePropertyWrapper(p));
 		}
 
-		public static IFieldOrPropertyWrapper CreatePropertyWrapper(PropertyInfo property)
+		public static IPropertyWrapper CreatePropertyWrapper(PropertyInfo property)
 		{
 			if (property.IsAutoProperty())
 				return CreateFieldWrapper(property.GetBackingField());
@@ -130,7 +130,7 @@ namespace Pseudo.Reflection
 			{
 				var wrapperType = typeof(PropertyWrapper<,>).MakeGenericType(property.DeclaringType, property.PropertyType);
 
-				return (IFieldOrPropertyWrapper)Activator.CreateInstance(wrapperType, property);
+				return (IPropertyWrapper)Activator.CreateInstance(wrapperType, property);
 			}
 		}
 

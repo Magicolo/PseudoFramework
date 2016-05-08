@@ -11,14 +11,9 @@ namespace Pseudo.Injection.Internal
 {
 	public class TypeAnalyzer : ITypeAnalyzer
 	{
-		static readonly Func<ConstructorInfo, bool> constructorFilter = c => c.IsDefined(typeof(InjectAttribute), true);
-		static readonly Func<FieldInfo, bool> fieldFilter = f => !f.IsSpecialName && f.IsDefined(typeof(InjectAttribute), true);
-		static readonly Func<PropertyInfo, bool> propertyFilter = p => !p.IsSpecialName && p.CanWrite && p.IsDefined(typeof(InjectAttribute), true);
-		static readonly Func<MethodInfo, bool> methodFilter = m => !m.IsSpecialName && !m.IsConstructor && m.IsDefined(typeof(InjectAttribute), true);
-
 		readonly Dictionary<Type, ITypeInfo> typeToInjectionInfo = new Dictionary<Type, ITypeInfo>();
 
-		public ITypeInfo Analyze(Type type)
+		public ITypeInfo GetAnalysis(Type type)
 		{
 			ITypeInfo info;
 
@@ -60,9 +55,9 @@ namespace Pseudo.Injection.Internal
 			var constructors = type.GetConstructors(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
 			// At least one constructor has an [Inject].
-			if (constructors.Any(constructorFilter))
+			if (constructors.Any(c => c.IsDefined(typeof(InjectAttribute), true)))
 				injectableConstructors.AddRange(constructors
-					.Where(constructorFilter)
+					.Where(c => c.IsDefined(typeof(InjectAttribute), true))
 					.Select(c => CreateInjectableConstructor(c)));
 			else
 			{
@@ -84,7 +79,7 @@ namespace Pseudo.Injection.Internal
 				.Concat(baseTypes // Need to recover the private members from base types.
 					.SelectMany(t => t.GetFields(BindingFlags.Instance | BindingFlags.NonPublic))
 					.Where(f => f.IsPrivate))
-				.Where(fieldFilter)
+				.Where(f => !f.IsSpecialName && f.IsDefined(typeof(InjectAttribute), true))
 				.Select(f => CreateInjectableField(f))
 				.ToArray();
 		}
@@ -95,7 +90,7 @@ namespace Pseudo.Injection.Internal
 				.Concat(baseTypes // Need to recover the private members from base types.
 					.SelectMany(t => t.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic))
 					.Where(p => p.IsPrivate()))
-				.Where(propertyFilter)
+				.Where(p => !p.IsSpecialName && p.IsDefined(typeof(InjectAttribute), true))
 				.Select(p => CreateInjectableProperty(p))
 				.ToArray();
 		}
@@ -106,7 +101,7 @@ namespace Pseudo.Injection.Internal
 				.Concat(baseTypes // Need to recover the private members from base types.
 					.SelectMany(t => t.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic))
 					.Where(m => m.IsPrivate))
-				.Where(methodFilter)
+				.Where(m => !m.IsSpecialName && !m.IsConstructor && m.IsDefined(typeof(InjectAttribute), true))
 				.Select(m => CreateInjectableMethod(m))
 				.ToArray();
 		}
@@ -128,11 +123,17 @@ namespace Pseudo.Injection.Internal
 
 		IInjectableField CreateInjectableField(FieldInfo field)
 		{
+			if (field.IsInitOnly)
+				throw new ArgumentException(string.Format("Can not inject in the readonly field {0}.{1}", field.DeclaringType.Name, field.Name));
+
 			return new InjectableField(field);
 		}
 
 		IInjectableProperty CreateInjectableProperty(PropertyInfo property)
 		{
+			if (!property.CanWrite)
+				throw new ArgumentException(string.Format("Can not inject in the readonly property {0}.{1}", property.DeclaringType.Name, property.Name));
+
 			return new InjectableProperty(property);
 		}
 

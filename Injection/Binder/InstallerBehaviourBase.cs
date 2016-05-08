@@ -4,11 +4,12 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 namespace Pseudo.Injection
 {
-	public interface ITypeAnalyzer
+	public abstract class InstallerBehaviourBase : MonoBehaviour, IBindingInstaller
 	{
-		ITypeInfo Analyze(Type type);
+		public abstract void Install(IContainer container);
 	}
 }

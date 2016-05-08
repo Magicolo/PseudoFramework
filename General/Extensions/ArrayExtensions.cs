@@ -61,7 +61,7 @@ namespace Pseudo
 
 		public static T Pop<T>(this T[] array, int index, out T[] remaining)
 		{
-			List<T> list = new List<T>(array);
+			var list = new List<T>(array);
 
 			T item = list.Pop(index);
 			remaining = list.ToArray();
@@ -379,24 +379,27 @@ namespace Pseudo
 			return index < 0 ? default(T) : array[index];
 		}
 
-		public static bool ContentEquals<T>(this IList<T> array, IList<T> otherArray)
+		public static bool ContentEquals<T>(this IList<T> array, IList<T> other, Func<T, T, bool> comparison)
 		{
-			if (array == null && otherArray == null)
+			if (array == other)
 				return true;
-
-			if (array == null || otherArray == null)
+			else if (array == null || other == null)
 				return false;
-
-			if (array.Count != otherArray.Count)
+			else if (array.Count != other.Count)
 				return false;
 
 			for (int i = 0; i < array.Count; i++)
 			{
-				if (!EqualityComparer<T>.Default.Equals(array[i], otherArray[i]))
+				if (!comparison(array[i], other[i]))
 					return false;
 			}
 
 			return true;
+		}
+
+		public static bool ContentEquals<T>(this IList<T> array, IList<T> other)
+		{
+			return array.ContentEquals(other, PEqualityComparer<T>.Default.Equals);
 		}
 
 		public static string[] ToStringArray(this IList array)
@@ -498,10 +501,9 @@ namespace Pseudo
 			}
 			else
 			{
-				var comparer = EqualityComparer<T>.Default;
 				for (int i = 0; i < array.Count; i++)
 				{
-					if (comparer.Equals(array[i], element))
+					if (PEqualityComparer<T>.Default.Equals(array[i], element))
 						return true;
 				}
 

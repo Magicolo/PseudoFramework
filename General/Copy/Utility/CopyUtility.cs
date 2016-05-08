@@ -55,20 +55,21 @@ namespace Pseudo.Internal
 
 		static ICopier CreateCopier(Type type)
 		{
-			Type copierType;
-
-			if (typeof(ICopyable<>).MakeGenericType(type).IsAssignableFrom(type))
-				copierType = typeof(GenericCopier<>).MakeGenericType(type);
-			else
-			{
-				var iCopyerType = typeof(ICopier<>).MakeGenericType(type);
-				copierType = TypeUtility.FindType(t => t.Is(iCopyerType) && t.IsConcrete() && t.HasEmptyConstructor());
-			}
+			var copyerInterfaceType = typeof(ICopier<>).MakeGenericType(type);
+			var copierType = TypeUtility.FindType(t =>
+				t.Is(copyerInterfaceType) &&
+				t.IsConcrete() &&
+				t.HasEmptyConstructor());
 
 			if (copierType == null)
-				return null;
-			else
-				return (ICopier)Activator.CreateInstance(copierType);
+			{
+				if (type.Is(typeof(ICopyable<>), type))
+					copierType = typeof(GenericCopier<>).MakeGenericType(type);
+				else
+					return null;
+			}
+
+			return (ICopier)Activator.CreateInstance(copierType);
 		}
 	}
 }

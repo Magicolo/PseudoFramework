@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 
-namespace Pseudo.Pooling2
+namespace Pseudo.PoolingNOOOO
 {
 	public interface IInitializableElement
 	{

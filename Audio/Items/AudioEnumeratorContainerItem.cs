@@ -54,5 +54,10 @@ namespace Pseudo.Audio.Internal
 			originalSettings = reference.originalSettings;
 			settings = reference.settings;
 		}
+
+		public void CopyTo(AudioEnumeratorContainerItem instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

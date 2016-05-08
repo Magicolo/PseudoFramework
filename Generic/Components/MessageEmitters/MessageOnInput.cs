@@ -31,7 +31,7 @@ namespace Pseudo
 		public InputMessage[] Messages = new InputMessage[0];
 
 		[Inject]
-		readonly IInputManager inputManager = null;
+		IInputManager inputManager = null;
 
 		void Update()
 		{

@@ -9,12 +9,18 @@ using UnityEngine.SceneManagement;
 
 namespace Pseudo.Injection
 {
+	[ExecutionOrder(-9998)]
 	public class SceneRoot : RootBehaviourBase
 	{
+		bool hasInjected;
+
 		public override void InjectAll()
 		{
-			PDebug.LogMethod();
+			if (hasInjected || !gameObject.scene.isLoaded)
+				return;
+
 			Inject(SceneUtility.FindComponents<MonoBehaviour>(gameObject.scene));
+			hasInjected = true;
 		}
 
 		protected override IContainer CreateContainer()
@@ -30,12 +36,18 @@ namespace Pseudo.Injection
 		protected override void Awake()
 		{
 			base.Awake();
-			StartCoroutine(InjectionRoutine());
+
+			InjectAll();
 		}
 
-		void Reset()
+		void OnEnable()
 		{
-			this.SetExecutionOrder(-9998);
+			InjectAll();
+		}
+
+		void Start()
+		{
+			InjectAll();
 		}
 
 		GlobalRoot GetOrCreateGlobalRoot()
@@ -51,14 +63,6 @@ namespace Pseudo.Injection
 			}
 
 			return root;
-		}
-
-		IEnumerator InjectionRoutine()
-		{
-			while (gameObject != null && !gameObject.scene.isLoaded)
-				yield return null;
-
-			InjectAll();
 		}
 	}
 }

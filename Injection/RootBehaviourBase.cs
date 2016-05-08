@@ -11,7 +11,7 @@ namespace Pseudo.Injection.Internal
 	public abstract class RootBehaviourBase : MonoBehaviour, IRoot, ISerializationCallbackReceiver
 	{
 		[SerializeField]
-		BehaviourInstallerBase[] installers;
+		InstallerBehaviourBase[] installers;
 		[SerializeField]
 		PAssembly[] assemblies;
 
@@ -37,16 +37,6 @@ namespace Pseudo.Injection.Internal
 
 			for (int i = 0; i < allInstallers.Count; i++)
 				allInstallers[i].Install(container);
-		}
-
-		public void AddInstaller(IBindingInstaller installer)
-		{
-			allInstallers.Add(installer);
-		}
-
-		public void RemoveInstaller(IBindingInstaller installer)
-		{
-			allInstallers.Remove(installer);
 		}
 
 		protected virtual void Awake()

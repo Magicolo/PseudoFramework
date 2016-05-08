@@ -5,7 +5,7 @@ using System;
 namespace Pseudo
 {
 	[System.Serializable]
-	public class ArchitectRotationFlip : IEquatable<ArchitectRotationFlip>, IEquatable<Transform>, IClonable<ArchitectRotationFlip>
+	public class ArchitectRotationFlip : IEquatable<ArchitectRotationFlip>, IEquatable<Transform>, ICloneable<ArchitectRotationFlip>
 	{
 		public float Angle;
 		public bool FlipX;

@@ -13,10 +13,10 @@ namespace Pseudo.Reflection.Tests
 	{
 		object dummyClass;
 		object dummyStruct;
-		IFieldOrPropertyWrapper classValueWrapper;
-		IFieldOrPropertyWrapper classReferenceWrapper;
-		IFieldOrPropertyWrapper structValueWrapper;
-		IFieldOrPropertyWrapper structReferenceWrapper;
+		IFieldWrapper classValueWrapper;
+		IFieldWrapper classReferenceWrapper;
+		IFieldWrapper structValueWrapper;
+		IFieldWrapper structReferenceWrapper;
 
 		public override void Setup()
 		{

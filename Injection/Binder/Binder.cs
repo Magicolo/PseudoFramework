@@ -60,7 +60,7 @@ namespace Pseudo.Injection.Internal
 				if (!type.IsDefined(typeof(BindAttributeBase), true))
 					continue;
 
-				var installers = container.Analyzer.Analyze(types[i]).Installers;
+				var installers = container.Analyzer.GetAnalysis(types[i]).Installers;
 
 				for (int j = 0; j < installers.Length; j++)
 					installers[j].Install(container);

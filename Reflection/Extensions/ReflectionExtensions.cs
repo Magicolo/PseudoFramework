@@ -169,18 +169,18 @@ namespace Pseudo.Reflection
 			}
 
 			Array.Resize(ref pathSplit, pathSplit.Length - 1);
-			object container = obj.GetValueFromMemberAtPath(pathSplit.Concat("."));
+			var container = obj.GetValueFromMemberAtPath(pathSplit.Concat("."));
 
 			member.SetMemberValue(container, value);
 		}
 
 		public static object InvokeMethod(this object obj, string methodName, params object[] arguments)
 		{
-			MethodInfo[] methods = obj.GetType().GetMethods(ReflectionUtility.AllFlags);
+			var methods = obj.GetType().GetMethods(ReflectionUtility.AllFlags);
 
 			for (int i = 0; i < methods.Length; i++)
 			{
-				MethodInfo method = methods[i];
+				var method = methods[i];
 
 				if (method.Name == methodName && method.GetParameters().Length == arguments.Length)
 					return method.Invoke(obj, arguments);
@@ -206,22 +206,22 @@ namespace Pseudo.Reflection
 
 		public static string[] GetFieldsAndPropertiesNames(this Type type, BindingFlags flags, params Type[] filter)
 		{
-			List<string> names = new List<string>();
-			FieldInfo[] fields = type.GetFields(flags);
+			var names = new List<string>();
+			var fields = type.GetFields(flags);
 
 			for (int i = 0; i < fields.Length; i++)
 			{
-				FieldInfo field = fields[i];
+				var field = fields[i];
 
 				if (filter == null || filter.Length == 0 || filter.Any(t => t.IsAssignableFrom(field.FieldType)))
 					names.Add(field.Name);
 			}
 
-			PropertyInfo[] properties = type.GetProperties(flags);
+			var properties = type.GetProperties(flags);
 
 			for (int i = 0; i < properties.Length; i++)
 			{
-				PropertyInfo property = properties[i];
+				var property = properties[i];
 
 				if (filter == null || filter.Length == 0 || filter.Any(t => t.IsAssignableFrom(property.PropertyType)))
 					names.Add(property.Name);
@@ -382,12 +382,12 @@ namespace Pseudo.Reflection
 			return ReflectionUtility.CreateTypeWrapper(type, flags, filter);
 		}
 
-		public static IFieldOrPropertyWrapper CreateWrapper(this FieldInfo field)
+		public static IFieldWrapper CreateWrapper(this FieldInfo field)
 		{
 			return ReflectionUtility.CreateFieldWrapper(field);
 		}
 
-		public static IFieldOrPropertyWrapper CreateWrapper(this PropertyInfo property)
+		public static IPropertyWrapper CreateWrapper(this PropertyInfo property)
 		{
 			return ReflectionUtility.CreatePropertyWrapper(property);
 		}

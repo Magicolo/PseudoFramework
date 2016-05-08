@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 
-namespace Pseudo.Pooling2
+namespace Pseudo.PoolingNOOOO
 {
 	/// <summary>
 	/// Creates and disposes of instances managed by an IPool instance.

@@ -6,7 +6,7 @@ using System.Linq;
 using Pseudo;
 using UnityEngine.Scripting;
 
-namespace Pseudo.Pooling2
+namespace Pseudo.PoolingNOOOO
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = true)]
 	public sealed class DoNotInitializeAttribute : PreserveAttribute { }

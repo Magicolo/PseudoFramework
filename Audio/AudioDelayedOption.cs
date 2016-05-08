@@ -49,6 +49,11 @@ namespace Pseudo.Audio.Internal
 			delayCounter = reference.delayCounter;
 		}
 
+		public void CopyTo(AudioDelayedOption instance)
+		{
+			instance.Copy(this);
+		}
+
 		public void Copy(object reference)
 		{
 			Copy((AudioDelayedOption)reference);

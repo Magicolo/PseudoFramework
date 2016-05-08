@@ -57,5 +57,10 @@ namespace Pseudo.Audio.Internal
 			settings = reference.settings;
 			switchValue = reference.switchValue;
 		}
+
+		public void CopyTo(AudioSwitchContainerItem instance)
+		{
+			instance.Copy(this);
+		}
 	}
 }

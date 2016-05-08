@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Pseudo.Pooling2
+namespace Pseudo.PoolingNOOOO
 {
 	/// <summary>
 	/// Stores the accessors for the members a given Type.
