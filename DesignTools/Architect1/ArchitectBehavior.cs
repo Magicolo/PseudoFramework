@@ -16,13 +16,9 @@ namespace Pseudo.Architect
 		public UISkin Skin;
 		public UIFactory UIFactory;
 		public ArchitectLinker Linker;
-		public Camera MapCam;
-		public Camera UICam;
 
 		void Start()
 		{
-			Architect.MapCam = MapCam;
-			Architect.UICam = UICam;
 			Architect.Linker = Linker;
 		}
 

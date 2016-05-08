@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
@@ -17,8 +18,11 @@ namespace Pseudo.Architect
 		public GridScallerTiller Grid;
 		public SpriteRenderer PreviewSprite;
 
+		[Inject("ArchitectUI")]
+		Camera UICam;
+
 		public RectTransform DrawingRect;
-		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(DrawingRect, UnityEngine.Input.mousePosition, Architect.UICam); } }
+		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(DrawingRect, UnityEngine.Input.mousePosition, UICam); } }
 
 		TileType SelectedTileType { get { return ToolControler.SelectedTileType; } }
 		ArchitectTilePositionGetter TilePositionGetter { get { return LayerControler.TilePositionGetter; } }

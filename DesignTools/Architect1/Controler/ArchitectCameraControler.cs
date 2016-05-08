@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
@@ -13,7 +14,8 @@ namespace Pseudo.Architect
 		public float CamMouvementFactor = 0.01f;
 		public float ArrowCamMouvementSpeed = 2f;
 
-		Camera Cam { get { return Architect.MapCam; } }
+		[Inject("ArchitectMain")]
+		Camera MainCam;
 
 		void Start()
 		{
@@ -47,7 +49,7 @@ namespace Pseudo.Architect
 			{
 				yMouvement += ArrowCamMouvementSpeed;
 			}
-			Cam.transform.Translate(new Vector3(xMouvement, yMouvement, 0) * Time.deltaTime);
+			MainCam.transform.Translate(new Vector3(xMouvement, yMouvement, 0) * Time.deltaTime);
 		}
 
 		void handleMiddleMouse()
@@ -56,7 +58,7 @@ namespace Pseudo.Architect
 			{
 				Vector2 newMousePosition = UnityEngine.Input.mousePosition;
 				Vector2 diff = lastMousePosition - newMousePosition;
-				Cam.transform.Translate(diff * CamMouvementFactor);
+				MainCam.transform.Translate(diff * CamMouvementFactor);
 				lastMousePosition = newMousePosition;
 
 			}

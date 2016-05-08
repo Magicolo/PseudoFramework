@@ -20,10 +20,6 @@ namespace Pseudo.Architect
 
 		public bool MapLoaded { get; private set; }
 
-		public Camera UICam;
-		public Camera MapCam;
-
-
 		public ArchitectHistory ArchitectHistory = new ArchitectHistory();
 		public bool HasHistory { get { return ArchitectHistory.History.Count > 0; } }
 		public bool HasRedoHistory { get { return ArchitectHistory.HistoryRedo.Count > 0; } }
