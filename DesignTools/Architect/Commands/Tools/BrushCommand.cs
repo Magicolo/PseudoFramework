@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System;
 
-namespace Pseudo
+namespace Pseudo.Architect
 {
 	[System.Serializable]
 	public class BrushCommand : ToolCommandBase
@@ -12,35 +12,41 @@ namespace Pseudo
 		public TileType DoTileType;
 		public ArchitectRotationFlip DoRotationFlip;
 
-		public BrushCommand(ArchitectOld architect, ArchitectTilePositionGetter tilePositionGetter) : base(architect, tilePositionGetter)
+		public BrushCommand(ArchitectTilePositionGetter tilePositionGetter, TileType tileType, ArchitectRotationFlip RotationFlip) 
+			: base(tilePositionGetter)
 		{
-			DoTileType = architect.SelectedTileType;
-			DoRotationFlip = architect.RotationFlip;
+			DoTileType = tileType;
+			DoRotationFlip = RotationFlip;
 		}
 
 		public override bool Do()
 		{
 			if (Layer.IsTileEmpty(TilePosition))
 			{
-				architect.AddTile(Layer, TileWorldPosition, TilePosition, DoTileType, DoRotationFlip);
+				//architect.AddTile(Layer, TileWorldPosition, TilePosition, DoTileType, DoRotationFlip);
+				Layer.AddTile(TilePosition, DoTileType, DoRotationFlip);
 				return true;
 			}
-			else if (Layer[TilePosition].TileType != architect.SelectedTileType)
+			else if (Layer[TilePosition].TileType != DoTileType)
+			//else if (Layer[TilePosition].TileType != architect.SelectedTileType)
 			{
 				OldTileType = Layer[TilePosition].TileType;
 				OldRotationFlip = ArchitectRotationFlip.FromTransform(Layer[TilePosition].Transform);
-				architect.RemoveTile(TilePosition);
-				architect.AddSelectedTileType(Layer, TileWorldPosition, TilePosition);
+				Layer.EmptyTile(TilePosition);
+				//architect.AddSelectedTileType(Layer, TileWorldPosition, TilePosition);
+				Layer.AddTile(TilePosition, DoTileType, DoRotationFlip);
 				OldRotationFlip.ApplyTo(Layer[TilePosition].Transform);
 				return true;
 			}
-			else if (!architect.RotationFlip.Equals(Layer[TilePosition].Transform))
+			else if (!DoRotationFlip.Equals(Layer[TilePosition].Transform))
+			//else if (!architect.RotationFlip.Equals(Layer[TilePosition].Transform))
 			{
 				//PDebug.Log(Layer[TilePosition].Transform.localScale, Layer[TilePosition].Transform.localRotation.eulerAngles.z, architect.RotationFlip);
 				OldTileType = Layer[TilePosition].TileType;
 
 				OldRotationFlip = ArchitectRotationFlip.FromTransform(Layer[TilePosition].Transform);
-				architect.RotationFlip.ApplyTo(Layer[TilePosition].Transform);
+				DoRotationFlip.ApplyTo(Layer[TilePosition].Transform);
+				//architect.RotationFlip.ApplyTo(Layer[TilePosition].Transform);
 				return true;
 			}
 			else
@@ -49,10 +55,11 @@ namespace Pseudo
 
 		public override void Undo()
 		{
-			architect.RemoveTile(TilePosition);
+			Layer.EmptyTile(TilePosition);
 			if (!OldTileType.IsNullOrIdZero())
 			{
-				architect.AddTile(Layer, TileWorldPosition, TilePosition, OldTileType);
+				Layer.AddTile(TilePosition, OldTileType, DoRotationFlip);
+				//architect.AddTile(Layer, TileWorldPosition, TilePosition, OldTileType);
 				OldRotationFlip.ApplyTo(Layer[TilePosition].Transform);
 			}
 		}

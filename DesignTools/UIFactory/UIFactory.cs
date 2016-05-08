@@ -47,11 +47,27 @@ namespace Pseudo
 			GameObject newImageGO = GameObject.Instantiate(ImageButton);
 
 			RectTransform trans = newImageGO.GetComponent<RectTransform>();
-			trans.SetParent(parent);
+			trans.SetParent(parent, false);
 			trans.anchorMin = new Vector2(0, 1);
 			trans.anchorMax = new Vector2(0, 1);
 			trans.anchoredPosition = position;
 			trans.sizeDelta = dimension;
+
+			Image image = newImageGO.GetComponent<Image>();
+			image.sprite = sourceImage;
+			image.color = color;
+
+			Button button = newImageGO.GetComponent<Button>();
+			button.onClick.AddListener(action);
+
+			return button;
+		}
+		public Button CreateImageButton(Transform parent, Sprite sourceImage, Color color, UnityAction action)
+		{
+			GameObject newImageGO = GameObject.Instantiate(ImageButton);
+
+			RectTransform trans = newImageGO.GetComponent<RectTransform>();
+			trans.SetParent(parent, false);
 
 			Image image = newImageGO.GetComponent<Image>();
 			image.sprite = sourceImage;

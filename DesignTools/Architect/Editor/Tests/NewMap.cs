@@ -6,18 +6,18 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Architect;
 
-namespace Tests.ArchitectTests
+namespace Pseudo.ArchitectTest.Tests
 {
 	public class NewMap
 	{
-		Architect architect;
+		ArchitectControler architect;
 
 		[SetUp]
 		public void Setup()
 		{
-			architect = new Architect();
-
+			architect = new ArchitectControler();
 		}
 
 		[TearDown]
@@ -27,14 +27,14 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _01_OnNewMaptheMapIsEmpty()
+		public void A1_OnNewMaptheMapIsEmpty()
 		{
 			architect.CreateNewMap(null, "Test1", 5, 5);
 			Assert.IsEmpty(architect.MapData.Layers);
 		}
 
 		[Test]
-		public void _02_Adding1Layer_NewMapContains1Layer()
+		public void A2_Adding1Layer_NewMapContains1Layer()
 		{
 			architect.CreateNewMap(null, "Test1", 5, 5);
 			architect.AddLayerData("bob");
@@ -43,7 +43,7 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _03_Adding1Layer_NewMapRootTransformContains1Layer()
+		public void A3_Adding1Layer_NewMapRootTransformContains1Layer()
 		{
 			GameObject parent = new GameObject("Test");
 			architect.CreateNewMap(parent.transform, "Test1", 5, 5);
@@ -52,7 +52,7 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _04_NewMapRemoveOldLayers()
+		public void A4_NewMapRemoveOldLayers()
 		{
 			architect.CreateNewMap(null, "Test1", 5, 5);
 			architect.AddLayerData("bob");
@@ -62,7 +62,7 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _05_NewMapRemoveOldMapGameObjects()
+		public void A5_NewMapRemoveOldMapGameObjects()
 		{
 			GameObject parent = new GameObject("Test");
 			architect.CreateNewMap(parent.transform, "Test1", 5, 5);
@@ -74,7 +74,7 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _10_Removing1Layer_LayerIsRemoved()
+		public void B1_Removing1Layer_LayerIsRemoved()
 		{
 			GameObject parent = new GameObject("Test");
 			architect.CreateNewMap(parent.transform, "TestRemove", 5, 5);
@@ -86,7 +86,7 @@ namespace Tests.ArchitectTests
 		}
 
 		[Test]
-		public void _11_RemovingNullLayer()
+		public void B2_RemovingNullLayer()
 		{
 			GameObject parent = new GameObject("Test");
 			architect.CreateNewMap(parent.transform, "Test1", 5, 5);

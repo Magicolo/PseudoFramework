@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace Pseudo
 {
-	[System.Serializable]
-	public class EraserTool : ToolCommandBase
+	//[System.Serializable]
+	/*public class EraserTool : ToolCommandBase
 	{
 
 		public TileType OldTileType;
@@ -40,5 +40,5 @@ namespace Pseudo
 			}
 		}
 
-	}
+	}*/
 }
