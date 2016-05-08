@@ -4,7 +4,7 @@ using Pseudo;
 
 namespace Pseudo
 {
-	[ExecuteInEditMode, RequireComponent(typeof(MeshRenderer))]
+	[RequireComponent(typeof(MeshRenderer))]
 	public class GridScallerTiller : PMonoBehaviour
 	{
 		const int textureGridSize = 32;

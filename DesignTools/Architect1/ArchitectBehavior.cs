@@ -4,13 +4,14 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
 	[Serializable]
 	public class ArchitectBehavior : MonoBehaviour
 	{
-
+		[Inject(),Disable()]
 		public ArchitectControler Architect;
 		public UISkin Skin;
 		public UIFactory UIFactory;
@@ -18,28 +19,16 @@ namespace Pseudo.Architect
 		public Camera MapCam;
 		public Camera UICam;
 
-		//ArchitectMenus menus;
-		LayerPanel layerPanel;
-		
-
-		public ArchitectBehavior()
+		void Start()
 		{
-			Architect = new ArchitectControler();
-		}
-
-		void Awake()
-		{
-			Architect.MapData = null;
 			Architect.MapCam = MapCam;
 			Architect.UICam = UICam;
-			//menus = GetComponentInChildren<ArchitectMenus>();
-			layerPanel = GetComponentInChildren<LayerPanel>();
+			Architect.Linker = Linker;
 		}
 
 		public void CreateNewMap(string text, int width, int height)
 		{
 			Architect.CreateNewMap(text, width, height);
-			layerPanel.RefreshUI();
 		}
 	}
 }

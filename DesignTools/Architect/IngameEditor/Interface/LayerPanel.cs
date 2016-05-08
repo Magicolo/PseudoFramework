@@ -38,7 +38,6 @@ namespace Pseudo.Architect
 
 		void Start()
 		{
-			Debug.Log(Architect == null);
 			Architect.OnMapDataChanged += HandleMapDataChanged;
 			RefreshUI();
 		}

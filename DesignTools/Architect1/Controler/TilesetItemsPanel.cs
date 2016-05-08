@@ -28,7 +28,6 @@ namespace Pseudo.Architect
 
 		void Start()
 		{
-			Refresh();
 		}
 
 		void Update()
@@ -38,7 +37,6 @@ namespace Pseudo.Architect
 
 		public void Refresh()
 		{
-			Debug.Log(Architect == null);
 			TileSet tileset = Architect.Linker.Tilesets[0];
 			if (Architect.MapLoaded && selectedTileset != tileset) 
 			{
@@ -64,7 +62,6 @@ namespace Pseudo.Architect
 
 		void buttonClicked(int index)
 		{
-			Debug.Log(ToolControler == null);
 			ToolControler.SelectedTileType = selectedTileset.Tiles[index];
 			selectTile(index);
 		}

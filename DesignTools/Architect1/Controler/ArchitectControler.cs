@@ -46,7 +46,8 @@ namespace Pseudo.Architect
 			if (MapData != null)
 				MapData.DestroyAndRemoveAllLayers();
 			MapData = new MapData(parent, mapName, width, height);
-			OnMapDataChanged(MapData);
+			if (OnMapDataChanged != null)
+				OnMapDataChanged(MapData);
 		}
 
 		public LayerData AddLayerData(string layerName)
