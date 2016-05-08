@@ -8,7 +8,7 @@ namespace Pseudo.Mechanics
 {
 	[ExecuteInEditMode]
 	[AddComponentMenu("Pseudo/General/Combo System")]
-	public class ComboSystem : PMonoBehaviour
+	public class ComboSystem : MonoBehaviour
 	{
 		[SerializeField]
 		ComboSequenceManager comboManager;
