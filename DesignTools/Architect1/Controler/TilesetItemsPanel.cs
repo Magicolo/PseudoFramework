@@ -11,7 +11,6 @@ namespace Pseudo.Architect
 	{
 		[Inject()]
 		ArchitectControler Architect;
-
 		[Inject()]
 		ArchitectBehavior ArchitectBehavior;
 		[Inject()]

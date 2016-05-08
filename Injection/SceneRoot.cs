@@ -13,6 +13,7 @@ namespace Pseudo.Injection
 	{
 		public override void InjectAll()
 		{
+			PDebug.LogMethod();
 			Inject(SceneUtility.FindComponents<MonoBehaviour>(gameObject.scene));
 		}
 
@@ -29,7 +30,6 @@ namespace Pseudo.Injection
 		protected override void Awake()
 		{
 			base.Awake();
-
 			StartCoroutine(InjectionRoutine());
 		}
 

@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
 	[System.Serializable]
 	public class ArchitectToolControler
 	{
+		
+		[Inject()]
 		ArchitectControler Architect;
+		[Inject()]
 		ArchitectLayerControler LayerControler;
 
 		[Disable]

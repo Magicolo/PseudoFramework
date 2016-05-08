@@ -15,8 +15,8 @@ namespace Pseudo.Architect
 	{
 		public override void Install(IContainer container)
 		{
-			PDebug.LogMethod();
 			container.Binder.Bind<ArchitectControler>().ToSelf().AsSingleton();
+			container.Binder.Bind<ArchitectBehavior>().ToSelf().AsSingleton();
 			container.Binder.Bind<ArchitectToolControler>().ToSelf().AsSingleton();
 			container.Binder.Bind<ArchitectLayerControler>().ToSelf().AsSingleton();
 			container.Binder.Bind<ArchitectCameraControler>().ToSelf().AsSingleton();
