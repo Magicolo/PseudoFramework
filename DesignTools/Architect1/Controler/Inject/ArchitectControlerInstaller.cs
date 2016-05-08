@@ -14,6 +14,8 @@ namespace Pseudo.Architect
 	public class ArchitectControlerInstaller : InstallerBehaviourBase
 	{
 		public ArchitectBehavior ArchitectBehavior;
+		public Camera MainCam;
+		public Camera UICam;
 
 		public override void Install(IContainer container)
 		{
@@ -23,6 +25,8 @@ namespace Pseudo.Architect
 			container.Binder.Bind<ArchitectLayerControler>().ToSelf().AsSingleton();
 			container.Binder.Bind<ArchitectCameraControler>().ToSelf().AsSingleton();
 			container.Binder.Bind<DrawingControler>().ToSelf().AsSingleton();
+			container.Binder.Bind<Camera>().ToInstance(MainCam).WhenHas("ArchitectMain");
+			container.Binder.Bind<Camera>().ToInstance(UICam).WhenHas("ArchitectUI");
 		}
 	}
 }

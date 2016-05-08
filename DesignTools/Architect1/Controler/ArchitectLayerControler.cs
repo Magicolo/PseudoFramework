@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
@@ -15,6 +16,9 @@ namespace Pseudo.Architect
 		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
 		public ArchitectTilePositionGetter TilePositionGetter { get { return tilePositionGetter; } }
 
+		[Inject("ArchitectMain")]
+		Camera MainCam;
+
 		void Update()
 		{
 			UpdateTileGetter();
@@ -22,7 +26,7 @@ namespace Pseudo.Architect
 
 		private void UpdateTileGetter()
 		{
-			ArchitectTilePositionGetter newTilePositionGetter = new ArchitectTilePositionGetter(Architect.MapCam.GetMouseWorldPosition(), SelectedLayer);
+			ArchitectTilePositionGetter newTilePositionGetter = new ArchitectTilePositionGetter(MainCam.GetMouseWorldPosition(), SelectedLayer);
 			if (newTilePositionGetter.TilePosition != tilePositionGetter.TilePosition)
 				tilePositionGetter = newTilePositionGetter;
 		}
