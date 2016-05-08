@@ -29,7 +29,7 @@ namespace Pseudo
 
 		public void Inject()
 		{
-			root = root ?? SceneUtility.FindComponent<SceneRoot>(CachedGameObject.scene);
+			root = root ?? SceneUtility.FindComponent<IRoot>(CachedGameObject.scene);
 
 			if (root == null || root.Container == null)
 				return;
