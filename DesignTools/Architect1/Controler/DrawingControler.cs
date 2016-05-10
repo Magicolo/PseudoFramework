@@ -12,11 +12,11 @@ namespace Pseudo.Architect
 	public class DrawingControler
 	{
 		[Inject()]
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 		[Inject()]
-		ArchitectToolControler ToolControler;
+		ArchitectToolControler ToolControler = null;
 		[Inject()]
-		ArchitectLayerControler LayerControler;
+		ArchitectLayerControler LayerControler = null;
 
 		[Inject("GridTiller")]
 		public GridScallerTiller Grid;
@@ -24,7 +24,7 @@ namespace Pseudo.Architect
 		public SpriteRenderer PreviewSprite;
 
 		[Inject("ArchitectUI")]
-		Camera UICam;
+		Camera UICam = null;
 		[Inject("DrawingRect")]
 		public RectTransform DrawingRect;
 
@@ -33,14 +33,15 @@ namespace Pseudo.Architect
 		TileType SelectedTileType { get { return ToolControler.SelectedTileType; } }
 		ArchitectTilePositionGetter TilePositionGetter { get { return LayerControler.TilePositionGetter; } }
 
-		
 
 
-		void Update() {
+
+		void Update()
+		{
 
 			UpdatePreviewSprite();
 			ResetGridSize();
-			if (IsMouseInDrawingRegion) 
+			if (IsMouseInDrawingRegion)
 			{
 				if (UnityEngine.Input.GetMouseButton(0))
 					ToolControler.HandleLeftMouse();
@@ -48,7 +49,7 @@ namespace Pseudo.Architect
 					ToolControler.HandlePipette();
 			}
 		}
-		
+
 		public void ResetGridSize()
 		{
 			if (LayerControler.SelectedLayer != null)
@@ -63,7 +64,7 @@ namespace Pseudo.Architect
 			{
 				Grid.gameObject.SetActive(false);
 			}
-			
+
 		}
 
 		private void UpdatePreviewSprite()

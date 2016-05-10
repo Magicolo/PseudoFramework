@@ -7,15 +7,15 @@ using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
-	[System.Serializable]
+	[Serializable]
 	public class LayerPanel : MonoBehaviour
 	{
-		[Inject()]
-		ArchitectControler Architect;
-		[Inject()]
-		ArchitectBehavior ArchitectBehavior;
-		[Inject()]
-		ArchitectLayerControler LayerControler;
+		[Inject]
+		ArchitectControler Architect = null;
+		[Inject]
+		ArchitectBehavior ArchitectBehavior = null;
+		[Inject]
+		ArchitectLayerControler LayerControler=null;
 
 		int ActiveLayerIndex = -1;
 		LayerData ActiveLayer { get { return LayerControler.SelectedLayer; } }

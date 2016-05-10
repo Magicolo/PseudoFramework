@@ -11,7 +11,7 @@ namespace Pseudo.Architect
 	{
 
 		[Inject()]
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 
 		public Button SaveButton;
 		public Button OpenButton;

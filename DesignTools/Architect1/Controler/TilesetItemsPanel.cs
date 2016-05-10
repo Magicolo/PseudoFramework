@@ -10,15 +10,15 @@ namespace Pseudo.Architect
 	public class TilesetItemsPanel : MonoBehaviour
 	{
 		[Inject()]
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 		[Inject()]
-		ArchitectBehavior ArchitectBehavior;
+		ArchitectBehavior ArchitectBehavior = null;
 		[Inject()]
-		DrawingControler DrawingControler;
+		DrawingControler DrawingControler = null;
 		[Inject()]
-		ArchitectToolControler ToolControler;
+		ArchitectToolControler ToolControler = null;
 		[Inject()]
-		ArchitectLinker Linker;
+		ArchitectLinker Linker = null;
 
 		List<Button> tilesetButtons = new List<Button>();
 		TileSet selectedTileset;
@@ -40,7 +40,7 @@ namespace Pseudo.Architect
 		public void Refresh()
 		{
 			TileSet tileset = Linker.Tilesets[0];
-			if (Architect.MapLoaded && selectedTileset != tileset) 
+			if (Architect.MapLoaded && selectedTileset != tileset)
 			{
 				clearTilesetButtons();
 				selectedTileset = tileset;
@@ -57,7 +57,7 @@ namespace Pseudo.Architect
 				int index = i; // Fix for a compiler strange behavior. bouttonClicked would have all had the same value without this realocation
 				UnityAction action = () => buttonClicked(index);
 				Button button = ArchitectBehavior.UIFactory.CreateImageButton(transform, tileType.PreviewSprite, BaseColor, action);
-				
+
 				tilesetButtons.Add(button);
 			}
 		}
