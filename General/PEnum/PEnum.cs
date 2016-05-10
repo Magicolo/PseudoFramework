@@ -1,11 +1,9 @@
 ﻿using Pseudo.Internal;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
 using UnityEngine;
 
 namespace Pseudo
@@ -16,7 +14,6 @@ namespace Pseudo
 	/// </summary>
 	/// <typeparam name="TEnum">Type of the enum.</typeparam>
 	/// <typeparam name="TValue">Type of the value held by the enum.</typeparam>
-	[ImmutableObject(true)]
 	public abstract class PEnum<TEnum, TValue> : PEnum, IEnum, IEquatable<PEnum<TEnum, TValue>>, IEquatable<TEnum>
 		where TEnum : PEnum<TEnum, TValue>
 		where TValue : IEquatable<TValue>

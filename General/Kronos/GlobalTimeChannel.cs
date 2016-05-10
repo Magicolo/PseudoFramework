@@ -9,24 +9,24 @@ namespace Pseudo.Internal
 {
 	public class GlobalTimeChannel : TimeChannelBase
 	{
-		public GlobalTimeChannel(TimeManager.TimeChannels channel)
+		public GlobalTimeChannel(Chronos.TimeChannels channel)
 		{
 			this.channel = channel;
 		}
 
 		protected override float GetTime()
 		{
-			return TimeManager.Unity.Time;
+			return Chronos.Unity.Time;
 		}
 
 		protected override float GetDeltaTime()
 		{
-			return TimeManager.Unity.DeltaTime;
+			return Chronos.Unity.DeltaTime;
 		}
 
 		protected override float GetFixedDeltaTime()
 		{
-			return TimeManager.Unity.FixedDeltaTime;
+			return Chronos.Unity.FixedDeltaTime;
 		}
 	}
 }

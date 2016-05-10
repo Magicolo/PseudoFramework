@@ -9,7 +9,7 @@ namespace Pseudo.Internal
 {
 	public abstract class TimeChannelBase : ITimeChannel
 	{
-		public TimeManager.TimeChannels Channel
+		public Chronos.TimeChannels Channel
 		{
 			get { return channel; }
 			set { channel = value; Reset(); }
@@ -35,7 +35,7 @@ namespace Pseudo.Internal
 		public float FixedDeltaTime { get { return GetFixedDeltaTime() * timeScale; } }
 
 		[SerializeField, PropertyField]
-		protected TimeManager.TimeChannels channel;
+		protected Chronos.TimeChannels channel;
 		[SerializeField, PropertyField]
 		protected float timeScale = 1f;
 		protected float time;

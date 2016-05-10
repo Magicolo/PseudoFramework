@@ -13,17 +13,17 @@ namespace Pseudo
 	{
 		protected override float GetTime()
 		{
-			return TimeManager.GetChannel(channel).Time;
+			return Chronos.GetChannel(channel).Time;
 		}
 
 		protected override float GetDeltaTime()
 		{
-			return TimeManager.GetChannel(channel).DeltaTime;
+			return Chronos.GetChannel(channel).DeltaTime;
 		}
 
 		protected override float GetFixedDeltaTime()
 		{
-			return TimeManager.GetChannel(channel).FixedDeltaTime;
+			return Chronos.GetChannel(channel).FixedDeltaTime;
 		}
 	}
 }

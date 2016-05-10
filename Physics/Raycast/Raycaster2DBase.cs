@@ -14,7 +14,7 @@ namespace Pseudo.Physics.Internal
 
 		public LayerMask Mask = Physics2D.DefaultRaycastLayers;
 		public QueryTriggerInteraction HitTrigger;
-		public QueryColliderInteration HitStartCollider;
+		public QueryColliderInteraction HitStartCollider;
 		public bool Draw = true;
 
 		bool hitTrigger;
@@ -52,10 +52,10 @@ namespace Pseudo.Physics.Internal
 
 			switch (HitStartCollider)
 			{
-				case QueryColliderInteration.Ignore:
+				case QueryColliderInteraction.Ignore:
 					Physics2D.queriesStartInColliders = false;
 					break;
-				case QueryColliderInteration.Collide:
+				case QueryColliderInteraction.Collide:
 					Physics2D.queriesStartInColliders = true;
 					break;
 			}

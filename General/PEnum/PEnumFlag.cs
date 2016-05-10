@@ -41,7 +41,7 @@ namespace Pseudo
 
 		public TEnum Add(byte flag)
 		{
-			return GetValue(Value.Add(flag));
+			return GetValue(Value + flag);
 		}
 
 		public TEnum Remove(TEnum flags)
@@ -56,7 +56,7 @@ namespace Pseudo
 
 		public TEnum Remove(byte flag)
 		{
-			return GetValue(Value.Remove(flag));
+			return GetValue(Value - flag);
 		}
 
 		public bool Has(byte flag)
@@ -66,32 +66,32 @@ namespace Pseudo
 
 		public bool HasAll(TEnum flags)
 		{
-			return (~Value & flags.Value) == ByteFlag.Nothing;
+			return Value.HasAll(flags.Value);
 		}
 
 		public bool HasAny(TEnum flags)
 		{
-			return (Value & ~flags.Value) != Value;
+			return Value.HasAny(flags.Value);
 		}
 
 		public bool HasNone(TEnum flags)
 		{
-			return !HasAny(flags);
+			return Value.HasNone(flags.Value);
 		}
 
 		public bool HasAll(ByteFlag flags)
 		{
-			return (~Value & flags) == ByteFlag.Nothing;
+			return Value.HasAll(flags);
 		}
 
 		public bool HasAny(ByteFlag flags)
 		{
-			return (Value & ~flags) != Value;
+			return Value.HasAny(flags);
 		}
 
 		public bool HasNone(ByteFlag flags)
 		{
-			return !HasAny(flags);
+			return Value.HasNone(flags);
 		}
 
 		IEnumFlag IEnumFlag.Add(IEnumFlag flags)
