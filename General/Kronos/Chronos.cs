@@ -7,7 +7,7 @@ using Pseudo.Internal;
 
 namespace Pseudo
 {
-	public static class TimeManager
+	public static class Chronos
 	{
 		public enum TimeChannels : byte
 		{

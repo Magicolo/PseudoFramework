@@ -28,8 +28,6 @@ namespace Pseudo.Editor.Internal
 				DrawNumericalFlag();
 			else if (fieldInfo.FieldType.Is<ByteFlag>())
 				DrawByteFlag();
-			else if (fieldInfo.FieldType.Is<BigFlag>())
-				DrawBigFlag();
 
 			End();
 		}
@@ -104,47 +102,6 @@ namespace Pseudo.Editor.Internal
 			Flags(currentPosition, options, OnByteFlagSelected, currentLabel, currentProperty);
 		}
 
-		void DrawBigFlag()
-		{
-			if (Enum.GetUnderlyingType(enumType) != typeof(int))
-			{
-				EditorGUI.HelpBox(currentPosition, string.Format("Underlying type of {0} must be of type {1}.", enumType.Name, typeof(int)), MessageType.Error);
-				return;
-			}
-
-			var bigFlag = currentProperty.GetValue<BigFlag>();
-			var options = new FlagsOption[enumValues.Length];
-
-			for (int i = 0; i < options.Length; i++)
-			{
-				var name = enumNames[i].Replace('_', '/').ToGUIContent();
-				var value = Convert.ToInt32(enumValues.GetValue(i));
-				options[i] = new FlagsOption(name, value, bigFlag[value]);
-			}
-
-			Flags(currentPosition, options, OnBigFlagSelected, currentLabel, currentProperty);
-		}
-
-		byte[] EnumValuesToBytes(Array enumValues)
-		{
-			var bytes = new byte[enumValues.Length];
-
-			for (int i = 0; i < enumValues.Length; i++)
-				bytes[i] = Convert.ToByte(enumValues.GetValue(i));
-
-			return bytes;
-		}
-
-		int[] EnumValuesToInts(Array enumValues)
-		{
-			var ints = new int[enumValues.Length];
-
-			for (int i = 0; i < enumValues.Length; i++)
-				ints[i] = Convert.ToInt32(enumValues.GetValue(i));
-
-			return ints;
-		}
-
 		void OnEnumFlagSelected(FlagsOption option, SerializedProperty property)
 		{
 			var enumValue = property.GetValue<int>();
@@ -177,37 +134,18 @@ namespace Pseudo.Editor.Internal
 			switch (option.Type)
 			{
 				case FlagsOption.OptionTypes.Everything:
-					byteFlag = new ByteFlag(EnumValuesToBytes(enumValues));
+					byteFlag = new ByteFlag(enumValues.Convert((object v) => Convert.ToByte(v)));
 					break;
 				case FlagsOption.OptionTypes.Nothing:
 					byteFlag = ByteFlag.Nothing;
 					break;
 				case FlagsOption.OptionTypes.Custom:
-					byteFlag[(byte)option.Value] = !byteFlag[(byte)option.Value];
+					byte value = (byte)option.Value;
+					byteFlag = byteFlag[value] ? byteFlag - value : byteFlag + value;
 					break;
 			}
 
 			property.SetValue(byteFlag);
-		}
-
-		void OnBigFlagSelected(FlagsOption option, SerializedProperty property)
-		{
-			var bigFlag = property.GetValue<BigFlag>();
-
-			switch (option.Type)
-			{
-				case FlagsOption.OptionTypes.Everything:
-					bigFlag = new BigFlag(EnumValuesToInts(enumValues));
-					break;
-				case FlagsOption.OptionTypes.Nothing:
-					bigFlag = BigFlag.Nothing;
-					break;
-				case FlagsOption.OptionTypes.Custom:
-					bigFlag[(int)option.Value] = !bigFlag[(int)option.Value];
-					break;
-			}
-
-			property.SetValue(bigFlag);
 		}
 	}
 }

@@ -11,7 +11,7 @@ namespace Pseudo
 {
 	public class TimeComponent : ComponentBehaviourBase, ITimeChannel
 	{
-		public TimeManager.TimeChannels Channel
+		public Chronos.TimeChannels Channel
 		{
 			get { return time.Channel; }
 		}

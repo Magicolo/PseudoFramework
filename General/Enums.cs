@@ -67,7 +67,7 @@ namespace Pseudo
 		All
 	}
 
-	public enum QueryColliderInteration : byte
+	public enum QueryColliderInteraction : byte
 	{
 		UseGlobal,
 		Ignore,

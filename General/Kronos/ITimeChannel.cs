@@ -3,7 +3,7 @@ namespace Pseudo
 {
 	public interface ITimeChannel
 	{
-		TimeManager.TimeChannels Channel { get; }
+		Chronos.TimeChannels Channel { get; }
 		float Time { get; }
 		float TimeScale { get; set; }
 		float DeltaTime { get; }

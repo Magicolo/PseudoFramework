@@ -9,9 +9,9 @@ namespace Pseudo.Internal
 {
 	public class UnityTimeChannel : ITimeChannel
 	{
-		public TimeManager.TimeChannels Channel
+		public Chronos.TimeChannels Channel
 		{
-			get { return TimeManager.TimeChannels.Unity; }
+			get { return Chronos.TimeChannels.Unity; }
 		}
 
 		public float DeltaTime
