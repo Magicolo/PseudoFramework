@@ -15,7 +15,7 @@ namespace Pseudo
 		public readonly int LayerWidth;
 		public readonly int LayerHeight;
 
-		TileData[] tiles;
+		private TileData[] tiles;
 
 		public Transform LayerTransform;
 

@@ -12,16 +12,16 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectBehavior : MonoBehaviour
 	{
-		[Inject(),Disable()]
-		public ArchitectControler Architect;
-		[Inject(), Disable()]
-		public ArchitectCameraControler CameraControler;
-		[Inject(), Disable()]
-		public ArchitectLayerControler LayerControler;
-		[Inject(), Disable()]
-		public ArchitectToolControler ToolControler;
-		[Inject(), Disable()]
-		public DrawingControler DrawingControler;
+		[Inject(),Disable(),NonSerialized()]
+		ArchitectControler Architect;
+		[Inject(), Disable(), NonSerialized()]
+		 ArchitectCameraControler CameraControler;
+		[Inject(), Disable(), NonSerialized()]
+		 ArchitectLayerControler LayerControler;
+		[Inject(), Disable(), NonSerialized()]
+		 ArchitectToolControler ToolControler;
+		[Inject(), Disable(), NonSerialized()]
+		 DrawingControler DrawingControler;
 
 		public UISkin Skin;
 		public UIFactory UIFactory;
