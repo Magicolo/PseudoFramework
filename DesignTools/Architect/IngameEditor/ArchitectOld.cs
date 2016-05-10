@@ -31,7 +31,7 @@ namespace Pseudo
 
 		//public ArchitectRotationFlip RotationFlip { get { return toolControler.RotationFlip; } }
 
-		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
+		//ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
 
 		public GridScallerTiller Grid;
 
@@ -44,7 +44,7 @@ namespace Pseudo
 		Point2 mapDimension;
 
 		//ArchitectMenus Menu;
-		ToolbarPanel Toolbar;
+		//ToolbarPanel Toolbar;
 		//TilesetItemsPanel TilesetPanel;
 		//LayerPanel LayerPanel;
 
@@ -78,7 +78,7 @@ namespace Pseudo
 		void Awake()
 		{
 			//Menu = GetComponentInChildren<ArchitectMenus>();
-			Toolbar = GetComponentInChildren<ToolbarPanel>();
+			//Toolbar = GetComponentInChildren<ToolbarPanel>();
 			//TilesetPanel = GetComponentInChildren<TilesetItemsPanel>();
 			//LayerPanel = GetComponentInChildren<LayerPanel>();
 			UISkin = GetComponentInChildren<UISkin>();

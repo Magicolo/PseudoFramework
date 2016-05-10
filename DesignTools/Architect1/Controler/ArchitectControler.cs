@@ -4,6 +4,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
@@ -13,9 +14,11 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectControler
 	{
-		public MapData MapData;
-		public ArchitectLinker Linker;
+		[Inject()]
+		ArchitectLinker Linker;
 
+		public MapData MapData;
+		
 		public event MapDataChanged OnMapDataChanged;
 
 		public bool MapLoaded { get; private set; }

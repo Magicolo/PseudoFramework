@@ -4,24 +4,23 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using Pseudo.Injection;
 
 
 namespace Pseudo.Architect
 {
 	public abstract class ArchitectControlerBase : MonoBehaviour
 	{
-
-		public ArchitectControler Architect { get; protected set; }
-		public ArchitectBehavior ArchitectBehavior { get; protected set; }
-		protected ArchitectLinker Linker { get { return Architect.Linker; } }
-
-
-		protected virtual void Awake()
-		{
-			ArchitectBehavior = GetComponentInParent<ArchitectBehavior>();
-			Architect = this.ArchitectBehavior.Architect;
-			Architect.Linker = ArchitectBehavior.Linker;
-		}
+		[Inject(), Disable()]
+		protected ArchitectControler Architect;
+		[Inject(), Disable()]
+		protected ArchitectCameraControler CameraControler;
+		[Inject(), Disable()]
+		protected ArchitectLayerControler LayerControler;
+		[Inject(), Disable()]
+		protected ArchitectToolControler ToolControler;
+		[Inject(), Disable()]
+		protected DrawingControler DrawingControler;
 
 	}
 }

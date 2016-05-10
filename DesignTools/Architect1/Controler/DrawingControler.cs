@@ -11,17 +11,23 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class DrawingControler
 	{
+		[Inject()]
 		ArchitectControler Architect;
+		[Inject()]
 		ArchitectToolControler ToolControler;
+		[Inject()]
 		ArchitectLayerControler LayerControler;
 
+		[Inject("GridTiller")]
 		public GridScallerTiller Grid;
+		[Inject("PreviewSprite")]
 		public SpriteRenderer PreviewSprite;
 
 		[Inject("ArchitectUI")]
 		Camera UICam;
-
+		[Inject("DrawingRect")]
 		public RectTransform DrawingRect;
+
 		public bool IsMouseInDrawingRegion { get { return RectTransformUtility.RectangleContainsScreenPoint(DrawingRect, UnityEngine.Input.mousePosition, UICam); } }
 
 		TileType SelectedTileType { get { return ToolControler.SelectedTileType; } }
@@ -45,10 +51,19 @@ namespace Pseudo.Architect
 		
 		public void ResetGridSize()
 		{
-			Grid.NbTilesX = LayerControler.SelectedLayer.LayerWidth;
-			Grid.NbTilesY = LayerControler.SelectedLayer.LayerHeight;
-			Grid.TileWidth = LayerControler.SelectedLayer.TileWidth;
-			Grid.TileHeight = LayerControler.SelectedLayer.TileHeight;
+			if (LayerControler.SelectedLayer != null)
+			{
+				Grid.gameObject.SetActive(true);
+				Grid.NbTilesX = LayerControler.SelectedLayer.LayerWidth;
+				Grid.NbTilesY = LayerControler.SelectedLayer.LayerHeight;
+				Grid.TileWidth = LayerControler.SelectedLayer.TileWidth;
+				Grid.TileHeight = LayerControler.SelectedLayer.TileHeight;
+			}
+			else
+			{
+				Grid.gameObject.SetActive(false);
+			}
+			
 		}
 
 		private void UpdatePreviewSprite()

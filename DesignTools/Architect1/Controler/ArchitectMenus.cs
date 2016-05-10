@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using Pseudo.Input.Internal;
 using UnityEngine.UI;
 using Pseudo.UI.Internal;
+using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
-	public class ArchitectMenus : ArchitectControlerBase
+	public class ArchitectMenus : MonoBehaviour
 	{
+
+		[Inject()]
+		ArchitectControler Architect;
 
 		public Button SaveButton;
 		public Button OpenButton;
@@ -44,7 +48,7 @@ namespace Pseudo.Architect
 			int width = InputFieldUtility.GetInt(NewMapWidth);
 			int height = InputFieldUtility.GetInt(NewMapHeight);
 
-			ArchitectBehavior.CreateNewMap(NewMapName.text, width, height);
+			Architect.CreateNewMap(NewMapName.text, width, height);
 			
 			NewFile.SetActive(false);
 		}

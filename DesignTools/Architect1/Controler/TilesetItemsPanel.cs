@@ -17,6 +17,8 @@ namespace Pseudo.Architect
 		DrawingControler DrawingControler;
 		[Inject()]
 		ArchitectToolControler ToolControler;
+		[Inject()]
+		ArchitectLinker Linker;
 
 		List<Button> tilesetButtons = new List<Button>();
 		TileSet selectedTileset;
@@ -37,7 +39,7 @@ namespace Pseudo.Architect
 
 		public void Refresh()
 		{
-			TileSet tileset = Architect.Linker.Tilesets[0];
+			TileSet tileset = Linker.Tilesets[0];
 			if (Architect.MapLoaded && selectedTileset != tileset) 
 			{
 				clearTilesetButtons();
