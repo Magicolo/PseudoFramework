@@ -12,16 +12,16 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectBehavior : MonoBehaviour
 	{
-		[Inject(),Disable(),NonSerialized()]
-		ArchitectControler Architect;
 		[Inject(), Disable(), NonSerialized()]
-		 ArchitectCameraControler CameraControler;
+		ArchitectControler Architect = null;
 		[Inject(), Disable(), NonSerialized()]
-		 ArchitectLayerControler LayerControler;
+		ArchitectCameraControler CameraControler = null;
 		[Inject(), Disable(), NonSerialized()]
-		 ArchitectToolControler ToolControler;
+		ArchitectLayerControler LayerControler = null;
 		[Inject(), Disable(), NonSerialized()]
-		 DrawingControler DrawingControler;
+		ArchitectToolControler ToolControler = null;
+		[Inject(), Disable(), NonSerialized()]
+		DrawingControler DrawingControler = null;
 
 		public UISkin Skin;
 		public UIFactory UIFactory;
@@ -34,9 +34,9 @@ namespace Pseudo.Architect
 			callMethod(DrawingControler, "Start");
 		}
 
-		void Update() 
+		void Update()
 		{
-			callMethod(CameraControler,"Update");
+			callMethod(CameraControler, "Update");
 			callMethod(LayerControler, "Update");
 			callMethod(ToolControler, "Update");
 			callMethod(DrawingControler, "Update");
@@ -46,7 +46,7 @@ namespace Pseudo.Architect
 		{
 			Type type = obj.GetType();
 			MethodInfo mi = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance);
-			if(mi != null)
+			if (mi != null)
 				mi.Invoke(obj, null);
 		}
 	}
