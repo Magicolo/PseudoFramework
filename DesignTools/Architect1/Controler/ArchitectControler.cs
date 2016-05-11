@@ -15,7 +15,7 @@ namespace Pseudo.Architect
 	public class ArchitectControler
 	{
 		[Inject()]
-		ArchitectLinker Linker;
+		ArchitectLinker Linker = null;
 
 		public MapData MapData;
 		

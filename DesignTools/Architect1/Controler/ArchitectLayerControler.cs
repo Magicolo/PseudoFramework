@@ -11,7 +11,7 @@ namespace Pseudo.Architect
 	public class ArchitectLayerControler
 	{
 		[Inject()]
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 		
 		[NonSerialized]
 		public LayerData SelectedLayer;
@@ -20,7 +20,7 @@ namespace Pseudo.Architect
 		public ArchitectTilePositionGetter TilePositionGetter { get { return tilePositionGetter; } }
 
 		[Inject("ArchitectMain")]
-		Camera MainCam;
+		Camera MainCam = null;
 
 		void Update()
 		{

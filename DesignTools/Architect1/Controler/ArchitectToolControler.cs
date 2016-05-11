@@ -9,9 +9,9 @@ namespace Pseudo.Architect
 	{
 		
 		[Inject()]
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 		[Inject()]
-		ArchitectLayerControler LayerControler;
+		ArchitectLayerControler LayerControler = null;
 
 		[Disable]
 		public ArchitectRotationFlip RotationFlip;

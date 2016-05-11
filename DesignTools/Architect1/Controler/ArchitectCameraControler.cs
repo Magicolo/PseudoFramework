@@ -7,7 +7,7 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectCameraControler
 	{
-		ArchitectControler Architect;
+		ArchitectControler Architect = null;
 
 		bool middleCliçked;
 		Vector2 lastMousePosition;
@@ -15,7 +15,7 @@ namespace Pseudo.Architect
 		public float ArrowCamMouvementSpeed = 2f;
 
 		[Inject("ArchitectMain")]
-		Camera MainCam;
+		Camera MainCam = null;
 
 		void Start()
 		{
