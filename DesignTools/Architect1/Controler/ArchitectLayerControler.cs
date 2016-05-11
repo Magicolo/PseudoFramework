@@ -8,12 +8,12 @@ using Pseudo.Injection;
 
 namespace Pseudo.Architect
 {
-	[Serializable]
 	public class ArchitectLayerControler
 	{
 		[Inject()]
 		ArchitectControler Architect;
 		
+		[NonSerialized]
 		public LayerData SelectedLayer;
 
 		ArchitectTilePositionGetter tilePositionGetter = new ArchitectTilePositionGetter(Vector3.zero, null);
