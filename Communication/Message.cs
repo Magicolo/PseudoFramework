@@ -8,14 +8,14 @@ using Pseudo;
 namespace Pseudo.Communication
 {
 	[Serializable]
-	public struct MessageEnum : IEquatable<MessageEnum>, IEquatable<Enum>, ISerializationCallbackReceiver
+	public struct Message : IEquatable<Message>, IEquatable<Enum>, ISerializationCallbackReceiver
 	{
 		public Enum Value
 		{
 			get
 			{
-				if (enumValue == null && EnumType != null)
-					enumValue = (Enum)Enum.ToObject(EnumType, value);
+				if (enumValue == null && Type != null)
+					enumValue = (Enum)Enum.ToObject(Type, value);
 
 				return enumValue;
 			}
@@ -37,7 +37,7 @@ namespace Pseudo.Communication
 				enumValue = value;
 			}
 		}
-		public Type EnumType
+		public Type Type
 		{
 			get
 			{
@@ -55,7 +55,7 @@ namespace Pseudo.Communication
 		Type type;
 		Enum enumValue;
 
-		public MessageEnum(Enum value)
+		public Message(Enum value)
 		{
 			type = value.GetType();
 			typeName = type.AssemblyQualifiedName;
@@ -76,15 +76,15 @@ namespace Pseudo.Communication
 			return enumValue == other;
 		}
 
-		public bool Equals(MessageEnum other)
+		public bool Equals(Message other)
 		{
 			return type == other.type && value == other.value;
 		}
 
 		public override bool Equals(object obj)
 		{
-			if (obj is MessageEnum)
-				return Equals((MessageEnum)obj);
+			if (obj is Message)
+				return Equals((Message)obj);
 			else if (obj is Enum)
 				return Equals((Enum)obj);
 			else
@@ -110,9 +110,9 @@ namespace Pseudo.Communication
 				enumValue = (Enum)Enum.ToObject(type, value);
 		}
 
-		public static implicit operator MessageEnum(Enum enumValue)
+		public static implicit operator Message(Enum enumValue)
 		{
-			return new MessageEnum(enumValue);
+			return new Message(enumValue);
 		}
 	}
 }

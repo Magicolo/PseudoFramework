@@ -22,7 +22,7 @@ namespace Pseudo
 		[Serializable]
 		public struct StateData
 		{
-			public MessageEnum Message;
+			public Message Message;
 			public EntityBehaviour State;
 		}
 

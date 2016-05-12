@@ -25,7 +25,7 @@ namespace Pseudo
 		{
 			public AudioSettingsBase Audio;
 			public SpatializationModes Spatialization;
-			public MessageEnum Message;
+			public Message Message;
 		}
 
 		public AudioAction[] Actions = new AudioAction[0];

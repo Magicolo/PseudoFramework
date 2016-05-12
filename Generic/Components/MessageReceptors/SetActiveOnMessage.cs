@@ -17,7 +17,7 @@ namespace Pseudo
 		{
 			public GameObject Target;
 			public bool Active;
-			public MessageEnum Message;
+			public Message Message;
 		}
 
 		[InitializeContent]

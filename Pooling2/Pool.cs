@@ -8,25 +8,81 @@ using Pseudo.Pooling2.Internal;
 
 namespace Pseudo.Pooling2
 {
-	public class Pool<T> : PoolBase<T> where T : class
+	public class Pool<T> : IPool<T> where T : class
 	{
-		readonly Func<T> construct;
-		readonly Action<T> initialize;
-
-		public Pool(Func<T> construct, Action<T> initialize)
+		public int Count
 		{
-			this.construct = construct;
-			this.initialize = initialize;
+			get { return storage.Count; }
+			set
+			{
+				storage.Capacity = value > storage.Capacity ? value : storage.Capacity;
+				storage.Trim(value);
+				storage.Fill(value, factory);
+			}
+		}
+		public int Capacity
+		{
+			get { return storage.Capacity; }
+			set { storage.Capacity = value; }
 		}
 
-		protected override T Construct()
+		Type IPool.Type
 		{
-			return construct();
+			get { return typeof(T); }
 		}
 
-		protected override void Initialize(T instance)
+		readonly Func<T> factory;
+		readonly IStorage<T> storage;
+		readonly IInitializer<T> initializer;
+
+		public Pool(Func<T> factory, IStorage<T> storage = null, IInitializer<T> initializer = null)
 		{
-			initialize(instance);
+			this.factory = factory;
+			this.storage = storage ?? new Storage<T>();
+			this.initializer = initializer ?? Initializer<T>.Default;
+		}
+
+		public T Create()
+		{
+			var instance = storage.Take() ?? factory();
+			initializer.OnCreate(instance);
+
+			return instance;
+		}
+
+		public bool Recycle(T instance)
+		{
+			if (instance == null)
+				return false;
+
+			initializer.OnRecycle(instance);
+
+			return storage.Put(instance);
+		}
+
+		public bool Contains(T instance)
+		{
+			return storage.Contains(instance);
+		}
+
+		public void Clear()
+		{
+			storage.Clear();
+		}
+
+		object IPool.Create()
+		{
+			return Create();
+		}
+
+		bool IPool.Recycle(object instance)
+		{
+			return Recycle(instance as T);
+		}
+
+		bool IPool.Contains(object instance)
+		{
+			return Contains(instance as T);
 		}
 	}
 }

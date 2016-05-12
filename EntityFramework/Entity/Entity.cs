@@ -1,10 +1,8 @@
 ﻿using Pseudo.Communication;
-using Pseudo.Communication.Internal;
 using Pseudo.Pooling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System.Collections;
@@ -52,10 +50,9 @@ namespace Pseudo.EntityFramework.Internal
 			componentIndices = new List<int>();
 		}
 
-		public void Initialize(IEntityManager entityManager, MessageManager messageManager, EntityGroups groups, bool active)
+		public void Initialize(IEntityManager entityManager, EntityGroups groups, bool active)
 		{
 			this.entityManager = entityManager;
-			this.messageManager = messageManager;
 			this.groups = groups;
 			this.active = active;
 		}

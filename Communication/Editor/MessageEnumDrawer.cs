@@ -9,14 +9,14 @@ using Pseudo.Communication;
 
 namespace Pseudo.Editor.Internal
 {
-	[CustomPropertyDrawer(typeof(MessageEnum))]
+	[CustomPropertyDrawer(typeof(Message))]
 	public class MessageEnumDrawer : PPropertyDrawer
 	{
 		static Type[] enumTypes;
 		static Enum[] enumValues;
 		static GUIContent[] enumValuesPath;
 
-		MessageEnum messageEnum;
+		Message messageEnum;
 
 		static MessageEnumDrawer()
 		{
@@ -36,7 +36,7 @@ namespace Pseudo.Editor.Internal
 		{
 			base.GetPropertyHeight(property, label);
 
-			messageEnum = property.GetValue<MessageEnum>();
+			messageEnum = property.GetValue<Message>();
 
 			return lineHeight;
 		}

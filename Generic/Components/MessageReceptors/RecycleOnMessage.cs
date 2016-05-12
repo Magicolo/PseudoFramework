@@ -13,7 +13,7 @@ namespace Pseudo
 	public class RecycleOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		public EntityBehaviour Recycle;
-		public MessageEnum Message;
+		public Message Message;
 
 		bool recycle;
 		[Inject]

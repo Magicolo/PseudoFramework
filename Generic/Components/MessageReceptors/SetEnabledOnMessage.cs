@@ -17,7 +17,7 @@ namespace Pseudo
 		{
 			public MonoBehaviour Target;
 			public bool Enabled;
-			public MessageEnum Message;
+			public Message Message;
 		}
 
 		[InitializeContent]

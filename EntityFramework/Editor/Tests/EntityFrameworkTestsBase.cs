@@ -17,7 +17,7 @@ namespace Pseudo.EntityFramework.Tests
 		[SetUp]
 		public virtual void Setup()
 		{
-			EntityManager = new EntityManager(new MessageManager());
+			EntityManager = new EntityManager(new Messager());
 		}
 
 		[TearDown]

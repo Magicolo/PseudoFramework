@@ -10,13 +10,15 @@ using Pseudo.Communication.Internal;
 
 namespace Pseudo.Communication
 {
-	public class MessageManager : IMessageManager
+	public class Messager : IMessager
 	{
 		readonly Dictionary<Type, object> typeToDispatcherGroup = new Dictionary<Type, object>();
 		readonly List<IMessageable> receivers = new List<IMessageable>();
 
-		public void SubscribeAll(IMessageable receiver)
+		public void Subscribe(IMessageable receiver)
 		{
+			Assert.IsNotNull(receiver);
+
 			receivers.Add(receiver);
 		}
 
@@ -27,8 +29,10 @@ namespace Pseudo.Communication
 			GetDispatcherGroup<TId>().Subscribe(receiver);
 		}
 
-		public void UnsubscribeAll(IMessageable receiver)
+		public void Unsubscribe(IMessageable receiver)
 		{
+			Assert.IsNotNull(receiver);
+
 			receivers.Remove(receiver);
 		}
 

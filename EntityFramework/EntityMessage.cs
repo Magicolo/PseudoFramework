@@ -11,7 +11,7 @@ namespace Pseudo.EntityFramework
 	[Serializable]
 	public struct EntityMessage
 	{
-		public MessageEnum Message;
+		public Message Message;
 		[SerializeField, EnumFlags(typeof(HierarchyScopes))]
 		int scope;
 
@@ -21,12 +21,12 @@ namespace Pseudo.EntityFramework
 			set { scope = (int)value; }
 		}
 
-		public EntityMessage(MessageEnum message, HierarchyScopes scope = HierarchyScopes.Self)
+		public EntityMessage(Message message, HierarchyScopes scope = HierarchyScopes.Self)
 		{
 			Message = message;
 			this.scope = (int)scope;
 		}
 
-		public EntityMessage(Enum message, HierarchyScopes scope = HierarchyScopes.Self) : this((MessageEnum)message, scope) { }
+		public EntityMessage(Enum message, HierarchyScopes scope = HierarchyScopes.Self) : this((Message)message, scope) { }
 	}
 }

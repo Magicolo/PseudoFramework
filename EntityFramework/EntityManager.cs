@@ -16,14 +16,18 @@ namespace Pseudo.EntityFramework
 		{
 			get { return entities; }
 		}
+		public Messager Messager
+		{
+			get { return messager; }
+		}
 
 		readonly EntityGroup entities = new EntityGroup();
 		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
-		readonly MessageManager messageManager;
+		readonly Messager messager;
 
-		public EntityManager(MessageManager messageManager)
+		public EntityManager(Messager messager)
 		{
-			this.messageManager = messageManager;
+			this.messager = messager;
 		}
 
 		public IEntity CreateEntity()
@@ -41,7 +45,7 @@ namespace Pseudo.EntityFramework
 			Assert.IsNotNull(groups);
 
 			var entity = entityPool.Create();
-			entity.Initialize(this, messageManager, groups, active);
+			entity.Initialize(this, groups, active);
 			AddEntity(entity);
 
 			return entity;
