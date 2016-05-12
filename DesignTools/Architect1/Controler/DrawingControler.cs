@@ -11,8 +11,8 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class DrawingControler
 	{
-		[Inject()]
-		ArchitectControler Architect = null;
+		//[Inject()]
+		//ArchitectControler Architect = null;
 		[Inject()]
 		ArchitectToolControler ToolControler = null;
 		[Inject()]

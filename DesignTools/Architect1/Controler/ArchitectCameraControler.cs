@@ -7,7 +7,7 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectCameraControler
 	{
-		ArchitectControler Architect = null;
+		//ArchitectControler Architect = null;
 
 		bool middleCliçked;
 		Vector2 lastMousePosition;

@@ -13,8 +13,8 @@ namespace Pseudo.Architect
 		ArchitectControler Architect = null;
 		[Inject()]
 		ArchitectBehavior ArchitectBehavior = null;
-		[Inject()]
-		DrawingControler DrawingControler = null;
+		//[Inject()]
+		//DrawingControler DrawingControler = null;
 		[Inject()]
 		ArchitectToolControler ToolControler = null;
 		[Inject()]

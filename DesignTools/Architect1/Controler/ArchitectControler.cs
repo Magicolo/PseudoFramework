@@ -14,11 +14,11 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectControler
 	{
-		[Inject()]
-		ArchitectLinker Linker = null;
+		//[Inject()]
+		//ArchitectLinker Linker = null;
 
 		public MapData MapData;
-		
+
 		public event MapDataChanged OnMapDataChanged;
 
 		public bool MapLoaded { get; private set; }
@@ -28,7 +28,8 @@ namespace Pseudo.Architect
 		public bool HasRedoHistory { get { return ArchitectHistory.HistoryRedo.Count > 0; } }
 
 
-		void Awake() {
+		void Awake()
+		{
 			MapData = null;
 		}
 
@@ -62,6 +63,6 @@ namespace Pseudo.Architect
 			OnMapDataChanged(MapData);
 		}
 
-		
+
 	}
 }

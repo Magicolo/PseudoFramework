@@ -10,9 +10,9 @@ namespace Pseudo.Architect
 {
 	public class ArchitectLayerControler
 	{
-		[Inject()]
-		ArchitectControler Architect = null;
-		
+		//[Inject()]
+		//ArchitectControler Architect = null;
+
 		[NonSerialized]
 		public LayerData SelectedLayer;
 
