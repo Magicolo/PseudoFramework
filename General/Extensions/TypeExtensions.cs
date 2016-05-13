@@ -115,11 +115,11 @@ namespace Pseudo
 		/// </summary>
 		/// <param name="type">The type to analyse.</param>
 		/// <returns>The result of the analysis.</returns>
-		public static bool IsPure(this Type type)
+		public static bool IsPureValueType(this Type type)
 		{
 			return
 				type.IsImmutable() ||
-				(type.IsValueType && Array.TrueForAll(type.GetFields(ReflectionUtility.InstanceFlags), f => f.FieldType.IsPure()));
+				(type.IsValueType && Array.TrueForAll(type.GetFields(ReflectionUtility.InstanceFlags), f => f.FieldType.IsPureValueType()));
 		}
 
 		public static string GetName(this Type type)

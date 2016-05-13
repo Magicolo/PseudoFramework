@@ -11,10 +11,10 @@ namespace Pseudo.Injection
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Parameter, AllowMultiple = false)]
 	public sealed class InjectAttribute : PreserveAttribute
 	{
-		public readonly string Identifier;
+		public readonly object Identifier;
 		public readonly bool Optional;
 
-		public InjectAttribute(string identifier = "", bool optional = false)
+		public InjectAttribute(object identifier = null, bool optional = false)
 		{
 			Identifier = identifier;
 			Optional = optional;

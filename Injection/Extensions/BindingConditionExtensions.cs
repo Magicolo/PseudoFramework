@@ -25,7 +25,7 @@ namespace Pseudo.Injection
 			return condition.When(context => context.Instance == instance);
 		}
 
-		public static IBinding WhenHas(this IBindingCondition condition, string identifier)
+		public static IBinding WhenHas(this IBindingCondition condition, object identifier)
 		{
 			return condition.When(context => context.Identifier == identifier);
 		}

@@ -23,26 +23,27 @@ namespace Pseudo.Pooling2.Internal
 			}
 		}
 
+		readonly Func<T> factory;
 		readonly Queue<T> instances = new Queue<T>();
 		readonly HashSet<T> hashedInstances = new HashSet<T>();
 		int capacity = 1024;
 
+		public Storage(Func<T> factory)
+		{
+			this.factory = factory;
+		}
+
 		public T Take()
 		{
-			T instance = null;
-
-			if (instances.Count > 0)
-			{
-				instance = instances.Dequeue();
-				hashedInstances.Remove(instance);
-			}
+			var instance = instances.Dequeue();
+			hashedInstances.Remove(instance);
 
 			return instance;
 		}
 
 		public bool Put(T instance)
 		{
-			if (Count < Capacity && hashedInstances.Add(instance))
+			if (instance != null && Count < Capacity && hashedInstances.Add(instance))
 			{
 				instances.Enqueue(instance);
 				return true;
@@ -51,7 +52,7 @@ namespace Pseudo.Pooling2.Internal
 				return false;
 		}
 
-		public void Fill(int count, Func<T> factory)
+		public void Fill(int count)
 		{
 			while (Count < count && Put(factory())) { }
 		}
@@ -70,6 +71,21 @@ namespace Pseudo.Pooling2.Internal
 		{
 			instances.Clear();
 			hashedInstances.Clear();
+		}
+
+		object IStorage.Take()
+		{
+			return Take();
+		}
+
+		bool IStorage.Put(object instance)
+		{
+			return Put(instance as T);
+		}
+
+		bool IStorage.Contains(object instance)
+		{
+			return Contains(instance as T);
 		}
 	}
 }

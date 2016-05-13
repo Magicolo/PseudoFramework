@@ -41,7 +41,7 @@ namespace Pseudo.Initialization.Internal
 			{
 				if (type.Is(typeof(IInitializable<>), type))
 					initializerType = typeof(GenericInitializer<>).MakeGenericType(type);
-				else if (type.IsPure())
+				else if (type.IsPureValueType())
 					initializerType = typeof(PureInitializer<>).MakeGenericType(type);
 				else if (type.IsArray)
 					initializerType = typeof(ArrayInitializer<>).MakeGenericType(type);

@@ -10,25 +10,26 @@ namespace Pseudo.Pooling2
 {
 	public class Pool<T> : IPool<T> where T : class
 	{
-		public int Count
+		public IStorage<T> Storage
 		{
-			get { return storage.Count; }
-			set
-			{
-				storage.Capacity = value > storage.Capacity ? value : storage.Capacity;
-				storage.Trim(value);
-				storage.Fill(value, factory);
-			}
+			get { return storage; }
 		}
-		public int Capacity
+		public IInitializer<T> Initializer
 		{
-			get { return storage.Capacity; }
-			set { storage.Capacity = value; }
+			get { return initializer; }
 		}
 
 		Type IPool.Type
 		{
 			get { return typeof(T); }
+		}
+		IStorage IPool.Storage
+		{
+			get { return storage; }
+		}
+		IInitializer IPool.Initializer
+		{
+			get { return initializer; }
 		}
 
 		readonly Func<T> factory;
@@ -38,13 +39,13 @@ namespace Pseudo.Pooling2
 		public Pool(Func<T> factory, IStorage<T> storage = null, IInitializer<T> initializer = null)
 		{
 			this.factory = factory;
-			this.storage = storage ?? new Storage<T>();
+			this.storage = storage ?? new Storage<T>(this.factory);
 			this.initializer = initializer ?? Initializer<T>.Default;
 		}
 
 		public T Create()
 		{
-			var instance = storage.Take() ?? factory();
+			var instance = storage.Count > 0 ? storage.Take() : factory();
 			initializer.OnCreate(instance);
 
 			return instance;
@@ -60,16 +61,6 @@ namespace Pseudo.Pooling2
 			return storage.Put(instance);
 		}
 
-		public bool Contains(T instance)
-		{
-			return storage.Contains(instance);
-		}
-
-		public void Clear()
-		{
-			storage.Clear();
-		}
-
 		object IPool.Create()
 		{
 			return Create();
@@ -78,11 +69,6 @@ namespace Pseudo.Pooling2
 		bool IPool.Recycle(object instance)
 		{
 			return Recycle(instance as T);
-		}
-
-		bool IPool.Contains(object instance)
-		{
-			return Contains(instance as T);
 		}
 	}
 }

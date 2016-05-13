@@ -9,7 +9,7 @@ namespace Pseudo.Injection
 {
 	public static class ResolverExtensions
 	{
-		public static object Resolve(this IResolver resolver, Type contractType, string identifier)
+		public static object Resolve(this IResolver resolver, Type contractType, object identifier)
 		{
 			return resolver.Resolve(new InjectionContext
 			{
@@ -29,12 +29,12 @@ namespace Pseudo.Injection
 			return (TContract)resolver.Resolve(typeof(TContract));
 		}
 
-		public static TContract Resolve<TContract>(this IResolver resolver, string identifier)
+		public static TContract Resolve<TContract>(this IResolver resolver, object identifier)
 		{
 			return (TContract)resolver.Resolve(typeof(TContract), identifier);
 		}
 
-		public static IEnumerable<object> ResolveAll(this IResolver resolver, Type contractType, string identifier)
+		public static IEnumerable<object> ResolveAll(this IResolver resolver, Type contractType, object identifier)
 		{
 			return resolver.ResolveAll(new InjectionContext
 			{
@@ -54,12 +54,12 @@ namespace Pseudo.Injection
 			return resolver.ResolveAll(typeof(TContract)).Cast<TContract>();
 		}
 
-		public static IEnumerable<TContract> ResolveAll<TContract>(this IResolver resolver, string identifier)
+		public static IEnumerable<TContract> ResolveAll<TContract>(this IResolver resolver, object identifier)
 		{
 			return resolver.ResolveAll(typeof(TContract), identifier).Cast<TContract>();
 		}
 
-		public static bool CanResolve(this IResolver resolver, Type contractType, string identifier)
+		public static bool CanResolve(this IResolver resolver, Type contractType, object identifier)
 		{
 			return resolver.CanResolve(new InjectionContext
 			{
@@ -79,7 +79,7 @@ namespace Pseudo.Injection
 			return resolver.CanResolve(typeof(TContract));
 		}
 
-		public static bool CanResolve<TContract>(this IResolver resolver, string identifier)
+		public static bool CanResolve<TContract>(this IResolver resolver, object identifier)
 		{
 			return resolver.CanResolve(typeof(TContract), identifier);
 		}

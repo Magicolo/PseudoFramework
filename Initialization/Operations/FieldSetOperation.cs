@@ -24,7 +24,7 @@ namespace Pseudo.Initialization.Internal
 			referenceValue = field.Get(ref reference);
 			type = GetType(referenceValue);
 			isValue = type == null ? false : type.IsValueType;
-			isPure = type == null || type.IsPure();
+			isPure = type == null || type.IsPureValueType();
 			operations = isPure ? null : InitializationUtility.GetInitializer(type).CreateOperations(referenceValue);
 		}
 

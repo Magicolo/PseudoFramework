@@ -31,7 +31,7 @@ namespace Pseudo.Injection
 		public object Instance;
 		public Type ContractType;
 		public Type DeclaringType;
-		public string Identifier;
+		public object Identifier;
 		public bool Optional;
 
 		public override string ToString()

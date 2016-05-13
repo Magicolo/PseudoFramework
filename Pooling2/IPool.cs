@@ -9,20 +9,20 @@ namespace Pseudo.Pooling2
 {
 	public interface IPool<T> : IPool where T : class
 	{
+		new IStorage<T> Storage { get; }
+		new IInitializer<T> Initializer { get; }
+
 		new T Create();
 		bool Recycle(T instance);
-		bool Contains(T instance);
 	}
 
 	public interface IPool
 	{
 		Type Type { get; }
-		int Count { get; }
-		int Capacity { get; set; }
+		IStorage Storage { get; }
+		IInitializer Initializer { get; }
 
 		object Create();
 		bool Recycle(object instance);
-		bool Contains(object instance);
-		void Clear();
 	}
 }
