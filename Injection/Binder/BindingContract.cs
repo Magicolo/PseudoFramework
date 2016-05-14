@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -53,7 +52,7 @@ namespace Pseudo.Injection.Internal
 		{
 			Assert.IsNotNull(method);
 
-			return ToFactory(new MethodFactory<object>(method));
+			return ToFactory(new InjectionMethodFactory<object>(method));
 		}
 
 		public IBindingScope ToFactory(Type factoryType)
@@ -96,7 +95,7 @@ namespace Pseudo.Injection.Internal
 
 		public IBindingScope ToMethod<TConcrete>(InjectionMethod<TConcrete> method) where TConcrete : TContract
 		{
-			return base.ToFactory(new MethodFactory<TConcrete>(method));
+			return base.ToFactory(new InjectionMethodFactory<TConcrete>(method));
 		}
 
 		public IBindingScope ToFactory<TFactory>() where TFactory : IInjectionFactory<TContract>

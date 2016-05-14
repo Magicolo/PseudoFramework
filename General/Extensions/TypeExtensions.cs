@@ -19,12 +19,7 @@ namespace Pseudo
 
 		public static bool HasEmptyConstructor(this Type type)
 		{
-			return type.GetConstructor(Type.EmptyTypes) != null;
-		}
-
-		public static bool HasDefaultConstructor(this Type type)
-		{
-			return type.IsValueType || type.HasEmptyConstructor();
+			return type.IsValueType || type.GetConstructor(Type.EmptyTypes) != null;
 		}
 
 		public static bool HasInterface(this Type type, Type interfaceType)

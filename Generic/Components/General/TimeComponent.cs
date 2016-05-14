@@ -37,7 +37,7 @@ namespace Pseudo
 			get { return time.FixedDeltaTime; }
 		}
 
-		[SerializeField, InitializeContent]
+		[SerializeField]
 		TimeChannel time = new TimeChannel();
 
 		public override void OnAdded()

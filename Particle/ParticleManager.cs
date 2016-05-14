@@ -50,7 +50,8 @@ namespace Pseudo.Particle
 		{
 			Assert.IsNotNull(prefab);
 
-			var effect = PrefabPoolManager.Create(prefab);
+			//var effect = PrefabPoolManager.Create(prefab);
+			var effect = UnityEngine.Object.Instantiate(prefab);
 			effect.Initialize(this, position, parent);
 			activeEffectToPrefab[prefab] = effect;
 
@@ -89,7 +90,7 @@ namespace Pseudo.Particle
 				activeEffects.Remove(instance);
 			}
 
-			PrefabPoolManager.Recycle(instance);
+			//PrefabPoolManager.Recycle(instance);
 		}
 
 		public void StopEffects<T>(T prefab) where T : ParticleEffect

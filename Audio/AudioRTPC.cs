@@ -65,7 +65,8 @@ namespace Pseudo.Audio
 		public virtual void OnCreate()
 		{
 			if (Scope == RTPCScope.Local)
-				value = TypePoolManager.Create<AudioValue<float>>();
+				//value = TypePoolManager.Create<AudioValue<float>>();
+				value = new AudioValue<float>();
 			else
 				value = GetGlobalRTPCValue(Name);
 
@@ -74,25 +75,25 @@ namespace Pseudo.Audio
 
 		public virtual void OnRecycle()
 		{
-			if (Scope == RTPCScope.Local)
-				TypePoolManager.Recycle(ref value);
+			//if (Scope == RTPCScope.Local)
+			//	TypePoolManager.Recycle(ref value);
 		}
 
-		public void Copy(AudioRTPC reference)
+		public void Copy(AudioRTPC source)
 		{
-			value = reference.value;
-			lastValue = reference.lastValue;
-			lastRatio = reference.lastRatio;
-			Name = reference.Name;
-			Type = reference.Type;
-			Scope = reference.Scope;
-			Range = reference.Range;
-			Curve = reference.Curve;
+			value = source.value;
+			lastValue = source.lastValue;
+			lastRatio = source.lastRatio;
+			Name = source.Name;
+			Type = source.Type;
+			Scope = source.Scope;
+			Range = source.Range;
+			Curve = source.Curve;
 		}
 
-		public void CopyTo(AudioRTPC instance)
+		public void CopyTo(AudioRTPC target)
 		{
-			instance.Copy(this);
+			target.Copy(this);
 		}
 
 		public static AudioValue<float> GetGlobalRTPCValue(string name)
@@ -101,7 +102,8 @@ namespace Pseudo.Audio
 
 			if (!rtpcValues.TryGetValue(name, out value))
 			{
-				value = TypePoolManager.Create<AudioValue<float>>();
+				//value = TypePoolManager.Create<AudioValue<float>>();
+				value = new AudioValue<float>();
 				rtpcValues[name] = value;
 			}
 

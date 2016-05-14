@@ -49,7 +49,7 @@ namespace Pseudo
 		}
 
 		[Serializable]
-		public class OscillatorData : IPoolFieldsInitializable, ISerializationCallbackReceiver
+		public class OscillatorData : ISerializationCallbackReceiver
 		{
 			public UnityEngine.Object Target;
 			public string PropertyName;
@@ -92,13 +92,6 @@ namespace Pseudo
 				oscillator.Oscillate(Target, settings, Flags, time);
 			}
 
-			void IPoolFieldsInitializable.OnPrePoolFieldsInitialize(IFieldInitializer initializer)
-			{
-				Initialize();
-			}
-
-			void IPoolFieldsInitializable.OnPostPoolFieldsInitialize(IFieldInitializer initializer) { }
-
 			void ISerializationCallbackReceiver.OnBeforeSerialize() { }
 
 			void ISerializationCallbackReceiver.OnAfterDeserialize()
@@ -107,7 +100,6 @@ namespace Pseudo
 			}
 		}
 
-		[InitializeContent]
 		public OscillatorData[] Oscillators = new OscillatorData[0];
 		public TimeComponent Time;
 

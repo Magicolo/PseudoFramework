@@ -21,7 +21,8 @@ namespace Pseudo.Audio.Internal
 			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = PrefabPoolManager.Create(settings);
+			//this.settings = PrefabPoolManager.Create(settings);
+			this.settings = UnityEngine.Object.Instantiate(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -46,21 +47,21 @@ namespace Pseudo.Audio.Internal
 		{
 			base.OnRecycle();
 
-			PrefabPoolManager.Recycle(ref settings);
+			//PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public void Copy(AudioSwitchContainerItem reference)
+		public void Copy(AudioSwitchContainerItem source)
 		{
-			base.Copy(reference);
+			base.Copy(source);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			switchValue = reference.switchValue;
+			originalSettings = source.originalSettings;
+			settings = source.settings;
+			switchValue = source.switchValue;
 		}
 
-		public void CopyTo(AudioSwitchContainerItem instance)
+		public void CopyTo(AudioSwitchContainerItem target)
 		{
-			instance.Copy(this);
+			target.Copy(this);
 		}
 	}
 }

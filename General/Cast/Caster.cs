@@ -27,7 +27,18 @@ namespace Pseudo
 			}
 		}
 
-		public static readonly ICaster<TIn, TOut> Default = CreateCaster();
+		public static ICaster<TIn, TOut> Default
+		{
+			get
+			{
+				if (defaultCaster == null)
+					defaultCaster = CreateCaster();
+
+				return defaultCaster;
+			}
+		}
+
+		static ICaster<TIn, TOut> defaultCaster;
 
 		public abstract TOut Cast(TIn value);
 
@@ -38,27 +49,23 @@ namespace Pseudo
 
 		static ICaster<TIn, TOut> CreateCaster()
 		{
-			var typeIn = typeof(TIn);
-			var typeOut = typeof(TOut);
 			var casterType = TypeUtility.FindType(t => t.Is<ICaster<TIn, TOut>>());
 
 			if (casterType == null)
 			{
-				if (typeIn.IsEnum)
+				if (typeof(TIn).IsEnum)
 					return CreateEnumCaster(true);
-				else if (typeOut.IsEnum)
+				else if (typeof(TOut).IsEnum)
 					return CreateEnumCaster(false);
-				else if (typeIn.Is<IConvertible>() && typeOut.Is<IConvertible>())
+				else if (typeof(TIn).Is<IConvertible>() && typeof(TOut).Is<IConvertible>())
 					return CreateConvertibleCaster();
-				else if (typeIn.IsClass && typeOut.IsClass)
-					return new ReferenceCaster<TIn, TOut>();
-				else if (typeIn.IsClass != typeOut.IsClass)
+				else if ((typeof(TIn).IsClass && typeof(TOut).IsClass) || typeof(TIn).IsClass != typeof(TOut).IsClass)
 					return new DefaultCaster<TIn, TOut>();
 				else
 					return new BitwiseCaster<TIn, TOut>();
 			}
-			else
-				return CreateCaster(casterType);
+
+			return CreateCaster(casterType);
 		}
 
 		static ICaster<TIn, TOut> CreateCaster(Type casterType)

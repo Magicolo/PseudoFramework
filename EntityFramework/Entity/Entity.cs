@@ -33,9 +33,7 @@ namespace Pseudo.EntityFramework.Internal
 		bool active;
 		EntityGroups groups;
 		IEntityManager entityManager = null;
-		[DoNotInitialize]
 		IComponent[] singleComponents;
-		[DoNotInitialize]
 		ComponentGroupBase[] componentGroups;
 		readonly List<IComponent> allComponents;
 		readonly List<int> componentIndices;
@@ -783,7 +781,8 @@ namespace Pseudo.EntityFramework.Internal
 		ComponentGroupBase CreateComponentGroup(Type componentType)
 		{
 			var componentGroupType = ComponentUtility.GetComponentGroupType(componentType);
-			var componentGroup = (ComponentGroupBase)TypePoolManager.Create(componentGroupType);
+			//var componentGroup = (ComponentGroupBase)TypePoolManager.Create(componentGroupType);
+			var componentGroup = (ComponentGroupBase)Activator.CreateInstance(componentGroupType);
 
 			bool success = false;
 
@@ -802,7 +801,7 @@ namespace Pseudo.EntityFramework.Internal
 		{
 			RemoveAllComponents(false);
 			RemoveAllChildren();
-			TypePoolManager.RecycleElements(componentGroups);
+			//TypePoolManager.RecycleElements(componentGroups);
 		}
 	}
 }

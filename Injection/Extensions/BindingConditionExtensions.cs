@@ -1,10 +1,8 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
-using UnityEngine.Assertions;
 
 namespace Pseudo.Injection
 {
@@ -27,7 +25,7 @@ namespace Pseudo.Injection
 
 		public static IBinding WhenHas(this IBindingCondition condition, object identifier)
 		{
-			return condition.When(context => context.Identifier == identifier);
+			return condition.When(context => Equals(context.Identifier, identifier));
 		}
 
 		public static IBinding WhenHas(this IBindingCondition condition, bool optional)

@@ -22,7 +22,8 @@ namespace Pseudo.EntityFramework
 		}
 
 		readonly EntityGroup entities = new EntityGroup();
-		readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
+		//readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
+		readonly Pool<Entity> entityPool = new Pool<Entity>(() => new Entity());
 		readonly Messager messager;
 
 		public EntityManager(Messager messager)
@@ -55,7 +56,8 @@ namespace Pseudo.EntityFramework
 		{
 			Assert.IsNotNull(prefab);
 
-			var entity = PrefabPoolManager.Create(prefab);
+			//var entity = PrefabPoolManager.Create(prefab);
+			var entity = UnityEngine.Object.Instantiate(prefab);
 			entity.Initialize(this);
 
 			return entity.Entity;
@@ -66,14 +68,14 @@ namespace Pseudo.EntityFramework
 			Assert.IsNotNull(entity);
 
 			RemoveEntity(entity);
-			entityPool.Recycle(entity);
+			//entityPool.Recycle(entity);
 		}
 
 		public void RecycleEntity(EntityBehaviour instance)
 		{
 			Assert.IsNotNull(instance);
 
-			PrefabPoolManager.Recycle(instance);
+			//PrefabPoolManager.Recycle(instance);
 		}
 
 		/// <summary>

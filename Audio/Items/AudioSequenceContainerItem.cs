@@ -25,7 +25,8 @@ namespace Pseudo.Audio.Internal
 			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = PrefabPoolManager.Create(settings);
+			//this.settings = PrefabPoolManager.Create(settings);
+			this.settings = UnityEngine.Object.Instantiate(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -37,7 +38,7 @@ namespace Pseudo.Audio.Internal
 		protected override void InitializeSources()
 		{
 			sourcesIndex = 0;
-			CopyUtility.CopyTo(originalSettings.Delays, ref settings.Delays);
+			originalSettings.Delays.CopyTo(settings.Delays, true);
 
 			if (originalSettings.Sources.Count > 0)
 				AddSource(originalSettings.Sources[sourcesIndex++]);
@@ -157,24 +158,24 @@ namespace Pseudo.Audio.Internal
 		{
 			base.OnRecycle();
 
-			PrefabPoolManager.Recycle(ref settings);
+			//PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public void Copy(AudioSequenceContainerItem reference)
+		public void Copy(AudioSequenceContainerItem source)
 		{
-			base.Copy(reference);
+			base.Copy(source);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			deltaTime = reference.deltaTime;
-			lastTime = reference.lastTime;
-			delay = reference.delay;
-			sourcesIndex = reference.sourcesIndex;
+			originalSettings = source.originalSettings;
+			settings = source.settings;
+			deltaTime = source.deltaTime;
+			lastTime = source.lastTime;
+			delay = source.delay;
+			sourcesIndex = source.sourcesIndex;
 		}
 
-		public void CopyTo(AudioSequenceContainerItem instance)
+		public void CopyTo(AudioSequenceContainerItem target)
 		{
-			instance.Copy(this);
+			target.Copy(this);
 		}
 	}
 }

@@ -11,16 +11,14 @@ namespace Pseudo.Audio.Internal
 	[Serializable]
 	public class AudioContainerSourceData : IPoolable
 	{
-		[InitializeValue]
 		public AudioSettingsBase Settings;
-		[InitializeContent]
 		public List<AudioOption> Options = new List<AudioOption>();
 
 		public virtual void OnCreate() { }
 
 		public virtual void OnRecycle()
 		{
-			TypePoolManager.RecycleElements(Options);
+			//TypePoolManager.RecycleElements(Options);
 		}
 	}
 }

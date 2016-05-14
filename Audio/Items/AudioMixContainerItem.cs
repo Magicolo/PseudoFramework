@@ -24,7 +24,8 @@ namespace Pseudo.Audio.Internal
 			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
-			this.settings = PrefabPoolManager.Create(settings);
+			//this.settings = PrefabPoolManager.Create(settings);
+			this.settings = UnityEngine.Object.Instantiate(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -114,22 +115,22 @@ namespace Pseudo.Audio.Internal
 			base.OnRecycle();
 
 			delays.Clear();
-			PrefabPoolManager.Recycle(ref settings);
+			//PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public void Copy(AudioMixContainerItem reference)
+		public void Copy(AudioMixContainerItem source)
 		{
-			base.Copy(reference);
+			base.Copy(source);
 
-			originalSettings = reference.originalSettings;
-			settings = reference.settings;
-			deltaTime = reference.deltaTime;
-			lastTime = reference.lastTime;
+			originalSettings = source.originalSettings;
+			settings = source.settings;
+			deltaTime = source.deltaTime;
+			lastTime = source.lastTime;
 		}
 
-		public void CopyTo(AudioMixContainerItem instance)
+		public void CopyTo(AudioMixContainerItem target)
 		{
-			instance.Copy(this);
+			target.Copy(this);
 		}
 	}
 }

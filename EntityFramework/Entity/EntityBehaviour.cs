@@ -10,7 +10,7 @@ namespace Pseudo.EntityFramework
 {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class EntityBehaviour : PMonoBehaviour, IPoolable, IPoolInitializable, IPoolFieldsInitializable
+	public class EntityBehaviour : PMonoBehaviour, IPoolable
 	{
 		class EntityState
 		{
@@ -41,31 +41,25 @@ namespace Pseudo.EntityFramework
 		/// <summary>
 		/// Needed to determine if EntityBehaviour is the root of its hierarchy.
 		/// </summary>
-		[NonSerialized, DoNotInitialize]
+		[NonSerialized]
 		EntityBehaviour parent;
 		/// <summary>
-		/// Needed to build the Entity hierachy.
-		/// Initialize content because pool will start initializing from root.
+		/// Needed to build the Entity hierarchy.
 		/// </summary>
-		[NonSerialized, InitializeContent]
+		[NonSerialized]
 		EntityBehaviour[] children;
 		/// <summary>
 		/// Default components.
-		/// No need to initialize because they are immutable.
 		/// </summary>
-		[DoNotInitialize]
 		IComponent[] components;
 		/// <summary>
 		/// Cached components on the same GameObject.
-		/// Initialize their content to reset their state when pooled.
 		/// </summary>
-		[InitializeContent]
 		ComponentBehaviourBase[] componentBehaviours;
 		/// <summary>
 		/// Some information about the initial state of the EntityBehaviour and its components.
 		/// Used to reset the EntityBehaviour and its components to their initial state.
 		/// </summary>
-		[DoNotInitialize]
 		EntityState initialState;
 
 		IEntityManager entityManager;
@@ -237,21 +231,5 @@ namespace Pseudo.EntityFramework
 		{
 			Recycle(true);
 		}
-
-		void IPoolInitializable.OnPrePoolInitialize()
-		{
-			InitializeHierarchyIfNeeded();
-			InitializeComponentsIfNeeded();
-		}
-
-		void IPoolInitializable.OnPostPoolInitialize() { }
-
-		void IPoolFieldsInitializable.OnPrePoolFieldsInitialize(IFieldInitializer initializer)
-		{
-			InitializeHierarchyIfNeeded();
-			InitializeComponentsIfNeeded();
-		}
-
-		void IPoolFieldsInitializable.OnPostPoolFieldsInitialize(IFieldInitializer initializer) { }
 	}
 }

@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,12 +6,9 @@ using Pseudo;
 
 namespace Pseudo.Injection
 {
-	public interface IInjectionFactory
-	{
-		object Create(InjectionContext context);
-	}
+	public interface IInjectionFactory : IFactory<InjectionContext, object> { }
 
-	public interface IInjectionFactory<T> : IInjectionFactory
+	public interface IInjectionFactory<out T> : IInjectionFactory
 	{
 		new T Create(InjectionContext context);
 	}

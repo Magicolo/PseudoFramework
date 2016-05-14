@@ -29,7 +29,8 @@ namespace Pseudo.Audio
 
 		public void Initialize(DynamicGetter getNextSettings, AudioItemManager itemManager, AudioSpatializer spatializer, IAudioItem parent)
 		{
-			settings = TypePoolManager.Create<AudioDynamicSettings>();
+			//settings = TypePoolManager.Create<AudioDynamicSettings>();
+			settings = ScriptableObject.CreateInstance<AudioDynamicSettings>();
 
 			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
@@ -59,7 +60,8 @@ namespace Pseudo.Audio
 			if (breakSequence || (sources.Count > 0 && !requestNextSettings))
 				return;
 
-			var data = TypePoolManager.Create<AudioDynamicData>();
+			//var data = TypePoolManager.Create<AudioDynamicData>();
+			var data = new AudioDynamicData();
 			var settings = getNextSettings(this, data);
 
 			currentStep++;
@@ -183,7 +185,7 @@ namespace Pseudo.Audio
 		{
 			base.RemoveSource(index);
 
-			TypePoolManager.Recycle(dynamicData.Pop(index));
+			//TypePoolManager.Recycle(dynamicData.Pop(index));
 			UpdateSequence();
 		}
 
@@ -191,8 +193,8 @@ namespace Pseudo.Audio
 		{
 			base.OnRecycle();
 
-			PrefabPoolManager.Recycle(settings);
-			TypePoolManager.RecycleElements(dynamicData);
+			//PrefabPoolManager.Recycle(settings);
+			//TypePoolManager.RecycleElements(dynamicData);
 		}
 	}
 }

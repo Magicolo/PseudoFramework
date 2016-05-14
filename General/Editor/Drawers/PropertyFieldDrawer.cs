@@ -33,17 +33,15 @@ namespace Pseudo.Editor.Internal
 			else
 				drawerOverride.OnGUI(currentPosition, property, label);
 
-			var value = property.GetValue();
-
 			if (hasChanged)
 			{
-				var propertyPath = property.GetAdjustedPath();
-				var propertyPathSplit = propertyPath.Split('.');
-
-				propertyPathSplit[propertyPathSplit.Length - 1] = propertyPathSplit.Last().Replace("_", "").Capitalized();
-				propertyPath = propertyPathSplit.Concat(".");
 				property.serializedObject.ApplyModifiedProperties();
-				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, value));
+
+				var fieldPath = property.GetAdjustedPath();
+				var pathSplit = fieldPath.Split('.');
+				pathSplit[pathSplit.Length - 1] = pathSplit.Last().Replace("_", "").Capitalized();
+				var propertyPath = pathSplit.Concat(".");
+				Array.ForEach(targets, t => t.SetValueToMemberAtPath(propertyPath, t.GetValueFromMemberAtPath(fieldPath)));
 				property.serializedObject.Update();
 				hasChanged = false;
 			}

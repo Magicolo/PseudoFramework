@@ -1,12 +1,8 @@
-﻿using UnityEngine;
-using System;
+﻿using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
-using System.Reflection;
-using UnityEngine.Assertions;
-using System.Runtime.Serialization;
 
 namespace Pseudo.Injection.Internal
 {

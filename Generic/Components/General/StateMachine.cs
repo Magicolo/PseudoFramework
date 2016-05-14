@@ -26,7 +26,6 @@ namespace Pseudo
 			public EntityBehaviour State;
 		}
 
-		[InitializeContent]
 		public StateData[] States = new StateData[0];
 
 		EntityBehaviour currentState;

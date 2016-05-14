@@ -216,7 +216,8 @@ namespace Pseudo.Audio
 
 			if (!switchValues.TryGetValue(name, out value))
 			{
-				value = TypePoolManager.Create<AudioValue<int>>();
+				//value = TypePoolManager.Create<AudioValue<int>>();
+				value = new AudioValue<int>();
 				switchValues[name] = value;
 			}
 

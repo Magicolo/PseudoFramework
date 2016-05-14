@@ -19,17 +19,24 @@ namespace Pseudo.Reflection.Internal
 		{
 			get { return method.ReturnType; }
 		}
+		public object[] DefaultArguments
+		{
+			get { return defaultArguments; }
+		}
 
 		protected readonly MethodInfo method;
+		protected readonly object[] defaultArguments;
 
 		protected MethodWrapperBase(MethodInfo method)
 		{
 			this.method = method;
+
+			defaultArguments = method.GetDefaultParameters();
 		}
 
 		public virtual object Invoke(ref object target)
 		{
-			return Invoke(ref target, ReflectionUtility.EmptyArguments);
+			return Invoke(ref target, defaultArguments);
 		}
 
 		public abstract object Invoke(ref object target, params object[] arguments);

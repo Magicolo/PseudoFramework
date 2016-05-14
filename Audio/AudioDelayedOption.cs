@@ -37,8 +37,8 @@ namespace Pseudo.Audio.Internal
 
 		public void OnRecycle()
 		{
-			if (recycle)
-				TypePoolManager.Recycle(ref option);
+			//if (recycle)
+			//	TypePoolManager.Recycle(ref option);
 		}
 
 		public void Copy(AudioDelayedOption reference)
@@ -54,9 +54,9 @@ namespace Pseudo.Audio.Internal
 			instance.Copy(this);
 		}
 
-		public void Copy(object reference)
+		public void Copy(object source)
 		{
-			Copy((AudioDelayedOption)reference);
+			Copy((AudioDelayedOption)source);
 		}
 	}
 }

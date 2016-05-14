@@ -44,7 +44,7 @@ namespace Pseudo
 		readonly Lazy<Rigidbody2D> cachedRigidbody2D;
 		public Rigidbody2D Rigidbody2D { get { return cachedRigidbody2D; } }
 
-		[SerializeField, InitializeContent]
+		[SerializeField]
 		GravityChannel gravity = new GravityChannel();
 		public TimeComponent Time;
 

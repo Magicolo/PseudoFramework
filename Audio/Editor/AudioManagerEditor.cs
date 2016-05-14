@@ -93,8 +93,8 @@ namespace Pseudo.Editor.Internal
 				previewSettings = null;
 			}
 
-			if (!Application.isPlaying)
-				PrefabPoolManager.ClearPool(audioManager.Reference);
+			//if (!Application.isPlaying)
+			//	PrefabPoolManager.ClearPool(audioManager.Reference);
 
 			stopPreview = false;
 		}

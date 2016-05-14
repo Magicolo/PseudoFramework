@@ -20,7 +20,6 @@ namespace Pseudo
 			public Message Message;
 		}
 
-		[InitializeContent]
 		public ActiveAction[] Actions = new ActiveAction[0];
 
 		void IMessageable.OnMessage<TId>(TId message)

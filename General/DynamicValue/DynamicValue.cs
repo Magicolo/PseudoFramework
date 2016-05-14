@@ -112,7 +112,7 @@ namespace Pseudo
 			valueType = reference.valueType;
 			isArray = reference.isArray;
 			data = reference.data;
-			CopyUtility.CopyTo(reference.objectValue, ref objectValue);
+			objectValue = (UnityEngine.Object[])reference.objectValue.Clone();
 		}
 
 		public void CopyTo(DynamicValue instance)
