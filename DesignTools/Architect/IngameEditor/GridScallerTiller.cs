@@ -33,9 +33,9 @@ namespace Pseudo
 
 		void Update()
 		{
-			Vector2 scale = new Vector2(NbTilesX * TileWidth, NbTilesY * TileHeight);
-			CachedTransform.localScale = scale;
-			CachedTransform.localPosition = PositionOffset + new Vector3(scale.x / 2, scale.y / 2);
+			var scale = new Vector2(NbTilesX * TileWidth, NbTilesY * TileHeight);
+			transform.localScale = scale;
+			transform.localPosition = PositionOffset + new Vector3(scale.x / 2, scale.y / 2);
 			CachedRenderer.sharedMaterial.mainTextureScale = new Vector2(NbTilesX, NbTilesY);
 
 		}

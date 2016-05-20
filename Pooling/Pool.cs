@@ -56,7 +56,7 @@ namespace Pseudo.Pooling
 		public Pool(Func<T> factory, Action<T> initializer, IStorage<T> storage = null)
 			: this(factory, initializer == null ? null : new MethodInitializer<T>(initializer), storage) { }
 
-		public T Create()
+		public virtual T Create()
 		{
 			T instance;
 
@@ -77,7 +77,7 @@ namespace Pseudo.Pooling
 			return instance;
 		}
 
-		public bool Recycle(T instance)
+		public virtual bool Recycle(T instance)
 		{
 			if (instance == null)
 				return false;

@@ -22,7 +22,6 @@ namespace Pseudo.EntityFramework
 		}
 
 		readonly EntityGroup entities = new EntityGroup();
-		//readonly Pool<Entity> entityPool = new Pool<Entity>(new Entity(), () => new Entity(), 0);
 		readonly Pool<Entity> entityPool = new Pool<Entity>(() => new Entity());
 		readonly Messager messager;
 

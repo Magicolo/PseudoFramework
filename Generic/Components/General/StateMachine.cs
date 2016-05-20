@@ -39,7 +39,7 @@ namespace Pseudo
 				var state = States[i];
 
 				if (state.State != null)
-					state.State.CachedGameObject.SetActive(false);
+					state.State.gameObject.SetActive(false);
 			}
 		}
 
@@ -48,14 +48,14 @@ namespace Pseudo
 			if (currentState != null)
 			{
 				Entity.SendMessage(StateMachineMessages.OnStateExit, HierarchyScopes.Children | HierarchyScopes.Self);
-				currentState.CachedGameObject.SetActive(false);
+				currentState.gameObject.SetActive(false);
 			}
 
 			currentState = state;
 
 			if (currentState != null)
 			{
-				currentState.CachedGameObject.SetActive(true);
+				currentState.gameObject.SetActive(true);
 				Entity.SendMessage(StateMachineMessages.OnStateEnter, HierarchyScopes.Children | HierarchyScopes.Self);
 			}
 		}

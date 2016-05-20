@@ -14,7 +14,7 @@ namespace Pseudo
 		Circle circle = new Circle(0f, 0f, 1f);
 
 		public Circle LocalCircle { get { return circle; } set { circle = value; } }
-		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + CachedTransform.position, circle.Radius); ; } }
+		public Circle WorldCircle { get { return new Circle(circle.Position.ToVector3() + transform.position, circle.Radius); ; } }
 
 #if UNITY_EDITOR
 		[SerializeField]
@@ -27,7 +27,7 @@ namespace Pseudo
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-			var position = CachedTransform.position + circle.Position.ToVector3();
+			var position = transform.position + circle.Position.ToVector3();
 			UnityEditor.Handles.color = color;
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, circle.Radius);
 			UnityEditor.Handles.color = color.SetValues(color.a / 4f, Channels.A);
@@ -93,7 +93,7 @@ namespace Pseudo
 		public override Vector3 GetRandomWorldPoint()
 		{
 			Vector3 randomPosition = WorldCircle.GetRandomPoint();
-			randomPosition.z = CachedTransform.position.z;
+			randomPosition.z = transform.position.z;
 
 			return randomPosition;
 		}

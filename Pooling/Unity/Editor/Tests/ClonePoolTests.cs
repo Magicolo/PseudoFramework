@@ -89,8 +89,6 @@ namespace Pseudo.Pooling.Tests
 			var pool1 = new ClonePool<Dummy2>(new Dummy2());
 			var pool2 = new ClonePool<Dummy3>(new Dummy3());
 
-			PDebug.Log(Cloner<Dummy2>.Default);
-			PDebug.Log(Copier<Dummy2>.Default);
 			Assert.That(pool1.Cloner, Is.AssignableFrom<Dummy2Cloner>());
 			Assert.That(pool1.Copier, Is.AssignableFrom<Dummy2Copier>());
 			Assert.That(pool2.Cloner, Is.AssignableFrom<DefaultCloner<Dummy3>>());

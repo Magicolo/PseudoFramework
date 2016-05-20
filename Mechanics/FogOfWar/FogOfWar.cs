@@ -201,8 +201,10 @@ namespace Pseudo.Mechanics
 			CreateLineInfos();
 		}
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+
 			UpdateFogOfWar = true;
 		}
 
@@ -228,8 +230,8 @@ namespace Pseudo.Mechanics
 		{
 			CleanUp();
 
-			currentScale = CachedTransform.lossyScale;
-			currentPosition = CachedTransform.position - currentScale / 2;
+			currentScale = transform.lossyScale;
+			currentPosition = transform.position - currentScale / 2;
 			area = new Rect(currentPosition.x, currentPosition.y, currentScale.x, currentScale.y);
 		}
 
@@ -241,7 +243,7 @@ namespace Pseudo.Mechanics
 
 				updateFogOfWar |= updateCount >= 0;
 
-				if (updateFogOfWar && CachedRenderer.isVisible && CachedGameObject.activeInHierarchy)
+				if (updateFogOfWar && CachedRenderer.isVisible && gameObject.activeInHierarchy)
 				{
 					deltaTime = UnityEngine.Time.deltaTime;
 					flickerAmount = (Random.value * 2 - 1) * Flicker;
@@ -373,8 +375,8 @@ namespace Pseudo.Mechanics
 
 		void CreateTexture()
 		{
-			mapWidth = Mathf.Abs((int)(CachedTransform.lossyScale.x * Definition).Round());
-			mapHeight = Mathf.Abs((int)(CachedTransform.lossyScale.y * Definition).Round());
+			mapWidth = Mathf.Abs((int)(transform.lossyScale.x * Definition).Round());
+			mapHeight = Mathf.Abs((int)(transform.lossyScale.y * Definition).Round());
 			mapDiagonal = (int)Mathf.Ceil(Mathf.Sqrt(mapWidth * mapWidth + mapHeight * mapHeight)) * 2;
 			currentAlphaMap = new float[mapWidth, mapHeight];
 			texture = new Texture2D(mapWidth, mapHeight, TextureFormat.RGBA32, false);
@@ -403,7 +405,7 @@ namespace Pseudo.Mechanics
 				{
 					for (int x = 0; x < mapWidth; x++)
 					{
-						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, CachedTransform.position.z);
+						Vector3 position = new Vector3(Area.xMin + (x + 0.5F) / Definition, Area.yMin + (y + 0.5F) / Definition, transform.position.z);
 
 						if (UnityEngine.Physics.Raycast(position - Vector3.forward * 100, Vector3.forward, Mathf.Infinity, LayerMask))
 							currentHeightMap[x, y] = 1;

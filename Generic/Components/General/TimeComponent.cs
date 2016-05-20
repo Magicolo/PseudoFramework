@@ -9,29 +9,26 @@ using Pseudo.Pooling;
 
 namespace Pseudo
 {
-	public class TimeComponent : ComponentBehaviourBase, ITimeChannel
+	[AddComponentMenu("Pseudo/Time")]
+	public class TimeComponent : PMonoBehaviour, ITimeChannel
 	{
 		public Chronos.TimeChannels Channel
 		{
 			get { return time.Channel; }
 		}
-
 		public float Time
 		{
 			get { return time.Time; }
 		}
-
 		public float TimeScale
 		{
 			get { return time.TimeScale; }
 			set { time.TimeScale = value; }
 		}
-
 		public float DeltaTime
 		{
 			get { return time.DeltaTime; }
 		}
-
 		public float FixedDeltaTime
 		{
 			get { return time.FixedDeltaTime; }
@@ -40,10 +37,8 @@ namespace Pseudo
 		[SerializeField]
 		TimeChannel time = new TimeChannel();
 
-		public override void OnAdded()
+		void OnCreate()
 		{
-			base.OnAdded();
-
 			time.Reset();
 		}
 

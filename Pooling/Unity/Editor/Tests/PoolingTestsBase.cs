@@ -8,7 +8,7 @@ using NUnit.Framework;
 
 namespace Pseudo.Pooling.Tests
 {
-	public class PoolingTestsBase
+	public abstract class PoolingTestsBase
 	{
 		[SetUp]
 		public virtual void Setup() { }

@@ -7,11 +7,11 @@ using Pseudo;
 
 namespace Pseudo.Pooling.Internal
 {
-	public abstract class PrefabFactory<T> : FactoryBase<T> where T : UnityEngine.Object
+	public class PrefabFactory<T> : FactoryBase<T> where T : UnityEngine.Object
 	{
-		protected readonly T prefab;
+		readonly T prefab;
 
-		protected PrefabFactory(T prefab)
+		public PrefabFactory(T prefab)
 		{
 			this.prefab = prefab;
 		}

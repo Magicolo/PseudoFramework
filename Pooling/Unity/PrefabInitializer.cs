@@ -11,18 +11,12 @@ namespace Pseudo.Pooling.Internal
 	{
 		public override void OnCreate(T instance)
 		{
-			var gameObject = instance.GetGameObject();
-
-			if (gameObject != null)
-			{
-				gameObject.BroadcastMessage("OnCreate");
-				gameObject.SetActive(true);
-			}
+			instance.GetGameObject().BroadcastMessage("OnCreate");
 		}
 
 		public override void OnRecycle(T instance)
 		{
-			throw new NotImplementedException();
+			instance.GetGameObject().BroadcastMessage("OnRecycle");
 		}
 	}
 }

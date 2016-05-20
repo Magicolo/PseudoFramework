@@ -54,7 +54,7 @@ namespace Pseudo.Mechanics.Internal
 
 		IEnumerator GenerateRoutine()
 		{
-			maze = gameObject.AddChild(string.Format("Maze {0}", CachedTransform.childCount));
+			maze = gameObject.AddChild(string.Format("Maze {0}", transform.childCount));
 			var map = new MazeChunk[Size.X, Size.Y];
 			var chunks = new List<MazeChunk>(Size.X * Size.Y);
 			var initialPosition = GetInitialPosition(map);
@@ -96,8 +96,8 @@ namespace Pseudo.Mechanics.Internal
 			chunk.name = string.Format("{0}_{1}", position.X, position.Y);
 			chunk.Position = position;
 			chunk.Orientation = orientation;
-			chunk.CachedTransform.parent = maze.transform;
-			chunk.CachedTransform.localPosition = position;
+			chunk.transform.parent = maze.transform;
+			chunk.transform.localPosition = position;
 			map[position.X, position.Y] = chunk;
 
 			CreateWalls(chunk, map);
@@ -123,7 +123,7 @@ namespace Pseudo.Mechanics.Internal
 		public GameObject CreateWall(MazeChunk chunk, Orientations orientation)
 		{
 			var wall = Instantiate(Wall);
-			wall.transform.parent = chunk.CachedTransform;
+			wall.transform.parent = chunk.transform;
 			wall.transform.localPosition = Vector3.zero;
 			wall.transform.localRotation = ToRotation(orientation);
 

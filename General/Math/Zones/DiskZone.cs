@@ -14,7 +14,7 @@ namespace Pseudo
 		Disk disk = new Disk(0f, 0f, 0.5f, 1f);
 
 		public Disk LocalDisk { get { return disk; } set { disk = value; } }
-		public Disk WorldDisk { get { return new Disk(disk.Position.ToVector3() + CachedTransform.position, disk.InnerRadius, disk.OuterRadius); } }
+		public Disk WorldDisk { get { return new Disk(disk.Position.ToVector3() + transform.position, disk.InnerRadius, disk.OuterRadius); } }
 
 #if UNITY_EDITOR
 		[SerializeField]
@@ -27,7 +27,7 @@ namespace Pseudo
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-			var position = CachedTransform.position + disk.Position.ToVector3();
+			var position = transform.position + disk.Position.ToVector3();
 			UnityEditor.Handles.color = color;
 			UnityEditor.Handles.DrawWireDisc(position, Vector3.back, disk.OuterRadius);
 			UnityEditor.Handles.color = color.SetValues(color.a / 4f, Channels.A);
@@ -98,7 +98,7 @@ namespace Pseudo
 		public override Vector3 GetRandomWorldPoint()
 		{
 			Vector3 randomPosition = WorldDisk.GetRandomPoint();
-			randomPosition.z = CachedTransform.position.z;
+			randomPosition.z = transform.position.z;
 
 			return randomPosition;
 		}

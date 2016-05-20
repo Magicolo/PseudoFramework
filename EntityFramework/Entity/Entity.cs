@@ -32,7 +32,7 @@ namespace Pseudo.EntityFramework.Internal
 
 		bool active;
 		EntityGroups groups;
-		IEntityManager entityManager = null;
+		IEntityManager entityManager;
 		IComponent[] singleComponents;
 		ComponentGroupBase[] componentGroups;
 		readonly List<IComponent> allComponents;

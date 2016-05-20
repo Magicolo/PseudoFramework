@@ -65,14 +65,18 @@ namespace Pseudo.EntityFramework
 		IEntityManager entityManager;
 		IEntity entity;
 
-		void OnEnable()
+		protected override void OnEnable()
 		{
+			base.OnEnable();
+
 			if (entity != null)
 				entity.Active = true;
 		}
 
-		void OnDisable()
+		protected override void OnDisable()
 		{
+			base.OnDisable();
+
 			if (entity != null)
 				entity.Active = false;
 		}
@@ -152,9 +156,9 @@ namespace Pseudo.EntityFramework
 			if (children != null)
 				return;
 
-			parent = CachedGameObject.GetComponentInParent<EntityBehaviour>(true);
+			parent = gameObject.GetComponent<EntityBehaviour>(HierarchyScopes.Parent);
 			var childList = new List<EntityBehaviour>();
-			PopulateChildren(CachedTransform, childList);
+			PopulateChildren(transform, childList);
 			children = childList.ToArray();
 		}
 
@@ -165,8 +169,8 @@ namespace Pseudo.EntityFramework
 
 			components = new IComponent[]
 			{
-				new TransformComponent(CachedTransform),
-				new GameObjectComponent(CachedGameObject),
+				new TransformComponent(transform),
+				new GameObjectComponent(gameObject),
 				new BehaviourComponent(this)
 			};
 
@@ -195,7 +199,7 @@ namespace Pseudo.EntityFramework
 		{
 			initialState = new EntityState
 			{
-				Active = CachedGameObject.activeSelf,
+				Active = gameObject.activeSelf,
 				Enabled = enabled,
 				ComponentStates = componentBehaviours.Convert(c => c.enabled)
 			};
@@ -204,7 +208,7 @@ namespace Pseudo.EntityFramework
 
 		void ResetToInitialState()
 		{
-			CachedGameObject.SetActive(initialState.Active);
+			gameObject.SetActive(initialState.Active);
 			enabled = initialState.Enabled;
 
 			for (int i = 0; i < initialState.ComponentStates.Length; i++)

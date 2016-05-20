@@ -14,45 +14,25 @@ namespace Pseudo.Pooling
 		{
 			get { return prefab; }
 		}
-		public Transform Transform
+		public Transform Root
 		{
-			get { return transform; }
+			get { return root; }
 		}
 
 		readonly T prefab;
-		readonly Transform transform;
+		readonly Transform root;
 
-		public PrefabPool(T prefab, IInitializer<T> initializer = null, IStorage<T> storage = null)
-			: this(prefab, new GameObject(prefab.name + " Pool").transform, initializer, storage) { }
+		public PrefabPool(T prefab, Transform root, IInitializer<T> initializer = null, IStorage<T> storage = null)
+			: this(prefab, root, new PrefabFactory<T>(prefab), initializer, storage) { }
 
-		public PrefabPool(T prefab, Action<T> initializer, IStorage<T> storage = null)
-			: this(prefab, initializer == null ? null : new MethodInitializer<T>(initializer), storage) { }
+		public PrefabPool(T prefab, Transform root, Action<T> initializer, IStorage<T> storage = null)
+			: this(prefab, root, initializer == null ? null : new MethodInitializer<T>(initializer), storage) { }
 
-		PrefabPool(T prefab, Transform transform, IInitializer<T> initializer = null, IStorage<T> storage = null)
-			: base(CreateFactory(prefab, transform), initializer ?? CreateInitializer(prefab, transform), storage)
+		PrefabPool(T prefab, Transform root, IFactory<T> factory, IInitializer<T> initializer = null, IStorage<T> storage = null)
+			: base(factory, initializer ?? new PrefabInitializer<T>(), storage ?? new PrefabStorage<T>(root, factory))
 		{
 			this.prefab = prefab;
-			this.transform = transform;
-		}
-
-		static IFactory<T> CreateFactory(T prefab, Transform transform)
-		{
-			if (prefab is GameObject)
-				return (IFactory<T>)new GameObjectFactory(prefab as GameObject, transform);
-			else if (prefab is Component)
-				return new ComponentFactory<T>(prefab, transform);
-			else
-				return null;
-		}
-
-		static IInitializer<T> CreateInitializer(T prefab, Transform transform)
-		{
-			if (prefab is GameObject)
-				return (IInitializer<T>)new GameObjectInitializer(transform);
-			else if (prefab is Component)
-				return new ComponentInitializer<T>(transform);
-			else
-				return null;
+			this.root = root;
 		}
 	}
 }

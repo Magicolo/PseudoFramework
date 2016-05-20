@@ -25,14 +25,14 @@ namespace Pseudo.Pooling.Internal
 		readonly IFactory<T> factory;
 		readonly Queue<T> instances = new Queue<T>();
 		readonly HashSet<T> hashedInstances = new HashSet<T>();
-		int capacity = 1024;
+		int capacity = 256;
 
 		public Storage(IFactory<T> factory)
 		{
 			this.factory = factory;
 		}
 
-		public T Take()
+		public virtual T Take()
 		{
 			var instance = instances.Dequeue();
 			hashedInstances.Remove(instance);
@@ -40,7 +40,7 @@ namespace Pseudo.Pooling.Internal
 			return instance;
 		}
 
-		public bool Put(T instance)
+		public virtual bool Put(T instance)
 		{
 			if (instance != null && Count < Capacity && hashedInstances.Add(instance))
 			{

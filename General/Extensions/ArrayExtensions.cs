@@ -379,7 +379,7 @@ namespace Pseudo
 			return index < 0 ? default(T) : array[index];
 		}
 
-		public static bool ContentEquals<T>(this IList<T> array, IList<T> other, Func<T, T, bool> comparison)
+		public static bool ContentEquals<T>(this IList<T> array, IList<T> other)
 		{
 			if (array == other)
 				return true;
@@ -387,19 +387,18 @@ namespace Pseudo
 				return false;
 			else if (array.Count != other.Count)
 				return false;
+			else if (array.Count == 0)
+				return true;
 
-			for (int i = 0; i < array.Count; i++)
+			var comparer = PEqualityComparer<T>.Default;
+
+			for (int i = 1; i < array.Count; i++)
 			{
-				if (!comparison(array[i], other[i]))
+				if (!comparer.Equals(array[i], other[i]))
 					return false;
 			}
 
 			return true;
-		}
-
-		public static bool ContentEquals<T>(this IList<T> array, IList<T> other)
-		{
-			return array.ContentEquals(other, PEqualityComparer<T>.Default.Equals);
 		}
 
 		public static string[] ToStringArray(this IList array)
@@ -425,7 +424,7 @@ namespace Pseudo
 			for (int i = 0; i < array.Count; i++)
 			{
 				var element = array[i];
-				float distance = (element.CachedTransform.position - position).sqrMagnitude;
+				float distance = (element.transform.position - position).sqrMagnitude;
 
 				if (distance < closestDistance)
 				{
@@ -437,41 +436,41 @@ namespace Pseudo
 			return closest;
 		}
 
-		public static bool ContainsAll<T>(this IList<T> array, IList<T> otherArray)
+		public static bool ContainsAll<T>(this IList<T> array, IList<T> other)
 		{
-			if (array.Count == 0 && otherArray.Count == 0)
+			if (array.Count == 0 && other.Count == 0)
 				return true;
 			else if (array.Count == 0)
 				return false;
-			else if (otherArray.Count == 0)
+			else if (other.Count == 0)
 				return true;
 
-			for (int i = 0; i < otherArray.Count; i++)
+			for (int i = 0; i < other.Count; i++)
 			{
-				if (!Contains(array, otherArray[i]))
+				if (!Contains(array, other[i]))
 					return false;
 			}
 
 			return true;
 		}
 
-		public static bool ContainsAny<T>(this IList<T> array, IList<T> otherArray)
+		public static bool ContainsAny<T>(this IList<T> array, IList<T> other)
 		{
-			if (array.Count == 0 || otherArray.Count == 0)
+			if (array.Count == 0 || other.Count == 0)
 				return false;
 
-			for (int i = 0; i < otherArray.Count; i++)
+			for (int i = 0; i < other.Count; i++)
 			{
-				if (Contains(array, otherArray[i]))
+				if (Contains(array, other[i]))
 					return true;
 			}
 
 			return false;
 		}
 
-		public static bool ContainsNone<T>(this IList<T> array, IList<T> otherArray)
+		public static bool ContainsNone<T>(this IList<T> array, IList<T> other)
 		{
-			return !array.ContainsAny(otherArray);
+			return !array.ContainsAny(other);
 		}
 
 		public static int Count<T>(this IList<T> array, Predicate<T> match)

@@ -21,9 +21,9 @@ namespace Pseudo.Physics
 
 		protected override void UpdateCast()
 		{
-			var position = CachedTransform.position;
-			var rotation = CachedTransform.eulerAngles;
-			var scale = CachedTransform.lossyScale;
+			var position = transform.position;
+			var rotation = transform.eulerAngles;
+			var scale = transform.lossyScale;
 			float angleIncrement = 0f;
 
 			if (Amount > 1)
