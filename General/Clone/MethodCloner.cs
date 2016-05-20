@@ -16,9 +16,9 @@ namespace Pseudo.Internal
 			this.method = method;
 		}
 
-		public override T Clone(T reference)
+		public override T Clone(T source)
 		{
-			return method(reference);
+			return method(source);
 		}
 	}
 }

@@ -10,12 +10,12 @@ namespace Pseudo.Internal
 {
 	public class DefaultCloner<T> : Cloner<T>
 	{
-		public override T Clone(T reference)
+		public override T Clone(T source)
 		{
-			var cloneable = reference as ICloneable<T>;
+			var cloneable = source as ICloneable<T>;
 
 			if (cloneable == null)
-				return CloneUtility.MemberwiseClone(reference);
+				return CloneUtility.MemberwiseClone(source);
 			else
 				return cloneable.Clone();
 		}
