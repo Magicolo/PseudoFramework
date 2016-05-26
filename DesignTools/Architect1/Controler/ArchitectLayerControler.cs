@@ -12,7 +12,7 @@ namespace Pseudo.Architect
 	{
 		//[Inject()]
 		//ArchitectControler Architect = null;
-
+		
 		[NonSerialized]
 		public LayerData SelectedLayer;
 

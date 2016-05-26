@@ -24,12 +24,12 @@ namespace Pseudo.Reflection.Tests
 		{
 			base.Setup();
 
-			classConstructor1Wrapper = ReflectionUtility.CreateEmptyConstructorWrapper(typeof(DummyClass));
+			classConstructor1Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass));
 			classConstructor2Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int) }));
 			classConstructor3Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string) }));
 			classConstructor4Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyClass).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));
 
-			structConstructor1Wrapper = ReflectionUtility.CreateEmptyConstructorWrapper(typeof(DummyStruct));
+			structConstructor1Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct));
 			structConstructor2Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int) }));
 			structConstructor3Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string) }));
 			structConstructor4Wrapper = ReflectionUtility.CreateConstructorWrapper(typeof(DummyStruct).GetConstructor(new[] { typeof(int), typeof(string), typeof(object) }));

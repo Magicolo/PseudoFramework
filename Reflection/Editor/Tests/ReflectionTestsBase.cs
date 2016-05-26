@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Pseudo.Reflection.Tests
 {
-	public abstract class ReflectionTestsBase
+	public class ReflectionTestsBase
 	{
 		[SetUp]
 		public virtual void Setup() { }

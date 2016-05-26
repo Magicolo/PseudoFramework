@@ -17,9 +17,10 @@ namespace Pseudo
 		{
 			public MonoBehaviour Target;
 			public bool Enabled;
-			public Message Message;
+			public MessageEnum Message;
 		}
 
+		[InitializeContent]
 		public EnabledAction[] Actions = new EnabledAction[0];
 
 		void IMessageable.OnMessage<TId>(TId message)

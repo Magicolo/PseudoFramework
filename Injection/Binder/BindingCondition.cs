@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using UnityEngine.Assertions;
 
 namespace Pseudo.Injection.Internal
 {
@@ -47,7 +48,7 @@ namespace Pseudo.Injection.Internal
 					case ConditionSource.DeclaringType:
 						return ConditionComparer(c.DeclaringType, (Type)target, comparer);
 					case ConditionSource.Identifier:
-						return ConditionComparer(c.Identifier, target, comparer);
+						return ConditionComparer(c.Identifier, (string)target, comparer);
 					case ConditionSource.Optional:
 						return ConditionComparer(c.Optional, (bool)target, comparer);
 				}

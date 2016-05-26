@@ -10,6 +10,8 @@ namespace Pseudo.EntityFramework.Internal
 {
 	public partial class Entity
 	{
+		MessageManager messageManager = null;
+
 		public void SendMessage(EntityMessage message)
 		{
 			SendMessage(message.Message.Value, (object)null, message.Scope);
@@ -40,7 +42,7 @@ namespace Pseudo.EntityFramework.Internal
 				var component = allComponents[i];
 
 				if (component.Active)
-					entityManager.Messager.Send(component, identifier, argument);
+					messageManager.Send(component, identifier, argument);
 			}
 		}
 

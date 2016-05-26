@@ -12,6 +12,11 @@ namespace Pseudo
 	{
 		public abstract Type Type { get; }
 
+		public virtual object Create()
+		{
+			return Create(ReflectionUtility.EmptyArguments);
+		}
+
 		public abstract object Create(params object[] arguments);
 	}
 
@@ -23,6 +28,11 @@ namespace Pseudo
 		}
 
 		public abstract TTarget Create();
+
+		object IFactory.Create()
+		{
+			return Create();
+		}
 
 		object IFactory.Create(params object[] arguments)
 		{
@@ -39,6 +49,11 @@ namespace Pseudo
 
 		public abstract TTarget Create(TArg argument);
 
+		object IFactory.Create()
+		{
+			return Create(default(TArg));
+		}
+
 		object IFactory.Create(params object[] arguments)
 		{
 			return Create(arguments.Length > 0 ? (TArg)arguments[0] : default(TArg));
@@ -53,6 +68,11 @@ namespace Pseudo
 		}
 
 		public abstract TTarget Create(TArg1 argument1, TArg2 argument2);
+
+		object IFactory.Create()
+		{
+			return Create(default(TArg1), default(TArg2));
+		}
 
 		object IFactory.Create(params object[] arguments)
 		{
@@ -70,6 +90,11 @@ namespace Pseudo
 		}
 
 		public abstract TTarget Create(TArg1 argument1, TArg2 argument2, TArg3 argument3);
+
+		object IFactory.Create()
+		{
+			return Create(default(TArg1), default(TArg2), default(TArg3));
+		}
 
 		object IFactory.Create(params object[] arguments)
 		{

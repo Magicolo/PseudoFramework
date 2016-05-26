@@ -1,5 +1,4 @@
-﻿using Pseudo.Communication;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,7 +8,6 @@ namespace Pseudo.EntityFramework
 	public interface IEntityManager
 	{
 		IEntityGroup Entities { get; }
-		Messager Messager { get; }
 
 		IEntity CreateEntity();
 		IEntity CreateEntity(EntityGroups groups);

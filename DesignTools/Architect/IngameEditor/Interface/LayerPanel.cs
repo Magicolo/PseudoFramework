@@ -12,10 +12,12 @@ namespace Pseudo.Architect
 	{
 		[Inject]
 		ArchitectControler Architect = null;
-		[Inject]
-		ArchitectBehavior ArchitectBehavior = null;
+		//[Inject]
+		//ArchitectBehavior ArchitectBehavior = null;
 		[Inject]
 		ArchitectLayerControler LayerControler=null;
+		[Inject]
+		UISkin Skin;
 
 		int ActiveLayerIndex = -1;
 		LayerData ActiveLayer { get { return LayerControler.SelectedLayer; } }
@@ -32,7 +34,6 @@ namespace Pseudo.Architect
 		public Button MoveDownLayerButton;
 		public Button DuplicateLayerButton;
 
-		private UISkin skin { get { return ArchitectBehavior.Skin; } }
 
 		private List<LayerData> Layers { get { return Architect.MapData.Layers; } }
 
@@ -105,7 +106,7 @@ namespace Pseudo.Architect
 
 			if (ActiveLayerIndex != -1 && ActiveLayerIndex < Layers.Count) 
 			{
-				layerButtons[ActiveLayerIndex].GetComponent<Image>().color = skin.SelectedButtonBackground;
+				layerButtons[ActiveLayerIndex].GetComponent<Image>().color = Skin.SelectedButtonBackground;
 				LayerControler.SelectedLayer = Layers[index];
 			}
 				
@@ -117,31 +118,31 @@ namespace Pseudo.Architect
 		{
 			if (Architect.MapData == null)
 			{
-				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
+				Skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
 			}
 			else if (Layers.Count == 0)
 			{
-				skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton);
-				skin.Enable(AddLayerButton);
+				Skin.Disable(MoveDownLayerButton, MoveUpLayerButton, RemoveLayerButton, DuplicateLayerButton);
+				Skin.Enable(AddLayerButton);
 			}
 			else if (Layers.Count == 1)
 			{
-				skin.Disable(MoveDownLayerButton, MoveUpLayerButton);
-				skin.Enable(RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
+				Skin.Disable(MoveDownLayerButton, MoveUpLayerButton);
+				Skin.Enable(RemoveLayerButton, DuplicateLayerButton, AddLayerButton);
 
 			}
 			else
 			{
 				if (Layers.Count == 6)
 				{
-					skin.Disable(AddLayerButton);
+					Skin.Disable(AddLayerButton);
 				}
-				skin.Enable(RemoveLayerButton, DuplicateLayerButton);
-				skin.Enable(MoveUpLayerButton, MoveDownLayerButton);
+				Skin.Enable(RemoveLayerButton, DuplicateLayerButton);
+				Skin.Enable(MoveUpLayerButton, MoveDownLayerButton);
 				if (ActiveLayerIndex == 0)
-					skin.Disable(MoveUpLayerButton);
+					Skin.Disable(MoveUpLayerButton);
 				else if (ActiveLayerIndex == Layers.Count - 1)
-					skin.Disable(MoveDownLayerButton);
+					Skin.Disable(MoveDownLayerButton);
 			}
 		}
 

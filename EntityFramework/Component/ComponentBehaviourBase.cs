@@ -24,17 +24,13 @@ namespace Pseudo.EntityFramework
 		IEntity entity;
 		bool active;
 
-		protected override void OnEnable()
+		void OnEnable()
 		{
-			base.OnEnable();
-
 			SetActive(true);
 		}
 
-		protected override void OnDisable()
+		void OnDisable()
 		{
-			base.OnDisable();
-
 			SetActive(false);
 		}
 

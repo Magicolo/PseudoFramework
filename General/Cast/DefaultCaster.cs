@@ -11,10 +11,7 @@ namespace Pseudo.Internal
 	{
 		public override TOut Cast(TIn value)
 		{
-			if (value is TOut)
-				return (TOut)(object)value;
-			else
-				return default(TOut);
+			return default(TOut);
 		}
 	}
 }

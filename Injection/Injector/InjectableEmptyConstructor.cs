@@ -1,9 +1,11 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
+using System.Runtime.Serialization;
 using Pseudo.Reflection;
 
 namespace Pseudo.Injection.Internal
@@ -25,7 +27,7 @@ namespace Pseudo.Injection.Internal
 
 		public InjectableEmptyConstructor(Type concreteType) : base(emptyAttributeProvider)
 		{
-			wrapper = ReflectionUtility.CreateEmptyConstructorWrapper(concreteType);
+			wrapper = ReflectionUtility.CreateConstructorWrapper(concreteType);
 		}
 
 		protected override bool CanInject(ref InjectionContext context)

@@ -19,8 +19,7 @@ namespace Pseudo.Audio.Internal
 			base.Initialize(settings.Identifier, itemManager, spatializer, parent);
 
 			originalSettings = settings;
-			//this.settings = PrefabPoolManager.Create(settings);
-			this.settings = UnityEngine.Object.Instantiate(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 
 			InitializeModifiers(originalSettings);
 			InitializeSources();
@@ -38,20 +37,20 @@ namespace Pseudo.Audio.Internal
 		{
 			base.OnRecycle();
 
-			//PrefabPoolManager.Recycle(ref settings);
+			PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public void Copy(AudioRandomContainerItem source)
+		public void Copy(AudioRandomContainerItem reference)
 		{
-			base.Copy(source);
+			base.Copy(reference);
 
-			originalSettings = source.originalSettings;
-			settings = source.settings;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
 		}
 
-		public void CopyTo(AudioRandomContainerItem target)
+		public void CopyTo(AudioRandomContainerItem instance)
 		{
-			target.Copy(this);
+			instance.Copy(this);
 		}
 	}
 }

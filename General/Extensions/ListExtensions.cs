@@ -30,15 +30,6 @@ namespace Pseudo
 			return success;
 		}
 
-		public static void CopyTo<T>(this List<T> source, List<T> target, bool resize = true)
-		{
-			if (resize)
-				target.Resize(source.Count);
-
-			for (int i = 0; i < source.Count; i++)
-				target[i] = source[i];
-		}
-
 		public static T Pop<T>(this List<T> list, int index = 0)
 		{
 			T item = list[index];

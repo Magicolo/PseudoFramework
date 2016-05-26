@@ -431,8 +431,7 @@ namespace Pseudo.Audio
 
 		static AudioOption Create(Types type, object value, float delay = 0f)
 		{
-			//var option = TypePoolManager.Create<AudioOption>();
-			var option = new AudioOption();
+			var option = TypePoolManager.Create<AudioOption>();
 			option.Initialize(type, value, delay);
 
 			return option;
@@ -468,27 +467,26 @@ namespace Pseudo.Audio
 			this.delay = delay;
 		}
 
-		public void Copy(AudioOption source)
+		public void Copy(AudioOption reference)
 		{
-			type = source.type;
-			value.Copy(source.value);
-			delay = source.delay;
+			type = reference.type;
+			value.Copy(reference.value);
+			delay = reference.delay;
 		}
 
-		public void CopyTo(AudioOption target)
+		public void CopyTo(AudioOption instance)
 		{
-			target.Copy(this);
+			instance.Copy(this);
 		}
 
 		void IPoolable.OnCreate()
 		{
-			//value = TypePoolManager.Create<DynamicValue>();
-			value = new DynamicValue();
+			value = TypePoolManager.Create<DynamicValue>();
 		}
 
 		void IPoolable.OnRecycle()
 		{
-			//TypePoolManager.Recycle(ref value);
+			TypePoolManager.Recycle(ref value);
 		}
 
 		public override string ToString()

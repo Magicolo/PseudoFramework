@@ -38,34 +38,44 @@ namespace Pseudo
 			set { gravity.Rotation = value; }
 		}
 
-		[SerializeField]
+		readonly Lazy<Rigidbody> cachedRigidbody;
+		public Rigidbody Rigidbody { get { return cachedRigidbody; } }
+
+		readonly Lazy<Rigidbody2D> cachedRigidbody2D;
+		public Rigidbody2D Rigidbody2D { get { return cachedRigidbody2D; } }
+
+		[SerializeField, InitializeContent]
 		GravityChannel gravity = new GravityChannel();
 		public TimeComponent Time;
 
-		Rigidbody body;
-		Rigidbody2D body2D;
 		bool hasRigidbody;
 		bool hasRigidbody2D;
 
+		public GravityComponent()
+		{
+			cachedRigidbody = new Lazy<Rigidbody>(GetComponent<Rigidbody>);
+			cachedRigidbody2D = new Lazy<Rigidbody2D>(GetComponent<Rigidbody2D>);
+		}
+
+		public override void OnAdded()
+		{
+			base.OnAdded();
+
+			gravity.Reset();
+		}
+
 		void Awake()
 		{
-			body = GetComponent<Rigidbody>();
-			body2D = GetComponent<Rigidbody2D>();
-			hasRigidbody = body != null;
-			hasRigidbody2D = body2D != null;
+			hasRigidbody = Rigidbody != null;
+			hasRigidbody2D = Rigidbody2D != null;
 		}
 
 		void FixedUpdate()
 		{
 			if (hasRigidbody)
-				body.velocity += gravity.Gravity * Time.FixedDeltaTime;
+				Rigidbody.velocity += gravity.Gravity * Time.FixedDeltaTime;
 			else if (hasRigidbody2D)
-				body2D.velocity += gravity.Gravity2D * Time.FixedDeltaTime;
-		}
-
-		void OnCreate()
-		{
-			gravity.Reset();
+				Rigidbody2D.velocity += gravity.Gravity2D * Time.FixedDeltaTime;
 		}
 
 		public static implicit operator GravityChannel(GravityComponent gravity)

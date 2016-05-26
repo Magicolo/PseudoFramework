@@ -17,9 +17,10 @@ namespace Pseudo
 		{
 			public GameObject Target;
 			public bool Active;
-			public Message Message;
+			public MessageEnum Message;
 		}
 
+		[InitializeContent]
 		public ActiveAction[] Actions = new ActiveAction[0];
 
 		void IMessageable.OnMessage<TId>(TId message)

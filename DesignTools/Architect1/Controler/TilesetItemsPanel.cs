@@ -12,20 +12,20 @@ namespace Pseudo.Architect
 		[Inject()]
 		ArchitectControler Architect = null;
 		[Inject()]
-		ArchitectBehavior ArchitectBehavior = null;
-		//[Inject()]
-		//DrawingControler DrawingControler = null;
-		[Inject()]
 		ArchitectToolControler ToolControler = null;
 		[Inject()]
 		ArchitectLinker Linker = null;
+		[Inject()]
+		UISkin Skin = null;
+		[Inject()]
+		UIFactory UIFactory = null;
 
 		List<Button> tilesetButtons = new List<Button>();
 		TileSet selectedTileset;
 		int selectedTileIndex;
 
-		Color SelectedColor { get { return ArchitectBehavior.Skin.SelectedButtonBackground; } }
-		Color BaseColor { get { return ArchitectBehavior.Skin.EnabledButtonBackground; } }
+		Color SelectedColor { get { return Skin.SelectedButtonBackground; } }
+		Color BaseColor { get { return Skin.EnabledButtonBackground; } }
 
 
 		void Start()
@@ -56,7 +56,7 @@ namespace Pseudo.Architect
 				TileType tileType = selectedTileset[i];
 				int index = i; // Fix for a compiler strange behavior. bouttonClicked would have all had the same value without this realocation
 				UnityAction action = () => buttonClicked(index);
-				Button button = ArchitectBehavior.UIFactory.CreateImageButton(transform, tileType.PreviewSprite, BaseColor, action);
+				Button button = UIFactory.CreateImageButton(transform, tileType.PreviewSprite, BaseColor, action);
 
 				tilesetButtons.Add(button);
 			}

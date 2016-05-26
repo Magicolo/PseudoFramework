@@ -1,29 +1,33 @@
 ﻿using System;
-using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using Pseudo;
 
-namespace Pseudo.Pooling
+namespace Pseudo.PoolingNOOOO
 {
 	public interface IPool<T> : IPool where T : class
 	{
-		new IFactory<T> Factory { get; }
-		new IInitializer<T> Initializer { get; }
-		new IStorage<T> Storage { get; }
+		new IPoolingFactory<T> Factory { get; }
 
 		new T Create();
-		bool Recycle(T instance);
+		void Recycle(T instance);
+		bool Contains(T instance);
 	}
 
+	/// <summary>
+	/// Creates and recycles instances of a given type.
+	/// </summary>
 	public interface IPool
 	{
-		Type Type { get; }
-		IFactory Factory { get; }
+		IPoolingFactory Factory { get; }
+		IPoolingUpdater Updater { get; }
 		IInitializer Initializer { get; }
-		IStorage Storage { get; }
+		int Size { get; }
+		Type Type { get; }
 
 		object Create();
-		bool Recycle(object instance);
+		void Recycle(object instance);
+		bool Contains(object instance);
+		void Clear();
+		void Reset();
 	}
 }

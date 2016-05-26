@@ -18,7 +18,7 @@ namespace Pseudo.Architect
 		//ArchitectLinker Linker = null;
 
 		public MapData MapData;
-
+		
 		public event MapDataChanged OnMapDataChanged;
 
 		public bool MapLoaded { get; private set; }
@@ -28,8 +28,7 @@ namespace Pseudo.Architect
 		public bool HasRedoHistory { get { return ArchitectHistory.HistoryRedo.Count > 0; } }
 
 
-		void Awake()
-		{
+		void Awake() {
 			MapData = null;
 		}
 
@@ -41,7 +40,7 @@ namespace Pseudo.Architect
 
 		public void CreateNewMap(Transform parent, string mapName, int width, int height)
 		{
-			Debug.Log("Createmap " + mapName);
+			//Debug.Log("Createmap " + mapName);
 			MapLoaded = true;
 			if (MapData != null)
 				MapData.DestroyAndRemoveAllLayers();
@@ -53,16 +52,18 @@ namespace Pseudo.Architect
 		public LayerData AddLayerData(string layerName)
 		{
 			LayerData newLayerData = MapData.AddLayer(layerName);
-			OnMapDataChanged(MapData);
+			if (OnMapDataChanged != null)
+				OnMapDataChanged(MapData);
 			return newLayerData;
 		}
 
 		public void RemoveLayerData(LayerData removeMe)
 		{
 			MapData.DestroyAndRemoveLayer(removeMe);
-			OnMapDataChanged(MapData);
+			if (OnMapDataChanged != null)
+				OnMapDataChanged(MapData);
 		}
 
-
+		
 	}
 }

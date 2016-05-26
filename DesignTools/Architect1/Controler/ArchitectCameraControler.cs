@@ -7,6 +7,7 @@ namespace Pseudo.Architect
 	[Serializable]
 	public class ArchitectCameraControler
 	{
+		//[Inject()]
 		//ArchitectControler Architect = null;
 
 		bool middleCliçked;

@@ -86,10 +86,12 @@ namespace Pseudo.Audio
 		/// <summary>
 		/// RealTime Parameter Controls that will allow to modify the volume or pitch of an AudioItem dynamicaly.
 		/// </summary>
+		[InitializeContent]
 		public List<AudioRTPC> RTPCs = new List<AudioRTPC>();
 		/// <summary>
 		/// Options that will override the default settings of the AudioItem.
 		/// </summary>
+		[InitializeContent]
 		public List<AudioOption> Options = new List<AudioOption>();
 
 		/// <summary>
@@ -120,8 +122,8 @@ namespace Pseudo.Audio
 		/// </summary>
 		public virtual void OnRecycle()
 		{
-			//TypePoolManager.RecycleElements(RTPCs);
-			//TypePoolManager.RecycleElements(Options);
+			TypePoolManager.RecycleElements(RTPCs);
+			TypePoolManager.RecycleElements(Options);
 		}
 	}
 }

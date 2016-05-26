@@ -6,6 +6,43 @@ using System.Text;
 
 namespace Pseudo.EntityFramework
 {
+	[Flags]
+	public enum HierarchyScopes
+	{
+		/// <summary>
+		/// Includes the components attached to self.
+		/// </summary>
+		Self = 1 << 0,
+		/// <summary>
+		/// Includes the local components of the root.
+		/// </summary>
+		Root = 1 << 1,
+		/// <summary>
+		/// Includes the local components of the immediate parent.
+		/// </summary>
+		Parent = 1 << 2,
+		/// <summary>
+		/// Includes the local components of all the ancestors in a bottom-to-top order.
+		/// </summary>
+		Ancestors = 1 << 3 | Parent,
+		/// <summary>
+		/// Includes the local components of the immediate children.
+		/// </summary>
+		Children = 1 << 4,
+		/// <summary>
+		/// Includes the local components of all the descendants in a top-to-bottom order.
+		/// </summary>
+		Descendants = 1 << 5 | Children,
+		/// <summary>
+		/// Includes the local components of the siblings.
+		/// </summary>
+		Siblings = 1 << 6,
+		/// <summary>
+		/// Includes all the components in the hierarchy starting from the root in a top-to-bottom order.
+		/// </summary>
+		Hierarchy = 1 << 7 | Self | Root | Ancestors | Descendants | Siblings,
+	}
+
 	public interface IEntity
 	{
 		bool Active { get; set; }

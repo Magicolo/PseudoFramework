@@ -22,10 +22,11 @@ namespace Pseudo
 		[Serializable]
 		public struct StateData
 		{
-			public Message Message;
+			public MessageEnum Message;
 			public EntityBehaviour State;
 		}
 
+		[InitializeContent]
 		public StateData[] States = new StateData[0];
 
 		EntityBehaviour currentState;
@@ -39,7 +40,7 @@ namespace Pseudo
 				var state = States[i];
 
 				if (state.State != null)
-					state.State.gameObject.SetActive(false);
+					state.State.CachedGameObject.SetActive(false);
 			}
 		}
 
@@ -48,14 +49,14 @@ namespace Pseudo
 			if (currentState != null)
 			{
 				Entity.SendMessage(StateMachineMessages.OnStateExit, HierarchyScopes.Children | HierarchyScopes.Self);
-				currentState.gameObject.SetActive(false);
+				currentState.CachedGameObject.SetActive(false);
 			}
 
 			currentState = state;
 
 			if (currentState != null)
 			{
-				currentState.gameObject.SetActive(true);
+				currentState.CachedGameObject.SetActive(true);
 				Entity.SendMessage(StateMachineMessages.OnStateEnter, HierarchyScopes.Children | HierarchyScopes.Self);
 			}
 		}

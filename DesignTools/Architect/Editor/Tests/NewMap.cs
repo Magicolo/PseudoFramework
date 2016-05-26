@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using Pseudo;
 using Pseudo.Architect;
 
-namespace Pseudo.ArchitectTest.Tests
+namespace Pseudo.Architect.Tests
 {
 	public class NewMap
 	{

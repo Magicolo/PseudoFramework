@@ -1,8 +1,10 @@
 ﻿using Pseudo.Communication;
+using Pseudo.Communication.Internal;
 using Pseudo.Pooling;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.Assertions;
 using System.Collections;
@@ -32,8 +34,10 @@ namespace Pseudo.EntityFramework.Internal
 
 		bool active;
 		EntityGroups groups;
-		IEntityManager entityManager;
+		IEntityManager entityManager = null;
+		[DoNotInitialize]
 		IComponent[] singleComponents;
+		[DoNotInitialize]
 		ComponentGroupBase[] componentGroups;
 		readonly List<IComponent> allComponents;
 		readonly List<int> componentIndices;
@@ -48,9 +52,10 @@ namespace Pseudo.EntityFramework.Internal
 			componentIndices = new List<int>();
 		}
 
-		public void Initialize(IEntityManager entityManager, EntityGroups groups, bool active)
+		public void Initialize(IEntityManager entityManager, MessageManager messageManager, EntityGroups groups, bool active)
 		{
 			this.entityManager = entityManager;
+			this.messageManager = messageManager;
 			this.groups = groups;
 			this.active = active;
 		}
@@ -781,8 +786,7 @@ namespace Pseudo.EntityFramework.Internal
 		ComponentGroupBase CreateComponentGroup(Type componentType)
 		{
 			var componentGroupType = ComponentUtility.GetComponentGroupType(componentType);
-			//var componentGroup = (ComponentGroupBase)TypePoolManager.Create(componentGroupType);
-			var componentGroup = (ComponentGroupBase)Activator.CreateInstance(componentGroupType);
+			var componentGroup = (ComponentGroupBase)TypePoolManager.Create(componentGroupType);
 
 			bool success = false;
 
@@ -801,7 +805,7 @@ namespace Pseudo.EntityFramework.Internal
 		{
 			RemoveAllComponents(false);
 			RemoveAllChildren();
-			//TypePoolManager.RecycleElements(componentGroups);
+			TypePoolManager.RecycleElements(componentGroups);
 		}
 	}
 }

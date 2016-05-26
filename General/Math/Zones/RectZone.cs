@@ -20,7 +20,7 @@ namespace Pseudo
 			get
 			{
 				var rect = LocalRect;
-				rect.position += transform.position.ToVector2();
+				rect.position += CachedTransform.position.ToVector2();
 				return rect;
 			}
 		}
@@ -36,7 +36,7 @@ namespace Pseudo
 			if (!draw || !enabled || !gameObject.activeInHierarchy)
 				return;
 
-			var position = transform.position + rect.position.ToVector3();
+			var position = CachedTransform.position + rect.position.ToVector3();
 			Vector3 size = rect.size;
 			Gizmos.color = color;
 			Gizmos.DrawWireCube(position, size);
@@ -103,7 +103,7 @@ namespace Pseudo
 		public override Vector3 GetRandomWorldPoint()
 		{
 			Vector3 randomPosition = WorldRect.GetRandomPoint();
-			randomPosition.z = transform.position.z;
+			randomPosition.z = CachedTransform.position.z;
 
 			return randomPosition;
 		}

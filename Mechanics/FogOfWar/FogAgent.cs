@@ -168,26 +168,22 @@ namespace Pseudo.Mechanics
 
 		Dictionary<FogOfWar, Vector3> relativePositionsDict = new Dictionary<FogOfWar, Vector3>();
 
-		protected override void OnEnable()
+		void OnEnable()
 		{
-			base.OnEnable();
-
 			for (int i = 0; i < fogsOfWar.Count; i++)
 			{
-				var fogOfWar = fogsOfWar[i];
+				FogOfWar fogOfWar = fogsOfWar[i];
 				fogOfWar.AddAgent(this);
 				fogOfWar.UpdateFogOfWar = true;
 				relativePositionsDict[fogOfWar] = Vector3.zero;
 			}
 		}
 
-		protected override void OnDisable()
+		void OnDisable()
 		{
-			base.OnDisable();
-
 			for (int i = 0; i < fogsOfWar.Count; i++)
 			{
-				var fogOfWar = fogsOfWar[i];
+				FogOfWar fogOfWar = fogsOfWar[i];
 				fogOfWar.RemoveAgent(this);
 				fogOfWar.UpdateFogOfWar = true;
 				relativePositionsDict.Remove(fogOfWar);
@@ -198,7 +194,7 @@ namespace Pseudo.Mechanics
 		{
 			CleanUp();
 
-			position = transform.position + offset;
+			position = CachedTransform.position + offset;
 			rect = new Rect(position.x - MaxRadius, position.y - MaxRadius, MaxRadius * 2, MaxRadius * 2);
 			IsInView = Camera.main.WorldRectInView(rect);
 
@@ -220,7 +216,7 @@ namespace Pseudo.Mechanics
 				{
 					FogOfWar fogOfWar = fogsOfWar[i];
 					Vector3 lastRelativePosition = relativePositionsDict[fogOfWar];
-					Vector3 currentRelativePosition = fogOfWar.transform.position - position;
+					Vector3 currentRelativePosition = fogOfWar.CachedTransform.position - position;
 					relativePositionsDict[fogOfWar] = currentRelativePosition;
 
 					if (HasChanged || (lastRelativePosition != currentRelativePosition && rect.Overlaps(fogOfWar.Area)))

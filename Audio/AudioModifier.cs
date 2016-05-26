@@ -45,20 +45,20 @@ namespace Pseudo.Audio.Internal
 			OnValueChanged = null;
 		}
 
-		public void Copy(AudioModifier source)
+		public void Copy(AudioModifier reference)
 		{
-			initialValue = source.initialValue;
-			fadeModifier = source.fadeModifier;
-			rampModifier = source.rampModifier;
-			parentModifier = source.parentModifier;
-			randomModifier = source.randomModifier;
-			rtpcModifier = source.rtpcModifier;
-			OnValueChanged = source.OnValueChanged;
+			initialValue = reference.initialValue;
+			fadeModifier = reference.fadeModifier;
+			rampModifier = reference.rampModifier;
+			parentModifier = reference.parentModifier;
+			randomModifier = reference.randomModifier;
+			rtpcModifier = reference.rtpcModifier;
+			OnValueChanged = reference.OnValueChanged;
 		}
 
-		public void CopyTo(AudioModifier target)
+		public void CopyTo(AudioModifier instance)
 		{
-			target.Copy(this);
+			instance.Copy(this);
 		}
 	}
 }

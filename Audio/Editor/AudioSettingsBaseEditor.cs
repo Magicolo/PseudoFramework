@@ -27,8 +27,8 @@ namespace Pseudo.Audio.Internal
 		{
 			base.End(space);
 
-			//if (GUI.changed)
-			//	PrefabPoolManager.ResetPool(settings);
+			if (GUI.changed)
+				PrefabPoolManager.ResetPool(settings);
 		}
 
 		public void ShowType()

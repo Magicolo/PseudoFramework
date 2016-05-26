@@ -22,6 +22,8 @@ namespace Pseudo.Architect
 
 		[Space()]
 		public ArchitectLinker Linker;
+		public UISkin Skin;
+		public UIFactory UIFactory;
 
 		public override void Install(IContainer container)
 		{
@@ -33,6 +35,9 @@ namespace Pseudo.Architect
 			container.Binder.Bind<DrawingControler>().ToSelf().AsSingleton();
 
 			container.Binder.Bind<ArchitectLinker>().ToInstance(Linker);
+			container.Binder.Bind<UISkin>().ToInstance(Skin);
+			container.Binder.Bind<UIFactory>().ToInstance(UIFactory);
+
 			container.Binder.Bind<Camera>().ToInstance(MainCam).WhenHas("ArchitectMain");
 			container.Binder.Bind<Camera>().ToInstance(UICam).WhenHas("ArchitectUI");
 			container.Binder.Bind<GridScallerTiller>().ToInstance(Grid).WhenHas("GridTiller");

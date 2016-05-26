@@ -11,19 +11,9 @@ namespace Pseudo.Reflection
 {
 	public static class ReflectionExtensions
 	{
-		public static object[] GetDefaultParameters(this MethodBase method)
+		public static object[] GetDefaultParameters(this MethodInfo method)
 		{
-			return method.GetParameters().Convert(p => p.GetDefaultValue());
-		}
-
-		public static bool HasDefaultValue(this ParameterInfo parameter)
-		{
-			return (parameter.Attributes & ParameterAttributes.HasDefault) == ParameterAttributes.HasDefault && !DBNull.Value.Equals(parameter.DefaultValue);
-		}
-
-		public static object GetDefaultValue(this ParameterInfo parameter)
-		{
-			return parameter.HasDefaultValue() ? parameter.DefaultValue : TypeUtility.GetDefaultValue(parameter.ParameterType);
+			return method.GetParameters().Convert(p => TypeUtility.GetDefaultValue(p.ParameterType));
 		}
 
 		public static MemberInfo GetFieldOrPropertyInfo(this object obj, string memberName)

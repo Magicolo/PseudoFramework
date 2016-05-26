@@ -1,8 +1,10 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
+using System.Reflection;
 
 namespace Pseudo.Injection
 {
@@ -29,7 +31,7 @@ namespace Pseudo.Injection
 		public object Instance;
 		public Type ContractType;
 		public Type DeclaringType;
-		public object Identifier;
+		public string Identifier;
 		public bool Optional;
 
 		public override string ToString()

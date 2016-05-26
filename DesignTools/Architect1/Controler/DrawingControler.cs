@@ -41,7 +41,7 @@ namespace Pseudo.Architect
 
 			UpdatePreviewSprite();
 			ResetGridSize();
-			if (IsMouseInDrawingRegion)
+			if (IsMouseInDrawingRegion && LayerControler.SelectedLayer != null)
 			{
 				if (UnityEngine.Input.GetMouseButton(0))
 					ToolControler.HandleLeftMouse();
@@ -81,6 +81,7 @@ namespace Pseudo.Architect
 					PreviewSprite.sprite = null;
 				else
 					PreviewSprite.sprite = SelectedTileType.PreviewSprite;
+				
 				PreviewSprite.transform.Translate(TilePositionGetter.TileWorldPosition);
 				ToolControler.RotationFlip.ApplyTo(PreviewSprite.transform);
 			}

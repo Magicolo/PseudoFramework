@@ -41,16 +41,12 @@ namespace Pseudo.Reflection
 
 	public interface IMethodWrapper : IMemberWrapper
 	{
-		object[] DefaultArguments { get; }
-
 		object Invoke(ref object target);
 		object Invoke(ref object target, params object[] arguments);
 	}
 
 	public interface IConstructorWrapper : IMemberWrapper
 	{
-		object[] DefaultArguments { get; }
-
 		object Invoke();
 		object Invoke(params object[] arguments);
 	}

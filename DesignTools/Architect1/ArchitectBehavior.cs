@@ -21,9 +21,7 @@ namespace Pseudo.Architect
 		public ArchitectToolControler ToolControler;
 		[Inject(), Disable()]
 		public DrawingControler DrawingControler;
-
-		public UISkin Skin;
-		public UIFactory UIFactory;
+		
 
 		void Start()
 		{

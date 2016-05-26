@@ -21,6 +21,8 @@ namespace Pseudo
 
 		public Color32 Color { set { CachedRenderer.sharedMaterial.color = value; } }
 
+		public Shader Shader;
+
 		readonly Lazy<MeshRenderer> cachedRenderer;
 		public MeshRenderer CachedRenderer { get { return cachedRenderer; } }
 
@@ -33,11 +35,12 @@ namespace Pseudo
 
 		void Update()
 		{
-			var scale = new Vector2(NbTilesX * TileWidth, NbTilesY * TileHeight);
-			transform.localScale = scale;
-			transform.localPosition = PositionOffset + new Vector3(scale.x / 2, scale.y / 2);
+			Vector2 scale = new Vector2(NbTilesX * TileWidth, NbTilesY * TileHeight);
+			CachedTransform.localScale = scale;
+			CachedTransform.localPosition = PositionOffset + new Vector3(scale.x / 2, scale.y / 2);
 			CachedRenderer.sharedMaterial.mainTextureScale = new Vector2(NbTilesX, NbTilesY);
-
+			Shader.SetGlobalInt("_GridXAmount", NbTilesX);
+			Shader.SetGlobalInt("_GridYAmount", NbTilesY);
 		}
 	}
 }

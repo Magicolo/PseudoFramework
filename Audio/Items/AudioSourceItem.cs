@@ -38,8 +38,7 @@ namespace Pseudo.Audio.Internal
 
 			// General Setup
 			originalSettings = settings;
-			//this.settings = PrefabPoolManager.Create(settings);
-			this.settings = UnityEngine.Object.Instantiate(settings);
+			this.settings = PrefabPoolManager.Create(settings);
 			source = audioSource;
 			source.transform.parent = itemManager.AudioManager.Reference.transform.parent;
 			base.spatializer.AddSource(source.transform);
@@ -207,7 +206,7 @@ namespace Pseudo.Audio.Internal
 				itemManager.Deactivate(this);
 
 			spatializer.RemoveSource(source.transform);
-			//TypePoolManager.Recycle(this);
+			TypePoolManager.Recycle(this);
 		}
 
 		protected override void ApplyOptionNow(AudioOption option, bool recycle)
@@ -342,8 +341,8 @@ namespace Pseudo.Audio.Internal
 				}
 			}
 
-			//if (recycle)
-			//	TypePoolManager.Recycle(ref option);
+			if (recycle)
+				TypePoolManager.Recycle(ref option);
 		}
 
 		public override void SetScheduledTime(double time)
@@ -393,24 +392,24 @@ namespace Pseudo.Audio.Internal
 		{
 			base.OnRecycle();
 
-			//PrefabPoolManager.Recycle(source);
-			//PrefabPoolManager.Recycle(ref settings);
+			PrefabPoolManager.Recycle(source);
+			PrefabPoolManager.Recycle(ref settings);
 		}
 
-		public void Copy(AudioSourceItem source)
+		public void Copy(AudioSourceItem reference)
 		{
-			base.Copy(source);
+			base.Copy(reference);
 
-			originalSettings = source.originalSettings;
-			settings = source.settings;
-			this.source = source.source;
-			deltaTime = source.deltaTime;
-			lastTime = source.lastTime;
+			originalSettings = reference.originalSettings;
+			settings = reference.settings;
+			source = reference.source;
+			deltaTime = reference.deltaTime;
+			lastTime = reference.lastTime;
 		}
 
-		public void CopyTo(AudioSourceItem target)
+		public void CopyTo(AudioSourceItem instance)
 		{
-			target.Copy(this);
+			instance.Copy(this);
 		}
 	}
 }

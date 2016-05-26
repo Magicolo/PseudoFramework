@@ -7,6 +7,6 @@ using Pseudo;
 
 namespace Pseudo.Communication
 {
-	[AttributeUsage(AttributeTargets.Enum, Inherited = true)]
+	[AttributeUsage(AttributeTargets.Enum, AllowMultiple = true, Inherited = true)]
 	public sealed class MessageEnumAttribute : Attribute { }
 }

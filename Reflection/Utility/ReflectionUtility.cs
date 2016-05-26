@@ -78,22 +78,16 @@ namespace Pseudo.Reflection
 			}
 		}
 
-		public static IConstructorWrapper CreateEmptyConstructorWrapper(Type type)
+		public static IConstructorWrapper CreateConstructorWrapper(Type type)
 		{
 			if (type.IsValueType)
-				return new EmptyValueConstructorWrapper(type);
-			else if (type.HasEmptyConstructor())
-				return CreateConstructorWrapper(type.GetConstructor(Type.EmptyTypes));
+				return new EmptyConstructorWrapper(type);
 			else
-				return null;
-		}
+			{
+				var constructor = type.GetConstructor(Type.EmptyTypes);
 
-		public static IConstructorWrapper CreateDefaultConstructorWrapper(Type type)
-		{
-			return
-				CreateEmptyConstructorWrapper(type) ??
-				CreateConstructorWrapper(type.GetConstructors(InstanceFlags)
-					.FindSmallest((a, b) => a.GetParameters().Length.CompareTo(b.GetParameters().Length)));
+				return constructor == null ? null : CreateConstructorWrapper(constructor);
+			}
 		}
 
 		public static IEnumerable<IFieldWrapper> CreateFieldWrappers(Type type, BindingFlags flags = InstanceFlags, Func<FieldInfo, bool> filter = null)

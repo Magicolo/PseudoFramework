@@ -7,13 +7,15 @@ using Pseudo;
 
 namespace Pseudo
 {
-	public interface ICopier<in T> : ICopier where T : class
-	{
-		void CopyTo(T source, T target);
-	}
-
 	public interface ICopier
 	{
 		void CopyTo(object source, object target);
+		void CopyTo(IList source, IList target);
+	}
+
+	public interface ICopier<T> : ICopier
+	{
+		void CopyTo(T source, T target);
+		void CopyTo(IList<T> source, IList<T> target);
 	}
 }

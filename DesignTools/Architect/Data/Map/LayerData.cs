@@ -118,12 +118,17 @@ namespace Pseudo
 			return newLayer;
 		}
 
-		public void AddTile(Point2 tilePoint, TileData prefab)
+		public bool AddTile(Point2 tilePoint, TileData prefab)
 		{
-			if (this[tilePoint.X, tilePoint.Y] == null) return;
-			AddTile(tilePoint, prefab.TileType);
-			this[tilePoint.X, tilePoint.Y].Transform.localScale = prefab.Transform.localScale;
-			this[tilePoint.X, tilePoint.Y].Transform.rotation = prefab.Transform.rotation;
+			if (this[tilePoint.X, tilePoint.Y] == null) return false;
+			if (AddTile(tilePoint, prefab.TileType))
+			{
+				this[tilePoint.X, tilePoint.Y].Transform.localScale = prefab.Transform.localScale;
+				this[tilePoint.X, tilePoint.Y].Transform.rotation = prefab.Transform.rotation;
+				return true;
+			}
+			else
+				return false;
 		}
 		public void AddTile(Point2 tilePoint, TileType tileType, int rotationFlags)
 		{
@@ -143,18 +148,27 @@ namespace Pseudo
 			AddTile(tilePoint, tileType);
 			ArchitectRotationHandler.ApplyRotationFlip(this[tilePoint.X, tilePoint.Y].Transform, angle, horizontal, vertical);
 		}
-		public void AddTile(Point2 tilePoint, TileType tileType)
+		public bool AddTile(Point2 tilePoint, TileType tileType)
 		{
-			if (!InRange(tilePoint)) return;
-			if (tileType == null || tileType.Prefab == null) return;
-			GameObject newTile = UnityEngine.Object.Instantiate(tileType.Prefab);
+			if (!InRange(tilePoint)) return false;
+			if (tileType == null) return false;
 
-			newTile.transform.SetPosition(new Vector3(tilePoint.X, tilePoint.Y, 0));
-			newTile.transform.parent = LayerTransform;
-			newTile.name = tileType.Prefab.name;
+			if (tileType.Prefab != null)
+			{
+				GameObject newTile = UnityEngine.Object.Instantiate(tileType.Prefab);
 
-			TileData tileData = new TileData(tileType, newTile);
-			this[tilePoint.X, tilePoint.Y] = tileData;
+				newTile.transform.SetPosition(new Vector3(tilePoint.X, tilePoint.Y, 0));
+				newTile.transform.parent = LayerTransform;
+				newTile.name = tileType.Prefab.name;
+				TileData tileData = new TileData(tileType, newTile);
+				this[tilePoint.X, tilePoint.Y] = tileData;
+			}
+			else
+			{
+				TileData tileData = new TileData(tileType, null);
+				this[tilePoint.X, tilePoint.Y] = tileData;
+			}
+			return true;
 		}
 
 		private bool InRange(Point2 tilePoint)

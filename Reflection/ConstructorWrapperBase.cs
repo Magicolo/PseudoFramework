@@ -19,24 +19,17 @@ namespace Pseudo.Reflection.Internal
 		{
 			get { return constructor.DeclaringType; }
 		}
-		public object[] DefaultArguments
-		{
-			get { return defaultArguments; }
-		}
 
 		protected readonly ConstructorInfo constructor;
-		protected readonly object[] defaultArguments;
 
 		protected ConstructorWrapperBase(ConstructorInfo constructor)
 		{
 			this.constructor = constructor;
-
-			defaultArguments = constructor.GetDefaultParameters();
 		}
 
 		public virtual object Invoke()
 		{
-			return Invoke(defaultArguments);
+			return Invoke(ReflectionUtility.EmptyArguments);
 		}
 
 		public abstract object Invoke(params object[] arguments);

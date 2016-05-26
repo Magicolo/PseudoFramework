@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
 using Pseudo.Internal;
-using System.Runtime.Serialization;
 
 namespace Pseudo
 {
@@ -81,14 +80,14 @@ namespace Pseudo
 
 		public static object GetDefaultValue(Type type)
 		{
-			if (!type.IsValueType)
+			if (type.IsClass)
 				return null;
 
 			object defaultValue;
 
 			if (!typeToDefaultValue.TryGetValue(type, out defaultValue))
 			{
-				defaultValue = FormatterServices.GetSafeUninitializedObject(type);
+				defaultValue = Activator.CreateInstance(type);
 				typeToDefaultValue[type] = defaultValue;
 			}
 

@@ -10,7 +10,7 @@ namespace Pseudo.EntityFramework
 {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Pseudo/General/Entity")]
-	public class EntityBehaviour : PMonoBehaviour, IPoolable
+	public class EntityBehaviour : PMonoBehaviour, IPoolable, IPoolInitializable, IPoolFieldsInitializable
 	{
 		class EntityState
 		{
@@ -41,42 +41,44 @@ namespace Pseudo.EntityFramework
 		/// <summary>
 		/// Needed to determine if EntityBehaviour is the root of its hierarchy.
 		/// </summary>
-		[NonSerialized]
+		[NonSerialized, DoNotInitialize]
 		EntityBehaviour parent;
 		/// <summary>
-		/// Needed to build the Entity hierarchy.
+		/// Needed to build the Entity hierachy.
+		/// Initialize content because pool will start initializing from root.
 		/// </summary>
-		[NonSerialized]
+		[NonSerialized, InitializeContent]
 		EntityBehaviour[] children;
 		/// <summary>
 		/// Default components.
+		/// No need to initialize because they are immutable.
 		/// </summary>
+		[DoNotInitialize]
 		IComponent[] components;
 		/// <summary>
 		/// Cached components on the same GameObject.
+		/// Initialize their content to reset their state when pooled.
 		/// </summary>
+		[InitializeContent]
 		ComponentBehaviourBase[] componentBehaviours;
 		/// <summary>
 		/// Some information about the initial state of the EntityBehaviour and its components.
 		/// Used to reset the EntityBehaviour and its components to their initial state.
 		/// </summary>
+		[DoNotInitialize]
 		EntityState initialState;
 
 		IEntityManager entityManager;
 		IEntity entity;
 
-		protected override void OnEnable()
+		void OnEnable()
 		{
-			base.OnEnable();
-
 			if (entity != null)
 				entity.Active = true;
 		}
 
-		protected override void OnDisable()
+		void OnDisable()
 		{
-			base.OnDisable();
-
 			if (entity != null)
 				entity.Active = false;
 		}
@@ -156,9 +158,9 @@ namespace Pseudo.EntityFramework
 			if (children != null)
 				return;
 
-			parent = gameObject.GetComponent<EntityBehaviour>(HierarchyScopes.Parent);
+			parent = CachedGameObject.GetComponentInParent<EntityBehaviour>(true);
 			var childList = new List<EntityBehaviour>();
-			PopulateChildren(transform, childList);
+			PopulateChildren(CachedTransform, childList);
 			children = childList.ToArray();
 		}
 
@@ -169,8 +171,8 @@ namespace Pseudo.EntityFramework
 
 			components = new IComponent[]
 			{
-				new TransformComponent(transform),
-				new GameObjectComponent(gameObject),
+				new TransformComponent(CachedTransform),
+				new GameObjectComponent(CachedGameObject),
 				new BehaviourComponent(this)
 			};
 
@@ -199,7 +201,7 @@ namespace Pseudo.EntityFramework
 		{
 			initialState = new EntityState
 			{
-				Active = gameObject.activeSelf,
+				Active = CachedGameObject.activeSelf,
 				Enabled = enabled,
 				ComponentStates = componentBehaviours.Convert(c => c.enabled)
 			};
@@ -208,7 +210,7 @@ namespace Pseudo.EntityFramework
 
 		void ResetToInitialState()
 		{
-			gameObject.SetActive(initialState.Active);
+			CachedGameObject.SetActive(initialState.Active);
 			enabled = initialState.Enabled;
 
 			for (int i = 0; i < initialState.ComponentStates.Length; i++)
@@ -235,5 +237,21 @@ namespace Pseudo.EntityFramework
 		{
 			Recycle(true);
 		}
+
+		void IPoolInitializable.OnPrePoolInitialize()
+		{
+			InitializeHierarchyIfNeeded();
+			InitializeComponentsIfNeeded();
+		}
+
+		void IPoolInitializable.OnPostPoolInitialize() { }
+
+		void IPoolFieldsInitializable.OnPrePoolFieldsInitialize(IFieldInitializer initializer)
+		{
+			InitializeHierarchyIfNeeded();
+			InitializeComponentsIfNeeded();
+		}
+
+		void IPoolFieldsInitializable.OnPostPoolFieldsInitialize(IFieldInitializer initializer) { }
 	}
 }

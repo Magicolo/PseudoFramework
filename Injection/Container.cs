@@ -1,4 +1,5 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -43,7 +44,11 @@ namespace Pseudo.Injection.Internal
 		readonly IInstantiator instantiator;
 		ITypeAnalyzer analyzer = defaultAnalyzer;
 
-		public Container(IContainer parent = null, IBinder binder = null, IResolver resolver = null, IInjector injector = null, IInstantiator instantiator = null)
+		public Container() : this(null, null, null, null, null) { }
+
+		public Container(IContainer parent) : this(parent, null, null, null, null) { }
+
+		public Container(IContainer parent, IBinder binder, IResolver resolver, IInjector injector, IInstantiator instantiator)
 		{
 			this.parent = parent;
 			this.binder = binder ?? new Binder(this);

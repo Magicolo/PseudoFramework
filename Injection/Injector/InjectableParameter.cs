@@ -1,10 +1,11 @@
-﻿using System;
+﻿using UnityEngine;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using Pseudo;
 using System.Reflection;
-using Pseudo.Reflection;
+using Pseudo.Internal;
 
 namespace Pseudo.Injection.Internal
 {
@@ -15,12 +16,7 @@ namespace Pseudo.Injection.Internal
 			get { return provider; }
 		}
 
-		readonly object defaultValue;
-
-		public InjectableParameter(ParameterInfo parameter) : base(parameter)
-		{
-			defaultValue = parameter.GetDefaultValue();
-		}
+		public InjectableParameter(ParameterInfo parameter) : base(parameter) { }
 
 		protected override void SetupContext(ref InjectionContext context)
 		{
@@ -39,10 +35,12 @@ namespace Pseudo.Injection.Internal
 		{
 			if (context.Container.Resolver.CanResolve(context))
 				return context.Container.Resolver.Resolve(context);
-			else if (provider.IsOptional || attribute.Optional)
-				return defaultValue;
-			else
+			else if (provider.IsOptional)
+				return provider.DefaultValue;
+			else if (!attribute.Optional)
 				return context.Container.Resolver.Resolve(context);
+
+			return null;
 		}
 	}
 }

@@ -11,25 +11,26 @@ namespace Pseudo
 	{
 		Type Type { get; }
 
+		object Create();
 		object Create(params object[] arguments);
 	}
 
-	public interface IFactory<out TTarget> : IFactory
+	public interface IFactory<TTarget> : IFactory
 	{
-		TTarget Create();
+		new TTarget Create();
 	}
 
-	public interface IFactory<in TArg, out TTarget> : IFactory
+	public interface IFactory<TArg, TTarget> : IFactory
 	{
 		TTarget Create(TArg argument);
 	}
 
-	public interface IFactory<in TArg1, in TArg2, out TTarget> : IFactory
+	public interface IFactory<TArg1, TArg2, TTarget> : IFactory
 	{
 		TTarget Create(TArg1 argument1, TArg2 argument2);
 	}
 
-	public interface IFactory<in TArg1, in TArg2, in TArg3, out TTarget> : IFactory
+	public interface IFactory<TArg1, TArg2, TArg3, TTarget> : IFactory
 	{
 		TTarget Create(TArg1 argument1, TArg2 argument2, TArg3 argument3);
 	}

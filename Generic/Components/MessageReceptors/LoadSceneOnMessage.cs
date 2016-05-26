@@ -14,7 +14,7 @@ namespace Pseudo
 	public class LoadSceneOnMessage : ComponentBehaviourBase, IMessageable
 	{
 		public string Scene;
-		public Message Message;
+		public MessageEnum Message;
 
 		bool load;
 

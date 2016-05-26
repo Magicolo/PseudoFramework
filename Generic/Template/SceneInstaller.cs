@@ -8,12 +8,6 @@ using Pseudo.Communication;
 
 namespace Pseudo
 {
-	public enum Cameras
-	{
-		Main,
-		UI
-	}
-
 	public class SceneInstaller : InstallerBehaviourBase
 	{
 		public Camera MainCamera;
@@ -22,9 +16,9 @@ namespace Pseudo
 		public override void Install(IContainer container)
 		{
 			container.Binder.Bind<EntityManager, IEntityManager>().ToSelf().AsSingleton();
-			container.Binder.Bind<Messager, IMessager>().ToSelf().AsSingleton();
-			container.Binder.Bind<Camera>().ToInstance(MainCamera).WhenHas(Cameras.Main);
-			container.Binder.Bind<Camera>().ToInstance(UICamera).WhenHas(Cameras.UI);
+			container.Binder.Bind<MessageManager, IMessageManager>().ToSelf().AsSingleton();
+			container.Binder.Bind<Camera>().ToInstance(MainCamera).WhenHas("Main");
+			container.Binder.Bind<Camera>().ToInstance(UICamera).WhenHas("UI");
 		}
 	}
 }

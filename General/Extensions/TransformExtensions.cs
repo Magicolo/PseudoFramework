@@ -203,11 +203,6 @@ namespace Pseudo
 		}
 		#endregion
 
-		public static bool IsRoot(this Transform transform)
-		{
-			return transform == transform.root;
-		}
-
 		public static Transform[] GetParents(this Transform child)
 		{
 			var parents = new List<Transform>();
